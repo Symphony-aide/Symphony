@@ -24,8 +24,6 @@ importers:
         specifier: ^4.6.3
         version: 4.9.5
 
-  languages: {}
-
   web:
     dependencies:
       '@codemirror/autocomplete':

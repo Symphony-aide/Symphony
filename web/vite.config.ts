@@ -9,7 +9,6 @@ export default defineConfig(() => ({
     alias: {
       events: "rollup-plugin-node-polyfills/polyfills/events",
       path: "rollup-plugin-node-polyfills/polyfills/path",
-      '@gveditor/languages': path.resolve(__dirname, '../languages'),
     },
   },
   build: {
