@@ -5,7 +5,7 @@ import RemoteExplorerContainer, {
 import { FloatingWindow } from "features";
 
 /**
- * Remote explorer, mainly used when Graviton is not running on Tauri
+ * Remote explorer, mainly used when Symphony is not running on Tauri
  */
 export class RemoteExplorer extends FloatingWindow {
   public container: () => ReactElement;

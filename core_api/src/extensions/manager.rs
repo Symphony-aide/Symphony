@@ -73,7 +73,7 @@ impl ExtensionsManager {
 /// Extension wrappers
 #[derive(Clone)]
 pub enum LoadedExtension {
-    // Loaded from the source code itself, not dinamically, e.g git-for-graviton (because it has a manifest but not a path)
+    // Loaded from the source code itself, not dinamically, e.g git-for-symphony (because it has a manifest but not a path)
     ManifestBuiltin {
         info: ManifestInfo,
     },

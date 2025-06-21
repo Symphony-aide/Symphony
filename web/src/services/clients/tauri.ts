@@ -18,7 +18,7 @@ import { StateData } from "state";
 /**
  * Tauri Client
  *
- * This makes use of Tauri's commands and events system, as a bridge to communicate the webview frontend and the Graviton core
+ * This makes use of Tauri's commands and events system, as a bridge to communicate the webview frontend and the Symphony core
  */
 export class TauriClient extends Emittery<EventsInterface> implements Client {
   public config: Configuration<null>;

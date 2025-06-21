@@ -1180,7 +1180,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "git-for-graviton"
+name = "git-for-symphony"
 version = "0.1.0"
 dependencies = [
  "git2",
@@ -1277,25 +1277,6 @@ dependencies = [
  "glib-sys",
  "libc",
  "system-deps 6.2.2",
-]
-
-[[package]]
-name = "graviton"
-version = "0.1.1"
-dependencies = [
- "anyhow",
- "git-for-graviton",
- "gveditor-core",
- "gveditor-core-api",
- "native-shell-graviton",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tracing",
- "tracing-subscriber",
- "typescript-lsp-graviton",
- "window-shadows",
 ]
 
 [[package]]
@@ -2168,7 +2149,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "native-shell-graviton"
+name = "native-shell-symphony"
 version = "0.1.0"
 dependencies = [
  "async-trait",
@@ -3203,7 +3184,7 @@ dependencies = [
 name = "server"
 version = "0.1.0"
 dependencies = [
- "git-for-graviton",
+ "git-for-symphony",
  "gveditor-core",
  "gveditor-core-api",
  "serde",
@@ -3391,6 +3372,25 @@ name = "strsim"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
+
+[[package]]
+name = "symphony"
+version = "0.1.1"
+dependencies = [
+ "anyhow",
+ "git-for-symphony",
+ "gveditor-core",
+ "gveditor-core-api",
+ "native-shell-symphony",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tracing",
+ "tracing-subscriber",
+ "typescript-lsp-symphony",
+ "window-shadows",
+]
 
 [[package]]
 name = "syn"
@@ -4085,7 +4085,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1dccffe3ce07af9386bfd29e80c0ab1a8205a2fc34e4bcd40364df902cfa8f3f"
 
 [[package]]
-name = "typescript-lsp-graviton"
+name = "typescript-lsp-symphony"
 version = "0.1.0"
 dependencies = [
  "async-trait",

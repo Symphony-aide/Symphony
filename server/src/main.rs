@@ -11,14 +11,15 @@ use gveditor_core_api::tokio::sync::mpsc::channel;
 use gveditor_core_api::{Mutex, State};
 use tracing_subscriber::prelude::__tracing_subscriber_SubscriberExt;
 use tracing_subscriber::{fmt, EnvFilter, Registry};
+use git_for_symphony;
 
 fn setup_logger() {
     let filter = EnvFilter::default()
         .add_directive("server=info".parse().unwrap())
-        .add_directive("graviton=info".parse().unwrap())
+        .add_directive("symphony=info".parse().unwrap())
         .add_directive("gveditor_core_api=info".parse().unwrap())
         .add_directive("gveditor_core=info".parse().unwrap())
-        .add_directive("typescript_lsp_graviton=info".parse().unwrap());
+        .add_directive("typescript_lsp_symphony=info".parse().unwrap());
 
     let subscriber = Registry::default().with(filter).with(fmt::Layer::default());
 
@@ -32,7 +33,7 @@ async fn main() {
     let (core_tx, core_rx) = channel::<ClientMessages>(1);
 
     let extensions_manager = ExtensionsManager::new(core_tx.clone(), None)
-        .load_extension_from_entry(git_for_graviton::entry, git_for_graviton::get_info(), 1)
+        .load_extension_from_entry(git_for_symphony::entry, git_for_symphony::get_info(), 1)
         .await
         .to_owned();
 

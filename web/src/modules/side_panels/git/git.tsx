@@ -48,7 +48,7 @@ function sendMessage(client: Client, message: ToExtensionMessage) {
     NotifyExtension: {
       msg_type: "ExtensionMessage",
       state_id: client.config.state_id,
-      extension_id: "git-for-graviton",
+      extension_id: "git-for-symphony",
       content: JSON.stringify(message),
     },
   });

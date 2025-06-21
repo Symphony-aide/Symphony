@@ -10,7 +10,7 @@ import { Client } from "services/clients/client.types";
 
 /**
  * This is a custom Transport for the Language Server client
- * It internally uses the communication transport that Graviton might be using,
+ * It internally uses the communication transport that Symphony might be using,
  * HTTP + WS or Tauri's IPC, depends on what type of build it runs
  */
 export default class GravitonTransport extends Transport {

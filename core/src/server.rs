@@ -16,7 +16,7 @@ pub struct Server {
     config: Configuration,
 }
 
-/// Graviton Server entry point
+/// Symphony Server entry point
 ///
 /// # Example
 /// ```rust

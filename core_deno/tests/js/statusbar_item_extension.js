@@ -1,4 +1,4 @@
-const item = await Graviton.crateStatusbarItem("test");
+const item = await Symphony.crateStatusbarItem("test");
 item.onClick(async () => {
     await item.hide();
 })

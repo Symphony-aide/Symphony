@@ -1,4 +1,4 @@
-This is a web-based frontend implementation for Graviton
+This is a web-based frontend implementation for Symphony
 
 Install dependencies:
 

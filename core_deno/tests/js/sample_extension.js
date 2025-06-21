@@ -1,5 +1,5 @@
 const send = () => {
-    Graviton.send({
+    Symphony.send({
         ServerMessage: {
             msg_type: "ShowPopup",
             state_id: 0,
@@ -10,11 +10,11 @@ const send = () => {
     })
 }
 
-Graviton.listenTo("listDir").then(() => send())
+Symphony.listenTo("listDir").then(() => send())
 
-Graviton.whenUnload().then(async () => {
+Symphony.whenUnload().then(async () => {
     await send();
-    await Graviton.exit()
+    await Symphony.exit()
 })
 
 send()

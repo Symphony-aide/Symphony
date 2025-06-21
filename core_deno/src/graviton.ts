@@ -1,7 +1,7 @@
-// Graviton namespace for the extensions runtime - WIP
+// Symphony namespace for the extensions runtime - WIP
 
 // deno-lint-ignore no-namespace
-namespace Graviton {
+namespace Symphony {
   export function send<T>(msg: Record<string, T>) {
     if (typeof msg !== "object") throw new Error("Message can't be parsed.");
   
@@ -73,4 +73,4 @@ namespace Graviton {
 }
 
 // deno-lint-ignore no-explicit-any
-(globalThis as any).Graviton = Graviton;
+(globalThis as any).Symphony = Symphony;

@@ -1,10 +1,10 @@
 [package]
-name = "graviton"
+name = "symphony"
 version = "0.1.1"
 description = "Desktop Code Editor"
 authors = ["Marc Espín Sanz"]
 license = "MIT"
-repository = "https://github.com/Graviton-Code-Editor/Graviton-App"
+repository = "https://github.com/Symphony-Code-Editor/Symphony-App"
 edition = "2021"
 build = "src/build.rs"
 
@@ -21,9 +21,9 @@ gveditor-core-api  = { path = "../../core_api"}
 # gveditor-core-deno = { path = "../../core_deno"}
 tracing = "0.1.41"
 tracing-subscriber = {version="0.3.19", features= ["env-filter", "std"] }
-git-for-graviton = { path = "../../extensions/git" }
-typescript-lsp-graviton = { path = "../../extensions/typescript-lsp" }
-native-shell-graviton = { path = "../../extensions/native-shell" }
+git-for-symphony = { path = "../../extensions/git" }
+typescript-lsp-symphony = { path = "../../extensions/typescript-lsp" }
+native-shell-symphony = { path = "../../extensions/native-shell" }
 anyhow = "1.0.98"
 
 [target.'cfg(windows)'.dependencies]

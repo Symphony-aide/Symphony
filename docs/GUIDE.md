@@ -47,8 +47,8 @@ Clone the repository and install all dependencies:
 
 ```bash
 # Clone the repository
-git clone https://github.com/Graviton-Code-Editor/Graviton-App.git
-cd Graviton-App
+git clone https://github.com/Symphony-Code-Editor/Symphony-App.git
+cd Symphony-App
 ```
 
 ## Automatic script
@@ -244,4 +244,4 @@ After building the application, you can find the executables in:
 - macOS: `desktop/src-tauri/target/release/bundle/dmg/`
 - Linux: `desktop/src-tauri/target/release/bundle/deb/` (or other formats)
 
-The executable for Windows is located at `desktop/src-tauri/target/release/graviton.exe` 
+The executable for Windows is located at `desktop/src-tauri/target/release/symphony.exe` 

@@ -5,7 +5,7 @@ import { initReactI18next } from "react-i18next";
 const EnglishLanguage = {
     code: "en",
     translation: {
-        "Graviton Editor": "Graviton Editor",
+        "Symphony Editor": "Symphony Editor",
         "messages": {
             "PickAShell": "Pick a Shell",
             "NoTabsOpenedMessage": "Tip: Open the Global Prompt with '{{hotkey}}'"
@@ -19,7 +19,7 @@ const EnglishLanguage = {
         "tabs":{
             "Welcome":{
                 "title": "Welcome",
-                "content": "You are currently using a pre-alpha version of Graviton, expect bugs or uncompleted features."
+                "content": "You are currently using a pre-alpha version of Symphony, expect bugs or uncompleted features."
             }
         },
         "prompts":{

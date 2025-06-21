@@ -17,7 +17,7 @@ import { StateData } from "state";
 /**
  * HTTP + WebSockets client
  *
- * This makes it possible to comunicate with a Graviton Core via HTTP and WebSockets. This is useful when using Graviton remotely
+ * This makes it possible to comunicate with a Symphony Core via HTTP and WebSockets. This is useful when using Symphony remotely
  */
 export class HTTPClient extends Emittery implements Client {
   // Internal rpc client

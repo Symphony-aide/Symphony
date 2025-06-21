@@ -9,7 +9,7 @@ WixTools
 .dockerignore
 .gitpod.Dockerfile
 scripts
-*/graviton.js
+*/symphony.js
 .idea
 pnpm-lock.yaml
 **/target/**

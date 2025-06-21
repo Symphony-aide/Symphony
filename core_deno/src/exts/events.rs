@@ -77,7 +77,7 @@ async fn op_terminate_main_worker(
     Ok(())
 }
 
-/// Duplex Events channels for Graviton and Deno
+/// Duplex Events channels for Symphony and Deno
 pub fn new(
     client: ExtensionClient,
     events_manager: EventsManager,

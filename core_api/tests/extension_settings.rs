@@ -18,11 +18,11 @@ async fn create_settings() {
 
     assert!(value.is_none());
 
-    settings.set("hello_world", "graviton").await.unwrap();
+    settings.set("hello_world", "symphony").await.unwrap();
 
     let value: Option<String> = settings.get("hello_world").await;
 
-    assert_eq!(value, Some("graviton".to_string()));
+    assert_eq!(value, Some("symphony".to_string()));
 }
 
 #[tokio::test]

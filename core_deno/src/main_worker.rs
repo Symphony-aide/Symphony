@@ -15,10 +15,10 @@ use gveditor_core_api::extensions::client::ExtensionClient;
 use crate::events_manager::EventsManager;
 use crate::exts::{events, statusbar_items};
 
-// Load up the Graviton JavaScript api, aka, fancy wrapper over Deno.core.opSync/opAsync
-static GRAVITON_DENO_API: &str = include_str!(concat!(env!("OUT_DIR"), "/graviton.js"));
+// Load up the Symphony JavaScript api, aka, fancy wrapper over Deno.core.opSync/opAsync
+static GRAVITON_DENO_API: &str = include_str!(concat!(env!("OUT_DIR"), "/symphony.js"));
 
-// Launches a Deno runtime for the specified file, it also embeds the Graviton Deno API
+// Launches a Deno runtime for the specified file, it also embeds the Symphony Deno API
 pub async fn create_main_worker(
     main_path: &str,
     client: ExtensionClient,
@@ -50,7 +50,7 @@ pub async fn create_main_worker(
             ts_version: "4.7.2".to_string(),
             unstable: false,
             is_tty: false,
-            user_agent: "graviton".to_string(),
+            user_agent: "symphony".to_string(),
         },
         extensions: vec![
             events::new(client.clone(), events_manager, worker_handle.clone()),
@@ -84,8 +84,8 @@ pub async fn create_main_worker(
     let handle = worker.js_runtime.handle_scope().thread_safe_handle();
     worker_handle.lock().await.replace(handle);
 
-    // Load the Graviton namespace
-    worker.execute_script("<graviton>", GRAVITON_DENO_API)?;
+    // Load the Symphony namespace
+    worker.execute_script("<symphony>", GRAVITON_DENO_API)?;
 
     // Load the extension's main module
     worker.execute_main_module(&main_module).await?;

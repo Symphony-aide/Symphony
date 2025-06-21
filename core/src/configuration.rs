@@ -5,7 +5,7 @@ use tokio::sync::Mutex;
 
 use crate::handlers::TransportHandler;
 
-/// Configuration for a Graviton Server
+/// Configuration for a Symphony Server
 pub struct Configuration {
     /// The Transport handler
     pub handler: Arc<Mutex<Box<dyn TransportHandler + Send + Sync>>>,

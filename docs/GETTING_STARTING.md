@@ -41,7 +41,7 @@ Symphony is a monorepo managed with `pnpm` workspaces. The project is divided in
 │   ├── src
 │   │   ├── exts
 │   │   ├── events_manager.rs
-│   │   ├── graviton.ts
+│   │   ├── symphony.ts
 │   │   ├── lib.rs
 │   │   └── main_worker.rs
 │   └── Cargo.toml
@@ -134,7 +134,7 @@ The main packages are:
 -   **Location:** `core_deno/`
 -   **Language:** Rust, TypeScript
 -   **Purpose:** Provides a Deno-based runtime for executing extensions written in JavaScript or TypeScript. This allows for web-based extensions that are isolated from the main application process.
--   **Architecture:** It uses `deno_runtime` to create a new JavaScript runtime for each extension in a separate thread. A TypeScript file, `graviton.ts`, defines the `Graviton` namespace, which is the API provided to extensions for interacting with the core. Communication between the Deno runtime and the Rust core is handled through Deno's `op` mechanism.
+-   **Architecture:** It uses `deno_runtime` to create a new JavaScript runtime for each extension in a separate thread. A TypeScript file, `symphony.ts`, defines the `Symphony` namespace, which is the API provided to extensions for interacting with the core. Communication between the Deno runtime and the Rust core is handled through Deno's `op` mechanism.
 -   **Interaction:** The `@desktop` package can use this crate to load and run Deno-based extensions. (Note: this is currently disabled in the desktop app).
 
 ### `@crosspty`

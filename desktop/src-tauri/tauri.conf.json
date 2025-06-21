@@ -13,7 +13,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.graviton.editor",
+      "identifier": "com.symphony.editor",
       "icon": [
         "./icons/32x32.png",
         "./icons/128x128.png",
@@ -62,7 +62,7 @@
     },
     "windows": [
       {
-        "title": "Graviton Editor",
+        "title": "Symphony Editor",
         "width": 800,
         "height": 600,
         "resizable": true,

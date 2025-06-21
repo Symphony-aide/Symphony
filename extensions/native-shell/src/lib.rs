@@ -80,7 +80,7 @@ pub fn get_info() -> ManifestInfo {
             name: EXTENSION_NAME.to_string(),
             author: "Marc Espín".to_string(),
             version: env!("CARGO_PKG_VERSION").to_string(),
-            repository: "https://github.com/Graviton-Code-Editor/Graviton-App".to_string(),
+            repository: "https://github.com/Symphony-Code-Editor/Symphony-App".to_string(),
             main: None,
         },
     }

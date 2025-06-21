@@ -24,7 +24,7 @@ use main_worker::create_main_worker;
 pub type EventListeners = Arc<Mutex<HashMap<String, HashMap<Uuid, Sender<ClientMessages>>>>>;
 pub type WorkerHandle = Arc<Mutex<Option<IsolateHandle>>>;
 
-/// DenoExtension is a wrapper around Graviton extension api that makes use of deno_runtime to execute the extensions
+/// DenoExtension is a wrapper around Symphony extension api that makes use of deno_runtime to execute the extensions
 struct DenoExtension {
     main_path: String,
     info: ManifestInfo,
@@ -160,7 +160,7 @@ impl DenoExtensionSupport for ExtensionsManager {
             // Iterate over all the found extensions
             while let Some(Ok(item)) = items.next().await {
                 let item_path = item.path();
-                let manifest_path = item_path.join("Graviton.toml");
+                let manifest_path = item_path.join("Symphony.toml");
 
                 // Get the extension manifest
                 let manifest = Manifest::parse(&manifest_path).await;

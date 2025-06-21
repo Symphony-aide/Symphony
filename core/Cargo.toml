@@ -1,12 +1,12 @@
 [package]
 name = "gveditor-core"
 version = "0.1.7"
-description = "Graviton Core"
+description = "Symphony Core"
 authors = ["Marc Espín Sanz"]
 edition = "2021"
 readme = "../readme.md"
-repository = "https://github.com/Graviton-Code-Editor/Graviton-App/tree/main"
-homepage = "https://github.com/Graviton-Code-Editor/Graviton-App/tree/main"
+repository = "https://github.com/Symphony-Code-Editor/Symphony-App/tree/main"
+homepage = "https://github.com/Symphony-Code-Editor/Symphony-App/tree/main"
 license = "MIT"
 
 [features]

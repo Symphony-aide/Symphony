@@ -58,7 +58,7 @@ export default function AboutRoute() {
 
   return (
     <div>
-      <Title>Graviton Editor</Title>
+      <Title>Symphony Editor</Title>
       <TabText>You are running v{WebPackage.version} (pre-alpha)</TabText>
       <SecondaryButton onClick={showLicensePopup}>View License</SecondaryButton>
     </div>

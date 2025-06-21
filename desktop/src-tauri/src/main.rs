@@ -113,7 +113,7 @@ fn get_settings_path(context: &Context<EmbeddedAssets>) -> anyhow::Result<(PathB
         context.config(),
         context.package_info(),
         &Env::default(),
-        ".graviton/states",
+        ".symphony/states",
         Some(BaseDirectory::Home),
     )?;
 
@@ -137,7 +137,7 @@ fn get_extensions_installation_path(context: &Context<EmbeddedAssets>) -> anyhow
         context.config(),
         context.package_info(),
         &Env::default(),
-        ".graviton/extensions",
+        ".symphony/extensions",
         Some(BaseDirectory::Home),
     )?;
 
@@ -149,19 +149,19 @@ fn get_extensions_installation_path(context: &Context<EmbeddedAssets>) -> anyhow
 /// Setup the logger
 fn setup_logger() {
     let filter = EnvFilter::default()
-        .add_directive("graviton=info".parse().unwrap())
+        .add_directive("symphony=info".parse().unwrap())
         .add_directive("gveditor_core_api=info".parse().unwrap())
         .add_directive("gveditor_core=info".parse().unwrap())
-        .add_directive("typescript_lsp_graviton=info".parse().unwrap());
+        .add_directive("typescript_lsp_symphony=info".parse().unwrap());
 
     let subscriber = Registry::default().with(filter).with(fmt::Layer::default());
 
     tracing::subscriber::set_global_default(subscriber).expect("Unable to set global subscriber");
 }
 
-// Graviton Desktop is fully local therefore doesn't need authentication which the Core
+// Symphony Desktop is fully local therefore doesn't need authentication which the Core
 // could have needed if it was running remotely. So, this is a useless token.
-static TOKEN: &str = "graviton_token";
+static TOKEN: &str = "symphony_token";
 static STATE_ID: u8 = 1;
 
 #[tokio::main]
@@ -195,20 +195,20 @@ async fn main() -> anyhow::Result<()> {
     // Load built-in extensions
     extensions_manager
         .load_extension_from_entry(
-            git_for_graviton::entry,
-            git_for_graviton::get_info(),
+            git_for_symphony::entry,
+            git_for_symphony::get_info(),
             STATE_ID,
         )
         .await
         .load_extension_from_entry(
-            typescript_lsp_graviton::entry,
-            typescript_lsp_graviton::get_info(),
+            typescript_lsp_symphony::entry,
+            typescript_lsp_symphony::get_info(),
             STATE_ID,
         )
         .await
         .load_extension_from_entry(
-            native_shell_graviton::entry,
-            native_shell_graviton::get_info(),
+            native_shell_symphony::entry,
+            native_shell_symphony::get_info(),
             STATE_ID,
         )
         .await;
@@ -255,7 +255,7 @@ async fn main() -> anyhow::Result<()> {
     let res = open_window(context, client, to_local, from_handler);
 
     if let Err(err) = res {
-        error!("Graviton crashed, error: {err}");
+        error!("Symphony crashed, error: {err}");
         Err(anyhow::Error::from(err))
     } else {
         Ok(())

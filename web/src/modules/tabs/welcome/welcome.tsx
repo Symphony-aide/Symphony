@@ -68,7 +68,7 @@ function WelcomeTabContainer({ close }: { close: () => void }) {
   return (
     <WelcomeTabContainerStyled>
       <WelcomeContent>
-        <h2>{t("Graviton Editor")}</h2>
+        <h2>{t("Symphony Editor")}</h2>
         <p>{t("tabs.Welcome.content")}</p>
         <WelcomeCardsView>
           <WelcomeCard>
@@ -83,13 +83,13 @@ function WelcomeTabContainer({ close }: { close: () => void }) {
           </WelcomeCard>
           <WelcomeCard>
             <CardTitle>Contribute</CardTitle>
-            <Link href="https://github.com/Graviton-Code-Editor/Graviton-App/issues">
+            <Link href="https://github.com/Symphony-Code-Editor/Symphony-App/issues">
               <SecondaryButton expanded={true}>
                 {t("Report issues")}
               </SecondaryButton>
             </Link>
             <br />
-            <Link href="https://github.com/Graviton-Code-Editor/Graviton-App/issues">
+            <Link href="https://github.com/Symphony-Code-Editor/Symphony-App/issues">
               <SecondaryButton expanded={true}>
                 {t("Contribute")}
               </SecondaryButton>
