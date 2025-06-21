@@ -12,3 +12,9 @@ scripts
 */graviton.js
 .idea
 pnpm-lock.yaml
+**/target/**
+**/dist/**
+**/build/**
+**/node_modules/**
+**/web/node_modules/**
+**/web/dist/**
