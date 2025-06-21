@@ -1,2 +1,5 @@
 [toolchain]
-channel = "1.70.0"
+channel = "stable"
+
+[patch.crates-io]
+v8 = { version = "0.47.1" }
