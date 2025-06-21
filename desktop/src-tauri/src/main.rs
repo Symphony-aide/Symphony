@@ -190,7 +190,7 @@ async fn main() -> anyhow::Result<()> {
         error!("Could not get the settings path, error: {err}");
     }
 
-    let third_party_extensions_path = third_party_extensions_path?;
+    // let third_party_extensions_path = third_party_extensions_path?;
 
     // Load built-in extensions
     extensions_manager

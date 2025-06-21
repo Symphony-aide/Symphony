@@ -1,5 +1,4 @@
 use crate::messaging::ClientMessages;
-pub use crate::state_persistors::memory::MemoryPersistor;
 use crate::State;
 use std::collections::HashMap;
 use std::sync::Arc;
