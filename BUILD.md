@@ -19,6 +19,7 @@ Before building the project, ensure you have the following tools installed:
 - **pnpm** - `npm install -g pnpm`
 - **Tauri CLI** - `cargo install tauri-cli --version "^1.2"`
 - **Deno** - [https://deno.land/#installation](https://deno.land/#installation)
+- **Python** - [https://www.python.org/downloads/](https://www.python.org/downloads/) (v3.6+, required for v8 compilation)
 
 ### OS-Specific Dependencies for Tauri
 
@@ -98,6 +99,54 @@ To install all Rust dependencies for the entire workspace at once:
 ```bash
 # From the project root
 cargo fetch
+```
+
+## Known Issues and Workarounds
+
+### v8 Compilation Issues
+
+The project uses the v8 JavaScript engine through the deno_core crate, which can cause compilation issues on some platforms. If you encounter errors related to v8 compilation (like `assertion failed: size_of::<TypeId>() == size_of::<u64>()`), you can try these workarounds:
+
+#### Option 1: Disable the Deno Runtime Component
+
+1. Comment out the core_deno dependency in Cargo.toml:
+   ```toml
+   [workspace]
+   members = [
+      "core",
+      "core_api",
+      # "core_deno",  # Comment this line
+      # ...
+   ]
+   ```
+
+2. Comment out the core_deno dependency in desktop/src-tauri/Cargo.toml:
+   ```toml
+   [dependencies]
+   # ...
+   # gveditor-core-deno = { path = "../../core_deno"}  # Comment this line
+   # ...
+   ```
+
+3. Comment out the DenoExtensionSupport import and any related code in desktop/src-tauri/src/main.rs:
+   ```rust
+   // use gveditor_core_deno::DenoExtensionSupport;  // Comment this line
+   
+   // Also comment out any code that uses DenoExtensionSupport or loads Deno extensions
+   ```
+
+#### Option 2: Install Python and Make Sure It's in PATH
+
+The v8 crate requires Python for its build process. Make sure Python is installed and properly added to your PATH:
+
+```bash
+# On Windows, add Python to PATH
+set PYTHON=C:\Path\To\Python\python.exe
+set PATH=%PATH%;C:\Path\To\Python
+
+# On Unix-like systems
+export PYTHON=/path/to/python
+export PATH=$PATH:/path/to/python/bin
 ```
 
 ## Building the Project
@@ -295,6 +344,8 @@ If you encounter issues during the build process, try these solutions:
    cargo clean
    cargo build
    ```
+
+7. **v8/Deno issues**: See the "Known Issues and Workarounds" section above.
 
 ## Deployment
 

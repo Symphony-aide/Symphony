@@ -1,5 +1,3 @@
 [toolchain]
 channel = "stable"
-
-[patch.crates-io]
-v8 = { version = "0.47.1" }
+components = ["rustfmt", "clippy"]

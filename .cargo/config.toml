@@ -1,0 +1,5 @@
+[env]
+# Tell v8 to download prebuilt binaries instead of building from source
+RUSTY_V8_MIRROR = "https://github.com/denoland/rusty_v8/releases/download/"
+# Specify the Python executable path if needed
+PYTHON = "python" 

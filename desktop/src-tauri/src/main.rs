@@ -13,7 +13,8 @@ use gveditor_core_api::messaging::{ClientMessages, ServerMessages};
 use gveditor_core_api::state_persistors::file::FilePersistor;
 use gveditor_core_api::states::{StatesList, TokenFlags};
 use gveditor_core_api::{Mutex, State};
-use gveditor_core_deno::DenoExtensionSupport;
+// Temporarily disabled due to v8 compilation issues
+// use gveditor_core_deno::DenoExtensionSupport;
 use std::fs;
 use std::fs::File;
 use std::path::PathBuf;
@@ -213,12 +214,15 @@ async fn main() -> anyhow::Result<()> {
         .await;
 
     // Load third party extensions
+    // Temporarily disabled due to v8 compilation issues
+    /*
     extensions_manager
         .load_extensions_with_deno_in_directory(
             third_party_extensions_path.to_str().unwrap(),
             STATE_ID,
         )
         .await;
+    */
 
     // Create the StatesList
     let states = {
