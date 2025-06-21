@@ -51,7 +51,13 @@ git clone https://github.com/Graviton-Code-Editor/Graviton-App.git
 cd Graviton-App
 ```
 
-### Frontend Dependencies
+## Automatic script
+
+run (install_build)[../install_build.py] script and it will install both frontend and backend dependencies
+
+## Manual Installing
+
+#### Frontend Dependencies
 
 Install the frontend dependencies using pnpm:
 
@@ -60,7 +66,7 @@ Install the frontend dependencies using pnpm:
 pnpm install
 ```
 
-### Rust Dependencies
+#### Rust Dependencies
 
 To install all Rust dependencies for the entire workspace at once:
 
@@ -70,7 +76,7 @@ cargo fetch
 cargo build
 ```
 
-### Tauri-CLI Caret
+#### Tauri-CLI Caret
 
 To install Tauri-cli run:
 
@@ -81,12 +87,20 @@ cargo install tauri-cli --version "1.6.5"
 ```
 
 
-### Nextest For Rust Testing Caret
+#### Nextest For Rust Testing Caret
 
 To install nextest run:
 
 ```bash
 cargo install --locked cargo-nextest
+```
+
+#### Install helper tools for Cargo
+
+To install them run:
+```bash
+# Cargo-edit to update the manager dependencies and Cargo-watch to keep building app as you editing
+cargo install cargo-edit cargo-watch
 ```
 
 ## Known Issues and Workarounds
