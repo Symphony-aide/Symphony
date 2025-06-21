@@ -1,6 +1,6 @@
 use std::env::current_dir;
 
-use gveditor_core_api::extensions::settings::ExtensionSettings;
+use sveditor_core_api::extensions::settings::ExtensionSettings;
 use tokio::fs;
 
 #[tokio::test]

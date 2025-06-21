@@ -6,11 +6,11 @@ use deno_runtime::ops::io::Stdio;
 use deno_runtime::permissions::Permissions;
 use deno_runtime::worker::{MainWorker, WorkerOptions};
 use deno_runtime::BootstrapOptions;
-use gveditor_core_api::Mutex;
+use sveditor_core_api::Mutex;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use gveditor_core_api::extensions::client::ExtensionClient;
+use sveditor_core_api::extensions::client::ExtensionClient;
 
 use crate::events_manager::EventsManager;
 use crate::exts::{events, statusbar_items};

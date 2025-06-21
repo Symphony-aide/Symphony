@@ -1,7 +1,7 @@
 use crate::server::{RpcManager, RpcMethods};
 use crate::StatesList;
 use async_trait::async_trait;
-use gveditor_core_api::messaging::{ClientMessages, ServerMessages};
+use sveditor_core_api::messaging::{ClientMessages, ServerMessages};
 use hyper_tungstenite::hyper::upgrade::Upgraded;
 use hyper_tungstenite::tungstenite::{self, Message};
 use hyper_tungstenite::{hyper, HyperWebsocket, WebSocketStream};
@@ -300,9 +300,9 @@ impl TransportHandler for HTTPHandler {
 #[cfg(test)]
 mod tests {
 
-    use gveditor_core_api::messaging::ClientMessages;
-    use gveditor_core_api::states::TokenFlags;
-    use gveditor_core_api::{Mutex, State};
+    use sveditor_core_api::messaging::ClientMessages;
+    use sveditor_core_api::states::TokenFlags;
+    use sveditor_core_api::{Mutex, State};
     use hyper_tungstenite::tungstenite::Message;
     use jsonrpc_core::futures_util::{SinkExt, StreamExt};
     use jsonrpc_core::serde_json;

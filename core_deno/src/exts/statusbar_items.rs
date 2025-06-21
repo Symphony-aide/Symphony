@@ -1,7 +1,7 @@
 use deno_core::error::AnyError;
 use deno_core::{op, Extension, OpState};
-use gveditor_core_api::extensions::client::ExtensionClient;
-use gveditor_core_api::extensions::modules::statusbar_item::StatusBarItem;
+use sveditor_core_api::extensions::client::ExtensionClient;
+use sveditor_core_api::extensions::modules::statusbar_item::StatusBarItem;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;

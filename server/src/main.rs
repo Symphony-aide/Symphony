@@ -1,14 +1,14 @@
 use std::sync::Arc;
 use std::thread;
 
-use gveditor_core::handlers::HTTPHandler;
-use gveditor_core::{Configuration, Server};
-use gveditor_core_api::extensions::manager::ExtensionsManager;
-use gveditor_core_api::messaging::ClientMessages;
-use gveditor_core_api::states::{MemoryPersistor, StatesList, TokenFlags};
-use gveditor_core_api::tokio;
-use gveditor_core_api::tokio::sync::mpsc::channel;
-use gveditor_core_api::{Mutex, State};
+use sveditor_core::handlers::HTTPHandler;
+use sveditor_core::{Configuration, Server};
+use sveditor_core_api::extensions::manager::ExtensionsManager;
+use sveditor_core_api::messaging::ClientMessages;
+use sveditor_core_api::states::{MemoryPersistor, StatesList, TokenFlags};
+use sveditor_core_api::tokio;
+use sveditor_core_api::tokio::sync::mpsc::channel;
+use sveditor_core_api::{Mutex, State};
 use tracing_subscriber::prelude::__tracing_subscriber_SubscriberExt;
 use tracing_subscriber::{fmt, EnvFilter, Registry};
 use git_for_symphony;
@@ -17,8 +17,8 @@ fn setup_logger() {
     let filter = EnvFilter::default()
         .add_directive("server=info".parse().unwrap())
         .add_directive("symphony=info".parse().unwrap())
-        .add_directive("gveditor_core_api=info".parse().unwrap())
-        .add_directive("gveditor_core=info".parse().unwrap())
+        .add_directive("sveditor_core_api=info".parse().unwrap())
+        .add_directive("sveditor_core=info".parse().unwrap())
         .add_directive("typescript_lsp_symphony=info".parse().unwrap());
 
     let subscriber = Registry::default().with(filter).with(fmt::Layer::default());

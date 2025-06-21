@@ -3,8 +3,8 @@ use crate::server::gen_client::Client;
 use crate::server::{RpcManager, RpcMethods};
 use crate::StatesList;
 use async_trait::async_trait;
-use gveditor_core_api::messaging::{ClientMessages, ServerMessages};
-use gveditor_core_api::Mutex;
+use sveditor_core_api::messaging::{ClientMessages, ServerMessages};
+use sveditor_core_api::Mutex;
 use jsonrpc_core::IoHandler;
 use jsonrpc_core_client::transports::local;
 use std::sync::Arc;
@@ -67,9 +67,9 @@ mod tests {
 
     use std::sync::Arc;
 
-    use gveditor_core_api::extensions::manager::ExtensionsManager;
-    use gveditor_core_api::states::{MemoryPersistor, TokenFlags};
-    use gveditor_core_api::{Mutex, State};
+    use sveditor_core_api::extensions::manager::ExtensionsManager;
+    use sveditor_core_api::states::{MemoryPersistor, TokenFlags};
+    use sveditor_core_api::{Mutex, State};
 
     use tokio::sync::mpsc::channel;
 

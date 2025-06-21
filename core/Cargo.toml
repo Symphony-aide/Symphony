@@ -1,5 +1,5 @@
 [package]
-name = "gveditor-core"
+name = "sveditor-core"
 version = "0.1.7"
 description = "Symphony Core"
 authors = ["Marc Espín Sanz"]
@@ -20,7 +20,7 @@ jsonrpc-core-client = "18.0.0"
 serde = { version = "1.0.219", features = ["derive"] }
 tokio = { version = "1.45.1", features = ["sync", "rt"]}
 tracing = "0.1.41"
-gveditor-core-api = { version = "0.1.6", path = "../core_api"}
+sveditor-core-api = { version = "0.1.6", path = "../core_api"}
 async-trait = "0.1.88"
 # http client
 jsonrpc-http-server = { version = "18.0.0", optional = true}

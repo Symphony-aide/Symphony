@@ -1,11 +1,11 @@
 use crate::handlers::TransportHandler;
 use crate::Configuration;
-use gveditor_core_api::filesystems::{DirItemInfo, FileInfo, FilesystemErrors};
-use gveditor_core_api::language_servers::LanguageServerBuilderInfo;
-use gveditor_core_api::messaging::{ClientMessages, ServerMessages};
-use gveditor_core_api::states::{StateData, StatesList};
-use gveditor_core_api::terminal_shells::TerminalShellBuilderInfo;
-use gveditor_core_api::{Errors, ManifestInfo, Mutex, State};
+use sveditor_core_api::filesystems::{DirItemInfo, FileInfo, FilesystemErrors};
+use sveditor_core_api::language_servers::LanguageServerBuilderInfo;
+use sveditor_core_api::messaging::{ClientMessages, ServerMessages};
+use sveditor_core_api::states::{StateData, StatesList};
+use sveditor_core_api::terminal_shells::TerminalShellBuilderInfo;
+use sveditor_core_api::{Errors, ManifestInfo, Mutex, State};
 use jsonrpc_core::BoxFuture;
 use jsonrpc_derive::rpc;
 
@@ -21,12 +21,12 @@ pub struct Server {
 /// # Example
 /// ```rust
 /// # use std::sync::Arc;
-/// # use gveditor_core::{
+/// # use sveditor_core::{
 ///     # handlers::HTTPHandler,
 ///     # Configuration,
 ///     # Server,
 /// # };
-///  # use gveditor_core_api::{
+///  # use sveditor_core_api::{
 ///     # extensions::manager::ExtensionsManager,
 ///     # messaging::ClientMessages,
 ///     # states::{

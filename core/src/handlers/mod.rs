@@ -1,6 +1,6 @@
 use async_trait::async_trait;
-use gveditor_core_api::messaging::{ClientMessages, ServerMessages};
-use gveditor_core_api::Mutex;
+use sveditor_core_api::messaging::{ClientMessages, ServerMessages};
+use sveditor_core_api::Mutex;
 use std::sync::Arc;
 use tokio::sync::mpsc::Sender;
 

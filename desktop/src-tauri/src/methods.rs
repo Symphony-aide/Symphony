@@ -1,9 +1,9 @@
-use gveditor_core::RPCResult;
-use gveditor_core_api::filesystems::{DirItemInfo, FileInfo};
-use gveditor_core_api::language_servers::LanguageServerBuilderInfo;
-use gveditor_core_api::states::StateData;
-use gveditor_core_api::terminal_shells::TerminalShellBuilderInfo;
-use gveditor_core_api::{Errors, ManifestInfo};
+use sveditor_core::RPCResult;
+use sveditor_core_api::filesystems::{DirItemInfo, FileInfo};
+use sveditor_core_api::language_servers::LanguageServerBuilderInfo;
+use sveditor_core_api::states::StateData;
+use sveditor_core_api::terminal_shells::TerminalShellBuilderInfo;
+use sveditor_core_api::{Errors, ManifestInfo};
 
 use crate::TauriState;
 

@@ -1184,9 +1184,9 @@ name = "git-for-symphony"
 version = "0.1.0"
 dependencies = [
  "git2",
- "gveditor-core-api",
  "serde",
  "serde_json",
+ "sveditor-core-api",
 ]
 
 [[package]]
@@ -1332,39 +1332,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
-]
-
-[[package]]
-name = "gveditor-core"
-version = "0.1.7"
-dependencies = [
- "async-trait",
- "gveditor-core-api",
- "hyper-tungstenite",
- "jsonrpc-core",
- "jsonrpc-core-client",
- "jsonrpc-derive",
- "jsonrpc-http-server",
- "serde",
- "tokio",
- "tokio-test",
- "tokio-tungstenite",
- "tracing",
- "url 2.5.4",
-]
-
-[[package]]
-name = "gveditor-core-api"
-version = "0.1.7"
-dependencies = [
- "async-trait",
- "serde",
- "serde_json",
- "tokio",
- "tokio-stream",
- "toml 0.5.11",
- "tracing",
- "uuid",
 ]
 
 [[package]]
@@ -2154,9 +2121,9 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "crosspty",
- "gveditor-core-api",
  "serde",
  "serde_json",
+ "sveditor-core-api",
 ]
 
 [[package]]
@@ -3185,10 +3152,10 @@ name = "server"
 version = "0.1.0"
 dependencies = [
  "git-for-symphony",
- "gveditor-core",
- "gveditor-core-api",
  "serde",
  "serde_json",
+ "sveditor-core",
+ "sveditor-core-api",
  "tracing",
  "tracing-subscriber",
 ]
@@ -3374,16 +3341,49 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
+name = "sveditor-core"
+version = "0.1.7"
+dependencies = [
+ "async-trait",
+ "hyper-tungstenite",
+ "jsonrpc-core",
+ "jsonrpc-core-client",
+ "jsonrpc-derive",
+ "jsonrpc-http-server",
+ "serde",
+ "sveditor-core-api",
+ "tokio",
+ "tokio-test",
+ "tokio-tungstenite",
+ "tracing",
+ "url 2.5.4",
+]
+
+[[package]]
+name = "sveditor-core-api"
+version = "0.1.7"
+dependencies = [
+ "async-trait",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-stream",
+ "toml 0.5.11",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
 name = "symphony"
 version = "0.1.1"
 dependencies = [
  "anyhow",
  "git-for-symphony",
- "gveditor-core",
- "gveditor-core-api",
  "native-shell-symphony",
  "serde",
  "serde_json",
+ "sveditor-core",
+ "sveditor-core-api",
  "tauri",
  "tauri-build",
  "tracing",
@@ -4090,11 +4090,11 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "bytes",
- "gveditor-core-api",
  "interactive_process",
  "serde",
  "serde_json",
  "snailquote",
+ "sveditor-core-api",
  "tracing",
 ]
 

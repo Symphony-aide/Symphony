@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use gveditor_core_api::terminal_shells::TerminalShell;
+use sveditor_core_api::terminal_shells::TerminalShell;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedSender};
 
 #[derive(Clone)]

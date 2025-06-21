@@ -4,17 +4,17 @@
 )]
 
 mod methods;
-use gveditor_core::gen_client::Client;
-use gveditor_core::handlers::{LocalHandler, TransportHandler};
-use gveditor_core::tokio::sync::mpsc::{channel, Receiver, Sender};
-use gveditor_core::{tokio, Configuration, Server};
-use gveditor_core_api::extensions::manager::ExtensionsManager;
-use gveditor_core_api::messaging::{ClientMessages, ServerMessages};
-use gveditor_core_api::state_persistors::file::FilePersistor;
-use gveditor_core_api::states::{StatesList, TokenFlags};
-use gveditor_core_api::{Mutex, State};
+use sveditor_core::gen_client::Client;
+use sveditor_core::handlers::{LocalHandler, TransportHandler};
+use sveditor_core::tokio::sync::mpsc::{channel, Receiver, Sender};
+use sveditor_core::{tokio, Configuration, Server};
+use sveditor_core_api::extensions::manager::ExtensionsManager;
+use sveditor_core_api::messaging::{ClientMessages, ServerMessages};
+use sveditor_core_api::state_persistors::file::FilePersistor;
+use sveditor_core_api::states::{StatesList, TokenFlags};
+use sveditor_core_api::{Mutex, State};
 // Temporarily disabled due to v8 compilation issues
-// use gveditor_core_deno::DenoExtensionSupport;
+// use sveditor_core_deno::DenoExtensionSupport;
 use std::fs;
 use std::fs::File;
 use std::path::PathBuf;
@@ -150,8 +150,8 @@ fn get_extensions_installation_path(context: &Context<EmbeddedAssets>) -> anyhow
 fn setup_logger() {
     let filter = EnvFilter::default()
         .add_directive("symphony=info".parse().unwrap())
-        .add_directive("gveditor_core_api=info".parse().unwrap())
-        .add_directive("gveditor_core=info".parse().unwrap())
+        .add_directive("sveditor_core_api=info".parse().unwrap())
+        .add_directive("sveditor_core=info".parse().unwrap())
         .add_directive("typescript_lsp_symphony=info".parse().unwrap());
 
     let subscriber = Registry::default().with(filter).with(fmt::Layer::default());

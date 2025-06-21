@@ -118,7 +118,7 @@ The main packages are:
 -   **Location:** `core/`
 -   **Language:** Rust
 -   **Purpose:** This is the heart of the Symphony editor. It is responsible for managing the application's state, file system operations, extensions, language servers, and terminals. It is designed to be a standalone component that can be used in different environments (desktop, server).
--   **Architecture:** `gveditor-core` is built with `tokio` for asynchronous operations. It exposes a JSON-RPC API for communication with clients. The core is transport-agnostic, meaning it can use different communication protocols (e.g., local in-process, HTTP) through a `TransportHandler` trait.
+-   **Architecture:** `sveditor-core` is built with `tokio` for asynchronous operations. It exposes a JSON-RPC API for communication with clients. The core is transport-agnostic, meaning it can use different communication protocols (e.g., local in-process, HTTP) through a `TransportHandler` trait.
 -   **Interaction:** The `@desktop` and `@server` packages both use this crate to run the editor's core logic. The `@web` frontend communicates with it through its JSON-RPC API.
 
 ### `@core_api`
@@ -150,7 +150,7 @@ The main packages are:
 -   **Location:** `desktop/`
 -   **Language:** Rust, TypeScript (in `@web`)
 -   **Purpose:** The Tauri-based desktop application shell for the Symphony editor. It provides the native window, menus, and integration with the operating system.
--   **Architecture:** It's a Tauri application where the backend is written in Rust (`desktop/src-tauri`) and the frontend is the `@web` package. The Rust backend initializes and runs the `gveditor-core` in-process (`local_client`), loads extensions, and communicates with the frontend via message passing and Tauri's `invoke` handlers.
+-   **Architecture:** It's a Tauri application where the backend is written in Rust (`desktop/src-tauri`) and the frontend is the `@web` package. The Rust backend initializes and runs the `sveditor-core` in-process (`local_client`), loads extensions, and communicates with the frontend via message passing and Tauri's `invoke` handlers.
 -   **How to Edit:** To modify the desktop-specific Rust code, edit the files in `desktop/src-tauri/src`. To change the frontend, see the `@web` package. To run in development mode, use `pnpm run --filter web dev` and in another terminal `cd desktop/src-tauri && cargo tauri dev`.
 
 ### `@web`
@@ -173,7 +173,7 @@ The main packages are:
 -   **Location:** `server/`
 -   **Language:** Rust
 -   **Purpose:** A standalone server for the Symphony core. It allows the editor to be accessed remotely from a web browser.
--   **Architecture:** A Rust application that hosts the `gveditor-core` and exposes its API over HTTP. It uses the `HTTPHandler` from the core.
+-   **Architecture:** A Rust application that hosts the `sveditor-core` and exposes its API over HTTP. It uses the `HTTPHandler` from the core.
 -   **How to Edit:** To make changes to the server, edit the files in `server/src`. To run the server, use `cd server && cargo run`.
 
 ### `@extensions`

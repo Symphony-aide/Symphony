@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use gveditor_core_api::messaging::ClientMessages;
+use sveditor_core_api::messaging::ClientMessages;
 use tokio::sync::mpsc::error::SendError;
 use tokio::sync::mpsc::Sender;
 use tokio::sync::Mutex;

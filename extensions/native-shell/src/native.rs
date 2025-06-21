@@ -1,13 +1,13 @@
 use async_trait::async_trait;
 use crosspty::platforms::new_pty;
 use crosspty::Pty;
-use gveditor_core_api::extensions::client::ExtensionClient;
-use gveditor_core_api::messaging::{ClientMessages, ServerMessages};
-use gveditor_core_api::terminal_shells::{
+use sveditor_core_api::extensions::client::ExtensionClient;
+use sveditor_core_api::messaging::{ClientMessages, ServerMessages};
+use sveditor_core_api::terminal_shells::{
     TerminalShell, TerminalShellBuilder, TerminalShellBuilderInfo,
 };
-use gveditor_core_api::tokio;
-use gveditor_core_api::tokio::sync::mpsc::channel;
+use sveditor_core_api::tokio;
+use sveditor_core_api::tokio::sync::mpsc::channel;
 
 pub struct NativeShellBuilder {
     pub state_id: u8,

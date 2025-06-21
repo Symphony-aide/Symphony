@@ -1,13 +1,13 @@
 use std::sync::Arc;
 
 use git2::{Error, Repository, StatusOptions};
-use gveditor_core_api::extensions::base::{Extension, ExtensionInfo};
-use gveditor_core_api::extensions::client::ExtensionClient;
-use gveditor_core_api::extensions::manager::ExtensionsManager;
-use gveditor_core_api::extensions::modules::statusbar_item::StatusBarItem;
-use gveditor_core_api::messaging::{ClientMessages, NotifyExtension, ServerMessages};
-use gveditor_core_api::tokio::sync::mpsc::{channel, Receiver, Sender};
-use gveditor_core_api::{tokio, ManifestExtension, ManifestInfo, Mutex, Serialize, State};
+use sveditor_core_api::extensions::base::{Extension, ExtensionInfo};
+use sveditor_core_api::extensions::client::ExtensionClient;
+use sveditor_core_api::extensions::manager::ExtensionsManager;
+use sveditor_core_api::extensions::modules::statusbar_item::StatusBarItem;
+use sveditor_core_api::messaging::{ClientMessages, NotifyExtension, ServerMessages};
+use sveditor_core_api::tokio::sync::mpsc::{channel, Receiver, Sender};
+use sveditor_core_api::{tokio, ManifestExtension, ManifestInfo, Mutex, Serialize, State};
 
 mod types;
 

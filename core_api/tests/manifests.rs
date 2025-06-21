@@ -1,6 +1,6 @@
 use std::env::current_dir;
 
-use gveditor_core_api::{Manifest, ManifestErrors};
+use sveditor_core_api::{Manifest, ManifestErrors};
 
 #[tokio::test]
 async fn load_manifests() {

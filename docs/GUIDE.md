@@ -126,13 +126,13 @@ The project uses the v8 JavaScript engine through the deno_core crate, which can
    ```toml
    [dependencies]
    # ...
-   # gveditor-core-deno = { path = "../../core_deno"}  # Comment this line
+   # sveditor-core-deno = { path = "../../core_deno"}  # Comment this line
    # ...
    ```
 
 3. Comment out the DenoExtensionSupport import and any related code in desktop/src-tauri/src/main.rs:
    ```rust
-   // use gveditor_core_deno::DenoExtensionSupport;  // Comment this line
+   // use sveditor_core_deno::DenoExtensionSupport;  // Comment this line
    
    // Also comment out any code that uses DenoExtensionSupport or loads Deno extensions
    ```

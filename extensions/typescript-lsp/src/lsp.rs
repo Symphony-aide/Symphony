@@ -1,7 +1,7 @@
 use std::{process::Stdio, sync::Arc};
 
 use async_trait::async_trait;
-use gveditor_core_api::{
+use sveditor_core_api::{
     extensions::{client::ExtensionClient, modules::statusbar_item::StatusBarItem},
     language_servers::{LanguageServerBuilder, LanguageServerBuilderInfo},
     messaging::{ClientMessages, ServerMessages},

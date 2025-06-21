@@ -1,5 +1,5 @@
 [package]
-name = "gveditor-core-api"
+name = "sveditor-core-api"
 version = "0.1.7"
 description = "Symphony Core API"
 authors = ["Marc Espín Sanz"]

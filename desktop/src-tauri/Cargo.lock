@@ -1686,7 +1686,7 @@ name = "git-for-symphony"
 version = "0.1.0"
 dependencies = [
  "git2",
- "gveditor-core-api",
+ "sveditor-core-api",
  "serde",
  "serde_json",
 ]
@@ -1838,9 +1838,9 @@ version = "0.1.1"
 dependencies = [
  "anyhow",
  "git-for-symphony",
- "gveditor-core",
- "gveditor-core-api",
- "gveditor-core-deno",
+ "sveditor-core",
+ "sveditor-core-api",
+ "sveditor-core-deno",
  "native-shell-symphony",
  "serde",
  "serde_json",
@@ -1919,11 +1919,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "gveditor-core"
+name = "sveditor-core"
 version = "0.1.7"
 dependencies = [
  "async-trait",
- "gveditor-core-api",
+ "sveditor-core-api",
  "jsonrpc-core",
  "jsonrpc-core-client",
  "jsonrpc-derive",
@@ -1933,7 +1933,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "gveditor-core-api"
+name = "sveditor-core-api"
 version = "0.1.7"
 dependencies = [
  "async-trait",
@@ -1947,14 +1947,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "gveditor-core-deno"
+name = "sveditor-core-deno"
 version = "0.1.1"
 dependencies = [
  "anyhow",
  "async-trait",
  "deno_core",
  "deno_runtime",
- "gveditor-core-api",
+ "sveditor-core-api",
  "serde",
  "tokio",
  "tokio-stream",
@@ -2798,7 +2798,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "crosspty",
- "gveditor-core-api",
+ "sveditor-core-api",
  "serde",
  "serde_json",
 ]
@@ -5048,7 +5048,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "bytes",
- "gveditor-core-api",
+ "sveditor-core-api",
  "interactive_process",
  "serde",
  "serde_json",

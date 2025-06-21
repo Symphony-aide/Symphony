@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use gveditor_core_api::extensions::base::{Extension, ExtensionInfo};
-use gveditor_core_api::extensions::client::ExtensionClient;
-use gveditor_core_api::extensions::manager::ExtensionsManager;
-use gveditor_core_api::messaging::ClientMessages;
-use gveditor_core_api::terminal_shells::TerminalShellBuilderInfo;
-use gveditor_core_api::{tokio, ManifestExtension, ManifestInfo, Mutex, State};
+use sveditor_core_api::extensions::base::{Extension, ExtensionInfo};
+use sveditor_core_api::extensions::client::ExtensionClient;
+use sveditor_core_api::extensions::manager::ExtensionsManager;
+use sveditor_core_api::messaging::ClientMessages;
+use sveditor_core_api::terminal_shells::TerminalShellBuilderInfo;
+use sveditor_core_api::{tokio, ManifestExtension, ManifestInfo, Mutex, State};
 use native::NativeShellBuilder;
 
 mod native;

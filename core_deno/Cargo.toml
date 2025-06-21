@@ -1,5 +1,5 @@
 [package]
-name = "gveditor-core-deno"
+name = "sveditor-core-deno"
 version = "0.1.1"
 description = "Deno Runtime for Core extensions"
 authors = ["Marc Espín Sanz"]
@@ -10,7 +10,7 @@ homepage = "https://github.com/Symphony-Code-Editor/Symphony-App/tree/main"
 license = "MIT"
 
 [dependencies]
-gveditor-core-api  = { path = "../core_api"}
+sveditor-core-api  = { path = "../core_api"}
 deno_core = "0.139.0"
 deno_runtime = "0.65.0"
 tokio = { version = "1.18.2", features = ["sync"]}

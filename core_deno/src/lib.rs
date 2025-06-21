@@ -1,11 +1,11 @@
 use async_trait::async_trait;
 use deno_core::v8::IsolateHandle;
 use events_manager::EventsManager;
-use gveditor_core_api::extensions::base::{Extension, ExtensionInfo};
-use gveditor_core_api::extensions::client::ExtensionClient;
-use gveditor_core_api::extensions::manager::{ExtensionsManager, LoadedExtension};
-use gveditor_core_api::messaging::ClientMessages;
-use gveditor_core_api::{Manifest, ManifestInfo, Mutex, Sender, State};
+use sveditor_core_api::extensions::base::{Extension, ExtensionInfo};
+use sveditor_core_api::extensions::client::ExtensionClient;
+use sveditor_core_api::extensions::manager::{ExtensionsManager, LoadedExtension};
+use sveditor_core_api::messaging::ClientMessages;
+use sveditor_core_api::{Manifest, ManifestInfo, Mutex, Sender, State};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::fs;

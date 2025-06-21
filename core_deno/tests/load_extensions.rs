@@ -1,7 +1,7 @@
-use gveditor_core_api::extensions::manager::ExtensionsManager;
-use gveditor_core_api::messaging::ClientMessages;
-use gveditor_core_api::ManifestInfo;
-use gveditor_core_deno::DenoExtensionSupport;
+use sveditor_core_api::extensions::manager::ExtensionsManager;
+use sveditor_core_api::messaging::ClientMessages;
+use sveditor_core_api::ManifestInfo;
+use sveditor_core_deno::DenoExtensionSupport;
 use std::env::current_dir;
 use tokio::sync::mpsc::channel;
 
