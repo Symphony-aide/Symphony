@@ -22,7 +22,6 @@
     "@codemirror/view": "^6.0.0",
     "@fontsource/inter": "^4.5.1",
     "@fontsource/jetbrains-mono": "^4.5.0",
-    "@gveditor/languages": "*",
     "@lezer/highlight": "^1.1.0",
     "@open-rpc/client-js": "^1.7.1",
     "@tauri-apps/api": "^1.0.0-rc.6",
