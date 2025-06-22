@@ -1,0 +1,18 @@
+[workspace]
+resolver = "2"
+members = [
+   "core",
+   "core_api",
+   # Temporarily disabled due to v8 compilation issues
+   # "core_deno",
+   "desktop/src-tauri",
+   "extensions/git",
+   "extensions/typescript-lsp",
+   "extensions/native-shell",
+   "server",
+   "crosspty"
+]
+
+[profile.release]
+lto = true
+opt-level = "z"

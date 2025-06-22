@@ -1,0 +1,76 @@
+{
+  "package": {
+    "productName": "GravitonEditor",
+    "version": "0.1.0"
+  },
+  "build": {
+    "distDir": "../../../web/dist",
+    "devPath": "http://localhost:8080",
+    "beforeDevCommand": "pnpm run --filter web dev",
+    "beforeBuildCommand": "pnpm run --filter web build"
+  },
+  "tauri": {
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "com.symphony.editor",
+      "icon": [
+        "./icons/32x32.png",
+        "./icons/128x128.png",
+        "./icons/128x128@2x.png",
+        "./icons/icon.icns",
+        "./icons/icon.ico"
+      ],
+      "copyright": "Marc Espín Sanz",
+      "category": "DeveloperTool",
+      "shortDescription": "Code Editor",
+      "longDescription": "Programming Code Editor",
+      "deb": {
+        "depends": []
+      },
+      "macOS": {
+        "frameworks": [],
+        "minimumSystemVersion": "",
+        "exceptionDomain": "",
+        "signingIdentity": null,
+        "entitlements": null
+      },
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": ""
+      }
+    },
+    "updater": {
+      "active": false
+    },
+    "allowlist": {
+      "dialog": {
+        "all": true
+      },
+      "window":{
+        "maximize": true,
+        "minimize": true,
+        "close": true,
+        "unminimize": true,
+        "unmaximize": true,
+        "startDragging": true
+      },
+      "shell":{
+        "open": true
+      }
+    },
+    "windows": [
+      {
+        "title": "Symphony Editor",
+        "width": 800,
+        "height": 600,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": "default-src blob: data: filesystem: ws: wss: http: https: tauri: 'unsafe-eval' 'unsafe-inline' 'self' img-src: 'self'"
+    }
+  }
+}
