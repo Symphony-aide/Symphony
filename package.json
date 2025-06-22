@@ -1,6 +1,7 @@
 {
   "private": true,
   "scripts": {
+    "preinstall": "node pnpm-prepare.js",
     "dev_server": "jake dev_server",
     "dev_desktop": "jake dev_desktop",
     "build_desktop": "jake build_desktop",
@@ -9,10 +10,10 @@
     "lint": "jake lint_core"
   },
   "devDependencies": {
-    "execa": "^6.0.0",
-    "fs-extra": "^10.0.0",
-    "jake": "^10.8.2",
-    "rimraf": "^3.0.2",
-    "typescript": "^4.6.3"
+    "execa": "^9.6.0",
+    "fs-extra": "^11.3.0",
+    "jake": "^10.9.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.8.3"
   }
 }
