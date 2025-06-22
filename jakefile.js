@@ -9,20 +9,24 @@ const run  = (what, args, where = './') => {
     })
 }
 
+const backkend_path = './backend'
+const server_path = `${backkend_path}/server`
+const desktop_path = `${backkend_path}/desktop`
+
 desc('Run the server in develop mode');
 task('dev_server', async function () {
     run('pnpm', ['run', '--filter', 'web', 'dev'])
-    await run('cargo run', [], './server')
+    await run('cargo run', [], server_path)
 });
 
 desc('Run the desktop in develop mode');
 task('dev_desktop', async function () {
-    await run('cargo tauri dev', [], './desktop')
+    await run('cargo tauri dev', [], desktop_path)
 });
 
 desc('Build the desktop');
 task('build_desktop', async function () {
-    await run('cargo tauri build', [], './desktop')
+    await run('cargo tauri build', [], desktop_path)
 });
 
 desc('Run tests');
@@ -43,6 +47,7 @@ task('format_web', async function () {
 
 desc('Lint the code');
 task('lint_core', async function () {
+    run("cd", [backkend_path])
     await run('cargo', ['clippy'])
 });
 
