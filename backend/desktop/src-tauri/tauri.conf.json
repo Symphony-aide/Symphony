@@ -4,7 +4,7 @@
     "version": "0.1.0"
   },
   "build": {
-    "distDir": "../../../web/dist",
+    "distDir": "../../../frontend/web/dist",
     "devPath": "http://localhost:8080",
     "beforeDevCommand": "pnpm run --filter web dev",
     "beforeBuildCommand": "pnpm run --filter web build"
