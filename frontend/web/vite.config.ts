@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import checker from "vite-plugin-checker";
 import tsconfigPaths from 'vite-tsconfig-paths'
 import path from 'path';
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig(() => ({
   resolve: {
@@ -22,6 +23,7 @@ export default defineConfig(() => ({
   clearScreen: false,
   plugins: [
     react(),
+    tailwindcss(),
     checker({
       typescript: true,
       eslint: {
