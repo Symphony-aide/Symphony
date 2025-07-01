@@ -10,7 +10,7 @@ import { isTauri } from "services/commands";
  */
 async function getToken() {
   if (isTauri) {
-    return "graviton_token";
+    return "symphony_token";
   } else {
     // Or query the URL to get the token
     return new URL(location.toString()).searchParams.get("token");

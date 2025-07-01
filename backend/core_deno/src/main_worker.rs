@@ -16,7 +16,7 @@ use crate::events_manager::EventsManager;
 use crate::exts::{events, statusbar_items};
 
 // Load up the Symphony JavaScript api, aka, fancy wrapper over Deno.core.opSync/opAsync
-static GRAVITON_DENO_API: &str = include_str!(concat!(env!("OUT_DIR"), "/symphony.js"));
+static SYMPHONY_DENO_API: &str = include_str!(concat!(env!("OUT_DIR"), "/symphony.js"));
 
 // Launches a Deno runtime for the specified file, it also embeds the Symphony Deno API
 pub async fn create_main_worker(
@@ -85,7 +85,7 @@ pub async fn create_main_worker(
     worker_handle.lock().await.replace(handle);
 
     // Load the Symphony namespace
-    worker.execute_script("<symphony>", GRAVITON_DENO_API)?;
+    worker.execute_script("<symphony>", SYMPHONY_DENO_API)?;
 
     // Load the extension's main module
     worker.execute_main_module(&main_module).await?;

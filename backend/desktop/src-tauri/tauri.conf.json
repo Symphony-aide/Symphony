@@ -1,13 +1,13 @@
 {
   "package": {
-    "productName": "GravitonEditor",
+    "productName": "SymphonyEditor",
     "version": "0.1.0"
   },
   "build": {
-    "distDir": "../../../frontend/web/dist",
-    "devPath": "http://localhost:8080",
-    "beforeDevCommand": "pnpm run --filter web dev",
-    "beforeBuildCommand": "pnpm run --filter web build"
+    "distDir": "../../../frontend/core/dist",
+    "devPath": "http://localhost:5173",
+    "beforeDevCommand": "pnpm run --filter core dev",
+    "beforeBuildCommand": "pnpm run --filter core build"
   },
   "tauri": {
     "bundle": {

@@ -12,10 +12,11 @@ const run  = (what, args, where = './') => {
 const backkend_path = './backend'
 const server_path = `${backkend_path}/server`
 const desktop_path = `${backkend_path}/desktop`
+const core_path = 'core'
 
 desc('Run the server in develop mode');
 task('dev_server', async function () {
-    run('pnpm', ['run', '--filter', 'web', 'dev'])
+    run('pnpm', ['run', '--filter', core_path, 'dev'])
     await run('cargo run', [], server_path)
 });
 
@@ -34,7 +35,7 @@ task('core_tests', async function () {
     await run('cargo', ['nextest', 'run'])
 });
 task('web_tests', async function () {
-    await run('pnpm', ['run', '--filter', 'web', 'test'])
+    await run('pnpm', ['run', '--filter', core_path, 'test'])
 });
 
 desc('Format the code');
@@ -42,7 +43,7 @@ task('format_core', async function () {
     await run('cargo', ['fmt'])
 });
 task('format_web', async function () {
-    await run('pnpm', ['run', '--filter', 'web', 'format'])
+    await run('pnpm', ['run', '--filter', core_path, 'format'])
 });
 
 desc('Lint the code');

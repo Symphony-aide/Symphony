@@ -1,6 +1,6 @@
-# How to Build Graviton
+# How to Build Symphony
 
-This guide provides instructions on how to build the Graviton application from source.
+This guide provides instructions on how to build the Symphony application from source.
 
 ## Summary of Steps
 
@@ -12,7 +12,7 @@ This guide provides instructions on how to build the Graviton application from s
 
 ## 1. Install Prerequisites
 
-You need to install the following tools to build Graviton. If you already have them installed, you can skip to the next section.
+You need to install the following tools to build Symphony. If you already have them installed, you can skip to the next section.
 
 -   **Node.js (LTS)**: Required for the frontend and build scripts.
     -   [Download Node.js](https://nodejs.org/)
@@ -20,7 +20,7 @@ You need to install the following tools to build Graviton. If you already have t
     ```shell
     npm install -g pnpm
     ```
--   **Rust**: The core of Graviton is written in Rust.
+-   **Rust**: The core of Symphony is written in Rust.
     -   [Install Rust](https://www.rust-lang.org/tools/install)
 -   **Tauri CLI**: The command-line interface for Tauri, the framework used to build the desktop app.
     ```shell
