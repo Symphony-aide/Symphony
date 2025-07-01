@@ -15,40 +15,17 @@ const desktop_path = `${backkend_path}/desktop`
 const core_path = 'core'
 
 desc('Run the server in develop mode');
-task('dev_server', async function () {
+task('server', async function () {
     run('pnpm', ['run', '--filter', core_path, 'dev'])
     await run('cargo run', [], server_path)
 });
 
 desc('Run the desktop in develop mode');
-task('dev_desktop', async function () {
+task('desktop', async function () {
     await run('cargo tauri dev', [], desktop_path)
 });
 
 desc('Build the desktop');
-task('build_desktop', async function () {
+task('build:desktop', async function () {
     await run('cargo tauri build', [], desktop_path)
 });
-
-desc('Run tests');
-task('core_tests', async function () {
-    await run('cargo', ['nextest', 'run'])
-});
-task('web_tests', async function () {
-    await run('pnpm', ['run', '--filter', core_path, 'test'])
-});
-
-desc('Format the code');
-task('format_core', async function () {
-    await run('cargo', ['fmt'])
-});
-task('format_web', async function () {
-    await run('pnpm', ['run', '--filter', core_path, 'format'])
-});
-
-desc('Lint the code');
-task('lint_core', async function () {
-    run("cd", [backkend_path])
-    await run('cargo', ['clippy'])
-});
-

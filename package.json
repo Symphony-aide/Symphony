@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "preinstall": "node pnpm-prepare.js",
-    "dev_server": "jake dev_server",
+    "server": "jake dev_server",
     "desktop": "jake dev_desktop",
     "build:desktop": "jake build_desktop",
     "test": "jake core_tests web_tests",
