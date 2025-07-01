@@ -1,6 +1,10 @@
-import { StatusBarItemOptions } from "features";
-import { BaseMessage } from "services/clients/client.types";
-import { StateData } from "state";
+import { BaseMessage } from "../../services/clients/client.types";
+
+// Define a simplified StateData interface since the original is missing
+export interface StateData {
+  id: number;
+  [key: string]: any;
+}
 
 export interface MessageFromExtension extends BaseMessage {
   state_id: number;
@@ -14,7 +18,10 @@ export interface ShowPopup extends BaseMessage {
   content: string;
 }
 
-export interface ShowStatusBarItem extends BaseMessage, StatusBarItemOptions {}
+export interface ShowStatusBarItem extends BaseMessage {
+  id: string;
+  label: string;
+}
 
 export interface HideStatusBarItem extends BaseMessage {
   id: string;

@@ -1,11 +1,8 @@
-import { setRecoil } from "recoil-nexus";
-import { RemoteExplorer } from "windows";
-import { showedWindowsState } from "state";
-
 export const isTauri = (globalThis as any).__TAURI__ != null;
 
 /**
  * Launches a filesystem picker, native if Tauri and web-based on browser
+ * This is a simplified version that only supports Tauri
  */
 export async function openFileSystemPicker(
   filesystem_name: string,
@@ -18,19 +15,10 @@ export async function openFileSystemPicker(
     return (await dialog.open({
       multiple: false,
       directory: kind === "folder",
-    })) as
-      | string
-      | null;
+    })) as string | null;
   } else {
-    // Use web-based explorer
-    return new Promise((resolve) => {
-      function onSelectedItem(itemPath: string) {
-        resolve(itemPath);
-      }
-      setRecoil(showedWindowsState, (val) => [
-        ...val,
-        new RemoteExplorer({ onSelectedItem, kind }),
-      ]);
-    });
+    // Web-based explorer not implemented in minimal version
+    console.warn("Web-based file picker not implemented in minimal version");
+    return null;
   }
 }

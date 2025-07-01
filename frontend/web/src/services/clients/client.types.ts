@@ -1,12 +1,12 @@
-import { ShowPopup, StateUpdated } from "types";
 import Emittery from "emittery";
-import Configuration from "utils/config";
-import { StateData } from "state";
+import Configuration from "../../utils/config";
+import { ShowPopup, StateData, StateUpdated } from "../../types/messaging/server";
 
 export interface BaseMessage {
   state_id: number;
   msg_type: string;
 }
+
 export interface CoreResponse<T> {
   Err?: any;
   Ok?: T;
