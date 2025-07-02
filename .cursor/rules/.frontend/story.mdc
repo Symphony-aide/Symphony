@@ -3,10 +3,10 @@ description: When Creating new Component or new package in frontend in our monor
 globs: 
 alwaysApply: false
 ---
-# Storybook Stories Best Practices Guide
+# Stories Best Practices Guide
 
 ## Overview
-This guide outlines best practices for writing comprehensive, maintainable, and user-friendly Storybook stories based on proven patterns and real-world examples.
+This guide outlines best practices for writing comprehensive, maintainable, and user-friendly stories (Ladle) based on proven patterns and real-world examples.
 
 ## 0. Before You Start: Explore Ladle Addons
 
