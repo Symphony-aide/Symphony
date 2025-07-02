@@ -1,5 +1,5 @@
 ---
-description: 
+description: When Creating new Component or new package in frontend in our monorepo project
 globs: 
 alwaysApply: false
 ---

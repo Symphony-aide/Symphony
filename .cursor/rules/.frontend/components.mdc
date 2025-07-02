@@ -1,7 +1,7 @@
 ---
-description: 
+description: When Creating new Component or new package in frontend in our monorepo project
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 # ⚛️ Chakra-UI-Compatible Cursor Rules – Full Version with Detailed Directives
 
