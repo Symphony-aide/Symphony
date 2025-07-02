@@ -1,0 +1,307 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Jotai vs TanStack Query: When to Use What
+
+## The Golden Rule
+
+**Jotai = Client State | TanStack Query = Server State**
+
+But it's more nuanced than that. Here's a comprehensive decision framework:
+
+## 🎯 Use Jotai When:
+
+### **Local/Derived State**
+
+```typescript
+// UI state that doesn't need persistence
+const isModalOpenAtom = atom(false)
+const selectedTabAtom = atom('code')
+const themeAtom = atom('dark')
+```
+
+### **Computed/Derived Values**
+
+```typescript
+// Derived from other state
+const activeModelCountAtom = atom((get) =>
+  get(modelsAtom).filter(model => model.status === 'active').length
+)
+
+// Complex calculations
+const harmonyScoreAtom = atom((get) => {
+  const models = get(modelsAtom)
+  const conductor = get(conductorAtom)
+  return calculateHarmony(models, conductor)
+})
+```
+
+### **Component-Scoped State**
+
+```typescript
+// State that belongs to specific components
+const editorCursorAtom = atom({ line: 1, column: 1 })
+const searchQueryAtom = atom('')
+const expandedNodesAtom = atom<Set<string>>(new Set())
+```
+
+### **Cross-Component Communication**
+
+```typescript
+// When components need to share state without parent-child relationship
+const globalNotificationAtom = atom<Notification | null>(null)
+const selectedFileAtom = atom<string | null>(null)
+```
+
+### **Form State (Simple)**
+
+```typescript
+// Simple forms that don't need validation/submission handling
+const userPreferencesAtom = atom({
+  fontSize: 14,
+  tabSize: 2,
+  wordWrap: true
+})
+```
+
+## 🌐 Use TanStack Query When:
+
+### **Server Data Fetching**
+
+```typescript
+// Any data from APIs/servers
+const useProjectData = () => useQuery({
+  queryKey: ['project', projectId],
+  queryFn: () => api.getProject(projectId)
+})
+
+const useAIModelStatus = () => useQuery({
+  queryKey: ['ai-models', 'status'],
+  queryFn: () => aiService.getModelStatus(),
+  refetchInterval: 1000 // Real-time updates
+})
+```
+
+### **Data with Caching Needs**
+
+```typescript
+// Data that should be cached/shared across components
+const useUserProjects = () => useQuery({
+  queryKey: ['user', 'projects'],
+  queryFn: fetchUserProjects,
+  staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+})
+```
+
+### **Background Synchronization**
+
+```typescript
+// Data that needs background updates
+const useFileContent = (filePath: string) => useQuery({
+  queryKey: ['file', filePath],
+  queryFn: () => fileService.readFile(filePath),
+  refetchOnWindowFocus: true,
+  refetchInterval: 30000 // Sync every 30s
+})
+```
+
+### **Mutations/Side Effects**
+
+```typescript
+// Any operation that changes server state
+const useCreateProject = () => useMutation({
+  mutationFn: (projectData) => api.createProject(projectData),
+  onSuccess: () => {
+    // Invalidate related queries
+    queryClient.invalidateQueries(['user', 'projects'])
+  }
+})
+```
+
+### **Best Practices for TanStack Query**
+
+1. Use **TypeScript** for type safety with React Query
+2. Implement **proper error boundaries** for query errors
+3. Utilize **React Query DevTools** for debugging
+4. Use **stale-while-revalidate** strategy for data freshness
+5. Implement **optimistic updates** for mutations
+6. Use **query invalidation** for data refetching
+7. Follow **React Query naming conventions** for consistency
+
+## 🤝 Use Both Together When:
+
+### **Server Data + Local Selections**
+
+```typescript
+// TanStack Query for data, Jotai for selections
+const { data: projects } = useQuery(['projects'], fetchProjects)
+const [selectedProjectId, setSelectedProjectId] = useAtom(selectedProjectAtom)
+
+const selectedProject = projects?.find(p => p.id === selectedProjectId)
+```
+
+### **Real-time Data + Local Filters**
+
+```typescript
+// TanStack Query for real-time AI status
+const { data: modelStatus } = useQuery(['ai-status'], fetchAIStatus, {
+  refetchInterval: 1000
+})
+
+// Jotai for local filtering
+const [filter, setFilter] = useAtom(statusFilterAtom)
+const filteredStatus = modelStatus?.filter(status =>
+  filter === 'all' || status.type === filter
+)
+```
+
+### **Optimistic Updates with Server Sync**
+
+```typescript
+// Jotai for immediate UI updates
+const [localCount, setLocalCount] = useAtom(likeCountAtom)
+
+// TanStack Query for server sync
+const likeMutation = useMutation({
+  mutationFn: toggleLike,
+  onMutate: () => setLocalCount(prev => prev + 1), // Optimistic
+  onError: () => setLocalCount(prev => prev - 1),  // Rollback
+  onSuccess: (data) => setLocalCount(data.likes)   // Sync with server
+})
+```
+
+## 🚨 Common Anti-Patterns
+
+### **DON'T Use Jotai For:**
+
+```typescript
+// ❌ Server data fetching
+const dataAtom = atom(async () => fetch('/api/data'))
+
+// ❌ Complex async operations
+const heavyComputationAtom = atom(async () => {
+  // Long running operation
+})
+
+// ❌ Data that should be cached across page reloads
+const userDataAtom = atom(null) // Will be lost on refresh
+```
+
+### **DON'T Use TanStack Query For:**
+
+```typescript
+// ❌ Simple UI state
+const useModalState = () => useQuery(['modal'], () => false)
+
+// ❌ Derived calculations from existing data
+const useCalculatedValue = () => useQuery(['calc'], () => {
+  // Calculation from existing state
+})
+
+// ❌ Component-local state
+const useInputValue = () => useQuery(['input'], () => '')
+```
+
+## 🎭 Symphony IDE Examples
+
+### **AI Model Orchestration**
+
+```typescript
+// Jotai: Local orchestration state
+const conductorModeAtom = atom<'orchestra' | 'soloist'>('orchestra')
+const activePipelineAtom = atom<string | null>(null)
+const harmonyLevelAtom = atom((get) => {
+  const models = get(modelStatusQuery)
+  return calculateHarmony(models?.data || [])
+})
+
+// TanStack Query: AI model status from Python bridge
+const useModelStatus = () => useQuery({
+  queryKey: ['ai-models', 'status'],
+  queryFn: () => aiService.getModelStatus(),
+  refetchInterval: 1000
+})
+
+// Combined usage
+const useAIOrchestration = () => {
+  const [mode, setMode] = useAtom(conductorModeAtom)
+  const { data: modelStatus, isLoading } = useModelStatus()
+  const [harmonyLevel] = useAtom(harmonyLevelAtom)
+  
+  return { mode, setMode, modelStatus, isLoading, harmonyLevel }
+}
+```
+
+### **Project Generation Pipeline**
+
+```typescript
+// Jotai: Local pipeline state
+const pipelineStepAtom = atom<'prompt' | 'epic' | 'plan' | 'generate'>('prompt')
+const userPromptAtom = atom('')
+const selectedEpicsAtom = atom<string[]>([])
+
+// TanStack Query: Pipeline operations
+const useGenerateProject = () => useMutation({
+  mutationFn: (config) => symphonyAPI.generateProject(config),
+  onSuccess: () => {
+    queryClient.invalidateQueries(['projects'])
+    // Reset local state
+    setStep('prompt')
+    setPrompt('')
+  }
+})
+```
+
+## 🔿 Decision Framework
+
+Ask yourself these questions:
+
+1. **Where does the data come from?**
+
+   * Server/API → TanStack Query
+   * Local computation/UI → Jotai
+
+2. **Does it need to survive page refreshes?**
+
+   * Yes → TanStack Query (with persistence)
+   * No → Jotai
+
+3. **Is it shared across many components?**
+
+   * Server data → TanStack Query
+   * Local state → Jotai
+
+4. **Does it need caching/background updates?**
+
+   * Yes → TanStack Query
+   * No → Jotai
+
+5. **Is it a side effect/mutation?**
+
+   * Yes → TanStack Query
+   * No → Jotai
+
+6. **Is it derived from other data?**
+
+   * From server data → TanStack Query (with select)
+   * From local state → Jotai (derived atoms)
+
+## 🎯 Quick Reference
+
+| Use Case           | Jotai | TanStack Query  |
+| ------------------ | ----- | --------------- |
+| API calls          | ❌     | ✅               |
+| Form state         | ✅     | ❌               |
+| UI toggles         | ✅     | ❌               |
+| Caching            | ❌     | ✅               |
+| Real-time sync     | ❌     | ✅               |
+| Derived values     | ✅     | ✅ (with select) |
+| Component state    | ✅     | ❌               |
+| Global state       | ✅     | ❌               |
+| Mutations          | ❌     | ✅               |
+| Background updates | ❌     | ✅               |
+
+Remember: **They complement each other perfectly**. Don't try to force one tool to do everything!
+

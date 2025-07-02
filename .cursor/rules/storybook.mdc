@@ -1,0 +1,243 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Storybook Stories Best Practices Guide
+
+## Overview
+This guide outlines best practices for writing comprehensive, maintainable, and user-friendly Storybook stories based on proven patterns and real-world examples.
+
+## 0. Before You Start: Explore Ladle Addons
+
+Ladle comes with a set of built-in addons that you can find in the bottom left corner (button icons). Before writing your stories, familiarize yourself with these powerful tools:
+
+### Built-in Addons
+- **Accessibility (Axe)** - Automated accessibility testing with axe-core integration
+- **Background** - Test components against different background colors
+- **Controls** - Interactive controls for component props (only if `args` or `argTypes` are defined)
+- **Dark Theme** - Toggle between light and dark themes
+- **Links** - Navigate between related stories
+- **MSW (API Mocking)** - Mock API responses for testing
+- **Preview Mode** - Clean preview without addon panels
+- **Right-to-Left** - Test RTL layouts and internationalization
+- **Story Source Code** - Preview the source code of the active story and its origin
+- **Width** - Test responsive behavior at different viewport widths
+
+**📚 Resources:**
+- [Ladle Addons Documentation](mdc:https:/ladle.dev/docs/addons)
+- [Ladle Accessibility Guide](mdc:https:/ladle.dev/docs/a11y)
+- [Story Source Documentation](mdc:https:/ladle.dev/docs/source)
+
+## Configuration Enhancement: Check .ladle/* Files
+
+Before diving into story creation, explore the `.ladle/` folder to enhance your configuration if needed:
+
+### Configuration Files
+- **`.ladle/components.tsx`** - Global React Context Provider for localization, state sharing, or routing
+- **`.ladle/config.mjs`** - Configure story search patterns and addon visibility
+- **`.ladle/head.html`** - Inject custom HTML into the document head
+
+### Example Configuration Setup
+```javascript
+// .ladle/config.mjs
+export default {
+  stories: "src/**/*.stories.{js,jsx,ts,tsx}",
+  addons: {
+    width: {
+      options: {
+        xsmall: 414,
+        small: 640,
+        medium: 768,
+        large: 1024
+      }
+    }
+  }
+};
+```
+
+**📚 Resources:**
+- [Ladle Configuration Guide](mdc:https:/ladle.dev/docs/config)
+- [Providers Documentation](mdc:https:/ladle.dev/docs/providers)
+
+## 1. Clear and Structured Code
+
+### Export Structure
+- Use default export for story configuration
+- Use named exports for individual stories
+- Follow consistent naming conventions
+
+```javascript
+export default {
+  title: 'Component/ButtonName',
+  argTypes: { /* controls */ },
+};
+
+export const BasicExample = () => <Button>Click me</Button>;
+export const WithVariants = () => <ButtonGroup>...</ButtonGroup>;
+```
+
+### Story Organization
+- Group related stories logically
+- Use descriptive story names that explain the use case
+- Order stories from basic to complex scenarios
+
+## 2. Controls and ArgTypes
+
+### Comprehensive Control Definition
+```javascript
+argTypes: {
+  children: {
+    control: { type: 'text' },
+    description: 'Button content/label',
+  },
+  variant: {
+    control: { type: 'select' },
+    options: ['solid', 'outline', 'ghost'],
+    description: 'Visual style variant',
+  },
+  disabled: {
+    control: { type: 'boolean' },
+    description: 'Disables interaction',
+  },
+}
+```
+
+### Control Best Practices
+- Provide meaningful descriptions for each prop
+- Use appropriate control types (select, boolean, text, etc.)
+- Include all available options for select controls
+- Set sensible default values
+
+## 3. Story Coverage Patterns
+
+### Essential Story Types
+1. **Interactive Controls Story** - Primary story with all controls
+2. **Variants** - Show all visual variants
+3. **Sizes** - Demonstrate size options
+4. **States** - Loading, disabled, error states
+5. **With Content** - Icons, complex children
+6. **Edge Cases** - Long text, empty states
+7. **Usage Patterns** - Real-world combinations
+
+### Example Implementation
+```javascript
+export const AllControls = (args) => <Button {...args} />;
+export const Variants = () => <VariantGroup />;
+export const LoadingStates = () => <LoadingExamples />;
+export const EdgeCases = () => <EdgeCaseExamples />;
+```
+
+## 4. Accessibility Considerations
+
+### ARIA Attributes
+- Include `aria-label` for icon-only buttons
+- Use `aria-describedby` for additional context
+- Provide `title` attributes for tooltips
+- Test with screen readers
+
+```javascript
+export const Accessibility = () => (
+  <Button
+    aria-label="Close dialog"
+    title="Close the current dialog"
+  >
+    ×
+  </Button>
+);
+```
+
+### Focus Management
+- Ensure proper focus indicators
+- Test keyboard navigation
+- Include focus management examples
+
+## 5. Responsive Design & Layout
+
+### Width Considerations
+- Test full-width scenarios
+- Show min/max width behaviors
+- Demonstrate text wrapping
+
+```javascript
+export const ResponsiveExamples = () => (
+  <Stack maxW="300px">
+    <Button w="full">Full Width</Button>
+    <Button minW="200px">Min Width</Button>
+  </Stack>
+);
+```
+
+### Container Constraints
+- Test components in narrow containers
+- Show behavior with long content
+- Include mobile-friendly examples
+
+## 6. Real-World Usage Patterns
+
+### Common Combinations
+- Primary + Secondary actions
+- Destructive actions with confirmation
+- Form submission patterns
+- Navigation patterns
+
+```javascript
+export const UsagePatterns = () => (
+  <Stack gap={6}>
+    <ButtonGroup>
+      <Button colorScheme="blue">Save</Button>
+      <Button variant="outline">Cancel</Button>
+    </ButtonGroup>
+  </Stack>
+);
+```
+
+## 7. Visual Organization
+
+### Stack and Layout
+- Use consistent spacing (gap={4})
+- Align items appropriately
+- Group related examples
+- Add descriptive labels
+
+### Color and Theming
+- Show all available color schemes
+- Demonstrate theme variations
+- Include brand-specific examples
+
+## 8. Documentation Integration
+
+### Story Descriptions
+- Add context for complex examples
+- Explain when to use each variant
+- Include implementation notes
+
+### Code Examples
+- Show realistic usage scenarios
+- Include common prop combinations
+- Demonstrate best practices
+
+## 9. Performance Considerations
+
+### Efficient Rendering
+- Avoid unnecessary re-renders
+- Use proper key props for lists
+- Minimize story complexity
+
+### Loading States
+- Show meaningful loading text
+- Demonstrate different loading patterns
+- Include timeout scenarios
+
+## 10. Testing Support
+
+### Test-Friendly Stories
+- Use consistent test IDs
+- Include error states
+- Provide predictable interactions
+
+### Edge Case Coverage
+- Empty states
+- Maximum content scenarios
+- Unusual prop combinations
+- Error conditions

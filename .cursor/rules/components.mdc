@@ -1,0 +1,283 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# ⚛️ Chakra-UI-Compatible Cursor Rules – Full Version with Detailed Directives
+
+## 🚨 Mandatory Chakra-UI Checks Before Starting
+
+### 1. **Check Chakra UI Documentation – ALWAYS**
+
+Before doing anything, **you MUST** review the [latest Chakra UI docs](mdc:https:/chakra-ui.com/docs) to ensure you're using up-to-date practices and APIs.
+
+> ✅ This includes understanding recent updates to components, hooks, theme API, and composition practices.
+
+### 2. **Revise Theme Files First**
+
+Prior to building any new component, you MUST:
+
+* Inspect all theme files located under `**/theme/*`
+* Extract:
+
+  * Color tokens (`colors.brand`, `colors.gray`, etc.)
+  * Font sizes, spacings, radii, etc.
+* This ensures brand consistency and helps generate Chakra-aware defaults.
+
+---
+
+## 🧩 Component Creation Must Be Chakra-Compatible
+
+All components must:
+
+* Be composed entirely from Chakra primitives unless there’s a strong reason not to.
+* Support Chakra props like `variant`, `size`, `sx`, `__css`, and `colorScheme`
+* Be theme-overridable via `useStyleConfig`, `styleConfig`, or `extendTheme`
+* Use Chakra's layout system (`Box`, `Flex`, `Grid`, etc.) for responsive design
+
+> 🎯 Your component should *feel native to Chakra* in every way.
+
+---
+
+## ♿ Accessibility Expectations
+
+Chakra UI comes with excellent built-in accessibility.
+
+* You **do not need to manually add ARIA or accessibility features**, unless the component requires custom behavior not covered by Chakra.
+
+✅ **Optional only when necessary** — otherwise rely on Chakra.
+
+---
+
+## 🔁 Style Overriding Must Be Supported
+
+Your component **must support** style overrides via:
+
+* `sx`
+* `__css`
+* `style`
+* Chakra’s theme `extendTheme`
+
+This ensures that consumers can apply design tokens and brand-level customization even after export.
+
+---
+
+## 🏗️ Chakra Project Setup Requirements
+
+1. **Wrap App in `ChakraProvider`**
+2. **Create and use a custom theme** (`theme/index.ts` or `theme.ts`)
+3. **Use Chakra’s built-in layout and UI primitives** (`Box`, `Text`, `Button`, etc.)
+4. **Support Dark Mode** with `useColorModeValue`
+5. **Use Responsive Props** like `{ base: 'block', md: 'flex' }`
+6. **Use Chakra Hooks** where applicable (`useDisclosure`, `useBreakpointValue`, etc.)
+
+---
+
+## 🛠️ Detailed Component Workflow
+
+### 1. 🔍 Analysis Phase
+
+* Define the role, purpose, and interaction model of the component
+* Assess reusability, visibility in app structure, and if it should be a shared or app-level component
+
+### 2. 📚 Research Phase
+
+* Search for similar components in these paths:
+
+  * `packages/ui/src/components`
+  * `apps/spa/src/components`
+* Prevent duplicate implementations and promote reuse
+
+### 3. 🎨 Design Phase
+
+* Define:
+
+  * Props structure (with TypeScript interfaces)
+  * Variants (`solid`, `outline`, etc.) and sizes (`sm`, `md`, `lg`)
+  * Brand-based design using theme tokens
+  * Expected behaviors (loading, focus, hover, etc.)
+  * Performance goals (e.g., throttling, memoization)
+  * Accessibility (only if Chakra doesn’t cover it)
+
+### 4. ✍️ Prompting Phase (AI/Scaffold Generation)
+
+When using AI to scaffold, the prompt MUST contain:
+
+* Component name and purpose
+* Expected Chakra primitives
+* Brand tokens to use from `/theme/*`
+* TypeScript interface for props
+* Dark mode support directive
+* Responsive layout requirement
+* Performance strategies if applicable
+* A flag if accessibility is needed
+
+### 5. 🧩 Implementation Phase
+
+* Use `forwardRef` for Chakra components
+* Utilize `useStyleConfig` for theme-aware styling
+* Add Chakra props support (`variant`, `size`, `sx`, etc.)
+* Use `useColorModeValue` to switch between light/dark
+* Apply Chakra layout for all structure
+
+### 6. 🔌 Integration Phase
+
+* Component should:
+
+  * Be usable inside both `@/components/` and `@repo/ui/components/ui/`
+  * Follow import/export conventions for tree-shaking
+  * Allow logic/state composition if required (e.g., `useDisclosure`)
+
+---
+
+## 📦 Example: Chakra-Compatible Component Template
+
+```tsx
+/**
+ * FancyButton - Chakra-Compatible Component
+ *
+ * @description Renders a themed button that supports size, variant, loading and full dark mode.
+ *
+ * @example
+ * <FancyButton variant="outline" size="md">Click Me</FancyButton>
+ */
+
+import { forwardRef } from 'react';
+import { Button, useStyleConfig, useColorModeValue } from '@chakra-ui/react';
+
+export interface FancyButtonProps {
+  variant?: string;
+  size?: string;
+  children: React.ReactNode;
+  isLoading?: boolean;
+  sx?: any;
+}
+
+export const FancyButton = forwardRef<HTMLButtonElement, FancyButtonProps>(
+  ({ variant = 'solid', size = 'md', children, isLoading = false, sx, ...rest }, ref) => {
+    const styles = useStyleConfig('FancyButton', { variant, size });
+
+    return (
+      <Button
+        ref={ref}
+        variant={variant}
+        size={size}
+        isLoading={isLoading}
+        __css={styles}
+        sx={sx}
+        {...rest}
+      >
+        {children}
+      </Button>
+    );
+  }
+);
+
+FancyButton.displayName = 'FancyButton';
+```
+
+---
+
+## ✅ Chakra-Enhanced Component Checklist
+
+* [ ] Built with Chakra primitives only (no raw HTML unless necessary)
+* [ ] TypeScript typed with optional loading, size, variant, etc.
+* [ ] Uses `__css`, `sx`, or theme-driven styles
+* [ ] Exposes theme override capability via `styleConfig`
+* [ ] Works with dark/light mode using `useColorModeValue`
+* [ ] Supports responsive props (mobile-first)
+* [ ] Uses Chakra layout primitives
+* [ ] ForwardRef and memoized if needed
+* [ ] Has usage docs, examples, and error handling when complex
+
+---
+
+## 🧠 AI Expectations (Automation Rules)
+
+Any model generating a Chakra-compatible component must:
+
+* Reference the latest Chakra UI docs
+* Analyze `/theme/*` for current brand settings
+* Scaffold components using Chakra primitives (`Box`, `Flex`, etc.)
+* Apply `useStyleConfig`, `useColorModeValue`, and responsive props
+* Allow override via `sx`, `__css`, theme
+* Skip A11Y unless Chakra lacks coverage
+* Use clean, strict, and typed TypeScript interface
+* Include memoization, loading states, throttling (if interactive)
+
+---
+
+## 📦 Exporting Guidelines
+
+* Export components via named export
+* Support compound structures (`Component.Root`, `Component.Body`, etc.)
+* File structure:
+
+  * `Component.tsx`
+  * `Component.stories.tsx`
+  * `Component.test.tsx`
+
+---
+
+## 🧪 Testing and Validation
+
+* Use `data-testid` for testing
+* Validate rendering inside ChakraProvider + Storybook
+* Test responsiveness, dark mode, and variants
+* Use `@testing-library/react` for behavior tests
+* Confirm theme override via `extendTheme`
+
+---
+
+## 📘 TypeScript Notes for Chakra-Compatible Development
+
+You are an expert in TypeScript, Node.js, React, Vite, TanStack Query, TanStack Router, and Tailwind.
+
+### 🔒 Response Constraints
+
+* Do not remove any existing code unless necessary.
+* Do not remove comments or commented-out code unless necessary.
+* Do not change the formatting of imports.
+* Do not change the formatting of code unless important for new functionality.
+
+### ✨ Code Style and Structure
+
+* Write concise, technical TypeScript code with accurate examples.
+* Use functional and declarative programming patterns; avoid classes.
+* Prefer iteration and modularization over code duplication.
+* Use descriptive variable names with auxiliary verbs (e.g., `isLoading`, `hasError`).
+* Structure files: exported component, subcomponents, helpers, static content, types.
+
+### 🧩 TypeScript Usage
+
+* Use TypeScript for all code; prefer interfaces over types.
+* Avoid enums; use maps instead.
+* Use functional components with TypeScript interfaces.
+
+### 🔠 Syntax and Formatting
+
+* Use the `function` keyword for pure functions.
+* Use curly braces for all conditionals. Favor simplicity over cleverness.
+* Use declarative JSX.
+
+### 🚀 Performance Optimization
+
+* Look for ways to make things faster:
+
+  * Use immutable data structures
+  * Use efficient data fetching strategies
+  * Optimize network requests
+  * Use efficient data structures
+  * Use efficient algorithms
+  * Use efficient rendering strategies
+  * Use efficient state management
+
+### 📌 Additional Instructions
+
+1. Use `.tsx` extension for files with JSX
+2. Implement strict TypeScript checks
+3. Utilize `React.lazy` and `Suspense` for code-splitting
+4. Use type inference where possible
+5. Implement error boundaries for robust error handling
+6. Follow React and TypeScript best practices and naming conventions
+7. Use ESLint with TypeScript and React plugins for code quality

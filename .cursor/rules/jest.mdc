@@ -1,0 +1,378 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Professional Testing Guide: Jest & Vitest Best Practices
+*Component-Agnostic Testing Methodology*
+
+> **Note**: This guide uses `Button` as an example component, but these patterns apply to **any React component** - forms, modals, cards, inputs, custom hooks, etc. Simply replace `Button` with your component name and adapt the test scenarios to your component's specific behavior.
+
+## Framework Selection
+**Check your project setup first:**
+- If using Vite (look for `vite.config.js/ts`), use **Vitest** for better integration
+- Otherwise, use **Jest** for most React projects
+
+## Essential Setup for Test Isolation
+
+### Jest Configuration
+```javascript
+// jest.config.js
+module.exports = {
+  testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
+  clearMocks: true, // Auto-clear mocks between tests
+  restoreMocks: true, // Restore original implementations
+  resetModules: true // Reset module registry between tests
+};
+```
+
+### Vitest Configuration
+```javascript
+// vitest.config.js
+import { defineConfig } from 'vitest/config'
+export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/setupTests.js'],
+    clearMocks: true,
+    restoreMocks: true,
+    isolate: true // Each test file runs in isolation
+  }
+})
+```
+
+## Test Isolation & Independence
+
+### Complete Test Isolation Setup
+```javascript
+// Each test should be completely independent
+describe('ComponentName', () => {
+  // Fresh mock for each test suite
+  const mockFunction = jest.fn(); // or vi.fn()
+
+  // Clean state before each test
+  beforeEach(() => {
+    // Clear all mocks and DOM
+    mockFunction.mockClear();
+    document.body.innerHTML = '';
+    
+    // Reset any global state if needed
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+
+  afterEach(() => {
+    // Cleanup after each test
+    cleanup(); // from @testing-library/react
+  });
+});
+```
+
+### Self-Contained Test Data
+```javascript
+// BAD: Depends on external data
+it('displays user data', () => {
+  render(<UserProfile userId="external-id" />);
+});
+
+// GOOD: Self-contained test data
+it('displays user data', () => {
+  const testUser = { id: 'test-123', name: 'Test User' };
+  render(<UserProfile user={testUser} />);
+});
+```
+
+### Mock External Dependencies
+```javascript
+// Mock external services/APIs in each test file
+jest.mock('../services/api', () => ({
+  fetchUser: jest.fn(),
+  updateUser: jest.fn()
+}));
+
+// Or for Vitest
+vi.mock('../services/api', () => ({
+  fetchUser: vi.fn(),
+  updateUser: vi.fn()
+}));
+```
+
+## Core Testing Principles
+
+### 1. Descriptive Test Structure
+```javascript
+describe('ComponentName', () => {
+  it('performs specific behavior when condition', () => {
+    // Test implementation
+  });
+});
+```
+
+### 2. Zero External Dependencies
+```javascript
+// Each test creates its own data and mocks
+it('handles form submission', async () => {
+  const mockSubmit = jest.fn();
+  const testData = { name: 'Test', email: 'test@example.com' };
+  
+  render(<Form onSubmit={mockSubmit} initialData={testData} />);
+  // Test logic here - completely self-contained
+});
+```
+
+### 3. Component Wrapper Pattern
+```javascript
+const renderWithProviders = (ui) => {
+  return render(ui, { 
+    wrapper: ({ children }) => <Provider>{children}</Provider> 
+  });
+};
+```
+
+## Universal Test Categories (Apply to Any Component)
+
+### Rendering Tests
+```javascript
+// Button example - adapt for any component
+it('renders with expected content', () => {
+  render(<Button>Click me</Button>);
+  expect(screen.getByRole('button', { name: /click me/i })).toBeInTheDocument();
+});
+
+// Modal example - same pattern
+it('renders with expected content', () => {
+  render(<Modal title="Confirm Action">Are you sure?</Modal>);
+  expect(screen.getByRole('dialog')).toBeInTheDocument();
+  expect(screen.getByText('Confirm Action')).toBeInTheDocument();
+});
+```
+
+### User Interaction Tests
+```javascript
+// Button example
+it('handles user clicks', async () => {
+  const user = userEvent.setup();
+  const mockClick = jest.fn();
+  
+  render(<Button onClick={mockClick}>Click</Button>);
+  await user.click(screen.getByRole('button'));
+  
+  expect(mockClick).toHaveBeenCalledTimes(1);
+});
+
+// Input example - same interaction testing pattern
+it('handles user input', async () => {
+  const user = userEvent.setup();
+  const mockChange = jest.fn();
+  
+  render(<Input onChange={mockChange} placeholder="Enter text" />);
+  await user.type(screen.getByRole('textbox'), 'test input');
+  
+  expect(mockChange).toHaveBeenCalled();
+});
+```
+
+### Component State Tests
+```javascript
+// Button loading state example
+it('shows loading state correctly', () => {
+  render(<Button isLoading loadingText="Saving...">Save</Button>);
+  
+  expect(screen.getByText('Saving...')).toBeInTheDocument();
+  expect(screen.queryByText('Save')).not.toBeInTheDocument();
+});
+
+// Form validation state - same pattern
+it('shows error state correctly', () => {
+  render(<Input isInvalid errorMessage="Required field">Email</Input>);
+  
+  expect(screen.getByText('Required field')).toBeInTheDocument();
+  expect(screen.getByRole('textbox')).toHaveAttribute('aria-invalid', 'true');
+});
+```
+
+### Conditional Behavior Tests
+```javascript
+// Button disabled state
+it('prevents interaction when disabled', async () => {
+  const user = userEvent.setup();
+  const mockClick = jest.fn();
+  
+  render(<Button onClick={mockClick} isDisabled>Disabled</Button>);
+  await user.click(screen.getByRole('button'));
+  
+  expect(mockClick).not.toHaveBeenCalled();
+  expect(screen.getByRole('button')).toBeDisabled();
+});
+
+// Modal closed state - same conditional logic
+it('does not render when closed', () => {
+  render(<Modal isOpen={false}>Hidden content</Modal>);
+  
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  expect(screen.queryByText('Hidden content')).not.toBeInTheDocument();
+});
+```
+
+### Props Validation Tests
+```javascript
+// Button styling props
+it('applies styling props correctly', () => {
+  render(<Button variant="outline" size="lg">Button</Button>);
+  
+  const button = screen.getByRole('button');
+  expect(button).toHaveAttribute('data-variant', 'outline');
+  expect(button).toHaveAttribute('data-size', 'lg');
+});
+
+// Card component - same prop testing approach
+it('applies styling props correctly', () => {
+  render(<Card elevation="high" rounded="md">Content</Card>);
+  
+  const card = screen.getByTestId('card'); // or appropriate selector
+  expect(card).toHaveClass('elevation-high', 'rounded-md');
+});
+```
+
+### Accessibility Tests (Universal Pattern)
+```javascript
+// Button keyboard navigation
+it('supports keyboard navigation', async () => {
+  const user = userEvent.setup();
+  const mockClick = jest.fn();
+  
+  render(<Button onClick={mockClick}>Button</Button>);
+  
+  const button = screen.getByRole('button');
+  button.focus();
+  
+  await user.keyboard('{Enter}');
+  await user.keyboard(' ');
+  
+  expect(mockClick).toHaveBeenCalledTimes(2);
+});
+
+// Dropdown keyboard navigation - same accessibility principles
+it('supports keyboard navigation', async () => {
+  const user = userEvent.setup();
+  
+  render(<Dropdown options={['Option 1', 'Option 2']} />);
+  
+  const trigger = screen.getByRole('button');
+  await user.keyboard('{ArrowDown}'); // Open dropdown
+  await user.keyboard('{ArrowDown}'); // Navigate options
+  await user.keyboard('{Enter}');     // Select option
+  
+  expect(screen.getByText('Option 1')).toBeInTheDocument();
+});
+
+// ARIA attributes - applies to any component
+it('supports ARIA attributes', () => {
+  render(<Button aria-label="Close" aria-describedby="help">×</Button>);
+  
+  const button = screen.getByRole('button');
+  expect(button).toHaveAttribute('aria-label', 'Close');
+  expect(button).toHaveAttribute('aria-describedby', 'help');
+});
+```
+
+## Professional Best Practices
+
+### Query Priority (Testing Library)
+1. `getByRole()` - Most accessible
+2. `getByLabelText()` - Form elements
+3. `getByText()` - User-visible text
+4. `getByTestId()` - Last resort
+
+### Assertion Patterns
+- Use `toBeInTheDocument()` for presence
+- Use `not.toBeInTheDocument()` for absence
+- Use `toHaveBeenCalledTimes(n)` for exact call counts
+- Use `toBeDisabled()` for form states
+
+### Complete Isolation Checklist
+- ✅ Each test creates its own test data
+- ✅ All external dependencies are mocked
+- ✅ DOM is cleaned between tests
+- ✅ Global state is reset (localStorage, etc.)
+- ✅ Mocks are cleared between tests
+- ✅ Tests can run in any order
+- ✅ Tests don't depend on file system or network
+- ✅ No shared state between test suites
+
+### Mock Cleanup & Isolation
+```javascript
+// Complete cleanup pattern
+beforeEach(() => {
+  jest.clearAllMocks(); // or vi.clearAllMocks()
+  document.body.innerHTML = '';
+  
+  // Reset browser APIs if used
+  Object.defineProperty(window, 'location', {
+    value: { href: 'http://localhost:3000' },
+    writable: true
+  });
+});
+```
+
+### Async Testing
+Always use `async/await` with user events:
+```javascript
+const user = userEvent.setup();
+await user.click(element);
+```
+
+## Component-Agnostic Testing Strategy
+
+### Testing Any Component Type
+| Component Type | Key Test Areas | Example Queries |
+|---|---|---|
+| **Buttons/Actions** | Click events, disabled states, variants | `getByRole('button')` |
+| **Forms/Inputs** | User input, validation, submission | `getByRole('textbox')`, `getByLabelText()` |
+| **Modals/Dialogs** | Open/close states, focus management | `getByRole('dialog')` |
+| **Lists/Tables** | Data rendering, sorting, filtering | `getByRole('table')`, `getAllByRole('row')` |
+| **Navigation** | Links, routing, active states | `getByRole('navigation')`, `getByRole('link')` |
+| **Custom Components** | Props, children, conditional rendering | `getByTestId()`, `getByText()` |
+
+### Universal Test Template
+```javascript
+describe('YourComponent', () => {
+  // 1. Basic rendering
+  it('renders correctly with required props', () => {
+    render(<YourComponent {...requiredProps} />);
+    expect(screen.getByRole('...')).toBeInTheDocument();
+  });
+
+  // 2. User interactions (if interactive)
+  it('handles user interaction', async () => {
+    // Test clicks, typing, navigation, etc.
+  });
+
+  // 3. Props and variants
+  it('applies props correctly', () => {
+    // Test different prop combinations
+  });
+
+  // 4. Conditional rendering
+  it('shows/hides content based on state', () => {
+    // Test conditional display logic
+  });
+
+  // 5. Accessibility
+  it('meets accessibility requirements', () => {
+    // Test ARIA attributes, keyboard navigation
+  });
+});
+```
+
+## Key Takeaways
+- **These patterns work for ANY React component** - buttons, forms, modals, custom components
+- Test user behavior, not implementation details
+- Write descriptive test names that explain the scenario
+- Group related tests with `describe` blocks
+- Always clean up mocks between tests
+- Prioritize accessibility-focused queries for all interactive components
+- Test edge cases (disabled, loading, error states) regardless of component type
+- Include keyboard navigation testing for any interactive element
+
