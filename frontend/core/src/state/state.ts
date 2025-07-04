@@ -1,8 +1,5 @@
-import {atom} from "recoil";
-import type {Client} from "../services/clients/client.types";
+import { atom } from "jotai";
+import type { Client } from "../services/clients/client.types";
 
 // Client state atom
-export const clientState = atom<Client | null>({
-  key: "clientState",
-  default: null,
-});
+export const clientState = atom<Client | null>(null);

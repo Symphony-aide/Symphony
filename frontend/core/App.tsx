@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { createClient } from "./src/services/client";
 import { clientState } from "./src/state";
-import { RecoilRoot, useSetRecoilState } from "recoil";
-import RecoilNexus from "recoil-nexus";
+import { useSetAtom } from "jotai";
 import { isTauri } from "./src/services/commands";
+import React from "react";
 
 /*
  * Retrieve the authentication token
@@ -21,7 +21,7 @@ async function getToken() {
  * Handles the connection client
  */
 function ClientRoot() {
-  const setClient = useSetRecoilState(clientState);
+  const setClient = useSetAtom(clientState);
 
   useEffect(() => {
     // Retrieve the token and then create a new client
@@ -42,14 +42,13 @@ function ClientRoot() {
 
 function App() {
   return (
-    <RecoilRoot>
+    <div>
       <ClientRoot />
-      <RecoilNexus />
       <div style={{ textAlign: 'center' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Hello World!</h1>
         <p>The Symphony app is running with a minimal UI.</p>
       </div>
-    </RecoilRoot>
+    </div>
   );
 }
 
