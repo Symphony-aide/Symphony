@@ -48,7 +48,7 @@ export class HTTPClient extends Emittery implements Client {
   /*
    * Promise wrapper for `connected` event
    */
-  public whenConnected() {
+  public whenConnected(): Promise<void> {
     return new Promise<void>((resolve) => {
       this.on("connected", () => {
         resolve();
@@ -161,7 +161,7 @@ export class HTTPClient extends Emittery implements Client {
    * Subscribe to the State messages
    * @WSCommand
    */
-  public listenToState() {
+  public listenToState(): void {
     this.socket.send(
       JSON.stringify({
         ListenToState: {
@@ -180,7 +180,7 @@ export class HTTPClient extends Emittery implements Client {
     ]);
   }
 
-  public async emitMessage<T>(message: T) {
+  public async emitMessage<T>(message: T): Promise<void> {
     this.socket.send(
       JSON.stringify({
         ...message,

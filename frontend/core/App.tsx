@@ -1,6 +1,5 @@
 import { useSetAtom } from "jotai";
-import { useEffect } from "react";
-import React from "react";
+import React, { type JSX, useEffect } from "react";
 
 import { createClient } from "./src/services/client";
 import { isTauri } from "./src/services/commands";
@@ -10,39 +9,40 @@ import { clientState } from "./src/state";
 /*
  * Retrieve the authentication token
  */
-async function getToken() {
+const getToken = async (): Promise<string | null> => {
   if (isTauri) {
     return "symphony_token";
   } else {
     // Or query the URL to get the token
     return new URL(location.toString()).searchParams.get("token");
   }
-}
+};
 
 /**
  * Handles the connection client
+ * @returns {null} The root client element
  */
-function ClientRoot() {
+const ClientRoot = (): null => {
   const setClient = useSetAtom(clientState);
 
   useEffect(() => {
     // Retrieve the token and then create a new client
-    getToken().then(async (token) => {
+    void getToken().then(async (token) => {
       if (token !== null) {
         const client = await createClient(token);
 
         // Wait until it's connected
-        client.whenConnected().then(() => {
+        void client.whenConnected().then(() => {
           setClient(client);
         });
       }
     });
-  }, []);
+  }, [setClient]);
 
   return null;
-}
+};
 
-function App() {
+const App = (): JSX.Element => {
   return (
     <div>
       <ClientRoot />
@@ -52,6 +52,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;

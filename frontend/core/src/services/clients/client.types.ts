@@ -9,7 +9,7 @@ export interface BaseMessage {
 }
 
 export interface CoreResponse<T> {
-  Err?: any;
+  Err?: unknown;
   Ok?: T;
 }
 

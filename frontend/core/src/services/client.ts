@@ -3,7 +3,7 @@ import Configuration from "../utils/config";
 import {Client} from "./clients/client.types";
 import {isTauri} from "./commands";
 
-export async function createClient(token: string): Promise<Client> {
+export const createClient = async (token: string): Promise<Client> => {
   if (isTauri) {
     const {TauriClient} = await import("./clients/tauri");
     const config = new Configuration(null, null, 1, token);

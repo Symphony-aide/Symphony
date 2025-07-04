@@ -1,4 +1,4 @@
-const applyPatches = () => {
+const applyPatches = (): void => {
   /**
    * Disable the print prompt
    */

@@ -30,7 +30,7 @@ export class TauriClient extends Emittery<EventsInterface> implements Client {
     this.config = config;
 
     listen("to_webview", ({payload}: { payload: BaseMessage }) => {
-      this.emit(payload.msg_type, payload as any);
+      this.emit(payload.msg_type, payload);
     });
 
     setTimeout(async () => {
@@ -38,7 +38,7 @@ export class TauriClient extends Emittery<EventsInterface> implements Client {
     }, 1);
   }
 
-  public whenConnected() {
+  public whenConnected(): Promise<void> {
     return Promise.resolve();
   }
 
@@ -147,7 +147,7 @@ export class TauriClient extends Emittery<EventsInterface> implements Client {
    * Listen for any mess in the websockets connection
    * @WSCommand
    */
-  public listenToState() {
+  public listenToState(): void {
     emit(
       "core_tx",
       JSON.stringify({
@@ -167,7 +167,7 @@ export class TauriClient extends Emittery<EventsInterface> implements Client {
     });
   }
 
-  public async emitMessage<T>(message: T) {
+  public async emitMessage<T>(message: T): Promise<void> {
     await emit(
       "core_tx",
       JSON.stringify({

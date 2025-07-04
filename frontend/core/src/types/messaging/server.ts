@@ -4,7 +4,7 @@ import {BaseMessage} from "../../services/clients/client.types";
 export interface StateData {
   id: number;
 
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface ShowPopup extends BaseMessage {
