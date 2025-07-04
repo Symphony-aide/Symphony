@@ -1,8 +1,10 @@
-const { task, desc } = require('jake')
-const { spawn } = require('child_process')
+import jake from 'jake'
+import { spawn } from 'child_process'
+
+const { task, desc } = jake
 
 // Easily run commands
-const run  = (what, args, where = './') => {
+const run = (what, args, where = './') => {
     return new Promise((resolve, reject) => {
         let proc = spawn(what, args, { cwd: where, stdio: 'inherit', shell: true});
         proc.on('close', (code) => code === 0 ? resolve() : reject())
