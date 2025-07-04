@@ -13,7 +13,7 @@ import {
   TerminalShellBuilderInfo,
 } from "./client.types";
 import Configuration from "../../utils/config";
-import { StateData } from "../../types/messaging/server";
+import { StateData } from "../../types";
 
 /**
  * Tauri Client

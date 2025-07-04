@@ -5,7 +5,7 @@ const { spawn } = require('child_process')
 const run  = (what, args, where = './') => {
     return new Promise((resolve, reject) => {
         let proc = spawn(what, args, { cwd: where, stdio: 'inherit', shell: true});
-        proc.on('close', (code) => code == 0 ? resolve() : reject())
+        proc.on('close', (code) => code === 0 ? resolve() : reject())
     })
 }
 
@@ -16,7 +16,7 @@ const core_path = 'core'
 
 desc('Run the server in develop mode');
 task('server', async function () {
-    run('pnpm', ['run', '--filter', core_path, 'dev'])
+    await run('pnpm', ['run', '--filter', core_path, 'dev'])
     await run('cargo run', [], server_path)
 });
 

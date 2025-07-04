@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { createClient } from "services/client";
-import { clientState } from "../../state/state";
+import { createClient } from "./src/services/client";
+import { clientState } from "./src/state";
 import { RecoilRoot, useSetRecoilState } from "recoil";
 import RecoilNexus from "recoil-nexus";
-import { isTauri } from "services/commands";
+import { isTauri } from "./src/services/commands";
 
 /*
  * Retrieve the authentication token

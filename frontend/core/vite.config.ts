@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import checker from "vite-plugin-checker";
 import tsconfigPaths from 'vite-tsconfig-paths'
 
+// noinspection JSUnusedGlobalSymbols
 export default defineConfig(() => ({
   build: {
     rollupOptions: {

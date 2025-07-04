@@ -12,7 +12,7 @@ import {
   ManifestInfo,
   TerminalShellBuilderInfo,
 } from "./client.types";
-import { StateData } from "../../types/messaging/server";
+import { StateData } from "../../types";
 
 /**
  * HTTP + WebSockets client
