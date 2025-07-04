@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState, useRef } from 'react';
 import {
   HStack,
   PinInput,
@@ -10,6 +9,7 @@ import {
   FormHelperText,
 } from '@chakra-ui/react';
 import { throttle, debounce } from 'lodash-es';
+import React, { useMemo, useCallback, useState, useRef } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -90,6 +90,9 @@ export interface OTPInputProps extends Omit<PinInputProps, 'onChange' | 'onCompl
 
 /**
  * Optimized change handler factory
+ * @param originalOnChange
+ * @param debounceMs
+ * @param analytics
  */
 const useOptimizedChangeHandler = (
   originalOnChange?: (value: string) => void,
@@ -123,6 +126,8 @@ const useOptimizedChangeHandler = (
 
 /**
  * Optimized complete handler factory
+ * @param originalOnComplete
+ * @param analytics
  */
 const useOptimizedCompleteHandler = (
   originalOnComplete?: (value: string) => void,
@@ -147,6 +152,9 @@ const useOptimizedCompleteHandler = (
 
 /**
  * OTP input validation hook
+ * @param value
+ * @param length
+ * @param validation
  */
 const useOTPInputValidation = (
   value: string,
@@ -188,6 +196,7 @@ const useOTPInputValidation = (
 
 /**
  * Auto-focus hook for OTP input
+ * @param enabled
  */
 const useAutoFocus = (enabled: boolean = true) => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);

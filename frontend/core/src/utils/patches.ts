@@ -1,4 +1,4 @@
-export default function applyPatches() {
+const applyPatches = () => {
   /**
    * Disable the print prompt
    */
@@ -26,3 +26,5 @@ export default function applyPatches() {
     true,
   );
 }
+
+export default applyPatches;

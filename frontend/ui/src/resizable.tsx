@@ -1,6 +1,6 @@
-import React, { useMemo, useCallback, useState, useRef, useEffect } from 'react';
 import { Box, BoxProps } from '@chakra-ui/react';
 import { throttle } from 'lodash-es';
+import React, { useMemo, useCallback, useState, useRef, useEffect } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -95,6 +95,7 @@ export interface ResizeHandleProps {
 
 /**
  * Get cursor style for handle position
+ * @param position
  */
 const getCursorForHandle = (position: ResizeHandlePosition): string => {
   const cursors = {
@@ -113,6 +114,7 @@ const getCursorForHandle = (position: ResizeHandlePosition): string => {
 
 /**
  * Get handle styles for position
+ * @param position
  */
 const getHandleStyles = (position: ResizeHandlePosition) => {
   const baseStyles = {
@@ -192,6 +194,9 @@ const getHandleStyles = (position: ResizeHandlePosition) => {
 
 /**
  * Optimized resize handler factory
+ * @param originalOnResize
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedResizeHandler = (
   originalOnResize?: (width: number, height: number) => void,
@@ -228,6 +233,11 @@ const useOptimizedResizeHandler = (
 
 /**
  * Resize hook
+ * @param direction
+ * @param constraints
+ * @param onResize
+ * @param onResizeStart
+ * @param onResizeEnd
  */
 const useResize = (
   direction: ResizableDirection,

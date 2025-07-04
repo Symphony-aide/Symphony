@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Button,
   ButtonProps,
@@ -6,6 +5,7 @@ import {
   IconButtonProps,
 } from '@chakra-ui/react';
 import { throttle } from 'lodash-es';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -94,6 +94,9 @@ export interface IconToggleProps extends Omit<IconButtonProps, 'onClick'> {
 
 /**
  * Optimized toggle handler factory
+ * @param originalOnToggle
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedToggleHandler = (
   originalOnToggle?: (pressed: boolean) => void,
@@ -130,6 +133,9 @@ const useOptimizedToggleHandler = (
 
 /**
  * Get toggle styles based on variant and pressed state
+ * @param variant
+ * @param pressed
+ * @param enableAnimations
  */
 const getToggleStyles = (
   variant: ToggleVariant,

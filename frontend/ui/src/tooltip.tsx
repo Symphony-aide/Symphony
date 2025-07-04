@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Tooltip as ChakraTooltip,
   TooltipProps as ChakraTooltipProps,
@@ -6,6 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle, debounce } from 'lodash-es';
+import React, { useMemo, useCallback, useState } from 'react';
 
 /**
  * Tooltip placement options
@@ -59,6 +59,10 @@ export interface TooltipProps extends Omit<ChakraTooltipProps, 'placement'> {
 
 /**
  * Optimized hover handler factory
+ * @param originalHandler
+ * @param debounceMs
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedHoverHandler = (
   originalHandler?: () => void,
@@ -100,6 +104,8 @@ const useOptimizedHoverHandler = (
 
 /**
  * Tooltip hover hook
+ * @param hoverDelay
+ * @param hideDelay
  */
 const useTooltipHover = (
   hoverDelay: number = 500,

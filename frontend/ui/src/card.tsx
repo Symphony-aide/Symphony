@@ -1,4 +1,3 @@
-import React, { useMemo } from 'react';
 import {
   Box,
   BoxProps,
@@ -8,6 +7,7 @@ import {
   Spacer,
 } from '@chakra-ui/react';
 import { motion, MotionProps } from 'framer-motion';
+import React, { useMemo } from 'react';
 
 /**
  * Card variants
@@ -91,6 +91,8 @@ export interface CardFooterProps extends BoxProps {
 
 /**
  * Get card styles based on variant and size
+ * @param variant
+ * @param size
  */
 const getCardStyles = (variant: CardVariant, size: CardSize) => {
   const sizeStyles = {

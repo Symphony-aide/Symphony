@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Slider as ChakraSlider,
   SliderTrack,
@@ -15,6 +14,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { throttle, debounce } from 'lodash-es';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -101,6 +101,10 @@ export interface SliderProps extends Omit<ChakraSliderProps, 'size' | 'orientati
 
 /**
  * Optimized change handler factory
+ * @param originalOnChange
+ * @param throttleMs
+ * @param debounceMs
+ * @param analytics
  */
 const useOptimizedChangeHandler = (
   originalOnChange?: (value: number | number[]) => void,
@@ -143,6 +147,8 @@ const useOptimizedChangeHandler = (
 
 /**
  * Slider validation hook
+ * @param value
+ * @param validation
  */
 const useSliderValidation = (
   value: number | number[],
@@ -176,6 +182,7 @@ const useSliderValidation = (
 
 /**
  * Default value formatter
+ * @param value
  */
 const defaultValueFormatter = (value: number) => value.toString();
 

@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Textarea as ChakraTextarea,
   TextareaProps as ChakraTextareaProps,
@@ -11,6 +10,7 @@ import {
   HStack,
 } from '@chakra-ui/react';
 import { debounce, throttle } from 'lodash-es';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -102,6 +102,9 @@ export interface TextareaProps extends Omit<ChakraTextareaProps, 'size' | 'varia
 
 /**
  * Optimized change handler factory
+ * @param originalOnChange
+ * @param debounceMs
+ * @param analytics
  */
 const useOptimizedChangeHandler = (
   originalOnChange?: (value: string, event: React.ChangeEvent<HTMLTextAreaElement>) => void,
@@ -137,6 +140,8 @@ const useOptimizedChangeHandler = (
 
 /**
  * Optimized input handler factory
+ * @param originalOnInput
+ * @param throttleMs
  */
 const useOptimizedInputHandler = (
   originalOnInput?: (value: string, event: React.FormEvent<HTMLTextAreaElement>) => void,
@@ -161,6 +166,8 @@ const useOptimizedInputHandler = (
 
 /**
  * Textarea validation hook
+ * @param value
+ * @param validation
  */
 const useTextareaValidation = (
   value: string,
@@ -211,6 +218,7 @@ const useTextareaValidation = (
 
 /**
  * Auto-resize hook for textarea
+ * @param enabled
  */
 const useAutoResize = (enabled: boolean = false) => {
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);

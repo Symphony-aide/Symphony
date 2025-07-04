@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState, useEffect } from 'react';
 import {
   Progress as ChakraProgress,
   CircularProgress,
@@ -10,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { throttle } from 'lodash-es';
+import React, { useMemo, useCallback, useState, useEffect } from 'react';
 
 /**
  * Progress variants
@@ -80,6 +80,9 @@ export interface ProgressProps extends Omit<ChakraProgressProps, 'size' | 'color
 
 /**
  * Optimized value change handler factory
+ * @param originalOnValueChange
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedValueChangeHandler = (
   originalOnValueChange?: (value: number) => void,
@@ -116,6 +119,9 @@ const useOptimizedValueChangeHandler = (
 
 /**
  * Smooth value transition hook
+ * @param targetValue
+ * @param enabled
+ * @param interval
  */
 const useSmoothTransition = (
   targetValue: number,
@@ -155,6 +161,8 @@ const useSmoothTransition = (
 
 /**
  * Get progress size styles
+ * @param size
+ * @param variant
  */
 const getProgressSize = (size: ProgressSize, variant: ProgressVariant) => {
   if (variant === 'circular') {
@@ -181,6 +189,8 @@ const getProgressSize = (size: ProgressSize, variant: ProgressVariant) => {
 
 /**
  * Default label format function
+ * @param value
+ * @param max
  */
 const defaultLabelFormat = (value: number, max: number) => {
   const percentage = Math.round((value / max) * 100);

@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Menu,
   MenuButton,
@@ -13,9 +12,10 @@ import {
   Button,
   IconButton,
 } from '@chakra-ui/react';
-import { ChevronDown, MoreVertical } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle } from 'lodash-es';
+import { ChevronDown, MoreVertical } from 'lucide-react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -95,6 +95,9 @@ export interface DropdownMenuProps extends Omit<MenuProps, 'children'> {
 
 /**
  * Optimized menu action handler factory
+ * @param originalOnMenuAction
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedMenuActionHandler = (
   originalOnMenuAction?: (item: DropdownMenuItemData) => void,
@@ -139,6 +142,11 @@ const menuVariants = {
 
 /**
  * Render menu items recursively
+ * @param items
+ * @param onAction
+ * @param testId
+ * @param checkedItems
+ * @param onCheckedChange
  */
 const renderMenuItems = (
   items: DropdownMenuItemData[],

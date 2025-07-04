@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Popover as ChakraPopover,
   PopoverTrigger,
@@ -14,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle, debounce } from 'lodash-es';
+import React, { useMemo, useCallback, useState } from 'react';
 
 /**
  * Popover placement options
@@ -84,6 +84,10 @@ export interface PopoverProps extends Omit<ChakraPopoverProps, 'children' | 'tri
 
 /**
  * Optimized trigger handler factory
+ * @param originalHandler
+ * @param throttleMs
+ * @param debounceMs
+ * @param analytics
  */
 const useOptimizedTriggerHandler = (
   originalHandler?: () => void,
@@ -125,6 +129,11 @@ const useOptimizedTriggerHandler = (
 
 /**
  * Hover popover hook
+ * @param isOpen
+ * @param onOpen
+ * @param onClose
+ * @param hoverDelay
+ * @param hideDelay
  */
 const useHoverPopover = (
   isOpen: boolean,

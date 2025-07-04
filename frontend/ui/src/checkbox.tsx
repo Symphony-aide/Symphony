@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback } from 'react';
 import {
   Checkbox as ChakraCheckbox,
   CheckboxGroup as ChakraCheckboxGroup,
@@ -11,6 +10,7 @@ import {
   Stack,
 } from '@chakra-ui/react';
 import { throttle, debounce } from 'lodash-es';
+import React, { useMemo, useCallback } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -113,6 +113,10 @@ export interface CheckboxGroupProps extends Omit<ChakraCheckboxGroupProps, 'onCh
 
 /**
  * Optimized change handler factory for single checkbox
+ * @param originalOnChange
+ * @param throttleMs
+ * @param debounceMs
+ * @param analytics
  */
 const useOptimizedCheckboxChangeHandler = (
   originalOnChange?: (checked: boolean, event: React.ChangeEvent<HTMLInputElement>) => void,
@@ -157,6 +161,8 @@ const useOptimizedCheckboxChangeHandler = (
 
 /**
  * Checkbox validation hook
+ * @param checked
+ * @param validation
  */
 const useCheckboxValidation = (
   checked: boolean,

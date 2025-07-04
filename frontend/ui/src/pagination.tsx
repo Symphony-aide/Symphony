@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback } from 'react';
 import {
   HStack,
   Button,
@@ -8,8 +7,9 @@ import {
   Box,
   Flex,
 } from '@chakra-ui/react';
-import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { throttle } from 'lodash-es';
+import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
+import React, { useMemo, useCallback } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -73,6 +73,9 @@ export interface PaginationProps {
 
 /**
  * Optimized page change handler factory
+ * @param originalOnPageChange
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedPageChangeHandler = (
   originalOnPageChange?: (page: number) => void,
@@ -109,6 +112,9 @@ const useOptimizedPageChangeHandler = (
 
 /**
  * Generate page numbers for pagination
+ * @param currentPage
+ * @param totalPages
+ * @param maxVisible
  */
 const generatePageNumbers = (currentPage: number, totalPages: number, maxVisible: number) => {
   const pages: (number | 'ellipsis')[] = [];

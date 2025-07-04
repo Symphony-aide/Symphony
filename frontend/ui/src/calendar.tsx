@@ -1,7 +1,7 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import { Box, Grid, Text, Button, Flex, IconButton } from '@chakra-ui/react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { throttle, debounce } from 'lodash-es';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -105,6 +105,9 @@ const dateUtils = {
 
 /**
  * Optimized navigation handler factory
+ * @param originalHandler
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedNavigationHandler = (
   originalHandler?: (direction: 'prev' | 'next') => void,
@@ -140,6 +143,9 @@ const useOptimizedNavigationHandler = (
 
 /**
  * Optimized date selection handler factory
+ * @param originalHandler
+ * @param debounceMs
+ * @param analytics
  */
 const useOptimizedSelectionHandler = (
   originalHandler?: (date: Date) => void,

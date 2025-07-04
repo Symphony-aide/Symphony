@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Input as ChakraInput,
   InputGroup,
@@ -11,8 +10,9 @@ import {
   FormHelperText,
   IconButton,
 } from '@chakra-ui/react';
-import { Eye, EyeOff } from 'lucide-react';
 import { debounce, throttle } from 'lodash-es';
+import { Eye, EyeOff } from 'lucide-react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -103,6 +103,9 @@ export interface InputProps extends Omit<ChakraInputProps, 'variant' | 'size' | 
 
 /**
  * Optimized change handler factory
+ * @param originalOnChange
+ * @param debounceMs
+ * @param analytics
  */
 const useOptimizedChangeHandler = (
   originalOnChange?: (value: string, event: React.ChangeEvent<HTMLInputElement>) => void,
@@ -139,6 +142,8 @@ const useOptimizedChangeHandler = (
 
 /**
  * Optimized input handler factory
+ * @param originalOnInput
+ * @param throttleMs
  */
 const useOptimizedInputHandler = (
   originalOnInput?: (value: string, event: React.FormEvent<HTMLInputElement>) => void,
@@ -163,6 +168,9 @@ const useOptimizedInputHandler = (
 
 /**
  * Input validation hook
+ * @param value
+ * @param validation
+ * @param lazy
  */
 const useInputValidation = (
   value: string,

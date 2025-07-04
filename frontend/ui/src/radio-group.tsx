@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   RadioGroup as ChakraRadioGroup,
   Radio,
@@ -10,6 +9,7 @@ import {
   FormHelperText,
 } from '@chakra-ui/react';
 import { throttle, debounce } from 'lodash-es';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -100,6 +100,10 @@ export interface RadioGroupProps extends Omit<ChakraRadioGroupProps, 'size' | 'o
 
 /**
  * Optimized change handler factory
+ * @param originalOnChange
+ * @param throttleMs
+ * @param debounceMs
+ * @param analytics
  */
 const useOptimizedChangeHandler = (
   originalOnChange?: (value: string) => void,
@@ -116,7 +120,7 @@ const useOptimizedChangeHandler = (
         (window as any).gtag('event', analytics.action || 'radio_group_change', {
           event_category: analytics.category || 'radio_group',
           event_label: analytics.label,
-          value: value,
+          value,
         });
       }
       
@@ -142,6 +146,8 @@ const useOptimizedChangeHandler = (
 
 /**
  * Radio group validation hook
+ * @param value
+ * @param validation
  */
 const useRadioGroupValidation = (
   value: string,

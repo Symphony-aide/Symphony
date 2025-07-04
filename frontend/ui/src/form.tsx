@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   FormControl,
   FormLabel,
@@ -9,8 +8,9 @@ import {
   Box,
   FormControlProps,
 } from '@chakra-ui/react';
-import { useForm, UseFormReturn, FieldValues, SubmitHandler, UseFormProps } from 'react-hook-form';
 import { throttle, debounce } from 'lodash-es';
+import React, { useMemo, useCallback, useState } from 'react';
+import { useForm, UseFormReturn, FieldValues, SubmitHandler, UseFormProps } from 'react-hook-form';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -115,6 +115,9 @@ export interface FormFieldProps extends FormControlProps {
 
 /**
  * Optimized submit handler factory
+ * @param originalOnSubmit
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedSubmitHandler = <T extends FieldValues>(
   originalOnSubmit?: SubmitHandler<T>,
@@ -150,6 +153,10 @@ const useOptimizedSubmitHandler = <T extends FieldValues>(
 
 /**
  * Auto-save hook
+ * @param form
+ * @param enabled
+ * @param interval
+ * @param storageKey
  */
 const useAutoSave = <T extends FieldValues>(
   form: UseFormReturn<T>,
@@ -176,6 +183,9 @@ const useAutoSave = <T extends FieldValues>(
 
 /**
  * Render form field based on type
+ * @param field
+ * @param form
+ * @param testId
  */
 const renderFormField = (field: FormFieldConfig, form: UseFormReturn<any>, testId?: string) => {
   const { register, formState: { errors } } = form;
@@ -330,6 +340,19 @@ FormFieldComponent.displayName = 'OptimizedFormField';
 
 /**
  * Optimized Form Component
+ * @param root0
+ * @param root0.fields
+ * @param root0.defaultValues
+ * @param root0.onSubmit
+ * @param root0.onValidate
+ * @param root0.submitText
+ * @param root0.resetText
+ * @param root0.showReset
+ * @param root0.performance
+ * @param root0.storageKey
+ * @param root0.testId
+ * @param root0.analytics
+ * @param root0.children
  */
 const FormComponent = <T extends FieldValues = FieldValues>({
   fields = [],

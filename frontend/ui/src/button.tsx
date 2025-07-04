@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
 import { Button as ChakraButton, ButtonProps as ChakraButtonProps } from '@chakra-ui/react';
 import { throttle, debounce } from 'lodash-es';
+import React, { useMemo } from 'react';
 
 /**
  * Custom button variants that extend Chakra's default variants
@@ -85,6 +85,9 @@ export interface ButtonProps extends Omit<ChakraButtonProps, 'variant' | 'size' 
 
 /**
  * Optimized click handler factory
+ * @param originalOnClick
+ * @param optimization
+ * @param analytics
  */
 const useOptimizedClickHandler = (
   originalOnClick?: (event: React.MouseEvent<HTMLButtonElement>) => void,

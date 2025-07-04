@@ -77,7 +77,6 @@ export { default as OptimizedProgress, OptimizedProgress as Progress } from './s
 export { default as OptimizedSkeleton, OptimizedSkeleton as Skeleton, SkeletonGroup, SkeletonLayouts } from './src/skeleton';
 export { default as OptimizedToast, useToast, promiseToast, batchToast, ToastProvider } from './src/toast';
 export { default as OptimizedToaster, OptimizedToaster as Toaster } from './src/toaster';
-export { default as OptimizedSonner, OptimizedSonner as Sonner, useOptimizedToast } from './sonner';
 
 // Data Display
 export { default as OptimizedAvatar, OptimizedAvatar as Avatar, AvatarGroup, AvatarBadge } from './src/avatar';
@@ -255,6 +254,7 @@ let globalConfig: GlobalPerformanceOptions = {
 
 /**
  * Configure global settings for all optimized components
+ * @param config
  */
 export const configureOptimizedComponents = (config: Partial<GlobalPerformanceOptions>) => {
   globalConfig = { ...globalConfig, ...config };
@@ -306,10 +306,6 @@ export const utils = {
   /**
    * Check if all components are loaded
    */
-  isLibraryReady: () => {
-    return LIBRARY_INFO.totalComponents === LIBRARY_INFO.components.length;
-  },
-
   /**
    * Get component count
    */

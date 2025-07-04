@@ -1,6 +1,7 @@
 import Emittery from "emittery";
-import Configuration from "../../utils/config";
+
 import {ShowPopup, StateData, StateUpdated} from "../../types";
+import Configuration from "../../utils/config";
 
 export interface BaseMessage {
   state_id: number;

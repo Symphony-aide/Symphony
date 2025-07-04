@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
 import { Divider, DividerProps } from '@chakra-ui/react';
+import React, { useMemo } from 'react';
 
 /**
  * Separator orientations
@@ -47,6 +47,10 @@ export interface SeparatorProps extends Omit<DividerProps, 'orientation' | 'vari
 
 /**
  * Get separator styles based on variant and orientation
+ * @param variant
+ * @param orientation
+ * @param thickness
+ * @param color
  */
 const getSeparatorStyles = (
   variant: SeparatorVariant,

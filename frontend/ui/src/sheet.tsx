@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Drawer,
   DrawerBody,
@@ -13,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle } from 'lodash-es';
+import React, { useMemo, useCallback, useState } from 'react';
 
 /**
  * Sheet placement options
@@ -94,6 +94,10 @@ export interface SheetTriggerProps {
 
 /**
  * Optimized action handler factory
+ * @param originalHandler
+ * @param throttleMs
+ * @param analytics
+ * @param actionType
  */
 const useOptimizedActionHandler = (
   originalHandler?: () => void | Promise<void>,
@@ -130,6 +134,7 @@ const useOptimizedActionHandler = (
 
 /**
  * Animation variants for sheet based on placement
+ * @param placement
  */
 const getSheetAnimationVariants = (placement: SheetPlacement) => {
   const variants = {

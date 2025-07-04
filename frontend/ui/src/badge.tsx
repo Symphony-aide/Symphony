@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
 import { Badge as ChakraBadge, BadgeProps as ChakraBadgeProps } from '@chakra-ui/react';
+import React, { useMemo } from 'react';
 
 /**
  * Badge variants
@@ -55,6 +55,7 @@ export interface BadgeProps extends Omit<ChakraBadgeProps, 'variant' | 'colorSch
 
 /**
  * Get badge size styles
+ * @param size
  */
 const getBadgeSize = (size: BadgeSize) => {
   const sizeStyles = {

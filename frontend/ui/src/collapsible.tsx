@@ -1,7 +1,7 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import { Box, Collapse, BoxProps } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle, debounce } from 'lodash-es';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -69,6 +69,10 @@ export interface CollapsibleContentProps extends BoxProps {
 
 /**
  * Optimized toggle handler factory
+ * @param originalOnToggle
+ * @param throttleMs
+ * @param debounceMs
+ * @param analytics
  */
 const useOptimizedToggleHandler = (
   originalOnToggle?: (isOpen: boolean) => void,

@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback } from 'react';
 import {
   Breadcrumb as ChakraBreadcrumb,
   BreadcrumbItem as ChakraBreadcrumbItem,
@@ -8,8 +7,9 @@ import {
   BreadcrumbItemProps as ChakraBreadcrumbItemProps,
   BreadcrumbLinkProps as ChakraBreadcrumbLinkProps,
 } from '@chakra-ui/react';
-import { ChevronRight } from 'lucide-react';
 import { throttle } from 'lodash-es';
+import { ChevronRight } from 'lucide-react';
+import React, { useMemo, useCallback } from 'react';
 
 /**
  * Breadcrumb sizes
@@ -94,6 +94,9 @@ export interface BreadcrumbLinkProps extends Omit<ChakraBreadcrumbLinkProps, 'on
 
 /**
  * Optimized click handler factory
+ * @param originalOnClick
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedClickHandler = (
   originalOnClick?: (event: React.MouseEvent) => void,
@@ -133,6 +136,7 @@ const useOptimizedClickHandler = (
 
 /**
  * Get breadcrumb size styles
+ * @param size
  */
 const getBreadcrumbSize = (size: BreadcrumbSize) => {
   const sizeStyles = {

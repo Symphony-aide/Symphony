@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState, useRef, useEffect } from 'react';
 import {
   Box,
   Input,
@@ -9,9 +8,10 @@ import {
   BoxProps,
   InputProps,
 } from '@chakra-ui/react';
-import { Search, Command as CommandIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle, debounce } from 'lodash-es';
+import { Search, Command as CommandIcon } from 'lucide-react';
+import React, { useMemo, useCallback, useState, useRef, useEffect } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -114,6 +114,8 @@ export interface CommandItemProps extends Omit<BoxProps, 'onSelect'> {
 
 /**
  * Default filter function
+ * @param items
+ * @param search
  */
 const defaultFilter = (items: CommandItemData[], search: string): CommandItemData[] => {
   if (!search.trim()) return items;
@@ -130,6 +132,9 @@ const defaultFilter = (items: CommandItemData[], search: string): CommandItemDat
 
 /**
  * Optimized search handler factory
+ * @param originalOnSearch
+ * @param debounceMs
+ * @param analytics
  */
 const useOptimizedSearchHandler = (
   originalOnSearch?: (search: string) => void,
@@ -162,6 +167,9 @@ const useOptimizedSearchHandler = (
 
 /**
  * Keyboard navigation hook
+ * @param items
+ * @param onSelect
+ * @param throttleMs
  */
 const useKeyboardNavigation = (
   items: CommandItemData[],

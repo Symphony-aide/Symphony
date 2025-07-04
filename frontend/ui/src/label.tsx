@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
 import { FormLabel, FormLabelProps } from '@chakra-ui/react';
+import React, { useMemo } from 'react';
 
 /**
  * Label variants
@@ -47,6 +47,8 @@ export interface LabelProps extends Omit<FormLabelProps, 'size'> {
 
 /**
  * Get label styles based on variant and size
+ * @param variant
+ * @param size
  */
 const getLabelStyles = (variant: LabelVariant, size: LabelSize) => {
   const sizeStyles = {

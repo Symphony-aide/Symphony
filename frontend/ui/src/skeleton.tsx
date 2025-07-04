@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
 import { Skeleton as ChakraSkeleton, SkeletonProps as ChakraSkeletonProps, VStack, HStack, Box } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import React, { useMemo } from 'react';
 
 /**
  * Skeleton variants
@@ -69,6 +69,10 @@ export interface SkeletonGroupProps {
 
 /**
  * Get skeleton styles based on variant and shape
+ * @param variant
+ * @param shape
+ * @param enableAnimations
+ * @param animationSpeed
  */
 const getSkeletonStyles = (
   variant: SkeletonVariant,
@@ -298,7 +302,11 @@ SkeletonGroupComponent.displayName = 'OptimizedSkeletonGroup';
  * Predefined skeleton layouts
  */
 export const SkeletonLayouts = {
-  /** Card layout with avatar, title, and description */
+  /**
+   * Card layout with avatar, title, and description
+   * @param isLoaded
+   * @param testId
+   */
   card: (isLoaded: boolean = false, testId?: string) => (
     <Box p={4} borderWidth="1px" borderRadius="lg">
       <HStack spacing={4} mb={4}>
@@ -333,7 +341,11 @@ export const SkeletonLayouts = {
     </Box>
   ),
 
-  /** List item layout */
+  /**
+   * List item layout
+   * @param isLoaded
+   * @param testId
+   */
   listItem: (isLoaded: boolean = false, testId?: string) => (
     <HStack spacing={3} p={3}>
       <SkeletonComponent
@@ -360,7 +372,12 @@ export const SkeletonLayouts = {
     </HStack>
   ),
 
-  /** Table row layout */
+  /**
+   * Table row layout
+   * @param isLoaded
+   * @param columns
+   * @param testId
+   */
   tableRow: (isLoaded: boolean = false, columns: number = 4, testId?: string) => (
     <HStack spacing={4} p={3}>
       {Array.from({ length: columns }, (_, index) => (

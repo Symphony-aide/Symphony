@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Select as ChakraSelect,
   SelectProps as ChakraSelectProps,
@@ -8,6 +7,7 @@ import {
   FormHelperText,
 } from '@chakra-ui/react';
 import { throttle, debounce } from 'lodash-es';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -100,6 +100,10 @@ export interface SelectProps extends Omit<ChakraSelectProps, 'size' | 'variant' 
 
 /**
  * Optimized change handler factory
+ * @param originalOnChange
+ * @param throttleMs
+ * @param debounceMs
+ * @param analytics
  */
 const useOptimizedChangeHandler = (
   originalOnChange?: (value: string, event: React.ChangeEvent<HTMLSelectElement>) => void,
@@ -118,7 +122,7 @@ const useOptimizedChangeHandler = (
         (window as any).gtag('event', analytics.action || 'select_change', {
           event_category: analytics.category || 'select',
           event_label: analytics.label,
-          value: value,
+          value,
         });
       }
       
@@ -144,6 +148,8 @@ const useOptimizedChangeHandler = (
 
 /**
  * Select validation hook
+ * @param value
+ * @param validation
  */
 const useSelectValidation = (
   value: string,
@@ -177,6 +183,7 @@ const useSelectValidation = (
 
 /**
  * Group options by group property
+ * @param options
  */
 const groupOptions = (options: SelectOptionData[]) => {
   const grouped = options.reduce((acc, option) => {

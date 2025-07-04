@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   ButtonGroup,
   Button,
@@ -6,6 +5,7 @@ import {
   ButtonProps,
 } from '@chakra-ui/react';
 import { throttle } from 'lodash-es';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -103,6 +103,9 @@ export interface ToggleItemProps extends Omit<ButtonProps, 'onClick'> {
 
 /**
  * Optimized change handler factory
+ * @param originalOnChange
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedChangeHandler = (
   originalOnChange?: (value: string | string[]) => void,

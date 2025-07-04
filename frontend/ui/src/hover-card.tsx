@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState, useRef } from 'react';
 import {
   Popover,
   PopoverTrigger,
@@ -10,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle, debounce } from 'lodash-es';
+import React, { useMemo, useCallback, useState, useRef } from 'react';
 
 /**
  * Hover card placement options
@@ -60,6 +60,10 @@ export interface HoverCardProps extends Omit<PopoverProps, 'children'> {
 
 /**
  * Optimized hover handler factory
+ * @param originalOnHover
+ * @param debounceMs
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedHoverHandler = (
   originalOnHover?: () => void,
@@ -101,6 +105,8 @@ const useOptimizedHoverHandler = (
 
 /**
  * Hover card hook
+ * @param hoverDelay
+ * @param hideDelay
  */
 const useHoverCard = (
   hoverDelay: number = 300,

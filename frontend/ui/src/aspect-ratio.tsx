@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
 import { AspectRatio as ChakraAspectRatio, AspectRatioProps as ChakraAspectRatioProps } from '@chakra-ui/react';
+import React, { useMemo } from 'react';
 
 /**
  * Common aspect ratios
@@ -42,6 +42,7 @@ export interface AspectRatioProps extends Omit<ChakraAspectRatioProps, 'ratio'> 
 
 /**
  * Get numeric ratio from preset
+ * @param ratio
  */
 const getAspectRatioValue = (ratio: number | AspectRatioPreset): number => {
   if (typeof ratio === 'number') return ratio;

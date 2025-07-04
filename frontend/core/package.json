@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "serve:ladle": "ladle serve"
   },
   "dependencies": {
     "@open-rpc/client-js": "^1.8.1",

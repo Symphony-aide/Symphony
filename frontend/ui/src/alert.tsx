@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback } from 'react';
 import {
   Alert as ChakraAlert,
   AlertIcon as ChakraAlertIcon,
@@ -10,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle } from 'lodash-es';
+import React, { useMemo, useCallback } from 'react';
 
 /**
  * Alert status types
@@ -67,6 +67,9 @@ export interface AlertProps extends Omit<ChakraAlertProps, 'status' | 'variant' 
 
 /**
  * Optimized dismiss handler factory
+ * @param originalOnDismiss
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedDismissHandler = (
   originalOnDismiss?: () => void,
@@ -106,6 +109,9 @@ const useOptimizedDismissHandler = (
 
 /**
  * Auto-dismiss hook
+ * @param onDismiss
+ * @param timeout
+ * @param enabled
  */
 const useAutoDismiss = (
   onDismiss?: () => void,

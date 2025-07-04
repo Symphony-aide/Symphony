@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState, useRef } from 'react';
 import {
   Menu,
   MenuButton,
@@ -13,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle } from 'lodash-es';
+import React, { useMemo, useCallback, useState, useRef } from 'react';
 
 /**
  * Context menu item data
@@ -74,6 +74,9 @@ export interface ContextMenuProps {
 
 /**
  * Optimized menu action handler factory
+ * @param originalOnMenuAction
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedMenuActionHandler = (
   originalOnMenuAction?: (item: ContextMenuItemData) => void,
@@ -145,6 +148,9 @@ const menuVariants = {
 
 /**
  * Render menu items recursively
+ * @param items
+ * @param onAction
+ * @param testId
  */
 const renderMenuItems = (
   items: ContextMenuItemData[],

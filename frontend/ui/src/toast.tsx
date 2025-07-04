@@ -1,10 +1,10 @@
-import React, { useMemo, useCallback } from 'react';
 import {
   useToast as useChakraToast,
   UseToastOptions as ChakraToastOptions,
   ToastId,
 } from '@chakra-ui/react';
 import { throttle } from 'lodash-es';
+import React, { useMemo, useCallback } from 'react';
 
 /**
  * Toast status types
@@ -82,6 +82,9 @@ export interface UseToastReturn {
 
 /**
  * Optimized toast handler factory
+ * @param originalToast
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedToastHandler = (
   originalToast: ReturnType<typeof useChakraToast>,
@@ -124,6 +127,7 @@ const useOptimizedToastHandler = (
 
 /**
  * Toast deduplication hook
+ * @param groupSimilar
  */
 const useToastDeduplication = (groupSimilar: boolean = false) => {
   const activeToasts = React.useRef<Map<string, ToastId>>(new Map());
@@ -157,6 +161,7 @@ const useToastDeduplication = (groupSimilar: boolean = false) => {
 
 /**
  * Optimized useToast hook
+ * @param defaultOptions
  */
 export const useToast = (defaultOptions?: Partial<ToastOptions>): UseToastReturn => {
   const chakraToast = useChakraToast();
@@ -246,6 +251,12 @@ export const useToast = (defaultOptions?: Partial<ToastOptions>): UseToastReturn
 export const promiseToast = {
   /**
    * Show a loading toast that updates based on promise resolution
+   * @param promise
+   * @param options
+   * @param options.loading
+   * @param options.success
+   * @param options.error
+   * @param options.toastOptions
    */
   promise: async <T,>(
     promise: Promise<T>,
@@ -301,6 +312,8 @@ export const promiseToast = {
 export const batchToast = {
   /**
    * Show multiple toasts with a delay between them
+   * @param toasts
+   * @param delay
    */
   sequence: async (
     toasts: Array<{ title: string; options?: ToastOptions }>,
@@ -318,6 +331,11 @@ export const batchToast = {
 
   /**
    * Show a group of related toasts
+   * @param toasts
+   * @param groupOptions
+   * @param groupOptions.title
+   * @param groupOptions.clearExisting
+   * @param groupOptions.staggerDelay
    */
   group: (
     toasts: Array<{ title: string; options?: ToastOptions }>,
@@ -363,6 +381,9 @@ const ToastContext = React.createContext<ToastContextValue | null>(null);
 
 /**
  * Toast provider component
+ * @param root0
+ * @param root0.children
+ * @param root0.defaultOptions
  */
 export const ToastProvider: React.FC<{
   children: React.ReactNode;

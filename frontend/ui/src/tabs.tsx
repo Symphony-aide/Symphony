@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Tabs as ChakraTabs,
   TabList,
@@ -9,6 +8,7 @@ import {
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle } from 'lodash-es';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -94,6 +94,9 @@ export interface TabsProps extends Omit<ChakraTabsProps, 'variant' | 'size' | 'o
 
 /**
  * Optimized tab change handler factory
+ * @param originalOnChange
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedTabChangeHandler = (
   originalOnChange?: (tabKey: string, tabIndex: number) => void,

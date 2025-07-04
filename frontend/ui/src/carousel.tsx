@@ -1,8 +1,8 @@
-import React, { useMemo, useCallback, useState, useRef, useEffect } from 'react';
 import { Box, Flex, IconButton, Button } from '@chakra-ui/react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle } from 'lodash-es';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useMemo, useCallback, useState, useRef, useEffect } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -89,6 +89,9 @@ export interface CarouselProps {
 
 /**
  * Optimized navigation handler factory
+ * @param originalHandler
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedNavigationHandler = (
   originalHandler?: (direction: 'prev' | 'next') => void,
@@ -124,6 +127,11 @@ const useOptimizedNavigationHandler = (
 
 /**
  * Autoplay hook
+ * @param currentIndex
+ * @param totalSlides
+ * @param onNext
+ * @param onPrev
+ * @param options
  */
 const useAutoplay = (
   currentIndex: number,

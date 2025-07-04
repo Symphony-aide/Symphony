@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Box,
   HStack,
@@ -9,9 +8,10 @@ import {
   Collapse,
   useDisclosure,
 } from '@chakra-ui/react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle } from 'lodash-es';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -83,6 +83,9 @@ export interface NavigationMenuProps {
 
 /**
  * Optimized navigation handler factory
+ * @param originalOnNavigate
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedNavigationHandler = (
   originalOnNavigate?: (item: NavigationMenuItemData) => void,

@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback } from 'react';
 import {
   Accordion as ChakraAccordion,
   AccordionItem as ChakraAccordionItem,
@@ -11,6 +10,7 @@ import {
   AccordionPanelProps as ChakraAccordionPanelProps,
 } from '@chakra-ui/react';
 import { throttle } from 'lodash-es';
+import React, { useMemo, useCallback } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -74,6 +74,9 @@ export interface AccordionPanelProps extends ChakraAccordionPanelProps {
 
 /**
  * Optimized change handler factory
+ * @param originalOnChange
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedChangeHandler = (
   originalOnChange?: (expandedIndex: number | number[]) => void,

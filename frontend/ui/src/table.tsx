@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Table as ChakraTable,
   Thead,
@@ -15,8 +14,9 @@ import {
   HStack,
   Checkbox,
 } from '@chakra-ui/react';
-import { ChevronUp, ChevronDown, ArrowUpDown } from 'lucide-react';
 import { throttle } from 'lodash-es';
+import { ChevronUp, ChevronDown, ArrowUpDown } from 'lucide-react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -116,6 +116,9 @@ export interface TableProps<T = any> extends Omit<ChakraTableProps, 'variant' | 
 
 /**
  * Optimized sort handler factory
+ * @param originalOnSort
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedSortHandler = (
   originalOnSort?: (key: string, direction: SortDirection) => void,
@@ -151,6 +154,9 @@ const useOptimizedSortHandler = (
 
 /**
  * Table sorting hook
+ * @param onSort
+ * @param persistSort
+ * @param storageKey
  */
 const useTableSort = (
   onSort?: (key: string, direction: SortDirection) => void,
@@ -192,6 +198,11 @@ const useTableSort = (
 
 /**
  * Table selection hook
+ * @param data
+ * @param rowKey
+ * @param onRowSelect
+ * @param persistSelection
+ * @param storageKey
  */
 const useTableSelection = (
   data: any[],
@@ -259,6 +270,8 @@ const useTableSelection = (
 
 /**
  * Default row key extractor
+ * @param row
+ * @param index
  */
 const defaultRowKey = (row: any, index: number) => {
   return row.id?.toString() || index.toString();
@@ -266,6 +279,23 @@ const defaultRowKey = (row: any, index: number) => {
 
 /**
  * Optimized Table Component
+ * @param root0
+ * @param root0.variant
+ * @param root0.size
+ * @param root0.columns
+ * @param root0.data
+ * @param root0.loading
+ * @param root0.emptyMessage
+ * @param root0.selectable
+ * @param root0.selectedRows
+ * @param root0.rowKey
+ * @param root0.onRowClick
+ * @param root0.onRowSelect
+ * @param root0.onSort
+ * @param root0.performance
+ * @param root0.storageKey
+ * @param root0.testId
+ * @param root0.analytics
  */
 const TableComponent = <T extends Record<string, any>>({
   variant = 'simple',

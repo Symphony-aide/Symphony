@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Switch as ChakraSwitch,
   SwitchProps as ChakraSwitchProps,
@@ -9,6 +8,7 @@ import {
   HStack,
 } from '@chakra-ui/react';
 import { throttle, debounce } from 'lodash-es';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 /**
@@ -85,6 +85,10 @@ export interface SwitchProps extends Omit<ChakraSwitchProps, 'size' | 'onChange'
 
 /**
  * Optimized change handler factory
+ * @param originalOnChange
+ * @param throttleMs
+ * @param debounceMs
+ * @param analytics
  */
 const useOptimizedChangeHandler = (
   originalOnChange?: (checked: boolean, event: React.ChangeEvent<HTMLInputElement>) => void,
@@ -129,6 +133,8 @@ const useOptimizedChangeHandler = (
 
 /**
  * Switch validation hook
+ * @param checked
+ * @param validation
  */
 const useSwitchValidation = (
   checked: boolean,
@@ -162,6 +168,9 @@ const useSwitchValidation = (
 
 /**
  * Get switch styles based on variant and size
+ * @param variant
+ * @param size
+ * @param enableAnimations
  */
 const getSwitchStyles = (variant: SwitchVariant, size: SwitchSize, enableAnimations: boolean) => {
   const sizeStyles = {

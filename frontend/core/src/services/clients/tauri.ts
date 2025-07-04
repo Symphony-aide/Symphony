@@ -1,6 +1,10 @@
 import {emit, listen} from "@tauri-apps/api/event";
 import {invoke} from "@tauri-apps/api/tauri";
 import Emittery from "emittery";
+
+import {StateData} from "../../types";
+import Configuration from "../../utils/config";
+
 import {
   BaseMessage,
   Client,
@@ -12,8 +16,6 @@ import {
   ManifestInfo as ManifestInfo,
   TerminalShellBuilderInfo,
 } from "./client.types";
-import Configuration from "../../utils/config";
-import {StateData} from "../../types";
 
 /**
  * Tauri Client

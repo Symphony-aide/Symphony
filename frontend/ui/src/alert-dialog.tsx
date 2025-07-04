@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback } from 'react';
 import {
   AlertDialog as ChakraAlertDialog,
   AlertDialogBody as ChakraAlertDialogBody,
@@ -12,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle } from 'lodash-es';
+import React, { useMemo, useCallback } from 'react';
 
 /**
  * Alert dialog sizes
@@ -70,6 +70,10 @@ export interface AlertDialogProps extends Omit<ChakraAlertDialogProps, 'onClose'
 
 /**
  * Optimized action handler factory
+ * @param originalHandler
+ * @param throttleMs
+ * @param analytics
+ * @param actionType
  */
 const useOptimizedActionHandler = (
   originalHandler?: () => void | Promise<void>,

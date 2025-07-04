@@ -1,4 +1,3 @@
-import React, { useMemo, useCallback, useState } from 'react';
 import {
   Menu,
   MenuButton,
@@ -10,9 +9,10 @@ import {
   Button,
   Box,
 } from '@chakra-ui/react';
-import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { throttle } from 'lodash-es';
+import { ChevronDown } from 'lucide-react';
+import React, { useMemo, useCallback, useState } from 'react';
 
 /**
  * Menubar item data
@@ -86,6 +86,9 @@ export interface MenubarProps {
 
 /**
  * Optimized menu action handler factory
+ * @param originalOnMenuAction
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedMenuActionHandler = (
   originalOnMenuAction?: (item: MenubarItemData, menuId: string) => void,
@@ -130,6 +133,9 @@ const menuVariants = {
 
 /**
  * Render menu items recursively
+ * @param items
+ * @param onAction
+ * @param testId
  */
 const renderMenuItems = (
   items: MenubarItemData[],

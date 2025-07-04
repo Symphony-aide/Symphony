@@ -1,4 +1,3 @@
-import React, { useMemo, useState, useCallback } from 'react';
 import {
   Avatar as ChakraAvatar,
   AvatarBadge as ChakraAvatarBadge,
@@ -7,6 +6,7 @@ import {
   AvatarGroupProps as ChakraAvatarGroupProps,
 } from '@chakra-ui/react';
 import { throttle } from 'lodash-es';
+import React, { useMemo, useState, useCallback } from 'react';
 
 /**
  * Avatar sizes
@@ -74,6 +74,9 @@ export interface AvatarGroupProps extends ChakraAvatarGroupProps {
 
 /**
  * Optimized click handler factory
+ * @param originalOnClick
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedClickHandler = (
   originalOnClick?: (event: React.MouseEvent<HTMLSpanElement>) => void,
@@ -113,6 +116,9 @@ const useOptimizedClickHandler = (
 
 /**
  * Image loading hook with caching
+ * @param src
+ * @param fallbackSrc
+ * @param enableCaching
  */
 const useImageLoading = (src?: string, fallbackSrc?: string, enableCaching: boolean = true) => {
   const [imageStatus, setImageStatus] = useState<'loading' | 'loaded' | 'error'>('loading');

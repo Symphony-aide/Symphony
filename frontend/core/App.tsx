@@ -1,9 +1,11 @@
-import { useEffect } from "react";
-import { createClient } from "./src/services/client";
-import { clientState } from "./src/state";
 import { useSetAtom } from "jotai";
-import { isTauri } from "./src/services/commands";
+import { useEffect } from "react";
 import React from "react";
+
+import { createClient } from "./src/services/client";
+import { isTauri } from "./src/services/commands";
+import { clientState } from "./src/state";
+
 
 /*
  * Retrieve the authentication token

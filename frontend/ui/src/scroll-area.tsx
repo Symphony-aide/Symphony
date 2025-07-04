@@ -1,6 +1,6 @@
-import React, { useMemo, useCallback, useRef, useState, useEffect } from 'react';
 import { Box, BoxProps } from '@chakra-ui/react';
 import { throttle } from 'lodash-es';
+import React, { useMemo, useCallback, useRef, useState, useEffect } from 'react';
 
 /**
  * Scroll area orientation
@@ -56,6 +56,9 @@ export interface ScrollAreaProps extends Omit<BoxProps, 'onScroll'> {
 
 /**
  * Optimized scroll handler factory
+ * @param originalOnScroll
+ * @param throttleMs
+ * @param analytics
  */
 const useOptimizedScrollHandler = (
   originalOnScroll?: (event: React.UIEvent<HTMLDivElement>) => void,
@@ -91,6 +94,9 @@ const useOptimizedScrollHandler = (
 
 /**
  * Scroll position hook
+ * @param scrollRef
+ * @param onScrollToTop
+ * @param onScrollToBottom
  */
 const useScrollPosition = (
   scrollRef: React.RefObject<HTMLDivElement>,
@@ -130,6 +136,8 @@ const useScrollPosition = (
 
 /**
  * Get scrollbar styles based on visibility
+ * @param visibility
+ * @param orientation
  */
 const getScrollbarStyles = (visibility: ScrollbarVisibility, orientation: ScrollAreaOrientation) => {
   const baseStyles = {
@@ -191,6 +199,11 @@ const getScrollbarStyles = (visibility: ScrollbarVisibility, orientation: Scroll
 
 /**
  * Smooth scroll utility
+ * @param element
+ * @param target
+ * @param target.x
+ * @param target.y
+ * @param duration
  */
 const smoothScrollTo = (
   element: HTMLElement,
