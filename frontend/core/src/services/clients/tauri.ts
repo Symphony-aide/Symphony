@@ -30,6 +30,7 @@ export class TauriClient extends Emittery<EventsInterface> implements Client {
 		this.config = config;
 
 		listen("to_webview", ({ payload }: { payload: BaseMessage }) => {
+			// @ts-ignore
 			this.emit(payload.msg_type, payload);
 		});
 

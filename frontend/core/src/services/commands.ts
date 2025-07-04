@@ -1,3 +1,4 @@
+// @ts-ignore
 export const isTauri = globalThis.__TAURI__ != null;
 
 /**

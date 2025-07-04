@@ -3,6 +3,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 
 import "./index.css";
+// @ts-ignore
 import App from "../app";
 
 import applyPatches from "./utils/patches";
@@ -25,5 +26,5 @@ const os = (() => {
 document.documentElement.setAttribute("platform", os);
 
 // Render the app
-const root = createRoot(document.getElementById("root"));
+const root = createRoot(document.getElementById("root") as HTMLElement);
 root.render(<App />);

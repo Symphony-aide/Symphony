@@ -1,4 +1,6 @@
+// @ts-ignore
 import { useSetAtom } from "jotai";
+// @ts-ignore
 import React, { type JSX, useEffect } from "react";
 
 import { createClient } from "./src/services/client";

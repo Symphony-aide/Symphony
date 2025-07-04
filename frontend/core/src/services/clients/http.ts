@@ -1,5 +1,6 @@
 //@ts-ignore
 import Emittery from "emittery";
+//@ts-ignore
 import * as simple_jsonrpc from "simple-jsonrpc-js";
 
 import { StateData } from "../../types";
