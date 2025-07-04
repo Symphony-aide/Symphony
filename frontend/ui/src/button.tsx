@@ -3,21 +3,19 @@ import { throttle, debounce } from 'lodash-es';
 import React, { useMemo } from 'react';
 
 /**
- * Custom button variants that extend Chakra's default variants
+ * Button variants compatible with Chakra UI v3
  */
 export type ButtonVariant = 
   | 'solid' 
   | 'outline' 
   | 'ghost' 
-  | 'subtle'
-  | 'surface'
-  | 'plain'
-  | 'gradient'; // Custom variant example
+  | 'link'
+  | 'unstyled';
 
 /**
- * Button sizes following design system conventions
+ * Button sizes following Chakra UI v3 conventions
  */
-export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';
 
 /**
  * Color schemes available for the button
@@ -25,7 +23,7 @@ export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ButtonColorScheme = 
   | 'gray' | 'red' | 'orange' | 'yellow' | 'green' 
   | 'teal' | 'blue' | 'cyan' | 'purple' | 'pink'
-  | 'primary' | 'secondary'; // Custom color schemes
+  | 'whiteAlpha' | 'blackAlpha';
 
 /**
  * Click handler optimization options
@@ -54,7 +52,7 @@ export interface PerformanceOptions {
 /**
  * Extended Button props interface with optimization features
  */
-export interface ButtonProps extends Omit<ChakraButtonProps, 'variant' | 'size' | 'colorScheme' | 'onClick'> {
+export interface ButtonProps {
   /** Button variant style */
   variant?: ButtonVariant;
   /** Button size */
@@ -81,6 +79,16 @@ export interface ButtonProps extends Omit<ChakraButtonProps, 'variant' | 'size' 
     category?: string;
     label?: string;
   };
+  /** Whether the button is in loading state */
+  isLoading?: boolean;
+  /** Whether the button is disabled */
+  isDisabled?: boolean;
+  /** Text to display when button is loading */
+  loadingText?: string;
+  /** Children of the button */
+  children?: React.ReactNode;
+  /** All other props from ChakraButtonProps */
+  [key: string]: any;
 }
 
 /**
@@ -162,6 +170,9 @@ const ButtonComponent = React.forwardRef<HTMLButtonElement, ButtonProps>(
       performance = { memoize: true },
       analytics,
       children,
+      isLoading,
+      isDisabled,
+      loadingText,
       ...rest
     },
     ref
@@ -169,39 +180,39 @@ const ButtonComponent = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // Optimized click handler
     const optimizedClickHandler = useOptimizedClickHandler(onClick, clickOptimization, analytics);
     
-    // Memoized Chakra props to prevent object recreation
-    const chakraProps = useMemo(() => {
-      const colorPalette = ['primary', 'secondary'].includes(colorScheme) ? 'blue' : colorScheme;
-      
-      return {
-        variant: variant === 'gradient' ? 'solid' : variant,
-        size,
-        colorScheme: colorPalette,
-        width: fullWidth ? 'full' : 'auto',
-        leftIcon,
-        rightIcon,
-        'data-testid': testId,
-        onClick: optimizedClickHandler,
-        ...rest,
-      };
-    }, [variant, size, colorScheme, fullWidth, leftIcon, rightIcon, testId, optimizedClickHandler, rest]);
-
-    // Custom CSS for gradient variant
-    const customStyle = variant === 'gradient' ? {
-      bgGradient: 'linear(to-r, blue.400, purple.500)',
-      color: 'white',
-      _hover: {
-        bgGradient: 'linear(to-r, blue.500, purple.600)',
-        transform: 'translateY(-2px)',
-        boxShadow: 'md',
-      }
-    } : {};
+    // Prepare props for Chakra UI v3 Button
+    const chakraProps = useMemo(() => ({
+      variant,
+      size,
+      colorScheme,
+      width: fullWidth ? 'full' : undefined,
+      leftIcon,
+      rightIcon,
+      'data-testid': testId,
+      onClick: optimizedClickHandler,
+      isLoading,
+      isDisabled,
+      loadingText,
+      ...rest
+    }), [
+      variant, 
+      size, 
+      colorScheme, 
+      fullWidth, 
+      leftIcon, 
+      rightIcon, 
+      testId, 
+      optimizedClickHandler, 
+      isLoading,
+      isDisabled,
+      loadingText,
+      rest
+    ]);
 
     return (
       <ChakraButton
         ref={ref}
         {...chakraProps}
-        {...customStyle}
       >
         {children}
       </ChakraButton>

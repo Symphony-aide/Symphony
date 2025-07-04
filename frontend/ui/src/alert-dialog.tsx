@@ -1,15 +1,7 @@
 import {
-  AlertDialog as ChakraAlertDialog,
-  AlertDialogBody as ChakraAlertDialogBody,
-  AlertDialogFooter as ChakraAlertDialogFooter,
-  AlertDialogHeader as ChakraAlertDialogHeader,
-  AlertDialogContent as ChakraAlertDialogContent,
-  AlertDialogOverlay as ChakraAlertDialogOverlay,
-  AlertDialogCloseButton as ChakraAlertDialogCloseButton,
-  AlertDialogProps as ChakraAlertDialogProps,
+  Button,
   useDisclosure,
 } from '@chakra-ui/react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { throttle } from 'lodash-es';
 import React, { useMemo, useCallback } from 'react';
 
@@ -33,9 +25,11 @@ export interface AlertDialogPerformanceOptions {
 }
 
 /**
- * Extended AlertDialog props with optimization features
+ * Extended AlertDialog props
  */
-export interface AlertDialogProps extends Omit<ChakraAlertDialogProps, 'onClose'> {
+export interface AlertDialogProps {
+  /** Dialog is open */
+  isOpen?: boolean;
   /** Dialog size */
   size?: AlertDialogSize;
   /** Dialog title */
@@ -49,7 +43,7 @@ export interface AlertDialogProps extends Omit<ChakraAlertDialogProps, 'onClose'
   /** Confirm button color scheme */
   confirmColorScheme?: string;
   /** Cancel button variant */
-  cancelVariant?: string;
+  cancelVariant?: 'solid' | 'outline' | 'ghost';
   /** Custom confirm handler */
   onConfirm?: () => void | Promise<void>;
   /** Custom cancel handler */
@@ -66,6 +60,8 @@ export interface AlertDialogProps extends Omit<ChakraAlertDialogProps, 'onClose'
     action?: string;
     label?: string;
   };
+  /** Dialog children */
+  children?: React.ReactNode;
 }
 
 /**
@@ -119,10 +115,13 @@ const alertDialogAnimationVariants = {
 
 /**
  * Optimized AlertDialog Component
+ * NOTE: This component is a placeholder and needs to be implemented 
+ * with the correct Dialog components from Chakra UI v3
  */
 const AlertDialogComponent = React.forwardRef<HTMLDivElement, AlertDialogProps>(
   (
     {
+      isOpen,
       size = 'md',
       title,
       description,
@@ -137,11 +136,10 @@ const AlertDialogComponent = React.forwardRef<HTMLDivElement, AlertDialogProps>(
       testId,
       analytics,
       children,
-      ...rest
     },
     ref
   ) => {
-    const [isLoading, setIsLoading] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
     const cancelRef = React.useRef<HTMLButtonElement>(null);
 
     // Optimized action handlers
@@ -163,14 +161,14 @@ const AlertDialogComponent = React.forwardRef<HTMLDivElement, AlertDialogProps>(
     const handleConfirm = useCallback(async () => {
       if (!optimizedConfirmHandler) return;
       
-      setIsLoading(true);
+      setLoading(true);
       try {
         await optimizedConfirmHandler();
         onClose?.();
       } catch (error) {
         console.error('Alert dialog confirm error:', error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     }, [optimizedConfirmHandler, onClose]);
 
@@ -180,128 +178,87 @@ const AlertDialogComponent = React.forwardRef<HTMLDivElement, AlertDialogProps>(
       onClose?.();
     }, [optimizedCancelHandler, onClose]);
 
-    // Memoized dialog props
-    const dialogProps = useMemo(() => ({
-      size,
-      leastDestructiveRef: cancelRef,
-      onClose: onClose || (() => {}),
-      'data-testid': testId,
-      ...rest,
-    }), [size, onClose, testId, rest]);
-
-    // Render dialog content
-    const dialogContent = useMemo(() => (
-      <ChakraAlertDialogContent>
-        {performance.enableAnimations ? (
-          <motion.div
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={alertDialogAnimationVariants}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-          >
-            <ChakraAlertDialogHeader fontSize="lg" fontWeight="bold">
-              {title}
-            </ChakraAlertDialogHeader>
-
-            <ChakraAlertDialogBody>
-              {description}
-              {children}
-            </ChakraAlertDialogBody>
-
-            <ChakraAlertDialogFooter>
-              <button
-                ref={cancelRef}
-                onClick={handleCancel}
-                disabled={isLoading}
-              >
-                {cancelText}
-              </button>
-              <button
-                onClick={handleConfirm}
-                disabled={isLoading}
-                style={{ marginLeft: 8 }}
-              >
-                {isLoading ? 'Loading...' : confirmText}
-              </button>
-            </ChakraAlertDialogFooter>
-          </motion.div>
-        ) : (
-          <>
-            <ChakraAlertDialogHeader fontSize="lg" fontWeight="bold">
-              {title}
-            </ChakraAlertDialogHeader>
-
-            <ChakraAlertDialogBody>
-              {description}
-              {children}
-            </ChakraAlertDialogBody>
-
-            <ChakraAlertDialogFooter>
-              <button
-                ref={cancelRef}
-                onClick={handleCancel}
-                disabled={isLoading}
-              >
-                {cancelText}
-              </button>
-              <button
-                onClick={handleConfirm}
-                disabled={isLoading}
-                style={{ marginLeft: 8 }}
-              >
-                {isLoading ? 'Loading...' : confirmText}
-              </button>
-            </ChakraAlertDialogFooter>
-          </>
-        )}
-      </ChakraAlertDialogContent>
-    ), [
-      performance.enableAnimations,
-      title,
-      description,
-      children,
-      handleCancel,
-      handleConfirm,
-      cancelText,
-      confirmText,
-      isLoading
-    ]);
-
+    // TEMPORARY IMPLEMENTATION: 
+    // A proper Dialog component from Chakra UI v3 should be used
+    if (!isOpen) return null;
+    
     return (
-      <ChakraAlertDialog ref={ref} {...dialogProps}>
-        <ChakraAlertDialogOverlay>
-          {dialogContent}
-        </ChakraAlertDialogOverlay>
-      </ChakraAlertDialog>
+      <div 
+        ref={ref}
+        role="alertdialog"
+        aria-modal="true"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'rgba(0,0,0,0.5)',
+          zIndex: 1000,
+        }}
+      >
+        <div
+          style={{
+            background: 'white',
+            borderRadius: '8px',
+            maxWidth: '500px',
+            width: '100%',
+            padding: '16px',
+          }}
+        >
+          {title && <div style={{ fontWeight: 'bold', fontSize: '18px' }}>{title}</div>}
+          
+          {description && <div style={{ marginTop: '8px' }}>{description}</div>}
+          
+          {children && <div style={{ marginTop: '16px' }}>{children}</div>}
+          
+          <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+            <Button
+              ref={cancelRef}
+              onClick={handleCancel}
+              disabled={loading}
+              variant={cancelVariant}
+              mr={3}
+            >
+              {cancelText}
+            </Button>
+            <Button
+              onClick={handleConfirm}
+              disabled={loading}
+              colorScheme={confirmColorScheme}
+              loading={loading}
+            >
+              {confirmText}
+            </Button>
+          </div>
+        </div>
+      </div>
     );
   }
 );
 
+// Set display name for better debugging
 AlertDialogComponent.displayName = 'OptimizedAlertDialog';
 
 /**
- * Memoized OptimizedAlertDialog export
+ * Memoized AlertDialog export for maximum performance
  */
-export const OptimizedAlertDialog = React.memo(AlertDialogComponent, (prevProps, nextProps) => {
-  if (!prevProps.performance?.memoize && !nextProps.performance?.memoize) {
-    return false;
-  }
+export const OptimizedAlertDialog = React.memo(AlertDialogComponent);
 
-  const keysToCompare: (keyof AlertDialogProps)[] = [
-    'size', 'title', 'description', 'confirmText', 'cancelText', 'isOpen'
-  ];
+/**
+ * Hook to use an optimized alert dialog
+ */
+export const useAlertDialog = () => {
+  const disclosure = useDisclosure();
   
-  return keysToCompare.every(key => prevProps[key] === nextProps[key]);
-});
+  return {
+    ...disclosure,
+    AlertDialog: OptimizedAlertDialog,
+  };
+};
 
-// Re-export Chakra components for convenience
-export const AlertDialogBody = ChakraAlertDialogBody;
-export const AlertDialogFooter = ChakraAlertDialogFooter;
-export const AlertDialogHeader = ChakraAlertDialogHeader;
-export const AlertDialogContent = ChakraAlertDialogContent;
-export const AlertDialogOverlay = ChakraAlertDialogOverlay;
-export const AlertDialogCloseButton = ChakraAlertDialogCloseButton;
-
-// Default export
+// Default export for convenience
 export default OptimizedAlertDialog;
