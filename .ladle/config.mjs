@@ -3,6 +3,14 @@ import { defineConfig } from "@ladle/react";
 export default defineConfig({
   stories: "../src/**/*.stories.{js,jsx,ts,tsx}",
   addons: {
+    theme: {
+      enabled: true,
+      defaultState: 'dark',
+    },
+    rtl: {
+      enabled: true,
+      defaultState: false,
+    },
     a11y: {
       enabled: true,
     },
@@ -22,4 +30,6 @@ export default defineConfig({
       },
     },
   },
+  defaultStory: '',
+  viteConfig: '../frontend/core/vite.config.ts',
 });
