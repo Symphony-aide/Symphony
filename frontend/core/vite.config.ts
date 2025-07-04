@@ -18,9 +18,7 @@ export default defineConfig(() => ({
     react(),
     checker({
       typescript: true,
-      eslint: {
-        lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
-      },
+      // Disable ESLint checker due to compatibility issues with ESLint v9
     }),
     tsconfigPaths()
   ],
