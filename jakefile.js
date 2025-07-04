@@ -26,6 +26,6 @@ task('desktop', async function () {
 });
 
 desc('Build the desktop');
-task('build:desktop', async function () {
+task('build_desktop', async function () {
     await run('cargo tauri build', [], desktop_path)
 });

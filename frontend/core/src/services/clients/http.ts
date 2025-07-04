@@ -12,7 +12,7 @@ import {
   ManifestInfo,
   TerminalShellBuilderInfo,
 } from "./client.types";
-import { StateData } from "../../types";
+import {StateData} from "../../types";
 
 /**
  * HTTP + WebSockets client
@@ -20,12 +20,11 @@ import { StateData } from "../../types";
  * This makes it possible to comunicate with a Symphony Core via HTTP and WebSockets. This is useful when using Symphony remotely
  */
 export class HTTPClient extends Emittery implements Client {
+  public config: Configuration<string>;
   // Internal rpc client
   private rpc: simple_jsonrpc;
-
   // Internal websockets client
   private socket: WebSocket;
-  public config: Configuration<string>;
 
   constructor(config: Configuration<string>) {
     super();

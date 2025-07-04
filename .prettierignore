@@ -1,0 +1,17 @@
+# .prettierignore
+**/node_modules/
+dist/
+build/
+coverage/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+.DS_Store
+*.log
+*.tgz
+*.tar.gz
+pnpm-lock.yaml
+
+# .eslintignore
+*.config.ts

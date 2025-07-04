@@ -1,8 +1,9 @@
-import { BaseMessage } from "../../services/clients/client.types";
+import {BaseMessage} from "../../services/clients/client.types";
 
 // Define a simplified StateData interface since the original is missing
 export interface StateData {
   id: number;
+
   [key: string]: any;
 }
 

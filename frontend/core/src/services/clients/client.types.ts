@@ -1,6 +1,6 @@
 import Emittery from "emittery";
 import Configuration from "../../utils/config";
-import { ShowPopup, StateData, StateUpdated } from "../../types";
+import {ShowPopup, StateData, StateUpdated} from "../../types";
 
 export interface BaseMessage {
   state_id: number;
@@ -23,6 +23,7 @@ export interface FileFormatText {
 }
 
 export type FileFormat = "Unknown" | "Binary" | FileFormatText;
+
 export interface FileInfo {
   content: string;
   format: FileFormat;
@@ -36,6 +37,7 @@ export interface ManifestExtension {
   repository: string;
   main: string | null;
 }
+
 export interface ManifestInfo {
   extension: ManifestExtension;
 }
