@@ -1,8 +1,8 @@
-import {emit, listen} from "@tauri-apps/api/event";
-import {invoke} from "@tauri-apps/api/tauri";
+import { emit, listen } from "@tauri-apps/api/event";
+import { invoke } from "@tauri-apps/api/tauri";
 import Emittery from "emittery";
 
-import {StateData} from "../../types";
+import { StateData } from "../../types";
 import Configuration from "../../utils/config";
 
 import {
@@ -29,7 +29,7 @@ export class TauriClient extends Emittery<EventsInterface> implements Client {
     super();
     this.config = config;
 
-    listen("to_webview", ({payload}: { payload: BaseMessage }) => {
+    listen("to_webview", ({ payload }: { payload: BaseMessage }) => {
       this.emit(payload.msg_type, payload);
     });
 

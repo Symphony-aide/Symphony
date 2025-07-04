@@ -5,7 +5,6 @@ import { createClient } from "./src/services/client";
 import { isTauri } from "./src/services/commands";
 import { clientState } from "./src/state";
 
-
 /*
  * Retrieve the authentication token
  */
@@ -46,8 +45,8 @@ const App = (): JSX.Element => {
   return (
     <div>
       <ClientRoot />
-      <div style={{ textAlign: 'center' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Hello World!</h1>
+      <div style={{ textAlign: "center" }}>
+        <h1 style={{ fontSize: "2rem", fontWeight: "bold" }}>Hello World!</h1>
         <p>The Symphony app is running with a minimal UI.</p>
       </div>
     </div>

@@ -25,6 +25,6 @@ const applyPatches = (): void => {
     },
     true,
   );
-}
+};
 
 export default applyPatches;

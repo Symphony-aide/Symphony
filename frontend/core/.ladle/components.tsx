@@ -3,9 +3,5 @@ import { Provider as JotaiProvider } from "jotai";
 import React from "react";
 
 export const Provider: GlobalProvider = ({ children }) => {
-  return (
-    <JotaiProvider>
-      {children}
-    </JotaiProvider>
-  );
+  return <JotaiProvider>{children}</JotaiProvider>;
 };
