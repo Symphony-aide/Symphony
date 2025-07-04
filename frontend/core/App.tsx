@@ -9,12 +9,12 @@ import { clientState } from "./src/state";
  * Retrieve the authentication token
  */
 const getToken = async (): Promise<string | null> => {
-  if (isTauri) {
-    return "symphony_token";
-  } else {
-    // Or query the URL to get the token
-    return new URL(location.toString()).searchParams.get("token");
-  }
+	if (isTauri) {
+		return "symphony_token";
+	} else {
+		// Or query the URL to get the token
+		return new URL(location.toString()).searchParams.get("token");
+	}
 };
 
 /**
@@ -22,35 +22,35 @@ const getToken = async (): Promise<string | null> => {
  * @returns {null} The root client element
  */
 const ClientRoot = (): null => {
-  const setClient = useSetAtom(clientState);
+	const setClient = useSetAtom(clientState);
 
-  useEffect(() => {
-    // Retrieve the token and then create a new client
-    void getToken().then(async (token) => {
-      if (token !== null) {
-        const client = await createClient(token);
+	useEffect(() => {
+		// Retrieve the token and then create a new client
+		void getToken().then(async token => {
+			if (token !== null) {
+				const client = await createClient(token);
 
-        // Wait until it's connected
-        void client.whenConnected().then(() => {
-          setClient(client);
-        });
-      }
-    });
-  }, [setClient]);
+				// Wait until it's connected
+				void client.whenConnected().then(() => {
+					setClient(client);
+				});
+			}
+		});
+	}, [setClient]);
 
-  return null;
+	return null;
 };
 
 const App = (): JSX.Element => {
-  return (
-    <div>
-      <ClientRoot />
-      <div style={{ textAlign: "center" }}>
-        <h1 style={{ fontSize: "2rem", fontWeight: "bold" }}>Hello World!</h1>
-        <p>The Symphony app is running with a minimal UI.</p>
-      </div>
-    </div>
-  );
+	return (
+		<div>
+			<ClientRoot />
+			<div style={{ textAlign: "center" }}>
+				<h1 style={{ fontSize: "2rem", fontWeight: "bold" }}>Hello World!</h1>
+				<p>The Symphony app is running with a minimal UI.</p>
+			</div>
+		</div>
+	);
 };
 
 export default App;
