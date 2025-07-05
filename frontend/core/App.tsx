@@ -2,6 +2,9 @@
 import { useSetAtom } from "jotai";
 // @ts-ignore
 import React, { type JSX, useEffect } from "react";
+import { Box, Button, Container, Heading, Text, VStack } from "@chakra-ui/react";
+import { system, ThemeProvider } from "@symphony/shared";
+import { EditorInput } from "@symphony/code-editor";
 
 import { createClient } from "./src/services/client";
 import { isTauri } from "./src/services/commands";
@@ -45,13 +48,43 @@ const ClientRoot = (): null => {
 
 const App = (): JSX.Element => {
 	return (
-		<div>
+		<ThemeProvider value={system}>
 			<ClientRoot />
-			<div style={{ textAlign: "center" }}>
-				<h1 style={{ fontSize: "2rem", fontWeight: "bold" }}>Hello World!</h1>
-				<p>The Symphony app is running with a minimal UI.</p>
-			</div>
-		</div>
+			<Container maxW="container.md" py={8}>
+				<VStack gap={8} align="stretch">
+					<Box textAlign="center">
+						<Heading as="h1" size="xl" color="primary.solid" mb={4}>
+							Symphony
+						</Heading>
+						<Text fontSize="lg">
+							Welcome to Symphony with custom themed components
+						</Text>
+					</Box>
+					
+					<VStack gap={6} align="stretch">
+						<EditorInput 
+							label="Title" 
+							placeholder="Enter a title..."
+						/>
+						
+						<EditorInput 
+							label="Description" 
+							placeholder="Enter a description..."
+							multiline
+						/>
+						
+						<Button 
+							colorPalette="secondary"
+							variant="solid"
+							alignSelf="flex-start"
+							mt={4}
+						>
+							Submit
+						</Button>
+					</VStack>
+				</VStack>
+			</Container>
+		</ThemeProvider>
 	);
 };
 
