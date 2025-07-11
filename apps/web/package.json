@@ -1,28 +1,25 @@
 {
-	"name": "symphony",
-	"version": "0.1.0",
-	"license": "MIT",
-	"type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "vite build",
-		"serve": "vite preview"
-	},
-	"dependencies": {
-		"@open-rpc/client-js": "^1.8.1",
-		"@tauri-apps/api": "^1.0.0-rc.6",
-		"@symphony/shared": "workspace:*",
-		"@symphony/code-editor": "workspace:*",
-		"emittery": "^1.2.0",
-		"i18next": "^21.5.4",
-		"react-i18next": "^11.14.3",
-		"simple-jsonrpc-js": "^1.2.0"
-	},
-	"devDependencies": {
-		"@vitejs/plugin-react": "4.5.2",
-		"vite": "^6.3.5",
-		"vite-plugin-checker": "^0.9.3",
-		"vite-tsconfig-paths": "^5.1.4",
-		"vitest": "^3.2.4"
-	}
+  "name": "web",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "dependencies": {
+    "config": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "shared-lib": "workspace:*",
+    "tsconfig": "workspace:*",
+    "ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.3",
+    "vite": "latest"
+  }
 }

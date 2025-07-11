@@ -7,11 +7,8 @@ Installs dependencies and builds the project with comprehensive error handling
 import os
 import sys
 import subprocess
-import shutil
 import time
-import json
-from pathlib import Path
-from typing import List, Tuple, Optional
+from typing import List, Optional
 from dataclasses import dataclass
 
 # Rich terminal libraries (fallback to basic if not available)
@@ -19,7 +16,6 @@ try:
     from rich.console import Console
     from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
     from rich.panel import Panel
-    from rich.text import Text
     from rich.table import Table
     from rich.prompt import Confirm
     RICH_AVAILABLE = True
@@ -31,7 +27,6 @@ except ImportError:
         from rich.console import Console
         from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
         from rich.panel import Panel
-        from rich.text import Text
         from rich.table import Table
         from rich.prompt import Confirm
         RICH_AVAILABLE = True
