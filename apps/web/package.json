@@ -1,5 +1,5 @@
 {
-	"name": "@symphony/core",
+	"name": "symphony",
 	"version": "0.1.0",
 	"license": "MIT",
 	"type": "module",

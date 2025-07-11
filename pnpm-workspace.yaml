@@ -1,6 +1,3 @@
 packages:
-  - frontend/core
-  - frontend/editor
-  - frontend/ui
-  - frontend/shared
-  - frontend/code-editor
+  - apps/web
+  - packages/*
