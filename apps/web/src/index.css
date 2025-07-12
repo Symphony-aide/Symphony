@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -34,6 +37,40 @@
     --ring: 24 5.4% 63.9%;
 
     --radius: 0.5rem;
+
+    --brand: 265 63% 38%;
+    --brand-50: 265 63% 95%;
+    --brand-100: 265 63% 88%;
+    --brand-200: 265 63% 78%;
+    --brand-300: 265 63% 68%;
+    --brand-400: 265 63% 60%;
+    --brand-500: 265 63% 38%;
+    --brand-600: 265 63% 31%;
+    --brand-700: 265 63% 25%;
+    --brand-800: 265 63% 19%;
+    --brand-900: 265 63% 12%;
+    --brand-950: 265 63% 8%;
+
+    --secondary: 240 41% 10%;
+    --secondary-50: 240 10% 93%;
+    --secondary-100: 240 10% 85%;
+    --secondary-200: 240 10% 70%;
+    --secondary-300: 240 10% 55%;
+    --secondary-400: 240 20% 40%;
+    --secondary-500: 240 41% 10%;
+    --secondary-600: 240 41% 8%;
+    --secondary-700: 240 41% 6%;
+    --secondary-800: 240 41% 4%;
+    --secondary-900: 240 41% 3%;
+    --secondary-950: 240 41% 1%;
+  }
+
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  code, pre, .font-fira {
+    font-family: 'Fira Code', monospace;
   }
 
   .dark {

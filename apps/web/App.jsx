@@ -5,7 +5,7 @@ function App() {
 
   return (
     <div className='space-y-8 p-20'>
-      <h1 className='text-2xl bg-red-500 font-bold'>Button Variants</h1>
+      <h1 className='text-2xl bg-blue-500 font-bold'>Button Variants</h1>
       <div className='flex flex-wrap gap-4'>
         <Button>Default</Button>
         <Button variant='destructive'>Destructive</Button>
