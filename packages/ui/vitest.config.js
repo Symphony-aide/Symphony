@@ -1,8 +1,8 @@
-const { defineConfig } = require('vitest/config');
-const react = require('@vitejs/plugin-react');
-const sharedConfigs = require('config/vitest.shared.config');
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import sharedConfigs from 'config/vitest.shared.config';
 
-module.exports = defineConfig({
+export default defineConfig({
   ...sharedConfigs,
   plugins: [react()],
   test: {
