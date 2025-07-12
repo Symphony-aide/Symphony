@@ -1,4 +1,5 @@
 import { Button } from 'ui';
+import Editor from "@symphony/code-editor"
 
 function App() {
 
@@ -13,6 +14,9 @@ function App() {
         <Button variant='ghost'>Ghost</Button>
         <Button variant='link'>Link</Button>
       </div>
+
+      <Editor/>
+      
 
       <h2 className='text-xl font-bold'>Button Sizes</h2>
       <div className='flex flex-wrap items-center gap-4'>
