@@ -1,5 +1,5 @@
 /** @type { import('@storybook/react-vite').Preview } */
-import '../dist/tailwind.css'; // Import global styles
+import '../dist/styles/tailwind.css'; // Import global styles
 
 const preview = {
   parameters: {

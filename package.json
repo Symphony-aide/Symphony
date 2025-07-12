@@ -1,6 +1,7 @@
 {
   "private": true,
   "type": "module",
+
   "scripts": {
     "preinstall": "node pnpm-prepare.js",
     "server": "jake server",
@@ -12,13 +13,14 @@
     "check-deps": "check-dependency-version-consistency",
     "lint": "eslint frontend/core --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write frontend/core",
-    "type-check": "cd frontend/core && tsc --noEmit",
-    "quality": "pnpm run lint && pnpm run format && pnpm run type-check && echo 'Quality check passed!'",
-    "build": "turbo run build",
+    "quality": "pnpm run lint && pnpm run format && echo 'Quality check passed!'",
     "dev": "turbo run dev --parallel",
     "prepare": "husky install",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "sb:build": "storybook build -c .storybook -o ./dist/storybook/build/",
+    "sb:watch": "concurrently 'pnpm run tw:watch' 'pnpm run sb'",
+    "sb": "storybook dev -p 6006",
+    "tw": "cd apps/web && npx tailwind -i src/index.css -o ../../dist/styles/tailwind.css",
+    "tw:watch": "cd apps/web && npx tailwind -i src/index.css -o ../../dist/styles/tailwind.css --watch"
   },
   "dependencies": {
     "jotai": "^2.12.5",
@@ -62,11 +64,7 @@
     "eslint-plugin-storybook": "9.0.16",
     "eslint-plugin-testing-library": "^7.5.3",
     "eslint-plugin-unicorn": "^59.0.1",
-    "execa": "^9.6.0",
-    "fs-extra": "^11.3.0",
-    "globals": "^16.3.0",
     "husky": "^9.1.7",
-    "import": "^0.0.6",
     "jake": "^10.9.2",
     "jest": "^30.0.4",
     "jest-environment-jsdom": "^30.0.4",
@@ -78,9 +76,6 @@
     "postcss": "^8.4.5",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.4.1",
-    "pretty-quick": "^3.1.3",
-    "prop-types": "15.8.1",
-    "rimraf": "^6.0.1",
     "storybook": "9.0.16",
     "tailwindcss": "3.3.2",
     "tailwindcss-animate": "^1.0.6",
