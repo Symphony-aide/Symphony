@@ -1,18 +1,12 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
+const { defineConfig } = require('vitest/config');
+const react = require('@vitejs/plugin-react');
+const sharedConfigs = require('config/vitest.shared.config');
 
-// https://vite.dev/config/
-export default defineConfig({
+module.exports = defineConfig({
+  ...sharedConfigs,
   plugins: [react()],
-  server: {
-    port: 3000,
-    host: true,
-    open: true,
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
+  test: {
+    ...sharedConfigs.test,
+    environment: 'jsdom',
   },
 });
