@@ -1,14 +1,11 @@
-import React from 'react';
-import { useState } from 'react';
 import { Button } from 'ui';
 
 function App() {
-  const [count, setCount] = useState(0);
 
   return (
-    <div className='space-y-20 p-20'>
+    <div className='space-y-8 p-20'>
       <h1 className='text-2xl bg-red-500 font-bold'>Button Variants</h1>
-      <div className='bg-green-500'>
+      <div className='flex flex-wrap gap-4'>
         <Button>Default</Button>
         <Button variant='destructive'>Destructive</Button>
         <Button variant='outline'>Outline</Button>

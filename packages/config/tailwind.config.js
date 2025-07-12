@@ -4,11 +4,12 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 module.exports = {
   darkMode: ['class'],
   content: [
-    './pages/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
-    './app/**/*.{js,ts,jsx,tsx}',
-    './src/**/*.{js,ts,jsx,tsx}',
-    '../../packages/ui/**/*.{js,ts,jsx,tsx}', // Add the ui package
+    './pages/**/*.{html,js,ts,jsx,tsx}',
+    './components/**/*.{html,js,ts,jsx,tsx}',
+    './app/**/*.{html,js,ts,jsx,tsx}',
+    './src/**/*.{html,js,ts,jsx,tsx}',
+    '../../apps/**/*.{html,js,ts,jsx,tsx}',
+    '../../packages/ui/**/*.{html,js,ts,jsx,tsx}', // Add the ui package
   ],
   theme: {
     screens: {
