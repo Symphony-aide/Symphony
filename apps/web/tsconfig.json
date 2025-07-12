@@ -1,6 +1,25 @@
 {
   "extends": "tsconfig/react-library.json",
-  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],
-  "compilerOptions": {}
+  "compilerOptions": {
+		"target": "ESNext",
+		"useDefineForClassFields": true,
+		"lib": ["DOM", "DOM.Iterable", "ESNext"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"strict": true,
+		"module": "ESNext",
+		"moduleResolution": "Node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": true,
+		"jsx": "react-jsx",
+		"forceConsistentCasingInFileNames": true,
+		"baseUrl": "src",
+		"paths": {
+			"@/*": ["./src/*"]
+		}
+	},
+	"include": ["**/*.ts", "**/*.tsx", "./src/*/**/*", "./src/vite-env.d.ts", "App.jsx"],
 }
