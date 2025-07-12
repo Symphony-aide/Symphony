@@ -12,7 +12,7 @@
     "config": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "shared-lib": "workspace:*",
+    "@symphony/shared": "workspace:*",
     "tsconfig": "workspace:*",
     "ui": "workspace:*",
     "@open-rpc/client-js": "^1.8.1",

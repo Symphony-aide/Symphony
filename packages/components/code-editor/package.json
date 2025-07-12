@@ -1,0 +1,10 @@
+{
+  "name": "@symphony/code-editor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "ui": "workspace:*",
+    "tsconfig": "workspace:*"
+  }
+} 
