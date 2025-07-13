@@ -1,43 +1,23 @@
-import { Button } from 'ui';
-import Editor from "@symphony/code-editor"
+import { Button } from "ui";
+import { Editor, ShortcutSettings } from "@symphony/code-editor";
 
 function App() {
-
-  return (
-    <div className='space-y-8 p-20'>
-      <h1 className='text-2xl bg-blue-500 font-bold'>Button Variants</h1>
-      <div className='flex flex-wrap gap-4'>
-        <Button>Default</Button>
-        <Button variant='destructive'>Destructive</Button>
-        <Button variant='outline'>Outline</Button>
-        <Button variant='secondary'>Secondary</Button>
-        <Button variant='ghost'>Ghost</Button>
-        <Button variant='link'>Link</Button>
-      </div>
-
-      <Editor/>
-      
-
-      <h2 className='text-xl font-bold'>Button Sizes</h2>
-      <div className='flex flex-wrap items-center gap-4'>
-        <Button size='sm'>Small</Button>
-        <Button size='default'>Default</Button>
-        <Button size='lg'>Large</Button>
-        <Button size='icon'>🔔</Button>
-      </div>
-
-      <h2 className='text-xl font-bold'>Button States</h2>
-      <div className='flex flex-wrap gap-4'>
-        <Button disabled>Disabled</Button>
-        <Button variant='destructive' disabled>
-          Disabled Destructive
-        </Button>
-        <Button variant='outline' disabled>
-          Disabled Outline
-        </Button>
-      </div>
-    </div>
-  );
+	return (
+		<div className='h-screen w-screen bg-gray-900 p-4 grid grid-cols-2 gap-4'>
+			<div className='border border-gray-700 rounded-lg p-2'>
+				<Editor
+					initialCode={`console.log("Hello World!");`}
+					language='javascript'
+					theme='vs-dark'
+					onSave={code => console.log("Saved code:", code)}
+					onRun={code => console.log("Run code:", code)}
+				/>
+			</div>
+			<div className='border border-gray-700 rounded-lg p-2'>
+				<ShortcutSettings />
+			</div>
+		</div>
+	);
 }
 
 export default App;
