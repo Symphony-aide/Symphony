@@ -1,5 +1,6 @@
+//App.jsx
 import { Button } from "ui";
-import { Editor, ShortcutSettings } from "@symphony/code-editor";
+import { Editor, ShortcutSettingsModal } from "@symphony/code-editor";
 
 function App() {
 	return (
@@ -12,9 +13,6 @@ function App() {
 					onSave={code => console.log("Saved code:", code)}
 					onRun={code => console.log("Run code:", code)}
 				/>
-			</div>
-			<div className='border border-gray-700 rounded-lg p-2'>
-				<ShortcutSettings />
 			</div>
 		</div>
 	);

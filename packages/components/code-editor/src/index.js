@@ -1,2 +1,3 @@
+//index.js
 export { default as Editor } from "./Editor";
-export { default as ShortcutSettings } from "./ShortcutSettings";
+export { default as ShortcutSettingsModal } from "./ShortcutSettingsModal";

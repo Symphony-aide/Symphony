@@ -1,108 +1,247 @@
-import React, { useEffect, useRef, useCallback, useState } from "react";
-import * as monaco from "@monaco-editor/react";
-import { Terminal } from "@xterm/xterm";
-import { FitAddon } from "@xterm/addon-fit";
-import hotkeysImport from "hotkeys-js";
-import { useAtom } from "jotai";
-import { shortcutsAtom } from "./shortcutsAtom.js";
-import "@xterm/xterm/css/xterm.css";
+//Editor.jsx
+import React, { useState, useEffect, useRef } from "react";
+import FileExplorer from "./FileExplorer";
+import EditorPanel from "./EditorPanel";
+import ShortcutSettingsModal from "./ShortcutSettingsModal";
+import hotkeys from "hotkeys-js";
+import TerminalComponent from "./Terminal";
+import StatusBar from "./StatusBar";
+import GlobalSearchReplace from "./GlobalSearchReplace";
 
-const hotkeys = hotkeysImport;
-
-export default function Editor({ initialCode = "", language = "javascript", theme = "vs-dark", onSave, onRun }) {
-	const terminalRef = useRef(null);
-	const term = useRef(null);
-	const fitAddon = useRef(null);
-
-	// Load saved code from localStorage if exists
-	const [code, setCode] = useState(() => {
-		return localStorage.getItem("savedCode") ?? initialCode;
+export default function Editor() {
+	// 📌 Load files from localStorage
+	const [files, setFiles] = useState(() => {
+		try {
+			const saved = JSON.parse(localStorage.getItem("files"));
+			if (Array.isArray(saved) && saved.length) return saved;
+		} catch {}
+		return [{ name: "untitled.txt", content: "" }];
 	});
-	const [shortcuts] = useAtom(shortcutsAtom);
 
-	// Initialize Terminal
+	// 📌 Load active file name from localStorage
+	const [activeFileName, setActiveFileName] = useState(() => {
+		return localStorage.getItem("activeFileName") || "untitled.txt";
+	});
+
+	// 📌 Save files when they change
 	useEffect(() => {
-		term.current = new Terminal({
-			cursorBlink: true,
-			fontSize: 14,
-			theme: { background: "#1e1e1e" },
-		});
-		fitAddon.current = new FitAddon();
+		localStorage.setItem("files", JSON.stringify(files));
+	}, [files]);
 
-		if (terminalRef.current) {
-			term.current.loadAddon(fitAddon.current);
-			term.current.open(terminalRef.current);
-			fitAddon.current.fit();
-			term.current.writeln("Welcome to the embedded terminal!");
+	// 📌 Save activeFileName when it changes
+	useEffect(() => {
+		localStorage.setItem("activeFileName", activeFileName);
+	}, [activeFileName]);
+
+	// 📌 Ensure activeFileName is valid
+	useEffect(() => {
+		if (!files.some(f => f.name === activeFileName) && files.length) {
+			setActiveFileName(files[0].name);
 		}
+	}, [files, activeFileName]);
 
-		term.current?.onData(data => {
-			term.current?.write(`\r\nYou typed: ${data}`);
-		});
-
-		return () => term.current?.dispose();
-	}, []);
-
-	// Resize terminal on window resize
+	const activeFile = files.find(f => f.name === activeFileName);
+	const editorRef = useRef(null);
+	const [openTabs, setOpenTabs] = useState(() => {
+		const saved = JSON.parse(localStorage.getItem("openTabs"));
+		return Array.isArray(saved) ? saved : [];
+	});
 	useEffect(() => {
-		const handleResize = () => fitAddon.current?.fit();
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
-	}, []);
+		localStorage.setItem("openTabs", JSON.stringify(openTabs));
+	}, [openTabs]);
 
-	// Handle ALL Hotkeys
+	const [isSaved, setIsSaved] = useState(true);
+	const [showTerminal, setShowTerminal] = useState(true);
+
+	const [shortcuts, setShortcuts] = useState(() => {
+		try {
+			const saved = JSON.parse(localStorage.getItem("shortcuts"));
+			if (Array.isArray(saved)) return saved;
+		} catch {}
+		return [
+			{ operation: "save", shortcut: "ctrl+s" },
+			{ operation: "run", shortcut: "ctrl+r" },
+			{ operation: "format", shortcut: "ctrl+f" },
+			{ operation: "toggleTerminal", shortcut: "ctrl+`" },
+		];
+	});
+
+	const [showSettings, setShowSettings] = useState(false);
+
+	// Bind Hotkeys
 	useEffect(() => {
-		// Bind all
-		Object.entries(shortcuts).forEach(([action, shortcut]) => {
+		shortcuts.forEach(({ operation, shortcut }) => {
 			if (!shortcut) return;
+
 			hotkeys(shortcut, event => {
 				event.preventDefault();
-				console.log(`Triggered action: ${action}`);
 
-				if (action === "save") {
-					onSave?.(code);
-					localStorage.setItem("savedCode", code);
-					term.current?.writeln("\r\nCode saved!");
-				} else if (action === "run") {
-					onRun?.(code);
-
-					try {
-						const result = eval(code);
-						term.current?.writeln(`\r\n> ${result}`);
-					} catch (err) {
-						term.current?.writeln(`\r\nError: ${err}`);
-					}
+				if (operation === "save") {
+					handleDownloadFile(activeFileName);
+				} else if (operation === "format") {
+					handleChange(activeFile.content.trim());
+				} else if (operation === "run") {
+					runCode(activeFile.content);
+				} else if (operation === "toggleTerminal") {
+					setShowTerminal(prev => !prev);
 				}
 			});
 		});
 
-		// Unbind on cleanup
 		return () => {
-			Object.values(shortcuts).forEach(shortcut => hotkeys.unbind(shortcut));
+			shortcuts.forEach(({ shortcut }) => {
+				if (shortcut) hotkeys.unbind(shortcut);
+			});
 		};
-	}, [shortcuts, code, onSave, onRun]);
+	}, [shortcuts, activeFile]);
 
-	// Editor change handler
-	const handleEditorChange = useCallback(value => {
-		setCode(value ?? "");
-	}, []);
+	// Handlers
+	const handleNewFile = () => {
+		const newName = prompt("Enter new file name:", "untitled.txt");
+		if (!newName) return;
+		if (files.some(f => f.name === newName)) {
+			alert("A file with this name already exists!");
+			return;
+		}
+		setFiles([...files, { name: newName, content: "" }]);
+		setActiveFileName(newName);
+	};
+
+	const handleUploadFile = e => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+		const reader = new FileReader();
+		reader.onload = () => {
+			const content = reader.result;
+			if (files.some(f => f.name === file.name)) {
+				alert("File with this name already exists!");
+				return;
+			}
+			setFiles([...files, { name: file.name, content }]);
+			setActiveFileName(file.name);
+		};
+		reader.readAsText(file);
+	};
+
+	const handleDeleteFile = name => {
+		if (!window.confirm(`Delete ${name}?`)) return;
+		const updated = files.filter(f => f.name !== name);
+		setFiles(updated);
+
+		setOpenTabs(tabs => tabs.filter(tab => tab !== name)); // remove from tabs too
+
+		if (activeFileName === name && updated.length) {
+			setActiveFileName(updated[0].name);
+		} else if (!updated.length) {
+			setActiveFileName("");
+		}
+	};
+
+	const handleRenameFile = name => {
+		const newName = prompt("Enter new name:", name);
+		if (!newName || newName === name) return;
+		if (files.some(f => f.name === newName)) {
+			alert("A file with this name already exists!");
+			return;
+		}
+		setFiles(files.map(f => (f.name === name ? { ...f, name: newName } : f)));
+		if (activeFileName === name) setActiveFileName(newName);
+	};
+
+	const handleDownloadFile = name => {
+		const file = files.find(f => f.name === name);
+		if (!file) return;
+		const blob = new Blob([file.content], { type: "text/plain;charset=utf-8" });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = file.name;
+		a.click();
+		URL.revokeObjectURL(url);
+		setIsSaved(true);
+	};
+
+	const handleChange = newContent => {
+		setFiles(files.map(f => (f.name === activeFileName ? { ...f, content: newContent } : f)));
+		setIsSaved(false);
+	};
+
+	const handleReplaceAllInAllFiles = (search, replace) => {
+		if (!search) return;
+		setFiles(prevFiles =>
+			prevFiles.map(file => ({
+				...file,
+				content: file.content.split(search).join(replace),
+			}))
+		);
+	};
+
+	const handleSelectFile = name => {
+		setActiveFileName(name);
+		if (!openTabs.includes(name)) {
+			setOpenTabs([...openTabs, name]);
+		}
+	};
+
+	const handleCloseTab = name => {
+		setOpenTabs(prev => prev.filter(tab => tab !== name));
+
+		if (activeFileName === name) {
+			const index = openTabs.indexOf(name);
+			const nextTab = openTabs[index + 1] || openTabs[index - 1];
+			setActiveFileName(nextTab || "");
+		}
+	};
 
 	return (
-		<div className='flex flex-col h-full w-full p-2 bg-gray-900 rounded-lg border border-gray-700'>
-			<div className='flex-grow mb-2 rounded overflow-hidden border border-gray-700'>
-				<monaco.Editor
-					height='300px'
-					defaultLanguage={language}
-					value={code}
-					theme={theme}
-					onChange={handleEditorChange}
-					options={{
-						minimap: { enabled: false },
-						fontSize: 14,
-					}}
+		<div className='flex flex-col h-full w-full'>
+			<GlobalSearchReplace onReplaceAll={handleReplaceAllInAllFiles} />
+			<div className='flex flex-grow overflow-hidden'>
+				<FileExplorer
+					files={files}
+					activeFileName={activeFileName}
+					onSelectFile={handleSelectFile}
+					onNewFile={handleNewFile}
+					onUploadFile={handleUploadFile}
+					onDeleteFile={handleDeleteFile}
+					onRenameFile={handleRenameFile}
+					onDownloadFile={handleDownloadFile}
+					onOpenSettings={() => setShowSettings(true)}
 				/>
+
+				<div className='relative flex-grow overflow-hidden bg-gray-900'>
+					<EditorPanel
+						files={files}
+						activeFileName={activeFileName}
+						onSelectFile={handleSelectFile}
+						openTabs={openTabs}
+						onChange={handleChange}
+						editorRef={editorRef}
+						onCloseTab={handleCloseTab}
+					/>
+
+					{showTerminal && (
+						<div className='absolute bottom-0 left-0 right-0 h-[180px] border-t border-gray-700 bg-black'>
+							<TerminalComponent />
+						</div>
+					)}
+				</div>
 			</div>
-			<div ref={terminalRef} className='h-[150px] bg-black rounded overflow-hidden border border-gray-700' />
+
+			<StatusBar
+				activeFileName={activeFileName}
+				saved={isSaved}
+				terminalVisible={showTerminal}
+				onToggleTerminal={() => setShowTerminal(prev => !prev)}
+			/>
+
+			{showSettings && (
+				<ShortcutSettingsModal
+					shortcuts={shortcuts}
+					setShortcuts={setShortcuts}
+					onClose={() => setShowSettings(false)}
+				/>
+			)}
 		</div>
 	);
 }

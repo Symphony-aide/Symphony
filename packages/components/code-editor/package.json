@@ -7,7 +7,12 @@
   "module": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
-    "ui": "workspace:*",
-    "tsconfig": "workspace:*"
+    "@babel/parser": "^7.28.0",
+    "@babel/standalone": "^7.28.1",
+    "@babel/traverse": "^7.28.0",
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/xterm": "^5.5.0",
+    "tsconfig": "workspace:*",
+    "ui": "workspace:*"
   }
 }
