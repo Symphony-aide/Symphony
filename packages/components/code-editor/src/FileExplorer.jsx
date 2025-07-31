@@ -1,4 +1,4 @@
-//FileExplorer.jsx
+// FileExplorer.jsx
 import React, { useState } from "react";
 
 export default function FileExplorer({
@@ -16,7 +16,11 @@ export default function FileExplorer({
 	const [searchTerm, setSearchTerm] = useState("");
 
 	// فلترة الملفات بناءً على البحث
-	const filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchTerm.toLowerCase()));
+	const filteredFiles = Array.isArray(files)
+		? files.filter(
+				file => typeof file?.name === "string" && file.name.toLowerCase().includes(searchTerm.toLowerCase())
+			)
+		: [];
 
 	return (
 		<div className='bg-gray-800 text-white w-64 p-3 border-r border-gray-700 flex flex-col'>
@@ -52,9 +56,9 @@ export default function FileExplorer({
 			<div className='flex-grow overflow-y-auto'>
 				{activeTab === "files" && (
 					<div className='flex flex-col space-y-1 mb-4'>
-						{files.map(file => (
+						{files.map((file, index) => (
 							<div
-								key={file.name}
+								key={`${file.name}-${index}`}
 								className={`flex items-center justify-between px-2 py-1 rounded ${
 									file.name === activeFileName ? "bg-gray-700" : "hover:bg-gray-700"
 								}`}
@@ -69,9 +73,18 @@ export default function FileExplorer({
 									<button onClick={() => onDownloadFile(file.name)} title='Download'>
 										⬇️
 									</button>
-									<button onClick={() => onRenameFile(file.name)} title='Rename'>
+									<button
+										onClick={() => {
+											const newName = prompt("Rename file:", file.name);
+											if (newName && newName !== file.name) {
+												onRenameFile(file.name, newName);
+											}
+										}}
+										title='Rename'
+									>
 										✏️
 									</button>
+
 									<button onClick={() => onDeleteFile(file.name)} title='Delete'>
 										🗑️
 									</button>
@@ -83,22 +96,34 @@ export default function FileExplorer({
 
 				{activeTab === "search" && (
 					<div className='flex flex-col space-y-2'>
-						<input
-							type='text'
-							value={searchTerm}
-							onChange={e => setSearchTerm(e.target.value)}
-							placeholder='Search files...'
-							className='p-2 rounded text-black'
-						/>
+						<div className='flex items-center space-x-2'>
+							<input
+								type='text'
+								value={searchTerm}
+								onChange={e => setSearchTerm(e.target.value)}
+								placeholder='Search files...'
+								className='p-2 rounded text-black flex-grow'
+							/>
+							{searchTerm && (
+								<button
+									key='clear-btn'
+									onClick={() => setSearchTerm("")}
+									className='text-sm text-gray-400 hover:text-white px-2'
+									title='Clear search'
+								>
+									✖️
+								</button>
+							)}
+						</div>
 						<div className='flex flex-col space-y-1 mt-2'>
 							{filteredFiles.length ? (
-								filteredFiles.map(file => (
+								filteredFiles.map((file, index) => (
 									<button
-										key={file.name}
+										key={`search-${file.name}-${index}`}
 										onClick={() => {
 											onSelectFile(file.name);
-											setActiveTab("files"); // رجع لملفات بعد الاختيار
-											setSearchTerm(""); // امسح البحث
+											setActiveTab("files");
+											setSearchTerm("");
 										}}
 										className='px-2 py-1 rounded hover:bg-gray-700 text-left overflow-hidden text-ellipsis'
 									>

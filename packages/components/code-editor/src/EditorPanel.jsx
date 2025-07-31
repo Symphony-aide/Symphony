@@ -1,6 +1,10 @@
-//EditorPanel,jsx
-import React, { useEffect, useRef } from "react";
+//EditorPanel.jsx
+import React, { useEffect, useRef, useMemo } from "react";
 import * as monaco from "@monaco-editor/react";
+import { parseScript } from "meriyah";
+import { outlineAtom } from "./outlineAtom";
+import { useSetAtom } from "jotai";
+import debounce from "lodash/debounce";
 
 export default function EditorPanel({
 	files,
@@ -10,19 +14,94 @@ export default function EditorPanel({
 	onChange,
 	terminalVisible,
 	onCloseTab,
+	editorRef,
 }) {
-	const editorRef = useRef(null);
+	const setOutline = useSetAtom(outlineAtom);
 	const containerRef = useRef(null);
 	const activeFile = files.find(f => f.name === activeFileName);
 
-	// Relayout when terminal toggles
+	const updateOutline = useMemo(
+		() =>
+			debounce((code = "") => {
+				if (!code.trim()) {
+					setOutline([]);
+					return;
+				}
+
+				try {
+					const ast = parseScript(code, {
+						next: true,
+						loc: true,
+					});
+
+					const outline = [];
+
+					const walk = node => {
+						if (!node || typeof node !== "object") return;
+						if (Array.isArray(node)) {
+							node.forEach(walk);
+							return;
+						}
+
+						switch (node.type) {
+							case "FunctionDeclaration":
+								outline.push({
+									name: node.id?.name || "anonymous",
+									type: "function",
+									start: node.start,
+									line: node.loc.start.line,
+								});
+								break;
+							case "VariableDeclaration":
+								node.declarations?.forEach(decl => {
+									if (decl.id?.name) {
+										outline.push({
+											name: decl.id.name,
+											type: "variable",
+											start: decl.start,
+											line: decl.loc.start.line,
+										});
+									}
+								});
+								break;
+							case "ClassDeclaration":
+								outline.push({
+									name: node.id?.name || "anonymous",
+									type: "class",
+									start: node.start,
+									line: node.loc.start.line,
+								});
+								break;
+						}
+
+						for (const key in node) {
+							if (key === "loc" || key === "start" || key === "end") continue;
+							walk(node[key]);
+						}
+					};
+
+					walk(ast.body);
+					setOutline(outline);
+				} catch (err) {
+					console.error("Failed to parse code:", err);
+					setOutline([]);
+				}
+			}, 300),
+		[setOutline]
+	);
+
+	useEffect(() => {
+		return () => {
+			updateOutline.cancel();
+		};
+	}, [updateOutline]);
+
 	useEffect(() => {
 		if (editorRef.current) {
 			editorRef.current.layout();
 		}
 	}, [terminalVisible]);
 
-	// Relayout on window resize
 	useEffect(() => {
 		const handleResize = () => {
 			if (editorRef.current) {
@@ -32,6 +111,16 @@ export default function EditorPanel({
 		window.addEventListener("resize", handleResize);
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
+
+	useEffect(() => {
+		if (
+			activeFile?.content &&
+			activeFile.name?.toLowerCase().endsWith(".js") &&
+			activeFile.content.trim().length > 0 // ✅ هنا التعديل المهم
+		) {
+			updateOutline(activeFile.content);
+		}
+	}, [activeFileName]);
 
 	return (
 		<div
@@ -74,7 +163,11 @@ export default function EditorPanel({
 					defaultLanguage='javascript'
 					value={activeFile?.content || ""}
 					theme='vs-dark'
-					onChange={value => onChange(value ?? "")}
+					onChange={value => {
+						const content = value ?? "";
+						onChange(content);
+						updateOutline(content);
+					}}
 					onMount={editor => {
 						editorRef.current = editor;
 					}}
