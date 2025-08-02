@@ -1,17 +1,11 @@
-# sample_extension
+# Sample Extension for Symphony
 
-To make Symphony run this extension follow the steps:
+This is a sample extension for the Symphony editor. It demonstrates how to create a simple extension using Deno, TypeScript, and the Symphony API.
 
-1. Create a directory in your user's HOME:
-```
-mkdir <YOUR_USER>/.symphony/extensions
-```
-2. Copy and paste this folder (`sample_extension`) into the directory created.
+## Features
 
-It must look like: 
+- **Status Bar Item:** Creates a status bar item that displays a random number when clicked.
 
-```
-<YOUR_USER>/.symphony/extensions/sample_extension
-```
+## Usage
 
-And finally, just run Symphony :-)
+To use this extension, you need to have the Deno runtime installed and the `deno` feature enabled in the `sveditor-core` crate. Once you have everything set up, you can load the extension using the `load_extension_with_deno` method on the `ExtensionsManager`.
