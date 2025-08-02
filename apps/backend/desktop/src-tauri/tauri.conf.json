@@ -4,7 +4,7 @@
     "version": "0.1.0"
   },
   "build": {
-    "distDir": "../../../../frontend/core/dist",
+    "distDir": "../../../web/dist",
     "devPath": "http://localhost:5173",
     "beforeDevCommand": "pnpm run --filter core dev",
     "beforeBuildCommand": "pnpm run --filter core build"
