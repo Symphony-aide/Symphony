@@ -1,7 +1,6 @@
 {
   "private": true,
   "type": "module",
-
   "scripts": {
     "preinstall": "node pnpm-prepare.js",
     "server": "jake server",
@@ -23,12 +22,15 @@
     "tw:watch": "cd apps/web && npx tailwind -i src/index.css -o ../../dist/styles/tailwind.css --watch"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/xterm": "^5.5.0",
+    "hotkeys-js": "^3.13.15",
     "jotai": "^2.12.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "config": "workspace:*",
     "@storybook/addon-docs": "9.0.16",
     "@storybook/addon-onboarding": "9.0.16",
     "@storybook/react": "^9.0.16",
@@ -46,6 +48,7 @@
     "autoprefixer": "^10.4.0",
     "check-dependency-version-consistency": "^5.0.1",
     "commitlint": "^19.8.1",
+    "config": "workspace:*",
     "cross-env": "^7.0.3",
     "eslint": "^9.30.1",
     "husky": "^9.1.7",
