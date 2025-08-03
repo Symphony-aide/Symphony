@@ -1,4 +1,3 @@
-// FileExplorer.jsx
 import React, { useState } from "react";
 
 export default function FileExplorer({
@@ -23,11 +22,13 @@ export default function FileExplorer({
 		: [];
 
 	return (
-		<div className='bg-gray-800 text-white w-64 p-3 border-r border-gray-700 flex flex-col'>
+		<div className='bg-gray-800 text-white w-64 p-3 border-r border-gray-700 flex flex-col relative'>
 			{/* Header */}
-			<div className='flex items-center justify-between mb-4'>
+			<div className='flex items-center justify-between mb-4 relative'>
 				<h2 className='text-lg font-bold'>Sidebar</h2>
-				<button onClick={onOpenSettings} className='hover:text-gray-400'>
+
+				{/* أيقونة الإعدادات تفتح SettingsModal مباشرة */}
+				<button onClick={() => onOpenSettings("shortcuts")} className='hover:text-gray-400'>
 					⚙️
 				</button>
 			</div>
@@ -84,7 +85,6 @@ export default function FileExplorer({
 									>
 										✏️
 									</button>
-
 									<button onClick={() => onDeleteFile(file.name)} title='Delete'>
 										🗑️
 									</button>

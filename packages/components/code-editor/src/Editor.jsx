@@ -1,5 +1,4 @@
 // Editor.jsx
-
 import React, { useState, useRef, useEffect } from "react";
 import { Layout, Model } from "flexlayout-react";
 import { useSetAtom } from "jotai";
@@ -8,7 +7,8 @@ import hotkeys from "hotkeys-js";
 import useUndo from "use-undo";
 import { FilesProvider } from "./FilesProvider";
 import "flexlayout-react/style/light.css";
-
+import SettingsModal from "./SettingsModal";
+import AutoSaveSettings from "./AutoSaveSettings";
 import FileExplorer from "./FileExplorer";
 import EditorPanel from "./EditorPanel";
 import TerminalComponent from "./Terminal";
@@ -70,7 +70,6 @@ export default function Editor() {
 	const initialFiles = savedFiles ? JSON.parse(savedFiles) : [{ name: "untitled.txt", content: "" }];
 
 	const [filesState, { set: setFiles, undo, redo, canUndo, canRedo }] = useUndo(initialFiles);
-
 	const files = filesState.present;
 
 	const [activeFileName, setActiveFileName] = useState(
@@ -81,10 +80,81 @@ export default function Editor() {
 		const saved = JSON.parse(localStorage.getItem("openTabs"));
 		return Array.isArray(saved) ? saved : [];
 	});
-
 	const [isSaved, setIsSaved] = useState(true);
+	const [modifiedTabs, setModifiedTabs] = useState([]); // الآن إدارة مركزية هنا
+
+	const [autoSaveSettings, setAutoSaveSettings] = useState(() => {
+		const saved = JSON.parse(localStorage.getItem("autoSaveSettings"));
+		return saved || { enabled: false, interval: 2 };
+	});
+	useEffect(() => {
+		localStorage.setItem("autoSaveSettings", JSON.stringify(autoSaveSettings));
+	}, [autoSaveSettings]);
+
+	// Auto Save
+	const activeFile = files.find(f => f.name === activeFileName);
+	useEffect(() => {
+		if (!autoSaveSettings.enabled) return;
+
+		const timer = setInterval(() => {
+			if (!isSaved && activeFile) {
+				localStorage.setItem("files", JSON.stringify(files));
+				setIsSaved(true);
+				setModifiedTabs(prev => prev.filter(tab => tab !== activeFileName));
+				console.log("Auto-saved to localStorage:", activeFileName);
+			}
+		}, autoSaveSettings.interval * 1000);
+
+		return () => clearInterval(timer);
+	}, [autoSaveSettings, isSaved, activeFileName, files]);
+
 	const [showTerminal, setShowTerminal] = useState(true);
 	const [showSettings, setShowSettings] = useState(false);
+	const [settingsTab, setSettingsTab] = useState("shortcuts");
+	const [tabCompletionSettings, setTabCompletionSettings] = useState(() => {
+		const saved = JSON.parse(localStorage.getItem("tabCompletionSettings"));
+		return saved || { enabled: true };
+	});
+
+	useEffect(() => {
+		localStorage.setItem("tabCompletionSettings", JSON.stringify(tabCompletionSettings));
+	}, [tabCompletionSettings]);
+
+	const [glyphMarginSettings, setGlyphMarginSettings] = useState(() => {
+		const saved = JSON.parse(localStorage.getItem("glyphMarginSettings"));
+		return saved || { enabled: true };
+	});
+
+	useEffect(() => {
+		localStorage.setItem("glyphMarginSettings", JSON.stringify(glyphMarginSettings));
+	}, [glyphMarginSettings]);
+	const [themeSettings, setThemeSettings] = useState(() => {
+		const saved = JSON.parse(localStorage.getItem("themeSettings"));
+		return saved || { theme: "vs-dark", fontSize: 14, fontFamily: "Fira Code, monospace" };
+	});
+
+	useEffect(() => {
+		localStorage.setItem("themeSettings", JSON.stringify(themeSettings));
+	}, [themeSettings]);
+	// استرجاع الإعدادات من localStorage أو استخدام قيم افتراضية
+	const [terminalSettings, setTerminalSettings] = useState(() => {
+		const saved = localStorage.getItem("terminalSettings");
+		return saved
+			? JSON.parse(saved)
+			: {
+					fontFamily: "monospace",
+					fontSize: 14,
+					fontWeight: "normal",
+					lineHeight: 1.2,
+					cursorStyle: "block",
+				};
+	});
+
+	// حفظ أي تعديل في localStorage
+	useEffect(() => {
+		localStorage.setItem("terminalSettings", JSON.stringify(terminalSettings));
+	}, [terminalSettings]);
+
 	const [shortcuts, setShortcuts] = useState(() => {
 		try {
 			const saved = JSON.parse(localStorage.getItem("shortcuts"));
@@ -99,12 +169,12 @@ export default function Editor() {
 	});
 
 	const editorRef = useRef(null);
-	const activeFile = files.find(f => f.name === activeFileName);
 
 	useEffect(() => localStorage.setItem("files", JSON.stringify(files)), [files]);
 	useEffect(() => localStorage.setItem("activeFileName", activeFileName), [activeFileName]);
 	useEffect(() => localStorage.setItem("openTabs", JSON.stringify(openTabs)), [openTabs]);
 
+	// Layout save
 	useEffect(() => {
 		if (!model || typeof model.toJson !== "function" || typeof model.addListener !== "function") return;
 		const saveLayout = () => {
@@ -119,6 +189,7 @@ export default function Editor() {
 		return () => model.removeListener("modelChanged", saveLayout);
 	}, [model]);
 
+	// Shortcuts
 	useEffect(() => {
 		shortcuts.forEach(({ operation, shortcut }) => {
 			if (!shortcut) return;
@@ -162,9 +233,13 @@ export default function Editor() {
 		}
 	}, 300);
 
+	// تحديث المحتوى مع تمييز التبويب
 	const handleChange = newContent => {
 		setFiles(files.map(f => (f.name === activeFileName ? { ...f, content: newContent } : f)));
 		setIsSaved(false);
+		if (!modifiedTabs.includes(activeFileName)) {
+			setModifiedTabs(prev => [...prev, activeFileName]);
+		}
 		updateOutline(newContent);
 	};
 
@@ -201,11 +276,13 @@ export default function Editor() {
 	const handleDeleteFile = name => {
 		setFiles(files.filter(f => f.name !== name));
 		setOpenTabs(openTabs.filter(tab => tab !== name));
+		setModifiedTabs(prev => prev.filter(tab => tab !== name));
 		if (activeFileName === name) setActiveFileName(files[0]?.name || "");
 	};
 
 	const handleRenameFile = (oldName, newName) => {
 		setFiles(files.map(f => (f.name === oldName ? { ...f, name: newName } : f)));
+		setModifiedTabs(prev => prev.map(tab => (tab === oldName ? newName : tab)));
 		if (activeFileName === oldName) setActiveFileName(newName);
 	};
 
@@ -219,6 +296,7 @@ export default function Editor() {
 		a.click();
 		URL.revokeObjectURL(url);
 		setIsSaved(true);
+		setModifiedTabs(prev => prev.filter(tab => tab !== name));
 	};
 
 	const handleCloseTab = name => {
@@ -259,7 +337,10 @@ export default function Editor() {
 					onDeleteFile={handleDeleteFile}
 					onRenameFile={handleRenameFile}
 					onDownloadFile={handleDownloadFile}
-					onOpenSettings={() => setShowSettings(true)}
+					onOpenSettings={tab => {
+						setSettingsTab(tab || "shortcuts");
+						setShowSettings(true);
+					}}
 				/>
 			);
 		}
@@ -274,11 +355,15 @@ export default function Editor() {
 					editorRef={editorRef}
 					onCloseTab={handleCloseTab}
 					terminalVisible={showTerminal}
+					glyphMarginSettings={glyphMarginSettings}
+					modifiedTabs={modifiedTabs} //
+					themeSettings={themeSettings}
 				/>
 			);
 		}
 		if (component === "outline") return <OutlineView onSelectItem={handleGoToOutlineItem} />;
-		if (component === "terminal") return showTerminal ? <TerminalComponent /> : null;
+		if (component === "terminal")
+			return showTerminal ? <TerminalComponent terminalSettings={terminalSettings} /> : null;
 		return null;
 	};
 
@@ -319,10 +404,21 @@ export default function Editor() {
 					onToggleTerminal={() => setShowTerminal(prev => !prev)}
 				/>
 				{showSettings && (
-					<ShortcutSettingsModal
+					<SettingsModal
 						shortcuts={shortcuts}
 						setShortcuts={setShortcuts}
+						autoSaveSettings={autoSaveSettings}
+						setAutoSaveSettings={setAutoSaveSettings}
+						tabCompletionSettings={tabCompletionSettings}
+						setTabCompletionSettings={setTabCompletionSettings}
+						glyphMarginSettings={glyphMarginSettings}
+						setGlyphMarginSettings={setGlyphMarginSettings}
+						themeSettings={themeSettings} // ✅ جديد
+						setThemeSettings={setThemeSettings} //
+						terminalSettings={terminalSettings}
+						setTerminalSettings={setTerminalSettings}
 						onClose={() => setShowSettings(false)}
+						defaultTab={settingsTab}
 					/>
 				)}
 			</div>

@@ -1,43 +1,42 @@
-//ShortcutSettingsModal.jsx
 import React, { useState } from "react";
 
-export default function ShortcutSettingsModal({ onClose, shortcuts, setShortcuts }) {
+export default function ShortcutSettingsModal({ shortcuts, setShortcuts, onClose, onSave }) {
 	const [localShortcuts, setLocalShortcuts] = useState(shortcuts);
 
-	const handleChange = (op, value) => {
-		setLocalShortcuts(prev => prev.map(s => (s.operation === op ? { ...s, shortcut: value } : s)));
+	const handleChangeShortcut = (index, value) => {
+		const updated = [...localShortcuts];
+		updated[index].shortcut = value;
+		setLocalShortcuts(updated);
 	};
 
 	const handleSave = () => {
-		setShortcuts(localShortcuts);
-		localStorage.setItem("shortcuts", JSON.stringify(localShortcuts));
-		onClose();
+		setShortcuts(localShortcuts); // حفظ التعديلات للأب
+		onSave?.(); // نرجع للي بعته SettingsModal
 	};
 
 	return (
-		<div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
-			<div className='bg-gray-800 p-6 rounded-lg text-white w-96'>
-				<h2 className='text-xl mb-4'>Keyboard Shortcuts Settings</h2>
+		<div className='p-4 bg-gray-800 rounded space-y-3'>
+			<h2 className='text-lg font-bold mb-2'>Shortcut Settings</h2>
 
-				{localShortcuts.map(s => (
-					<div key={s.operation} className='mb-3'>
-						<label className='block mb-1 capitalize'>{s.operation} Shortcut:</label>
-						<input
-							value={s.shortcut}
-							onChange={e => handleChange(s.operation, e.target.value)}
-							className='w-full p-2 rounded text-black'
-						/>
-					</div>
-				))}
-
-				<div className='flex justify-end space-x-2 mt-4'>
-					<button onClick={handleSave} className='bg-green-600 px-4 py-2 rounded hover:bg-green-500'>
-						Save
-					</button>
-					<button onClick={onClose} className='bg-gray-600 px-4 py-2 rounded hover:bg-gray-500'>
-						Close
-					</button>
+			{localShortcuts.map((item, idx) => (
+				<div key={idx} className='flex items-center space-x-2'>
+					<span className='w-32'>{item.operation}</span>
+					<input
+						type='text'
+						value={item.shortcut}
+						onChange={e => handleChangeShortcut(idx, e.target.value)}
+						className='flex-1 p-1 rounded text-black'
+					/>
 				</div>
+			))}
+
+			<div className='flex justify-end space-x-2 mt-4'>
+				<button onClick={onClose} className='bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded'>
+					Close
+				</button>
+				<button onClick={handleSave} className='bg-green-600 hover:bg-green-500 px-3 py-1 rounded'>
+					Save
+				</button>
 			</div>
 		</div>
 	);
