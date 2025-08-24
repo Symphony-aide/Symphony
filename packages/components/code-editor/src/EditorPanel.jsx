@@ -1,3 +1,4 @@
+// EditorPanel.jsx
 import React, { useEffect, useRef, useMemo } from "react";
 import * as monaco from "@monaco-editor/react";
 import { parseScript } from "meriyah";
@@ -16,36 +17,33 @@ export default function EditorPanel({
 	editorRef,
 	glyphMarginSettings,
 	modifiedTabs = [],
-	themeSettings = { theme: "vs-dark", fontSize: 14 }, // جديد: ثيم وحجم الخط
+	themeSettings = { theme: "vs-dark", fontSize: 14 },
 }) {
 	const setOutline = useSetAtom(outlineAtom);
 	const containerRef = useRef(null);
 	const activeFile = files.find(f => f.name === activeFileName);
-
-	// breakpoints
 	const breakpointsRef = useRef([]);
 
-	// Inject breakpoint style dynamically
+	// Breakpoint styles
 	useEffect(() => {
 		const style = document.createElement("style");
 		style.innerHTML = `
       .breakpoint {
-        background-color: #ef4444; /* red-500 */
+        background-color: #ef4444;
         width: 8px;
         height: 8px;
         border-radius: 50%;
         margin-left: 4px;
       }
-      /* Folding Highlight */
       .monaco-editor .decorationsOverviewRuler.folding {
-        background-color: rgba(255, 215, 0, 0.3); /* gold */
+        background-color: rgba(255, 215, 0, 0.3);
       }
     `;
 		document.head.appendChild(style);
 		return () => style.remove();
 	}, []);
 
-	// Update outline
+	// Outline update
 	const updateOutline = useMemo(
 		() =>
 			debounce((code = "") => {
@@ -53,13 +51,8 @@ export default function EditorPanel({
 					setOutline([]);
 					return;
 				}
-
 				try {
-					const ast = parseScript(code, {
-						next: true,
-						loc: true,
-					});
-
+					const ast = parseScript(code, { next: true, loc: true });
 					const outline = [];
 
 					const walk = node => {
@@ -80,14 +73,13 @@ export default function EditorPanel({
 								break;
 							case "VariableDeclaration":
 								node.declarations?.forEach(decl => {
-									if (decl.id?.name) {
+									if (decl.id?.name)
 										outline.push({
 											name: decl.id.name,
 											type: "variable",
 											start: decl.start,
 											line: decl.loc.start.line,
 										});
-									}
 								});
 								break;
 							case "ClassDeclaration":
@@ -100,50 +92,34 @@ export default function EditorPanel({
 								break;
 						}
 
-						for (const key in node) {
-							if (key === "loc" || key === "start" || key === "end") continue;
-							walk(node[key]);
-						}
+						for (const key in node) if (!["loc", "start", "end"].includes(key)) walk(node[key]);
 					};
 
 					walk(ast.body);
 					setOutline(outline);
-				} catch (err) {
-					console.error("Failed to parse code:", err);
+				} catch {
 					setOutline([]);
 				}
 			}, 300),
 		[setOutline]
 	);
 
-	useEffect(() => {
-		return () => {
-			updateOutline.cancel();
-		};
-	}, [updateOutline]);
+	useEffect(() => updateOutline.cancel, [updateOutline]);
 
 	useEffect(() => {
-		if (editorRef.current) {
-			editorRef.current.layout();
-		}
+		if (editorRef.current) editorRef.current.layout();
 	}, [terminalVisible]);
 
 	useEffect(() => {
 		const handleResize = () => {
-			if (editorRef.current) {
-				editorRef.current.layout();
-			}
+			if (editorRef.current) editorRef.current.layout();
 		};
 		window.addEventListener("resize", handleResize);
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
 	useEffect(() => {
-		if (
-			activeFile?.content &&
-			activeFile.name?.toLowerCase().endsWith(".js") &&
-			activeFile.content.trim().length > 0
-		) {
+		if (activeFile?.content?.trim().length > 0 && activeFile.name?.toLowerCase().endsWith(".js")) {
 			updateOutline(activeFile.content);
 		}
 	}, [activeFileName]);
@@ -158,17 +134,14 @@ export default function EditorPanel({
 				{openTabs.map(name => {
 					const file = files.find(f => f.name === name);
 					if (!file) return null;
-
 					const isActive = name === activeFileName;
 					const isModified = modifiedTabs.includes(name);
-
 					return (
 						<div
 							key={name}
 							className={`flex items-center space-x-1 px-2 py-1 rounded cursor-pointer transition
-								${isActive ? "bg-gray-700 text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700"}
-								${isModified ? "border border-yellow-400" : ""}
-							`}
+              ${isActive ? "bg-gray-700 text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700"}
+              ${isModified ? "border border-yellow-400" : ""}`}
 							onClick={() => onSelectFile(name)}
 						>
 							<span>
@@ -195,7 +168,7 @@ export default function EditorPanel({
 					height='100%'
 					defaultLanguage='javascript'
 					value={activeFile?.content || ""}
-					theme={themeSettings.theme} // ← الثيم من الإعدادات
+					theme={themeSettings.theme}
 					onChange={value => {
 						const content = value ?? "";
 						onChange(content);
@@ -205,15 +178,121 @@ export default function EditorPanel({
 						editorRef.current = editor;
 						const decorations = breakpointsRef.current;
 
-						// ✅ Enable clickable links to open in new tab
+						// Codelens Inline + Reference Count + Lines
+						try {
+							if (activeFile?.name?.toLowerCase().endsWith(".js")) {
+								monacoInstance.languages.registerCodeLensProvider("javascript", {
+									provideCodeLenses: model => {
+										const code = model.getValue();
+										const lenses = [];
+										try {
+											const ast = parseScript(code, { next: true, loc: true });
+											const counts = {};
+
+											// Count all identifiers
+											const countIdentifiers = node => {
+												if (!node || typeof node !== "object") return;
+												if (Array.isArray(node)) {
+													node.forEach(countIdentifiers);
+													return;
+												}
+												if (node.type === "Identifier")
+													counts[node.name] = (counts[node.name] || 0) + 1;
+												for (const key in node)
+													if (!["loc", "start", "end"].includes(key))
+														countIdentifiers(node[key]);
+											};
+											countIdentifiers(ast.body);
+
+											// Add lenses to declarations
+											const addLens = node => {
+												if (!node || typeof node !== "object") return;
+												if (Array.isArray(node)) {
+													node.forEach(addLens);
+													return;
+												}
+
+												// Function
+												if (node.type === "FunctionDeclaration") {
+													const name = node.id?.name || "anonymous";
+													const line = node.loc.start.line;
+													const lines = node.loc.end.line - node.loc.start.line + 1;
+													lenses.push({
+														range: {
+															startLineNumber: line,
+															startColumn: 1,
+															endLineNumber: line,
+															endColumn: 1,
+														},
+														command: {
+															id: "noop",
+															title: `💡 ${name} (${counts[name] || 1} refs, ${lines} lines)`,
+														},
+													});
+												}
+
+												// Variable
+												if (node.type === "VariableDeclaration") {
+													node.declarations?.forEach(decl => {
+														const name = decl.id?.name;
+														if (!name) return;
+														const line = decl.loc.start.line;
+														lenses.push({
+															range: {
+																startLineNumber: line,
+																startColumn: 1,
+																endLineNumber: line,
+																endColumn: 1,
+															},
+															command: {
+																id: "noop",
+																title: `💡 ${name} (${counts[name] || 1} refs, 1 line)`,
+															},
+														});
+													});
+												}
+
+												// Class
+												if (node.type === "ClassDeclaration") {
+													const name = node.id?.name || "anonymous";
+													const line = node.loc.start.line;
+													const lines = node.loc.end.line - node.loc.start.line + 1;
+													lenses.push({
+														range: {
+															startLineNumber: line,
+															startColumn: 1,
+															endLineNumber: line,
+															endColumn: 1,
+														},
+														command: {
+															id: "noop",
+															title: `💡 ${name} (${counts[name] || 1} refs, ${lines} lines)`,
+														},
+													});
+												}
+
+												for (const key in node)
+													if (!["loc", "start", "end"].includes(key)) addLens(node[key]);
+											};
+											addLens(ast.body);
+										} catch {}
+										return { lenses, dispose: () => {} };
+									},
+									resolveCodeLens: lens => lens,
+								});
+								monacoInstance.editor.registerCommand("noop", () => {});
+							}
+						} catch (err) {
+							console.warn("Codelens failed:", err);
+						}
+
+						// Breakpoints & links
 						editor.onMouseDown(e => {
-							// Handle gutter clicks for breakpoints
 							if (
 								e.target.type === monacoInstance.editor.MouseTargetType.GUTTER_GLYPH_MARGIN &&
 								glyphMarginSettings.enabled
 							) {
 								const lineNumber = e.target.position.lineNumber;
-
 								const existing = decorations.find(d => d.lineNumber === lineNumber);
 								if (existing) {
 									editor.deltaDecorations([existing.id], []);
@@ -237,10 +316,9 @@ export default function EditorPanel({
 								}
 							}
 
-							// Handle clickable links
 							if (e.target?.element?.tagName === "A") {
 								const href = e.target.element.getAttribute("href");
-								if (href && href.startsWith("http")) {
+								if (href?.startsWith("http")) {
 									e.event.preventDefault();
 									window.open(href, "_blank");
 								}

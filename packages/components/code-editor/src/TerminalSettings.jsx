@@ -1,3 +1,4 @@
+//TerminalSettings.jsx
 import React from "react";
 
 export default function TerminalSettings({ terminalSettings, setTerminalSettings }) {

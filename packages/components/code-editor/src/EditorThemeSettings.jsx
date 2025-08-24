@@ -1,3 +1,4 @@
+//EditorThemeSettings.jsx
 import React from "react";
 
 export default function EditorThemeSettings({ themeSettings, setThemeSettings }) {

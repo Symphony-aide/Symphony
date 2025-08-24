@@ -1,3 +1,4 @@
+//ShortcutSettingsModal.jsx
 import React, { useState } from "react";
 
 export default function ShortcutSettingsModal({ shortcuts, setShortcuts, onClose, onSave }) {
