@@ -5,7 +5,7 @@ import { parseScript } from "meriyah";
 import { outlineAtom } from "./outlineAtom";
 import { useSetAtom } from "jotai";
 import debounce from "lodash/debounce";
-
+import { defaultMonacoOptions } from "./monacoOptions";
 export default function EditorPanel({
 	files,
 	activeFileName,
@@ -326,49 +326,10 @@ export default function EditorPanel({
 						});
 					}}
 					options={{
-						fontSize: themeSettings.fontSize,
+						...defaultMonacoOptions, // كل الإعدادات مرة واحدة
+						fontSize: themeSettings.fontSize, // override لو عايز
 						fontFamily: themeSettings.fontFamily,
-						cursorBlinking: "smooth",
-						cursorSmoothCaretAnimation: true,
-						minimap: { enabled: true },
-						lineHeight: 20,
-						renderWhitespace: "selection",
-						automaticLayout: true,
 						glyphMargin: glyphMarginSettings.enabled,
-						folding: true,
-						foldingHighlight: true,
-						foldingImportsByDefault: true,
-						showFoldingControls: "always",
-						links: true,
-						multiCursorModifier: "ctrlCmd",
-						multiCursorMergeOverlapping: true,
-						mouseWheelZoom: true,
-						smoothScrolling: true,
-						fastScrollSensitivity: 5,
-						wordWrap: "on",
-						wordBasedSuggestions: true,
-						occurrencesHighlight: true,
-						selectionHighlight: true,
-						matchBrackets: "always",
-						autoClosingBrackets: "always",
-						autoClosingQuotes: "always",
-						autoIndent: "full",
-						tabSize: 2,
-						insertSpaces: true,
-						quickSuggestions: { other: true, comments: false, strings: true },
-						parameterHints: { enabled: true },
-						hover: { enabled: true },
-						suggestOnTriggerCharacters: true,
-						acceptSuggestionOnEnter: "on",
-						snippetSuggestions: "inline",
-						inlineSuggest: { enabled: true },
-						gotoLocation: {
-							multipleDefinitions: "peek",
-							multipleReferences: "peek",
-							multipleDeclarations: "peek",
-						},
-						definitionLinkOpensInPeek: true,
-						guides: { bracketPairs: true },
 					}}
 				/>
 			</div>

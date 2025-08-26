@@ -17,7 +17,6 @@ import ShortcutSettingsModal from "./ShortcutSettingsModal";
 import StatusBar from "./StatusBar";
 import GlobalSearchReplace from "./GlobalSearchReplace";
 import { outlineAtom } from "./outlineAtom";
-
 const defaultLayoutModel = {
 	global: {},
 	borders: [],
@@ -341,6 +340,7 @@ export default function Editor() {
 						setSettingsTab(tab || "shortcuts");
 						setShowSettings(true);
 					}}
+					modifiedTabs={modifiedTabs}
 				/>
 			);
 		}
@@ -397,12 +397,14 @@ export default function Editor() {
 						<Layout ref={layoutRef} model={model} factory={factory} />
 					</div>
 				</div>
+
 				<StatusBar
 					activeFileName={activeFileName}
 					saved={isSaved}
 					terminalVisible={showTerminal}
 					onToggleTerminal={() => setShowTerminal(prev => !prev)}
 				/>
+
 				{showSettings && (
 					<SettingsModal
 						shortcuts={shortcuts}
