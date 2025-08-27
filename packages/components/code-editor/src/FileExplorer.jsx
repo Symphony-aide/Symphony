@@ -1,5 +1,5 @@
 // FileExplorer.jsx
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 
 export default function FileExplorer({
 	files,
@@ -11,13 +11,23 @@ export default function FileExplorer({
 	onRenameFile,
 	onDownloadFile,
 	onOpenSettings,
-	modifiedTabs = [], // ✅ اختياري
-	gitStatusMap = {}, // ✅ Stage2: إظهار حالات Git
+	modifiedTabs = [],
+	gitStatusMap = {},
+	onGitStage,
+	onGitCommit,
+	onGitRevert,
+	onReorderFiles,
 }) {
 	const [activeTab, setActiveTab] = useState("files");
 	const [searchTerm, setSearchTerm] = useState("");
+	const [extFilter, setExtFilter] = useState("all");
+	const [sizeFilter, setSizeFilter] = useState("all");
+	const [statusFilter, setStatusFilter] = useState("all");
+	const [sortBy, setSortBy] = useState("name"); // name | size | status
+	const [contextMenu, setContextMenu] = useState(null); // {x,y,file,index}
 
-	// ===== Helpers =====
+	const dragIndex = useRef(null);
+
 	const getExt = name => {
 		if (typeof name !== "string") return "no-ext";
 		const i = name.lastIndexOf(".");
@@ -43,10 +53,6 @@ export default function FileExplorer({
 		return ["all", ...Array.from(set).sort()];
 	}, [files, modifiedTabs, gitStatusMap]);
 
-	const [extFilter, setExtFilter] = useState("all");
-	const [sizeFilter, setSizeFilter] = useState("all");
-	const [statusFilter, setStatusFilter] = useState("all");
-
 	const matchSize = kb => {
 		if (sizeFilter === "all") return true;
 		if (sizeFilter === "tiny") return kb < 1;
@@ -58,35 +64,65 @@ export default function FileExplorer({
 
 	const visibleFiles = useMemo(() => {
 		if (!Array.isArray(files)) return [];
-		return files.filter(file => {
+		let arr = files.filter(file => {
 			const name = file?.name || "";
 			const extOk = extFilter === "all" || getExt(name) === extFilter;
 			const sizeOk = matchSize(getSizeKB(file));
 			const stat = getStatus(file);
 			const statusOk = statusFilter === "all" || stat === statusFilter;
-			return extOk && sizeOk && statusOk;
+			const searchOk = !searchTerm || name.toLowerCase().includes(searchTerm.toLowerCase());
+			return extOk && sizeOk && statusOk && searchOk;
 		});
-	}, [files, extFilter, sizeFilter, statusFilter, modifiedTabs, gitStatusMap]);
 
-	const searchFilteredFiles = Array.isArray(files)
-		? files.filter(
-				file => typeof file?.name === "string" && file.name.toLowerCase().includes(searchTerm.toLowerCase())
-			)
-		: [];
+		if (sortBy === "name") arr.sort((a, b) => (a.name > b.name ? 1 : -1));
+		else if (sortBy === "size") arr.sort((a, b) => getSizeKB(a) - getSizeKB(b));
+		else if (sortBy === "status") arr.sort((a, b) => (getStatus(a) > getStatus(b) ? 1 : -1));
+
+		return arr;
+	}, [files, extFilter, sizeFilter, statusFilter, sortBy, searchTerm, modifiedTabs, gitStatusMap]);
 
 	const statusBadge = status => {
 		const base = "inline-block px-1.5 py-0.5 rounded text-[10px] ml-2";
 		if (status === "modified") return <span className={`${base} bg-yellow-600/30 text-yellow-300`}>M</span>;
 		if (status === "untracked") return <span className={`${base} bg-blue-600/30 text-blue-300`}>U</span>;
 		if (status === "staged") return <span className={`${base} bg-green-600/30 text-green-300`}>S</span>;
+		if (status === "committed") return <span className={`${base} bg-gray-600/30 text-gray-300`}>✓</span>;
 		return <span className={`${base} bg-gray-600/30 text-gray-300`}>C</span>;
 	};
+
+	// --- drag & drop handlers ---
+	const handleDragStart = (e, idx) => {
+		dragIndex.current = idx;
+		e.dataTransfer.effectAllowed = "move";
+	};
+	const handleDragOver = e => {
+		e.preventDefault();
+	};
+	const handleDrop = (e, toIndex) => {
+		e.preventDefault();
+		const fromIndex = dragIndex.current;
+		if (fromIndex == null) return;
+		if (typeof onReorderFiles === "function") onReorderFiles(fromIndex, toIndex);
+		dragIndex.current = null;
+	};
+
+	// context menu
+	const openContextMenu = (e, file, index) => {
+		e.preventDefault();
+		setContextMenu({
+			x: e.clientX,
+			y: e.clientY,
+			file,
+			index,
+		});
+	};
+	const closeContextMenu = () => setContextMenu(null);
 
 	return (
 		<div className='bg-gray-800 text-white w-64 p-3 border-r border-gray-700 flex flex-col relative'>
 			{/* Header */}
 			<div className='flex items-center justify-between mb-4 relative'>
-				<h2 className='text-lg font-bold'>Sidebar</h2>
+				<h2 className='text-lg font-bold'>Explorer</h2>
 				<button onClick={() => onOpenSettings("shortcuts")} className='hover:text-gray-400'>
 					⚙️
 				</button>
@@ -106,17 +142,10 @@ export default function FileExplorer({
 				>
 					Search
 				</button>
-				<button
-					onClick={() => setActiveTab("git")}
-					className={`flex-grow px-2 py-1 rounded ${activeTab === "git" ? "bg-gray-700" : "hover:bg-gray-700"}`}
-				>
-					Git
-				</button>
 			</div>
 
 			{/* Content */}
 			<div className='flex-grow overflow-y-auto'>
-				{/* === Files tab === */}
 				{activeTab === "files" && (
 					<>
 						{/* Filters */}
@@ -165,6 +194,19 @@ export default function FileExplorer({
 									))}
 								</select>
 							</div>
+
+							<div className='flex items-center space-x-2'>
+								<label className='text-xs text-gray-300 w-12'>Sort</label>
+								<select
+									value={sortBy}
+									onChange={e => setSortBy(e.target.value)}
+									className='flex-1 p-1 rounded bg-gray-700 text-white text-sm'
+								>
+									<option value='name'>Name</option>
+									<option value='size'>Size</option>
+									<option value='status'>Status</option>
+								</select>
+							</div>
 						</div>
 
 						{/* Files list */}
@@ -173,13 +215,15 @@ export default function FileExplorer({
 								const isActive = file.name === activeFileName;
 								const stat = getStatus(file);
 								const sizeKB = getSizeKB(file);
-
 								return (
 									<div
 										key={`${file.name}-${index}`}
-										className={`flex items-center justify-between px-2 py-1 rounded ${
-											isActive ? "bg-gray-700" : "hover:bg-gray-700"
-										}`}
+										draggable
+										onDragStart={e => handleDragStart(e, index)}
+										onDragOver={handleDragOver}
+										onDrop={e => handleDrop(e, index)}
+										onContextMenu={e => openContextMenu(e, file, index)}
+										className={`flex items-center justify-between px-2 py-1 rounded ${isActive ? "bg-gray-700" : "hover:bg-gray-700"}`}
 										title={`${sizeKB} KB • ${stat}`}
 									>
 										<button
@@ -192,6 +236,24 @@ export default function FileExplorer({
 
 										<div className='flex items-center space-x-1 ml-2'>
 											<span className='text-[10px] text-gray-400 mr-1'>{sizeKB}KB</span>
+
+											{/* Git quick actions */}
+											{stat !== "staged" && (
+												<button
+													onClick={() => onGitStage && onGitStage(file.name)}
+													title='Stage'
+												>
+													S
+												</button>
+											)}
+											{stat === "staged" && (
+												<button
+													onClick={() => onGitCommit && onGitCommit(file.name)}
+													title='Commit'
+												>
+													✓
+												</button>
+											)}
 											<button onClick={() => onDownloadFile(file.name)} title='Download'>
 												⬇️
 											</button>
@@ -220,7 +282,6 @@ export default function FileExplorer({
 					</>
 				)}
 
-				{/* === Search tab === */}
 				{activeTab === "search" && (
 					<div className='flex flex-col space-y-2'>
 						<div className='flex items-center space-x-2'>
@@ -233,7 +294,6 @@ export default function FileExplorer({
 							/>
 							{searchTerm && (
 								<button
-									key='clear-btn'
 									onClick={() => setSearchTerm("")}
 									className='text-sm text-gray-400 hover:text-white px-2'
 									title='Clear search'
@@ -243,8 +303,8 @@ export default function FileExplorer({
 							)}
 						</div>
 						<div className='flex flex-col space-y-1 mt-2'>
-							{searchFilteredFiles.length ? (
-								searchFilteredFiles.map((file, index) => (
+							{visibleFiles.length ? (
+								visibleFiles.map((file, index) => (
 									<button
 										key={`search-${file.name}-${index}`}
 										onClick={() => {
@@ -263,31 +323,6 @@ export default function FileExplorer({
 						</div>
 					</div>
 				)}
-
-				{/* === Git tab (Stage2) === */}
-				{activeTab === "git" && (
-					<div className='flex flex-col space-y-1'>
-						{Array.isArray(files) && files.length ? (
-							files.map((file, index) => {
-								const stat = getStatus(file);
-								return (
-									<div
-										key={`git-${file.name}-${index}`}
-										className='flex items-center justify-between px-2 py-1 rounded hover:bg-gray-700'
-									>
-										<span className='truncate flex items-center'>
-											{file.name}
-											{statusBadge(stat)}
-										</span>
-										<span className='text-[10px] text-gray-400'>{getSizeKB(file)}KB</span>
-									</div>
-								);
-							})
-						) : (
-							<p className='text-sm text-gray-400 p-2'>No files to show</p>
-						)}
-					</div>
-				)}
 			</div>
 
 			{/* Actions */}
@@ -301,9 +336,84 @@ export default function FileExplorer({
 					</button>
 					<label className='bg-gray-700 text-white px-2 py-1 rounded cursor-pointer text-center hover:bg-gray-600'>
 						Upload File
-						<input type='file' onChange={onUploadFile} accept='.js,.ts,.txt,.json' className='hidden' />
+						<input
+							type='file'
+							onChange={e => onUploadFile && onUploadFile(e)}
+							accept='.js,.ts,.txt,.json'
+							className='hidden'
+						/>
 					</label>
 				</>
+			)}
+
+			{/* Context menu */}
+			{contextMenu && (
+				<div
+					onMouseLeave={closeContextMenu}
+					style={{ left: contextMenu.x, top: contextMenu.y }}
+					className='absolute z-50 bg-gray-900 border border-gray-700 rounded shadow p-2'
+				>
+					<div className='flex flex-col space-y-1 text-sm'>
+						<button
+							onClick={() => {
+								onSelectFile(contextMenu.file.name);
+								closeContextMenu();
+							}}
+							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+						>
+							Open
+						</button>
+						<button
+							onClick={() => {
+								const newName = prompt("Rename file:", contextMenu.file.name);
+								if (newName && newName !== contextMenu.file.name) {
+									onRenameFile(contextMenu.file.name, newName);
+								}
+								closeContextMenu();
+							}}
+							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+						>
+							Rename
+						</button>
+						<button
+							onClick={() => {
+								onDeleteFile(contextMenu.file.name);
+								closeContextMenu();
+							}}
+							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+						>
+							Delete
+						</button>
+						<div className='border-t border-gray-700 my-1' />
+						<button
+							onClick={() => {
+								if (onGitStage) onGitStage(contextMenu.file.name);
+								closeContextMenu();
+							}}
+							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+						>
+							Stage (Git)
+						</button>
+						<button
+							onClick={() => {
+								if (onGitCommit) onGitCommit(contextMenu.file.name);
+								closeContextMenu();
+							}}
+							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+						>
+							Commit (Git)
+						</button>
+						<button
+							onClick={() => {
+								if (onGitRevert) onGitRevert(contextMenu.file.name);
+								closeContextMenu();
+							}}
+							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+						>
+							Revert Git
+						</button>
+					</div>
+				</div>
 			)}
 		</div>
 	);
