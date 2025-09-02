@@ -21,3 +21,5 @@ pnpm-lock.yaml
 !.eslintrc
 .turbo/
 !.husky/
+.symphony/.pnpm-store
+.symphony/.pnpm-cache
