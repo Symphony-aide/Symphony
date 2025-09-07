@@ -25,8 +25,9 @@ export default function AutoSaveSettings({ enabled, interval, onChange }) {
 					min={1}
 					value={saveInterval}
 					onChange={e => setSaveInterval(Number(e.target.value))}
-					className='w-16 p-1 rounded text-black'
+					className='w-16 p-1 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500'
 				/>
+
 				<span>seconds</span>
 			</div>
 		</div>

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useMemo } from "react";
 import * as monaco from "@monaco-editor/react";
 import { parseScript } from "meriyah";
-import { outlineAtom } from "./outlineAtom";
+import { outlineAtom } from "../../outlineview/src/outlineAtom";
 import { useSetAtom } from "jotai";
 import debounce from "lodash/debounce";
 import { defaultMonacoOptions } from "./monacoOptions";

@@ -7,16 +7,15 @@ import hotkeys from "hotkeys-js";
 import useUndo from "use-undo";
 import { FilesProvider } from "./FilesProvider";
 import "flexlayout-react/style/light.css";
-import SettingsModal from "./SettingsModal";
-import AutoSaveSettings from "./AutoSaveSettings";
-import FileExplorer from "./FileExplorer";
+import SettingsModal from "../../settings/src/SettingsModal";
+import AutoSaveSettings from "../../settings/src/AutoSaveSettings";
+import FileExplorer from "../../file-explorer/src/FileExplorer";
 import EditorPanel from "./EditorPanel";
-import TerminalComponent from "./Terminal";
-import OutlineView from "./OutlineView";
-import ShortcutSettingsModal from "./ShortcutSettingsModal";
-import StatusBar from "./StatusBar";
+import TerminalComponent from "../../terminal/src/Terminal";
+import OutlineView from "../../outlineview/src/OutlineView";
+import StatusBar from "../../statusbar/src/StatusBar";
 import GlobalSearchReplace from "./GlobalSearchReplace";
-import { outlineAtom } from "./outlineAtom";
+import { outlineAtom } from "../../outlineview/src/outlineAtom";
 const defaultLayoutModel = {
 	global: {},
 	borders: [],

@@ -1,6 +1,6 @@
 //App.jsx
 import { Button } from "ui";
-import { Editor, ShortcutSettingsModal } from "@symphony/code-editor";
+import { Editor } from "@symphony/code-editor";
 
 function App() {
 	return (

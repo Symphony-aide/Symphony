@@ -26,7 +26,7 @@ export default function ShortcutSettingsModal({ shortcuts, setShortcuts, onClose
 						type='text'
 						value={item.shortcut}
 						onChange={e => handleChangeShortcut(idx, e.target.value)}
-						className='flex-1 p-1 rounded text-black'
+						className='flex-1 p-1 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500'
 					/>
 				</div>
 			))}
