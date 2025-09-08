@@ -5,6 +5,7 @@ import AutoSaveSettings from "./AutoSaveSettings";
 import GlyphMarginSettings from "./GlyphMarginSettings";
 import EditorThemeSettings from "./EditorThemeSettings";
 import TerminalSettings from "./TerminalSettings";
+import GlobalSearchReplace from "./GlobalSearchReplace"; // ✅ import
 import { useState } from "react";
 
 export default function SettingsModal({
@@ -16,12 +17,13 @@ export default function SettingsModal({
 	setTabCompletionSettings,
 	glyphMarginSettings,
 	setGlyphMarginSettings,
-	themeSettings, // ✅ نستقبل إعدادات الثيم
-	setThemeSettings, //
+	themeSettings,
+	setThemeSettings,
 	terminalSettings,
 	setTerminalSettings,
 	onClose,
 	defaultTab = "shortcuts",
+	onReplaceAll, // ✅ added
 }) {
 	const [activeTab, setActiveTab] = useState(defaultTab);
 
@@ -43,8 +45,9 @@ export default function SettingsModal({
 						["autosave", "Auto Save"],
 						["tabcompletion", "Tab Completion"],
 						["glyphmargin", "Glyph Margin"],
-						["theme", "Editor Theme"], //
+						["theme", "Editor Theme"],
 						["terminal", "Terminal Settings"],
+						["searchreplace", "Search & Replace"], // ✅ new tab
 					].map(([key, label]) => (
 						<button
 							key={key}
@@ -56,6 +59,7 @@ export default function SettingsModal({
 					))}
 				</div>
 
+				{/* Content */}
 				<div className='p-4 max-h-[70vh] overflow-y-auto'>
 					{activeTab === "shortcuts" && (
 						<ShortcutSettingsModal shortcuts={shortcuts} setShortcuts={setShortcuts} onClose={() => {}} />
@@ -84,6 +88,11 @@ export default function SettingsModal({
 							terminalSettings={terminalSettings}
 							setTerminalSettings={setTerminalSettings}
 						/>
+					)}
+					{activeTab === "searchreplace" && (
+						<div className='bg-gray-800 p-3 rounded'>
+							<GlobalSearchReplace onReplaceAll={onReplaceAll} />
+						</div>
 					)}
 				</div>
 			</div>

@@ -14,7 +14,7 @@ import EditorPanel from "./EditorPanel";
 import TerminalComponent from "../../terminal/src/Terminal";
 import OutlineView from "../../outlineview/src/OutlineView";
 import StatusBar from "../../statusbar/src/StatusBar";
-import GlobalSearchReplace from "./GlobalSearchReplace";
+import GlobalSearchReplace from "../../settings/src/GlobalSearchReplace";
 import { outlineAtom } from "../../outlineview/src/outlineAtom";
 const defaultLayoutModel = {
 	global: {},
@@ -369,17 +369,6 @@ export default function Editor() {
 	return (
 		<FilesProvider>
 			<div className='h-screen w-full flex flex-col bg-[#1e1e1e] text-white'>
-				<GlobalSearchReplace
-					onReplaceAll={(search, replace) => {
-						if (!search) return;
-						setFiles(prevFiles =>
-							prevFiles.map(file => ({
-								...file,
-								content: file.content.split(search).join(replace),
-							}))
-						);
-					}}
-				/>
 				<div className='flex items-center justify-between px-4 py-2 bg-[#2a2a2a] border-b border-gray-600 text-sm z-10 relative'>
 					<h1 className='text-base font-semibold'>Symphony Editor</h1>
 					<div className='flex items-center space-x-2'>
@@ -420,6 +409,16 @@ export default function Editor() {
 						setTerminalSettings={setTerminalSettings}
 						onClose={() => setShowSettings(false)}
 						defaultTab={settingsTab}
+						onReplaceAll={(search, replace) => {
+							// ✅ new
+							if (!search) return;
+							setFiles(prevFiles =>
+								prevFiles.map(file => ({
+									...file,
+									content: file.content.split(search).join(replace),
+								}))
+							);
+						}}
 					/>
 				)}
 			</div>
