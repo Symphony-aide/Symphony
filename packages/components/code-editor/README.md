@@ -1,17 +1,64 @@
 # @symphony/code-editor
 
-Symphony editor input component package.
+A comprehensive code editor package built with Monaco Editor and React, providing a full-featured IDE experience with file management, syntax highlighting, and layout management.
 
 ## Overview
 
-This package provides a styled input component for the Symphony application. It's built using Chakra UI V3 and follows Symphony's design system.
+This package provides the main code editor components for the Symphony application, featuring a flexible layout system with Monaco Editor integration, file management, and various editor panels.
 
-## Features
+## Exported Components
 
-- Single-line and multi-line text inputs
-- Symphony brand theming using the shared theme package
-- Fully typed with TypeScript
-- Accessible form components
+### `Editor`
+The main editor component that orchestrates the entire IDE experience with a flexible layout system.
+
+**Features:**
+- Monaco Editor integration with syntax highlighting
+- Flexible layout management using FlexLayout
+- File management and tab system
+- Settings modal integration
+- Terminal integration
+- Outline view support
+- Auto-save functionality
+- Keyboard shortcuts support
+
+**Usage:**
+```tsx
+import { Editor } from "@symphony/code-editor";
+
+<Editor
+  files={files}
+  activeFileName={activeFileName}
+  onFileChange={handleFileChange}
+  onSave={handleSave}
+/>
+```
+
+### `EditorPanel`
+A panel component that wraps the Monaco Editor with additional functionality.
+
+**Features:**
+- Monaco Editor instance management
+- File content editing
+- Syntax highlighting
+- Code completion
+- Error highlighting
+
+### `FilesProvider`
+A context provider for managing file state across the editor components.
+
+**Features:**
+- File state management
+- Context-based file operations
+- Centralized file data handling
+
+### `monacoOptions`
+Configuration object containing default Monaco Editor options.
+
+**Features:**
+- Pre-configured editor settings
+- Theme configurations
+- Language support settings
+- Editor behavior options
 
 ## Installation
 
@@ -23,47 +70,33 @@ pnpm install @symphony/code-editor
 ## Usage
 
 ```tsx
-import { EditorInput } from "@symphony/code-editor";
+import { Editor, EditorPanel, FilesProvider, monacoOptions } from "@symphony/code-editor";
 
-// Single-line input
-const SingleLineExample = () => (
-  <EditorInput
-    label="Title"
-    placeholder="Enter title..."
-    onChange={(value) => console.log(value)}
-  />
+// Basic editor setup
+const App = () => (
+  <FilesProvider>
+    <Editor
+      files={files}
+      activeFileName={activeFileName}
+      onFileChange={handleFileChange}
+    />
+  </FilesProvider>
 );
 
-// Multi-line text area
-const MultiLineExample = () => (
-  <EditorInput
-    label="Description"
-    placeholder="Enter description..."
-    multiline
-    onChange={(value) => console.log(value)}
-  />
-);
+// Custom Monaco options
+const customOptions = {
+  ...monacoOptions,
+  theme: 'vs-dark',
+  fontSize: 14
+};
 ```
-
-## Props
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `label` | string | (required) | Label text for the input field |
-| `initialValue` | string | `""` | Initial value of the input |
-| `multiline` | boolean | `false` | Whether to use a textarea instead of input |
-| `onChange` | function | `undefined` | Callback when value changes |
-| `placeholder` | string | `"Enter text..."` | Placeholder text |
-
-## Development
-
-To develop this package:
-
-1. Install dependencies: `pnpm install`
-2. Build: `pnpm run build`
-3. Watch mode for development: `pnpm run dev`
 
 ## Dependencies
 
-- @symphony/shared
-- @chakra-ui/react 
+- React
+- Monaco Editor
+- FlexLayout React
+- Jotai (state management)
+- Lodash
+- Hotkeys-js
+- Use-undo

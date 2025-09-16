@@ -87,6 +87,13 @@ export default function FileExplorer({
 	// Drag & drop handlers
 	const onFileDragStart = (e, filePath) => {
 		e.dataTransfer.setData("text/plain", filePath);
+		e.dataTransfer.setData("application/x-drag-type", "file");
+		e.dataTransfer.effectAllowed = "move";
+	};
+
+	const onFolderDragStart = (e, folderPath) => {
+		e.dataTransfer.setData("text/plain", folderPath);
+		e.dataTransfer.setData("application/x-drag-type", "folder");
 		e.dataTransfer.effectAllowed = "move";
 	};
 
@@ -97,12 +104,29 @@ export default function FileExplorer({
 	const onFolderDrop = (e, targetFolderPath) => {
 		e.preventDefault();
 		const draggedPath = e.dataTransfer.getData("text/plain");
+		const dragType = e.dataTransfer.getData("application/x-drag-type");
+		
 		if (!draggedPath) return;
+		
+		// Prevent dropping a folder into itself or its children
+		if (dragType === "folder" && (draggedPath === targetFolderPath || targetFolderPath.startsWith(draggedPath + "/"))) {
+			return;
+		}
+		
 		const base = draggedPath.split("/").pop();
 		const cleanTarget = targetFolderPath.replace(/\/$/, "");
 		const newPath = cleanTarget ? `${cleanTarget}/${base}` : base;
+		
 		if (newPath === draggedPath) return;
-		onRenameFile && onRenameFile(draggedPath, newPath);
+		
+		if (dragType === "folder") {
+			// Handle folder move
+			renameFolder(draggedPath, newPath);
+		} else {
+			// Handle file move
+			onRenameFile && onRenameFile(draggedPath, newPath);
+		}
+		
 		setExpanded(prev => ({ ...prev, [targetFolderPath]: true }));
 	};
 
@@ -206,6 +230,7 @@ export default function FileExplorer({
 									onToggleExpand={toggleExpand}
 									onContextMenu={openContextMenu}
 									onFileDragStart={onFileDragStart}
+									onFolderDragStart={onFolderDragStart}
 									onFolderDragOver={onFolderDragOver}
 									onFolderDrop={onFolderDrop}
 									onRenameValueChange={setRenameValue}

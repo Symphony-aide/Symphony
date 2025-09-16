@@ -1,11 +1,12 @@
 // useFolderOperations.js
 import { useState, useEffect } from "react";
+import { storageService } from "../utils/storageService.js";
 
-export const useFolderOperations = (files, onRenameFile, onDeleteFile) => {
+export function useFolderOperations(files, onRenameFile, onDeleteFile) {
 	// User-created folders state
 	const [userFolders, setUserFolders] = useState(() => {
 		try {
-			return JSON.parse(localStorage.getItem("explorer.userFolders")) || [];
+			return storageService.getSync("explorer.userFolders") || [];
 		} catch {
 			return [];
 		}
@@ -14,20 +15,20 @@ export const useFolderOperations = (files, onRenameFile, onDeleteFile) => {
 	// Expanded folders state
 	const [expanded, setExpanded] = useState(() => {
 		try {
-			return JSON.parse(localStorage.getItem("explorer.expanded")) || {};
+			return storageService.getSync("explorer.expanded") || {};
 		} catch {
 			return {};
 		}
 	});
 
-	// Persist userFolders to localStorage
+	// Persist userFolders to storage
 	useEffect(() => {
-		localStorage.setItem("explorer.userFolders", JSON.stringify(userFolders));
+		storageService.setSync("explorer.userFolders", userFolders);
 	}, [userFolders]);
 
-	// Persist expanded state to localStorage
+	// Persist expanded state to storage
 	useEffect(() => {
-		localStorage.setItem("explorer.expanded", JSON.stringify(expanded));
+		storageService.setSync("explorer.expanded", expanded);
 	}, [expanded]);
 
 	const toggleExpand = path => {

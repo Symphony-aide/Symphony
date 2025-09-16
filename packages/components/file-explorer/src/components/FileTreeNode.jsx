@@ -14,6 +14,7 @@ const FileTreeNode = ({
 	onToggleExpand,
 	onContextMenu,
 	onFileDragStart,
+	onFolderDragStart,
 	onFolderDragOver,
 	onFolderDrop,
 	onRenameValueChange,
@@ -122,6 +123,8 @@ const FileTreeNode = ({
 					style={{ paddingLeft: 4 + depth * 14 }}
 					onClick={() => onToggleExpand(node.path)}
 					onContextMenu={e => onContextMenu(e, { type: "folder", folderPath: node.path })}
+					draggable
+					onDragStart={e => onFolderDragStart(e, node.path)}
 					onDragOver={onFolderDragOver}
 					onDrop={e => onFolderDrop(e, node.path)}
 				>
@@ -164,6 +167,7 @@ const FileTreeNode = ({
 							onToggleExpand={onToggleExpand}
 							onContextMenu={onContextMenu}
 							onFileDragStart={onFileDragStart}
+							onFolderDragStart={onFolderDragStart}
 							onFolderDragOver={onFolderDragOver}
 							onFolderDrop={onFolderDrop}
 							onRenameValueChange={onRenameValueChange}

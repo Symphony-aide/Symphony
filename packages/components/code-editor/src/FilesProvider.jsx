@@ -1,12 +1,13 @@
 //FilesProvider.jsx
 import React, { createContext, useContext } from "react";
 import useUndo from "use-undo";
+import { storageService } from "./utils/storageService.js";
 
 const FilesContext = createContext();
 
 export function FilesProvider({ children }) {
 	const [filesState, { set: setFiles, undo, redo, canUndo, canRedo }] = useUndo(
-		JSON.parse(localStorage.getItem("files")) || []
+		storageService.getSync("files") || []
 	);
 
 	const files = filesState.present;
