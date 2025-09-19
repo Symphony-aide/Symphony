@@ -1,24 +1,25 @@
 {
-  "name": "web",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
-  },
-  "dependencies": {
-    "config": "workspace:*",
-    "@symphony/shared": "workspace:*",
-    "@symphony/code-editor": "workspace:*",
-    "tsconfig": "workspace:*",
-    "ui": "workspace:*",
-    "@open-rpc/client-js": "^1.8.1",
+	"name": "web",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+	},
+	"dependencies": {
+		"config": "workspace:*",
+		"@symphony/shared": "workspace:*",
+		"@symphony/code-editor": "workspace:*",
+		"@symphony/syntax-highlighting": "workspace:*",
+		"@symphony/tsconfig": "workspace:*",
+		"ui": "workspace:*",
+		"@open-rpc/client-js": "^1.8.1",
 		"@tauri-apps/api": "^1.0.0-rc.6",
 		"emittery": "^1.2.0",
 		"i18next": "^21.5.4",
 		"react-i18next": "^11.14.3",
 		"simple-jsonrpc-js": "^1.2.0"
-  }
+	}
 }

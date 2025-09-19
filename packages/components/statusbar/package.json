@@ -24,7 +24,7 @@
 		"lucide-react": "^0.261.0",
 		"meriyah": "^6.1.4",
 		"react-mosaic-component": "^6.1.1",
-		"tsconfig": "workspace:*",
+		"@symphony/tsconfig": "workspace:*",
 		"ui": "workspace:*",
 		"use-undo": "^1.1.1",
 		"vscode-icons-js": "^11.6.1"

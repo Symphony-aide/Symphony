@@ -26,7 +26,7 @@
 		"react-mosaic-component": "^6.1.1",
 		"tree-sitter": "^0.25.0",
 		"tree-sitter-python": "^0.23.6",
-		"tsconfig": "workspace:*",
+		"@symphony/tsconfig": "workspace:*",
 		"ui": "workspace:*",
 		"use-undo": "^1.1.1",
 		"vscode-icons-js": "^11.6.1",

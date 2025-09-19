@@ -2,6 +2,13 @@
   "name": "config",
   "version": "0.0.0",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./vitest.shared.config": "./vitest.shared.config.js",
+    "./eslint.config": "./eslint.config.js",
+    "./postcss.config": "./postcss.config.js",
+    "./tailwind.config": "./tailwind.config.js"
+  },
   "license": "MIT",
   "files": [
     ".eslintrc.js",
@@ -10,7 +17,7 @@
     "tailwind.config.js"
   ],
   "devDependencies": {
-        "eslint-config-prettier": "^10.1.5",
+    "eslint-config-prettier": "^10.1.5",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jest-dom": "^5.5.0",

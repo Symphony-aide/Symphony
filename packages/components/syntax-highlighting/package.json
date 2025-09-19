@@ -1,0 +1,16 @@
+{
+	"name": "@symphony/syntax-highlighting",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"main": "./index.ts",
+	"module": "./index.ts",
+	"types": "./index.ts",
+	"dependencies": {
+		"react": "^18.2.0",
+		"@symphony/tsconfig": "workspace:*"
+	},
+	"peerDependencies": {
+		"react": "^18.2.0"
+	}
+}

@@ -9,7 +9,7 @@ import { useBreakpoints } from "./useBreakpoints";
 
 export const useEditor = (editorRef, activeFile, terminalVisible, glyphMarginSettings) => {
   const setOutline = useSetAtom(outlineAtom);
-  const { registerCodeLensProvider, addJumpToCommand } = useCodeLens();
+  const { registerCodeLensProvider, addJumpToCommand, dispose } = useCodeLens();
   const { 
     breakpointsRef, 
     handleBreakpointClick, 
@@ -60,10 +60,23 @@ export const useEditor = (editorRef, activeFile, terminalVisible, glyphMarginSet
     }
   }, [activeFile?.name, updateOutline]);
 
-  // Cleanup debounced function
+  // Re-register CodeLens provider when active file changes
   useEffect(() => {
-    return () => updateOutline.cancel();
-  }, [updateOutline]);
+    if (editorRef.current && activeFile) {
+      const monacoInstance = window.monaco;
+      if (monacoInstance) {
+        registerCodeLensProvider(monacoInstance, activeFile);
+      }
+    }
+  }, [activeFile?.name, registerCodeLensProvider]);
+
+  // Cleanup debounced function and CodeLens providers
+  useEffect(() => {
+    return () => {
+      updateOutline.cancel();
+      dispose();
+    };
+  }, [updateOutline, dispose]);
 
   const handleEditorMount = (editor, monacoInstance) => {
     editorRef.current = editor;
