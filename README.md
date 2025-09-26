@@ -1,151 +1,100 @@
-# 🎼 Agentic Symphony IDE [Codename: "Symphony"]
+# Symphony IDE
 
-> *"A fully orchestrated, multi-agent IDE that composes and delivers complete software projects in a single, expressive prompt — with precision, harmony, and intelligence."*
+> 🎼 AI-First Development Environment
+> 
 
----
+## 🎯 Overview
 
-## 🎯 What is Agentic Symphony?
-Agentic Symphony is a fully agent-driven IDE powered by a symphony of intelligent models, each acting like a musician in a grand orchestra. It enables users to:
+Symphony is a minimal, extensible IDE designed around intelligent orchestration. Unlike traditional IDEs that treat AI as an add-on, Symphony places AI collaboration at its core through an innovative agent-driven architecture.
 
-- Generate and deploy fully functional, production-quality software projects
-- From just **one prompt** — enhanced, expanded, and interpreted by multiple agents
-- With version control, task backlogs, documentation, and a deployed GitHub repository
+## 🧭 Core Philosophy
 
-The orchestration is directed by the **Conductor** model, with models communicating, activating, and reinforcing each other musically.
+**Minimal Core, Maximum Potential** - Symphony ships with only essential components:
 
----
+- 📝 Text Editor
+- 🗂️ File Explorer
+- 🎨 Syntax Highlighting
+- 💻 Terminal Integration
+- 🔌 Extension System
 
-## 🧠 Core Agentic Models & Their Roles
+Everything else—debugging, language servers, AI models, specialized tools—comes from the community through extensions.
 
-| Icon  | Agent                     | Description                                                                  | Inputs                     | Outputs                    |
-|-------|---------------------------|------------------------------------------------------------------------------|----------------------------|----------------------------|
-| 🎤    | **Enhancer-Prompt Model** | Converts user prompts into technical instructions                            | `prompt`                   | `enhanced-prompt`          |
-| 🎼    | **Feature Model**         | Extracts system EPICs and tasks from enhanced prompts                        | `enhanced-prompt`          | `backlog.csv`              |
-| 🏗️   | **Planner Model**         | Designs file structure, dependencies, UI/UX, and architecture                | `backlog.csv`              | `plan.json`                |
-| 🎛️   | **Coordinator Model**     | Allocates task execution, plans git strategy, and generates development flow | `plan.json`                | `instructions.json`        |
-| 🧮    | **Code-Visualizer Model** | Converts technical tasks to pseudocode or logic blueprints                   | `instructions.json`        | `psuedocode.txt`           |
-| 🧑‍💻 | **Editor Model**          | Produces final code based on pseudocode and language specification           | `instructions.json`        | `*.py`, `*.js`, etc.       |
-| 🎩    | **Conductor Model**       | Master orchestrator — decides when and how each model plays                  | **All intermediate files** | **Orchestrated execution** |
+## 🌟 Key Features
 
----
+### 🎼 Intelligent Orchestration
 
-## ⚙️ Configuration Parameters (Shared)
-Each session supports tuning the following modes:
+- **🎩 The Conductor**: Orchestrates complex workflows using specialized AI agents
+- **🤖 Agent-Driven Development**: AI handles implementation while you guide the vision
+- **🎛️ Visual Workflows**: Compose development processes through intuitive interfaces
 
-- **Complexity**: Sets feature depth (e.g., Beginner, Intermediate, Enterprise)
-- **Deep Token**: Enables semantic vector expansion to enrich prompt interpretation
-- **Search Mode**: Uses local or online repository references for inspiration
+### 🎭 Three-Layer Extension System
 
-These affect **all models' behavior** and are accessible globally.
+- **🎻 Instruments**: AI/ML models as configurable extensions
+- **⚙️ Operators**: Workflow utilities and data processing tools
+- **🧩 Addons**: UI enhancements and specialized editors
 
----
+### Developer Experience
 
-## 🔁 Workflow Overview
+- Lightning-fast startup times
+- Community-driven intelligence
+- Transparent, artifact-based communication
+- Secure sandboxed execution
 
-### 1. 🎤 Enhancer-Prompt Model
-- Takes a simple user request (e.g., "to-do app")
-- Enhances it into a detailed technical prompt
+## Architecture
 
-### 2. 🎼 Feature Model
-- Interprets the enhanced prompt
-- Categorizes functionalities into EPICs
-- Displays EPICs and waits for user to:
-  - `🎧 Look deeper`: Break EPICs into tasks
-  - `🚀 Go`: Proceed to planning phase (skip breakdown)
-  - `✏️ Edit`: Manually modify EPICs or tasks
+Symphony uses a microkernel architecture where the minimal core orchestrates an ecosystem of intelligent extensions. This design ensures:
 
-### 3. 🏗️ Planner Model
-- Receives finalized tasks (from Feature model)
-- Designs the project structure, flow, dependencies, visuals, and branding
-- Requests user resources (e.g., logos, fonts)
-- Outputs: `plan.json`
+- **Reliability**: Component failures don't crash the system
+- **Flexibility**: Unlimited customization through extensions
+- **Performance**: Load only what you need
+- **Security**: Controlled permissions and sandboxing
 
-### 4. 🎛️ Coordinator Model
-- Uses `plan.json` to:
-  - Create execution strategy
-  - Assign subtasks to models
-  - Design git workflow: commits, branches, issues
-- Outputs: `instructions.json`
+## Getting Started
 
-### 5. 🧮 Code-Visualizer Model
-- Translates task intent into:
-  - Pseudocode
-  - Logical steps
-  - Mathematical formulae
+1. Download Symphony core
+2. Browse the Orchestra Kit marketplace
+3. Install extensions for your tech stack
+4. Configure your development workflow
+5. Let AI agents handle the complexity
 
-### 6. 🧑‍💻 Editor Model
-- Converts abstract pseudocode into real code files
-- Applies framework patterns and best practices
+## Extension Development
 
-### 7. 🎩 Conductor Model
-- **Views all intermediate files** (`enhanced-prompt`, `backlog.csv`, `plan.json`, etc.)
-- **Decides activation/re-activation** of any model
-- **Tunes** the pipeline based on:
-  - Current melody (project coherence)
-  - Reinforcement (if it feels better output is possible)
+Symphony's open ecosystem welcomes contributions:
 
-The Conductor behaves:
-- **Symmetrically** (sequential execution)
-- Or **Reinforcement-inspired** (optimizes based on internal motivations)
+- **Full ownership** of your extensions
+- **Flexible licensing** - choose your business model
+- **Secure sandboxing** with defined permissions
+- **Global distribution** through the marketplace
 
----
+## Use Cases
 
-## 📦 Intermediate Files
+Symphony adapts to diverse development scenarios:
 
-| File                  | Generated By    | Description                                        |
-|-----------------------|-----------------|----------------------------------------------------|
-| `enhanced-prompt.txt` | Enhancer-Prompt | Refined prompt for downstream models               |
-| `backlog.csv`         | Feature Model   | Structured feature list in task form               |
-| `plan.json`           | Planner         | Project layout, structure, and execution blueprint |
-| `instructions.json`   | Coordinator     | Model-specific development instructions            |
-| `psuedocode.txt`      | Code-Visualizer | Logical flow of system                             |
+- Rapid prototyping with AI assistance
+- Complex enterprise applications
+- Research and experimental projects
+- Team collaboration with shared workflows
+
+## Technology Stack
+
+- **Core**: Proprietary (ensures quality and security)
+- **Extensions**: Any technology stack
+- **Communication**: Structured artifacts and APIs
+- **Deployment**: Cross-platform desktop application
+
+## Community
+
+Join developers building the future of AI-assisted development:
+
+- Contribute extensions to the marketplace
+- Share workflows and best practices
+- Collaborate on open-source tools
+- Shape the evolution of intelligent development
+
+## Vision
+
+Symphony represents a paradigm shift from tool-assisted to agent-orchestrated development. We envision a future where developers compose intelligent systems rather than write individual lines of code.
 
 ---
 
-## 🚀 Final Outputs
-After full orchestration, the Symphony generates:
-
-- ✅ **Production-ready codebase** (hosted on GitHub)
-- 📋 **backlog.xlsx**: formatted and enriched project backlog
-- 📄 **Project Documentation**: auto-generated docs with setup and usage
-- 🪶 **Summary.md**: poetic explanation of how the Conductor and its agentic ensemble composed your software symphony
-
----
-
-## 🧩 Supported Model Backends
-Each agentic model is backed by specialized LLMs:
-
-| Model           | Backend Options (Open)     | Vendor Fallback        |
-|-----------------|----------------------------|------------------------|
-| Enhancer        | Phi-3 / DeepSeek           | GPT-4-turbo            |
-| Feature         | Mistral / StarCoder2       | Claude 3 Opus          |
-| Planner         | DeepSeek-Coder / Gemma     | GPT-4                  |
-| Coordinator     | Yi 34B / Mixtral           | GPT-4o                 |
-| Code-Visualizer | CodeGemma / DeepSeek       | StarCoder2             |
-| Editor          | Phind-CodeLlama / DeepSeek | Claude Sonnet          |
-| Conductor       | Mixtral + RL logic         | GPT-4o + System Prompt |
-
----
-
-## 🎹 Why Music Metaphor?
-- **Melodies** = development flow
-- **Solfeggio frequencies** = model configurations
-- **Tone skipping** = skipping detail layers ("Go")
-- **Harmony** = code coherence
-- **Symphony** = the orchestrated project
-
----
-
-## 🛠️ Future Features
-- Real-time agent visualizer (see which model is active)
-- Editable intermediate files UI
-- Plugin system for adding/removing instruments (models)
-- Automatic performance metrics for each generated symphony
-
----
-
-## 🧭 License & Credits
-Built with ❤️ by the minds who believe **code is music** and IDEs should feel like art.
-
-> *Let your prompt sing. Let your project dance.*
-
+**Symphony IDE**: Where human creativity meets artificial intelligence in perfect harmony.
