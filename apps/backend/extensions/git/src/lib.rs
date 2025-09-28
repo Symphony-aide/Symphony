@@ -1,3 +1,21 @@
+//! # Git Extension for Symphony
+//!
+//! This extension provides Git integration for the Symphony code editor, enabling users to
+//! perform Git operations directly from the editor interface.
+//!
+//! ## Features
+//!
+//! - **Repository Detection**: Automatically detects Git repositories
+//! - **Branch Information**: Displays current branch in the status bar
+//! - **File Status**: Shows Git status for files (modified, staged, untracked, etc.)
+//! - **Real-time Updates**: Updates Git information as you navigate through directories
+//!
+//! ## Architecture
+//!
+//! The extension uses the `git2` crate for Git operations and integrates with Symphony's
+//! extension system through the `Extension` trait. It communicates with the client through
+//! message passing and updates the status bar with repository information.
+
 use std::sync::Arc;
 
 use git2::{Error, Repository, StatusOptions};
@@ -13,8 +31,19 @@ mod types;
 
 use types::{FileState, FromExtension, ToExtension};
 
+/// The display name of this extension
 static EXTENSION_NAME: &str = "Git";
 
+/// Sends a message from the extension to the client.
+///
+/// This helper function serializes the message and sends it through the extension client.
+///
+/// # Arguments
+///
+/// * `client` - The extension client for communication
+/// * `state_id` - The ID of the editor state
+/// * `extension_id` - The ID of this extension
+/// * `message` - The message to send (must be serializable)
 async fn send_message_to_client(
     client: &ExtensionClient,
     state_id: u8,
@@ -34,16 +63,44 @@ async fn send_message_to_client(
         .ok();
 }
 
+/// Main Git extension implementation.
+///
+/// This struct manages Git operations and communication with the Symphony client.
+/// It handles repository detection, branch information, and file status updates.
 struct GitExtension {
+    /// Message receiver for handling client messages
     rx: Option<Receiver<ClientMessages>>,
+    /// Message sender for internal communication
     tx: Sender<ClientMessages>,
+    /// Status bar item for displaying Git information
     status_bar_item: StatusBarItem,
+    /// Client for communicating with the Symphony frontend
     client: ExtensionClient,
 }
 
 impl GitExtension {
-    /// Handle ListDir events
-    /// Note: The errors should be better handled
+    /// Gets the current branch name for a Git repository.
+    ///
+    /// # Arguments
+    ///
+    /// * `path` - The file system path to check for a Git repository
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(Some(branch_name))` if a repository is found and has a current branch,
+    /// `Ok(None)` if no branch is found, or an `Error` if the operation fails.
+    ///
+    /// # Examples
+    ///
+    /// ```rust,no_run
+    /// # use git_for_symphony::GitExtension;
+    /// let branch = GitExtension::get_repo_branch("/path/to/repo".to_string());
+    /// match branch {
+    ///     Ok(Some(name)) => println!("Current branch: {}", name),
+    ///     Ok(None) => println!("No current branch"),
+    ///     Err(e) => println!("Error: {}", e),
+    /// }
+    /// ```
     pub fn get_repo_branch(path: String) -> Result<Option<String>, Error> {
         let repo = Repository::discover(path);
         let repo = repo?;
@@ -51,6 +108,34 @@ impl GitExtension {
         Ok(head.shorthand().map(|v| v.to_string()))
     }
 
+    /// Gets the Git status for all files in a repository.
+    ///
+    /// This method discovers the Git repository from the given path and returns
+    /// the status of all files that have changes (modified, staged, untracked, etc.).
+    ///
+    /// # Arguments
+    ///
+    /// * `path` - The file system path within a Git repository
+    ///
+    /// # Returns
+    ///
+    /// Returns a vector of `FileState` objects representing the Git status of files,
+    /// or an `Error` if the operation fails.
+    ///
+    /// # Examples
+    ///
+    /// ```rust,no_run
+    /// # use git_for_symphony::GitExtension;
+    /// let status = GitExtension::get_repo_status("/path/to/repo".to_string());
+    /// match status {
+    ///     Ok(files) => {
+    ///         for file in files {
+    ///             println!("File: {}, Status: {}", file.path, file.status);
+    ///         }
+    ///     }
+    ///     Err(e) => println!("Error getting status: {}", e),
+    /// }
+    /// ```
     pub fn get_repo_status(path: String) -> Result<Vec<FileState>, Error> {
         let repo = Repository::discover(path);
         let repo = repo?;
@@ -72,6 +157,17 @@ impl GitExtension {
         Ok(files)
     }
 
+    /// Handles messages from the side panel UI.
+    ///
+    /// This method processes requests from the Symphony client for Git information,
+    /// such as loading file states or branch information.
+    ///
+    /// # Arguments
+    ///
+    /// * `client` - The extension client for sending responses
+    /// * `state_id` - The ID of the editor state
+    /// * `extension_id` - The ID of this extension
+    /// * `message` - The message received from the client
     pub async fn handle_side_panel_messages(
         client: &ExtensionClient,
         state_id: u8,
