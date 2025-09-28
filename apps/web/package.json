@@ -12,6 +12,7 @@
 		"config": "workspace:*",
 		"@symphony/shared": "workspace:*",
 		"@symphony/code-editor": "workspace:*",
+		"@symphony/commands": "workspace:*",
 		"@symphony/syntax-highlighting": "workspace:*",
 		"@symphony/tsconfig": "workspace:*",
 		"ui": "workspace:*",
