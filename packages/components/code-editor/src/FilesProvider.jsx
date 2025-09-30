@@ -1,19 +1,19 @@
 //FilesProvider.jsx
 import React, { createContext, useContext } from "react";
-import useUndo from "use-undo";
-import { storageService } from "./utils/storageService.js";
+import { useCommandState } from "@symphony/commands";
+import { useEditorCommands } from "./hooks/useEditorCommands.js";
 
 const FilesContext = createContext();
 
 export function FilesProvider({ children }) {
-	const [filesState, { set: setFiles, undo, redo, canUndo, canRedo }] = useUndo(
-		storageService.getSync("files") || []
-	);
-
-	const files = filesState.present;
+	// Use the new command-based file management
+	const { files, setFiles } = useEditorCommands();
+	
+	// Get undo/redo state from global command system
+	const { canUndo, canRedo } = useCommandState();
 
 	return (
-		<FilesContext.Provider value={{ files, setFiles, undo, redo, canUndo, canRedo }}>
+		<FilesContext.Provider value={{ files, setFiles, canUndo, canRedo }}>
 			{children}
 		</FilesContext.Provider>
 	);

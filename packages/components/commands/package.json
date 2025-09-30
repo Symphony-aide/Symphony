@@ -1,5 +1,5 @@
 {
-	"name": "@symphony/code-editor",
+	"name": "@symphony/commands",
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
@@ -24,13 +24,9 @@
 		"lucide-react": "^0.261.0",
 		"meriyah": "^6.1.4",
 		"react-mosaic-component": "^6.1.1",
-		"tree-sitter": "^0.25.0",
-		"tree-sitter-python": "^0.23.6",
-		"@symphony/commands": "workspace:*",
 		"@symphony/tsconfig": "workspace:*",
 		"ui": "workspace:*",
 		"use-undo": "^1.1.1",
-		"vscode-icons-js": "^11.6.1",
-		"web-tree-sitter": "^0.25.9"
+		"vscode-icons-js": "^11.6.1"
 	}
 }

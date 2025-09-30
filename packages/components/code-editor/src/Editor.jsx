@@ -5,6 +5,7 @@ import LayoutManager from "./components/LayoutManager";
 import { createLayoutFactory } from "./components/LayoutFactory";
 import SettingsPanel from "./components/SettingsPanel";
 import StatusBar from "../../statusbar/src/StatusBar";
+import { UndoRedoToolbar } from "@symphony/commands";
 import { useEditorState } from "./hooks/useEditorState";
 import { useEditorSettings } from "./hooks/useEditorSettings";
 import { useFileOperations } from "./hooks/useFileOperations";
@@ -45,8 +46,6 @@ export default function Editor() {
 		activeFile,
 		canUndo: editorState.canUndo,
 		canRedo: editorState.canRedo,
-		undo: editorState.undo,
-		redo: editorState.redo,
 		handleDownloadFile: fileOperations.handleDownloadFile,
 		handleChange: fileOperations.handleChange,
 		setShowTerminal: editorState.setShowTerminal,
@@ -92,6 +91,18 @@ export default function Editor() {
 	return (
 		<FilesProvider>
 			<div className='h-screen w-full flex flex-col bg-[#1e1e1e] text-white'>
+				{/* Toolbar with Undo/Redo */}
+				<div className="bg-[#2d2d30] border-b border-gray-600 px-4 py-2 flex items-center gap-4">
+					<UndoRedoToolbar 
+						className="flex items-center"
+						showDescriptions={false}
+						iconSize={14}
+					/>
+					<div className="text-xs text-gray-400">
+						Global Undo/Redo System Active
+					</div>
+				</div>
+
 				<LayoutManager factory={factory} />
 
 				<StatusBar

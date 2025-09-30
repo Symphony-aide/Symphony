@@ -1,14 +1,15 @@
 // useEditorState.js
 import { useState, useEffect } from "react";
-import useUndo from "use-undo";
+import { useCommandState } from "@symphony/commands";
 import { storageService } from "../utils/storageService.js";
+import { useEditorCommands } from "./useEditorCommands.js";
 
 export function useEditorState() {
-	// Files management with undo/redo
-	const savedFiles = storageService.getSync("files");
-	const initialFiles = savedFiles || [{ name: "untitled.txt", content: "" }];
-	const [filesState, { set: setFiles, undo, redo, canUndo, canRedo }] = useUndo(initialFiles);
-	const files = filesState.present;
+	// Files management through command system
+	const { files, setFiles } = useEditorCommands();
+	
+	// Get undo/redo state from global command system
+	const { canUndo, canRedo } = useCommandState();
 
 	// Active file and tabs
 	const [activeFileName, setActiveFileName] = useState(
@@ -52,9 +53,7 @@ export function useEditorState() {
 		showTerminal,
 		setShowTerminal,
 		
-		// Undo/Redo
-		undo,
-		redo,
+		// Undo/Redo (now handled by global command system)
 		canUndo,
 		canRedo,
 	};
