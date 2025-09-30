@@ -1,13 +1,14 @@
+import { spawn } from 'node:child_process'
+import fs from 'node:fs'
+import path from 'node:path'
+
 import jake from 'jake'
-import { spawn } from 'child_process'
-import fs from 'fs'
 import yaml from 'js-yaml'
-import path from 'path'
 
 const { task, desc } = jake
 
 
-const backkend_path = './backend'
+const backkend_path = './apps/backend'
 const server_path = `${backkend_path}/server`
 const desktop_path = `${backkend_path}/desktop`
 const core_path = 'frontend/core'
@@ -138,7 +139,7 @@ const run = (what, args, where = './') => {
 }
 
 desc('Build all workspaces except core');
-task('server_build', async function () {
+task('server_build', async () => {
     try {
         console.log('Starting server_build task...')
         const workspaces = getWorkspacesExceptCore()
@@ -159,7 +160,7 @@ task('server_build', async function () {
 });
 
 desc('Run the server in develop mode');
-task('server_dev', async function () {
+task('server_dev', async () => {
     try {
         console.log('Starting server task...')
         const workspaces = getWorkspacesExceptCore()
@@ -184,13 +185,13 @@ task('server_dev', async function () {
 });
 
 desc('Run the core in develop mode');
-task('server', async function () {
+task('server', async () => {
     await run('npm', ['run', 'dev'], core_path)
     await run('cargo run', [], server_path)
 });
 
 desc('Run the desktop in develop mode');
-task('desktop', async function () {
+task('desktop', async () => {
     try {
         await run('cargo tauri dev', [], desktop_path)
     } catch (error) {
@@ -200,7 +201,7 @@ task('desktop', async function () {
 });
 
 desc('Build the desktop');
-task('build_desktop', async function () {
+task('build_desktop', async () => {
     try {
         await run('cargo tauri build', [], desktop_path)
     } catch (error) {

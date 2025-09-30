@@ -32,6 +32,7 @@ export default [
 			"**/.vuepress/**",
 			"**/public/**",
 			"**/static/**",
+			"**/jakefile.js"
 		],
 	},
 
