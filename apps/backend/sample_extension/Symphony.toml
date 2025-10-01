@@ -1,7 +1,0 @@
-[extension]
-name = "Sample Extension"
-id = "sample-extension"
-author = "marc2332"
-version = "0.1.0"
-repository = "https://github.com/Symphony-Code-Editor/Symphony-App"
-main = "main.js"
