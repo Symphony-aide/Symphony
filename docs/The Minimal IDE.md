@@ -66,6 +66,17 @@ Symphony's core is intentionally **tiny but powerful**. It provides only the ess
 
 ---
 
+### 🎨 **Syntax Highlighting Engine**
+
+- TextMate grammar support
+- Language detection for common languages (JavaScript, Python, Rust, Java, C++, Go, etc.)
+- Color theming foundation
+- Token-based highlighting
+
+***Note**: Symphony's minimal core provides syntax highlighting for widely used programming languages. Specialized languages and domain-specific syntaxes are available through community extensions.*
+
+---
+
 ## 🚀 The Power of Community Extensions
 
 Here's where Symphony gets revolutionary. **Every major IDE feature** you're used to - debugging, source control, linting, advanced search, IntelliSense, formatters - all of these are **community-built extensions**.
