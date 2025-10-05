@@ -2,7 +2,7 @@
 name = "sveditor-core"
 version = "0.1.7"
 description = "Symphony Core"
-authors = ["Marc Espín Sanz"]
+authors = ["Symphony Team"]
 edition = "2021"
 readme = "../readme.md"
 repository = "https://github.com/Symphony-Code-Editor/Symphony-App/tree/main"

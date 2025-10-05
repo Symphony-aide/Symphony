@@ -1,6 +1,6 @@
 {
   "package": {
-    "productName": "SymphonyEditor",
+    "productName": "Symphony",
     "version": "0.1.0"
   },
   "build": {
@@ -21,7 +21,7 @@
         "./icons/icon.icns",
         "./icons/icon.ico"
       ],
-      "copyright": "Marc Espín Sanz",
+      "copyright": "Symphony Team",
       "category": "DeveloperTool",
       "shortDescription": "Code Editor",
       "longDescription": "Programming Code Editor",
@@ -62,7 +62,7 @@
     },
     "windows": [
       {
-        "title": "Symphony Editor",
+        "title": "Symphony",
         "width": 800,
         "height": 600,
         "resizable": true,
