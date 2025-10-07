@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Symphony IDE - Normal Mode</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&amp;family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "background-dark": "#18181B",
+                        "surface-dark": "#1F2937",
+                        "border-dark": "#27272A",
+                        "text-dark": "#F9FAFB",
+                        "text-secondary-dark": "#A1A1AA",
+                    },
+                    fontFamily: {
+                        sans: ["Roboto", "sans-serif"],
+                        mono: ["Roboto Mono", "monospace"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        none: "0",
+                    },
+                    boxShadow: {
+                        none: 'none',
+                    }
+                },
+            },
+        };
+    </script>
+<style>
+        .material-icons {
+            font-size: 20px;
+        }
+        .code-editor-container::-webkit-scrollbar {
+            width: 14px;
+        }
+        .code-editor-container::-webkit-scrollbar-track {
+            background-color: #1e1e1e;
+        }
+        .code-editor-container::-webkit-scrollbar-thumb {
+            background-color: #424242;
+            border-radius: 2px;
+            border: 3px solid #1e1e1e;
+        }
+        .code-editor-container::-webkit-scrollbar-thumb:hover {
+            background-color: #555;
+        }
+        .code-editor-container::-webkit-scrollbar-corner {
+            background-color: #1e1e1e;
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-text-dark font-sans antialiased">
+<div class="flex flex-col h-screen">
+<header class="flex items-center justify-between text-center py-2 px-4 border-b border-border-dark">
+<div class="flex items-center space-x-2">
+<svg class="h-8 w-8 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+<h1 class="text-xl font-medium">Symphony IDE - Normal Mode</h1>
+</div>
+<div class="relative w-1/3 max-w-sm">
+<span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary-dark">search</span>
+<input class="w-full bg-surface-dark border border-border-dark rounded-md py-1.5 pl-10 pr-4 text-sm text-text-dark placeholder:text-text-secondary-dark focus:ring-primary focus:border-primary" placeholder="Search files, symbols, and more..." type="search"/>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-16 bg-background-dark border-r border-border-dark flex flex-col items-center py-4">
+<div class="flex-1 space-y-6">
+<button class="p-2 rounded-md bg-primary/20 text-primary">
+<span class="material-icons">description</span>
+</button>
+<button class="p-2 rounded-md text-text-secondary-dark hover:bg-gray-700">
+<span class="material-icons">search</span>
+</button>
+<button class="p-2 rounded-md text-text-secondary-dark hover:bg-gray-700">
+<span class="material-icons">biotech</span>
+</button>
+<button class="p-2 rounded-md text-text-secondary-dark hover:bg-gray-700">
+<span class="material-icons">bug_report</span>
+</button>
+</div>
+<div class="mt-auto">
+<button class="p-2">
+<img alt="User avatar" class="h-8 w-8 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrRnBeE3b9HLTSQtNJCYGQ9qzKnBX541QHeEUfCbT82S8xz9Yr_xcu4snJNSM7yBTLYCFlwHAItw2SX-rrYatBLskEFN7o0Q2x5uc7YnBqztltlG9gLbX6V3NdE0ysiMW17FObI4MjgRbb-A68ZCDlwVbosyh6gy3hDPc2P2Q-2IV7CtkAkrVj_4Ai_qu4X8FNUzLNo8vObAuz1LnofsXP8fyxK1pqxcaKTeSLBXdZ424ly3yrUEN36IE_1w4bIvrM6VEM4ny9amcJ"/>
+</button>
+</div>
+</aside>
+<nav class="w-64 bg-background-dark border-r border-border-dark p-4 flex flex-col">
+<h2 class="text-sm font-bold tracking-wider uppercase text-text-secondary-dark mb-4">Explorer</h2>
+<div class="flex-1 space-y-2">
+<div class="space-y-1">
+<div class="flex items-center space-x-2">
+<span class="material-icons text-sm">expand_more</span>
+<span class="material-icons text-yellow-500">folder</span>
+<span class="font-medium">src</span>
+</div>
+<ul class="pl-6 space-y-1">
+<li class="flex items-center space-x-2 p-1 rounded-md bg-primary/20">
+<span class="material-icons text-sm text-blue-400">javascript</span>
+<span>main.js</span>
+</li>
+<li class="flex items-center space-x-2 p-1">
+<span class="material-icons text-sm text-blue-400">javascript</span>
+<span>utils.js</span>
+</li>
+<li class="flex items-center space-x-2 p-1">
+<span class="material-icons text-sm text-yellow-500">folder</span>
+<span>tests</span>
+</li>
+</ul>
+</div>
+<div class="flex items-center space-x-2 p-1">
+<span class="material-icons text-sm text-blue-400">javascript</span>
+<span>main.test.js</span>
+</div>
+<div class="flex items-center space-x-2 p-1">
+<span class="material-icons text-sm text-red-400">code</span>
+<span>package.json</span>
+</div>
+<div class="flex items-center space-x-2 p-1">
+<span class="material-icons text-sm text-gray-400">description</span>
+<span>README.md</span>
+</div>
+</div>
+<div class="mt-4">
+<h2 class="text-sm font-bold tracking-wider uppercase text-text-secondary-dark mb-4">Orchestra Kit</h2>
+<ul class="space-y-2">
+<li class="flex items-center space-x-2">
+<span class="material-icons text-green-500">smart_toy</span>
+<span>GPT-4 Assistant</span>
+</li>
+<li class="flex items-center space-x-2 text-text-secondary-dark">
+<span class="material-icons">person</span>
+<span>Claude Reviewer</span>
+</li>
+<li class="flex items-center space-x-2 text-text-secondary-dark">
+<span class="material-icons">biotech</span>
+<span>Test Generator</span>
+</li>
+<li class="flex items-center space-x-2 text-text-secondary-dark">
+<span class="material-icons">build_circle</span>
+<span>File Processor</span>
+</li>
+<li class="flex items-center space-x-2 text-text-secondary-dark">
+<span class="material-icons">bug_report</span>
+<span>AI Debugger</span>
+</li>
+</ul>
+</div>
+</nav>
+<main class="flex-1 flex flex-col bg-background-dark">
+<div class="flex-1 flex flex-col">
+<div class="bg-background-dark border-b border-border-dark flex items-center justify-between">
+<div class="flex items-center">
+<div class="flex items-center space-x-2 px-4 py-2 border-r border-border-dark bg-primary/10">
+<span>main.js</span>
+</div>
+<div class="flex items-center space-x-2 px-4 py-2 border-r border-border-dark">
+<span>utils.js</span>
+</div>
+<div class="flex items-center space-x-2 px-4 py-2 border-r border-border-dark">
+<span>package.json</span>
+</div>
+<button class="px-4 py-2 flex items-center space-x-1 border-r border-border-dark">
+<span class="material-icons text-sm">add</span>
+<span>New</span>
+</button>
+</div>
+</div>
+<div class="flex-1 flex overflow-hidden bg-[#1E1E1E] relative">
+<div class="h-full overflow-y-auto code-editor-container">
+<div class="flex font-mono text-sm">
+<div class="text-right pr-4 text-text-secondary-dark/50 select-none sticky top-0 py-4 bg-[#1E1E1E]">
+<div class="h-[21px]">1</div>
+<div class="h-[21px]">2</div>
+<div class="h-[21px]">3</div>
+<div class="h-[21px]">4</div>
+<div class="h-[21px]">5</div>
+<div class="h-[21px]">6</div>
+<div class="h-[21px]">7</div>
+<div class="h-[21px]">8</div>
+<div class="h-[21px]">9</div>
+<div class="h-[21px]">10</div>
+<div class="h-[21px]">11</div>
+<div class="h-[21px]">12</div>
+<div class="h-[21px]">13</div>
+<div class="h-[21px]">14</div>
+<div class="h-[21px]">15</div>
+<div class="h-[21px]">16</div>
+<div class="h-[21px]">17</div>
+<div class="h-[21px]">18</div>
+<div class="h-[21px]">19</div>
+<div class="h-[21px]">20</div>
+<div class="h-[21px]">21</div>
+<div class="h-[21px]">22</div>
+<div class="h-[21px]">23</div>
+<div class="h-[21px]">24</div>
+<div class="h-[21px]">25</div>
+<div class="h-[21px]">26</div>
+<div class="h-[21px]">27</div>
+<div class="h-[21px]">28</div>
+<div class="h-[21px]">29</div>
+<div class="h-[21px]">30</div>
+<div class="h-[21px]">31</div>
+<div class="h-[21px]">32</div>
+<div class="h-[21px]">33</div>
+<div class="h-[21px]">34</div>
+<div class="h-[21px]">35</div>
+<div class="h-[21px]">36</div>
+<div class="h-[21px]">37</div>
+<div class="h-[21px]">38</div>
+<div class="h-[21px]">39</div>
+<div class="h-[21px]">40</div>
+<div class="h-[21px]">41</div>
+<div class="h-[21px]">42</div>
+<div class="h-[21px]">43</div>
+<div class="h-[21px]">44</div>
+</div>
+<pre class="text-gray-300 py-4 pr-4"><code class="language-javascript"><span class="text-[#9CDCFE]">import</span> { <span class="text-[#4FC1FF]">fetchUserData</span>, <span class="text-[#4FC1FF]">API_URL</span> } <span class="text-[#9CDCFE]">from</span> <span class="text-[#CE9178]">'./utils.js'</span>;
+<span class="text-[#6A9955]"></span>
+<span class="text-[#DCDCAA]">function</span> <span class="text-[#4FC1FF]">processUserData</span>(<span class="text-[#9CDCFE]">rawData</span>) {
+  <span class="text-[#C586C0]">if</span> (!<span class="text-[#9CDCFE]">rawData</span> || <span class="text-[#DCDCAA]">typeof</span> <span class="text-[#9CDCFE]">rawData</span> !== <span class="text-[#CE9178]">'object'</span>) {
+    <span class="text-[#C586C0]">throw new</span> <span class="text-[#4EC9B0]">Error</span>(<span class="text-[#CE9178]">'Invalid input: rawData must be an object.'</span>);
+  }
+  <span class="text-[#569CD6]">const</span> { <span class="text-[#9CDCFE]">id</span>, <span class="text-[#9CDCFE]">name</span>, <span class="text-[#9CDCFE]">email</span>, <span class="text-[#9CDCFE]">profile</span> } = <span class="text-[#9CDCFE]">rawData</span>;
+  <span class="text-[#569CD6]">return</span> {
+    <span class="text-[#9CDCFE]">userId</span>: <span class="text-[#9CDCFE]">id</span>,
+    <span class="text-[#9CDCFE]">fullName</span>: <span class="text-[#9CDCFE]">name</span>,
+    <span class="text-[#9CDCFE]">contact</span>: <span class="text-[#9CDCFE]">email</span>,
+    <span class="text-[#9CDCFE]">isActive</span>: <span class="text-[#9CDCFE]">profile</span>?.<span class="text-[#9CDCFE]">isActive</span> ?? <span class="text-[#569CD6]">false</span>,
+    <span class="text-[#9CDCFE]">lastLogin</span>: <span class="text-[#569CD6]">new</span> <span class="text-[#4EC9B0]">Date</span>()
+  };
+}
+<span class="text-[#6A9955]"></span>
+<span class="text-[#DCDCAA]">async function</span> <span class="text-[#4FC1FF]">main</span>() {
+  <span class="text-[#C586C0]">try</span> {
+    <span class="text-[#569CD6]">const</span> <span class="text-[#9CDCFE]">userData</span> = <span class="text-[#569CD6]">await</span> <span class="text-[#DCDCAA]">fetchUserData</span>(<span class="text-[#B5CEA8]">123</span>);
+    <span class="text-[#569CD6]">const</span> <span class="text-[#9CDCFE]">processedData</span> = <span class="text-[#DCDCAA]">processUserData</span>(<span class="text-[#9CDCFE]">userData</span>);
+    <span class="text-[#9CDCFE]">console</span>.<span class="text-[#DCDCAA]">log</span>(<span class="text-[#CE9178]'Processed User:'&lt;/span&gt;, &lt;span class=" text-[#9cdcfe]"="">processedData</span>);
+  } <span class="text-[#C586C0]">catch</span> (<span class="text-[#9CDCFE]">error</span>) {
+    <span class="text-[#9CDCFE]">console</span>.<span class="text-[#DCDCAA]">error</span>(<span class="text-[#CE9178]'An error occurred:'&lt;/span&gt;, &lt;span class=" text-[#9cdcfe]"="">error</span>.<span class="text-[#9CDCFE]">message</span>);
+  }
+}
+<span class="text-[#DCDCAA]">main</span>();
+<span class="text-[#6A9955]"></span>
+<span class="text-[#6A9955]"></span>
+<span class="text-[#6A9955]"></span>
+<span class="text-[#6A9955]"></span>
+<span class="text-[#6A9955]"></span>
+<span class="text-[#6A9955]"></span>
+<span class="text-[#6A9955]"></span>
+<span class="text-[#6A9955]"></span>
+<span class="text-[#6A9955]"></span>
+<span class="text-[#DCDCAA]">function</span> <span class="text-[#4FC1FF]">anotherFunction</span>(<span class="text-[#9CDCFE]">param1</span>, <span class="text-[#9CDCFE]">param2</span>) {
+  <span class="text-[#C586C0]">if</span> (<span class="text-[#9CDCFE]">param1</span> &gt; <span class="text-[#B5CEA8]">10</span>) {
+    <span class="text-[#569CD6]">return</span> <span class="text-[#9CDCFE]">param1</span> * <span class="text-[#9CDCFE]">param2</span>;
+  }
+  <span class="text-[#569CD6]">return</span> <span class="text-[#9CDCFE]">param2</span> - <span class="text-[#9CDCFE]">param1</span>;
+}
+<span class="text-[#6A9955]"></span>
+<span class="text-[#569CD6]">const</span> <span class="text-[#9CDCFE]">result</span> = <span class="text-[#DCDCAA]">anotherFunction</span>(<span class="text-[#B5CEA8]">5</span>, <span class="text-[#B5CEA8]">20</span>);
+<span class="text-[#9CDCFE]">console</span>.<span class="text-[#DCDCAA]">log</span>(<span class="text-[#CE9178]">'Result:'</span>, <span class="text-[#9CDCFE]">result</span>);
+</code></pre>
+</div>
+</div>
+<div class="absolute bottom-24 right-8 bg-surface-dark p-4 rounded-lg text-text-dark shadow-none w-64">
+<h4 class="font-bold mb-2 flex items-center"><span class="material-icons text-green-500 text-lg mr-2">smart_toy</span>AI Assistant</h4>
+<p class="text-sm text-text-secondary-dark mb-3">Here are some suggestions for `main.js`:</p>
+<ul class="text-sm space-y-2">
+<li class="flex items-start"><span class="material-icons text-blue-400 text-base mr-2 mt-0.5">add_circle_outline</span>
+<div><span class="font-medium">Add comprehensive JSDoc</span>
+<p class="text-xs text-text-secondary-dark">Improve documentation for all functions.</p>
+</div>
+</li>
+<li class="flex items-start"><span class="material-icons text-blue-400 text-base mr-2 mt-0.5">science</span>
+<div><span class="font-medium">Generate unit tests</span>
+<p class="text-xs text-text-secondary-dark">Create a `main.test.js` file with Jest.</p>
+</div>
+</li>
+<li class="flex items-start"><span class="material-icons text-blue-400 text-base mr-2 mt-0.5">speed</span>
+<div><span class="font-medium">Optimize performance</span>
+<p class="text-xs text-text-secondary-dark">Analyze and refactor for better efficiency.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="h-48 bg-background-dark border-t border-border-dark flex flex-col">
+<div class="px-4 py-2 border-b border-border-dark">
+<h3 class="font-medium text-sm">INTEGRATED TERMINAL</h3>
+</div>
+<div class="flex-1 p-4 font-mono text-sm overflow-auto text-text-secondary-dark">
+<p>$ npm run dev</p>
+<p>Symphony development server starting...</p>
+<p class="flex items-center"><span class="material-icons text-green-500 mr-2">check_circle</span>AI agents initialized</p>
+<p class="flex items-center"><span class="material-icons text-green-500 mr-2">check_circle</span>Watching for file changes</p>
+<p class="flex items-center"><span class="material-icons text-green-500 mr-2">check_circle</span>Server running on localhost:3000</p>
+<p class="text-green-400">&gt;</p>
+</div>
+</div>
+</main>
+<aside class="w-72 bg-background-dark border-l border-border-dark p-4 flex flex-col space-y-6">
+<div class="flex items-center justify-end space-x-1">
+<button class="px-3 py-1 text-sm rounded-md bg-primary text-white">Normal</button>
+<button class="px-3 py-1 text-sm rounded-md bg-surface-dark text-text-dark">Harmony</button>
+<button class="px-3 py-1 text-sm rounded-md bg-surface-dark text-text-dark">Maestro</button>
+</div>
+<div>
+<h3 class="font-bold mb-2">AI AGENTS</h3>
+<div class="bg-surface-dark rounded-md p-3 space-y-2">
+<div class="flex items-center space-x-2">
+<span class="material-icons text-green-500">task_alt</span>
+<div>
+<p class="font-medium">Code Assistant</p>
+<p class="text-xs text-text-secondary-dark">Active - Writing functions</p>
+</div>
+</div>
+<div class="border-t border-border-dark my-2"></div>
+<div class="flex items-center space-x-2">
+<span class="material-icons text-yellow-500">pending</span>
+<div>
+<p class="font-medium">Test Generator</p>
+<p class="text-xs text-text-secondary-dark">Pending - Generate tests</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h3 class="font-bold mb-2">GIT INTEGRATION</h3>
+<div class="bg-surface-dark rounded-md p-3 space-y-2 text-sm">
+<p class="flex items-center"><span class="material-icons text-yellow-500 mr-2 text-base">edit</span> 3 files modified</p>
+<p class="flex items-center"><span class="material-icons text-green-500 mr-2 text-base">check_box</span> main.js staged</p>
+<p class="flex items-center"><span class="material-icons text-gray-400 mr-2 text-base">check_box_outline_blank</span> tests pending</p>
+</div>
+</div>
+<div>
+<h3 class="font-bold mb-2">QUICK ACTIONS</h3>
+<div class="space-y-2">
+<button class="w-full flex items-center space-x-2 p-2 rounded-md bg-surface-dark text-left">
+<span class="material-icons">swap_horiz</span>
+<span>Switch to Harmony Board</span>
+</button>
+<button class="w-full flex items-center space-x-2 p-2 rounded-md bg-surface-dark text-left">
+<span class="material-icons">model_training</span>
+<span>Enable Maestro Mode</span>
+</button>
+</div>
+</div>
+</aside>
+</div>
+<footer class="bg-background-dark border-t border-border-dark px-4 py-1 flex items-center justify-between text-sm text-text-secondary-dark">
+<div class="flex items-center space-x-4">
+<button class="flex items-center space-x-1 hover:bg-gray-700 px-2 py-0.5 rounded-md">
+<span class="material-icons text-sm">source_control</span>
+<span>main</span>
+</button>
+<div class="flex items-center space-x-1">
+<span class="material-icons text-sm">sync</span>
+<span>0</span>
+<span class="material-icons text-sm">arrow_upward</span>
+<span>0</span>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="hover:bg-gray-700 px-2 py-0.5 rounded-md">Ln 22, Col 3</button>
+<button class="hover:bg-gray-700 px-2 py-0.5 rounded-md">Spaces: 2</button>
+<button class="hover:bg-gray-700 px-2 py-0.5 rounded-md">UTF-8</button>
+<button class="hover:bg-gray-700 px-2 py-0.5 rounded-md">{ } JavaScript</button>
+<button class="flex items-center space-x-1 hover:bg-gray-700 px-2 py-0.5 rounded-md">
+<span class="material-icons text-sm">notifications</span>
+</button>
+</div>
+</footer>
+</div>
+</body></html>
