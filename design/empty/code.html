@@ -4,6 +4,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Symphony - AI-First Development Environment</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 <script>
@@ -20,9 +21,9 @@
                             dark: "#4A7AD8",
                             accent: "#3B6DD8",
                         },
-                        "bg-primary": "#0A0A0F",
-                        "bg-secondary": "#13131A",
-                        "bg-tertiary": "#1A1A24",
+                        "bg-primary": "#1E1E1E",
+                        "bg-secondary": "#252526",
+                        "bg-tertiary": "#2D2D30",
                         "border-subtle": "#252530",
                         "border-default": "#2D2D3A",
                         "text-primary": "#E8E8F0",
@@ -100,6 +101,78 @@
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
+        
+        /* Musical Staff Lines - Reciprocal Function */
+        .musical-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .musical-lines svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        @keyframes wave-flow {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+        
+        .musical-line {
+            animation: wave-flow 4s ease-in-out infinite;
+        }
+        
+        .musical-line:nth-child(1) { animation-delay: 0s; }
+        .musical-line:nth-child(2) { animation-delay: 0.8s; }
+        .musical-line:nth-child(3) { animation-delay: 1.6s; }
+        
+        /* Fluid Professional Tab */
+        .blob-tab {
+            position: relative;
+            background: rgba(91, 143, 249, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(91, 143, 249, 0.3);
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            padding: 6px 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .blob-tab::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #5B8FF9, #7BA5FA);
+            border-radius: 2px 2px 0 0;
+        }
+        
+        .blob-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: -1px;
+            right: -1px;
+            height: 1px;
+            background: #1E1E1E;
+            z-index: 1;
+        }
+        
+        .blob-tab:hover {
+            background: rgba(91, 143, 249, 0.2);
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body class="bg-bg-primary text-text-primary font-sans antialiased">
@@ -109,7 +182,7 @@
 <div class="flex items-center space-x-3">
 <!-- Symphony Logo -->
 <div class="relative">
-<img src="../../assets/logo.png" alt="Symphony" class="h-7 w-7" />
+<img src="../../assets/rounded.png" alt="Symphony" class="h-7 w-7" />
 </div>
 <div>
 <h1 class="text-base font-semibold tracking-tight text-text-primary">Symphony</h1>
@@ -117,11 +190,11 @@
 </div>
 
 <!-- Mode Switcher -->
-<div class="flex items-center ml-6 space-x-1 bg-bg-tertiary rounded-lg p-1">
-<button class="px-3 py-1.5 text-xs font-medium rounded-md bg-symphony-primary text-white transition-all">
+<div class="flex items-center ml-24 right-0 space-x-1 bg-bg-tertiary rounded-lg p-1">
+<button class="px-3 py-1.5 text-xs font-medium rounded-md bg-symphony-primary text-white transition-all" data-mode="normal" onclick="switchMode(this)">
 🎼 Normal
 </button>
-<button class="px-3 py-1.5 text-xs font-medium rounded-md text-text-tertiary hover:text-text-primary hover:bg-bg-secondary transition-all">
+<button class="px-3 py-1.5 text-xs font-medium rounded-md text-text-tertiary hover:text-text-primary hover:bg-bg-secondary transition-all" data-mode="maestro" onclick="switchMode(this)">
 🎩 Maestro
 </button>
 </div>
@@ -150,7 +223,7 @@
 <div class="absolute top-1 right-1 w-2 h-2 bg-symphony-primary rounded-full animate-pulse"></div>
 
 <!-- Notification Popup -->
-<div class="absolute top-12 right-0 w-80 glass rounded-xl shadow-2xl border border-border-default overflow-hidden z-50">
+<div class="absolute top-12 right-0 w-80 glass rounded-xl shadow-2xl border border-border-default overflow-hidden z-50 hidden">
 <div class="bg-bg-secondary/80 px-4 py-3 border-b border-border-subtle">
 <h3 class="text-sm font-semibold text-text-primary">Notifications</h3>
 </div>
@@ -213,28 +286,28 @@
 <aside class="w-14 bg-bg-secondary border-r border-border-subtle flex flex-col items-center py-4 gap-1">
 <div class="flex-1 flex flex-col gap-1">
 <!-- Files -->
-<button class="group relative p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary" title="Explorer">
+<button class="group relative p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary" title="Explorer" data-sidebar="explorer" onclick="switchSidebar(this)">
 <span class="material-icons text-lg">folder_open</span>
 <div class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
 </button>
 
-<!-- Search -->
-<button class="group relative p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="Search">
-<span class="material-icons text-lg">search</span>
+<!-- Harmony Board -->
+<button class="group relative p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="Harmony Board" data-sidebar="harmony" onclick="switchSidebar(this)">
+<span class="material-icons text-lg">dashboard</span>
 </button>
 
 <!-- Source Control -->
-<button class="group relative p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="Source Control">
+<button class="group relative p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="Source Control" data-sidebar="source" onclick="switchSidebar(this)">
 <span class="material-icons text-lg">source</span>
 </button>
 
 <!-- AI Orchestra -->
-<button class="group relative p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="AI Orchestra">
+<button class="group relative p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="AI Orchestra" data-sidebar="orchestra" onclick="switchSidebar(this)">
 <span class="material-icons text-lg">smart_toy</span>
 </button>
 
 <!-- Extensions -->
-<button class="group relative p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="Extensions">
+<button class="group relative p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="Extensions" data-sidebar="extensions" onclick="switchSidebar(this)">
 <span class="material-icons text-lg">extension</span>
 </button>
 </div>
@@ -256,20 +329,19 @@
 <!-- Tab Bar with Tabs -->
 <div class="bg-bg-secondary/30 border-b border-border-subtle flex items-center justify-between h-10">
 <div class="flex items-center h-full">
-<!-- Active Tab -->
-<button class="group relative px-4 h-full flex items-center space-x-2 text-xs bg-bg-primary border-r border-border-subtle text-text-primary hover:bg-bg-tertiary/50">
-<span class="material-icons text-sm text-symphony-primary">description</span>
+<!-- Active Tab - Fluid Professional Style -->
+<button class="blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium" data-tab="welcome">
+<span class="material-icons text-base">description</span>
 <span>Welcome</span>
-<div class="absolute bottom-0 left-0 right-0 h-0.5 bg-symphony-primary"></div>
 </button>
 
 <!-- Inactive Tabs -->
-<button class="group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary">
+<button class="group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary" data-tab="getting-started" onclick="switchTab(this)">
 <span class="material-icons text-sm">code</span>
 <span>Getting Started</span>
 </button>
 
-<button class="group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary">
+<button class="group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary" data-tab="documentation" onclick="switchTab(this)">
 <span class="material-icons text-sm">help_outline</span>
 <span>Documentation</span>
 </button>
@@ -282,6 +354,26 @@
 
 <!-- Main Empty State Canvas -->
 <div class="flex-1 flex overflow-hidden relative">
+<!-- Musical Staff Lines - Reciprocal Function Style -->
+<div class="musical-lines">
+<svg viewBox="0 0 1000 800" preserveAspectRatio="none">
+<defs>
+<linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#5B8FF9;stop-opacity:0.6" />
+<stop offset="100%" style="stop-color:#5B8FF9;stop-opacity:0.2" />
+</linearGradient>
+<linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#7BA5FA;stop-opacity:0.5" />
+<stop offset="100%" style="stop-color:#7BA5FA;stop-opacity:0.15" />
+</linearGradient>
+<linearGradient id="waveGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#4A7AD8;stop-opacity:0.4" />
+<stop offset="100%" style="stop-color:#4A7AD8;stop-opacity:0.1" />
+</linearGradient>
+</defs>
+</svg>
+</div>
+
 <!-- Beautiful Empty State -->
 <div class="flex-1 flex items-center justify-center p-12">
 <div class="max-w-2xl w-full text-center space-y-8">
@@ -421,4 +513,130 @@ The AI-First Development Environment where intelligent agents orchestrate softwa
 </div>
 </footer>
 </div>
+
+<script>
+// Generate reciprocal function curves
+const svg = document.querySelector('.musical-lines svg');
+const curves = [
+    { id: 'waveGrad1', offset: 0, scale: 1, strokeWidth: 2 },
+    { id: 'waveGrad2', offset: 30, scale: 1.2, strokeWidth: 1.8 },
+    { id: 'waveGrad3', offset: 60, scale: 1.4, strokeWidth: 1.5 }
+];
+
+curves.forEach((curve, index) => {
+    let pathData = '';
+    const points = 300;
+    
+    for (let i = 0; i < points; i++) {
+        const x = (i / points) * 1000;
+        // Reciprocal function: y = k/(x + offset) shifted and scaled
+        const xShifted = (i / points) * 10 + 0.5; // Start from 0.5 to avoid division by zero
+        const y = (curve.offset + 150 / (xShifted * curve.scale)) + 50;
+        
+        if (i === 0) {
+            pathData += `M ${x} ${y}`;
+        } else {
+            pathData += ` L ${x} ${y}`;
+        }
+    }
+    
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('class', 'musical-line');
+    path.setAttribute('d', pathData);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', `url(#${curve.id})`);
+    path.setAttribute('stroke-width', curve.strokeWidth);
+    path.setAttribute('stroke-linecap', 'round');
+    
+    svg.appendChild(path);
+});
+
+// Tab switching functionality
+function switchTab(clickedTab) {
+    // Get all tab buttons
+    const allTabs = document.querySelectorAll('[data-tab]');
+    
+    // Remove active class from all tabs
+    allTabs.forEach(tab => {
+        tab.classList.remove('blob-tab', 'text-symphony-primary', 'font-medium', 'text-sm');
+        tab.classList.add('group', 'relative', 'px-4', 'h-full', 'text-xs', 'border-r', 'border-border-subtle', 'text-text-tertiary', 'hover:bg-bg-tertiary/50', 'hover:text-text-primary');
+        
+        // Update icon size
+        const icon = tab.querySelector('.material-icons');
+        if (icon) {
+            icon.classList.remove('text-base');
+            icon.classList.add('text-sm');
+        }
+    });
+    
+    // Add active class to clicked tab
+    clickedTab.classList.remove('group', 'relative', 'px-4', 'h-full', 'text-xs', 'border-r', 'border-border-subtle', 'text-text-tertiary', 'hover:bg-bg-tertiary/50', 'hover:text-text-primary');
+    clickedTab.classList.add('blob-tab', 'text-symphony-primary', 'font-medium', 'text-sm');
+    
+    // Update icon size for active tab
+    const activeIcon = clickedTab.querySelector('.material-icons');
+    if (activeIcon) {
+        activeIcon.classList.remove('text-sm');
+        activeIcon.classList.add('text-base');
+    }
+    
+    // Optional: You can add content switching logic here
+    console.log('Switched to tab:', clickedTab.dataset.tab);
+}
+
+// Make welcome tab clickable too
+document.addEventListener('DOMContentLoaded', () => {
+    const welcomeTab = document.querySelector('[data-tab="welcome"]');
+    if (welcomeTab) {
+        welcomeTab.onclick = function() { switchTab(this); };
+    }
+});
+
+// Sidebar switching functionality
+function switchSidebar(clickedButton) {
+    // Get all sidebar buttons
+    const allButtons = document.querySelectorAll('[data-sidebar]');
+    
+    // Remove active state from all buttons
+    allButtons.forEach(btn => {
+        btn.classList.remove('bg-symphony-primary/10', 'text-symphony-primary');
+        btn.classList.add('text-text-tertiary');
+        
+        // Remove indicator line
+        const indicator = btn.querySelector('.absolute');
+        if (indicator) {
+            indicator.remove();
+        }
+    });
+    
+    // Add active state to clicked button
+    clickedButton.classList.remove('text-text-tertiary');
+    clickedButton.classList.add('bg-symphony-primary/10', 'text-symphony-primary');
+    
+    // Add indicator line
+    const indicator = document.createElement('div');
+    indicator.className = 'absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t';
+    clickedButton.appendChild(indicator);
+    
+    console.log('Switched to sidebar:', clickedButton.dataset.sidebar);
+}
+
+// Mode switching functionality
+function switchMode(clickedButton) {
+    // Get all mode buttons
+    const allModes = document.querySelectorAll('[data-mode]');
+    
+    // Remove active state from all modes
+    allModes.forEach(btn => {
+        btn.classList.remove('bg-symphony-primary', 'text-white');
+        btn.classList.add('text-text-tertiary', 'hover:text-text-primary', 'hover:bg-bg-secondary');
+    });
+    
+    // Add active state to clicked mode
+    clickedButton.classList.remove('text-text-tertiary', 'hover:text-text-primary', 'hover:bg-bg-secondary');
+    clickedButton.classList.add('bg-symphony-primary', 'text-white');
+    
+    console.log('Switched to mode:', clickedButton.dataset.mode);
+}
+</script>
 </body></html>
