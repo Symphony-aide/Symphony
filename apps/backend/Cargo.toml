@@ -1,14 +1,80 @@
 [workspace]
 resolver = "2"
 members = [
-   "core",
-   "core_api",
-   "desktop/src-tauri",
-   "extensions/git",
-   "extensions/typescript-lsp",
-   "extensions/native-shell",
-   "server",
-   "crosspty"
+    # Core Foundation
+    "core",
+    "types",
+    "config",
+    "core_api",
+    
+    # Extension Layers - AIDE Pit
+    "extension/layers/aide/pit/core",
+    "extension/layers/aide/pit/pool_manager",
+    "extension/layers/aide/pit/dag_tracker",
+    "extension/layers/aide/pit/artifact_store",
+    "extension/layers/aide/pit/arbitration_engine",
+    "extension/layers/aide/pit/stale_manager",
+    
+    # Extension Layers - IDE
+    "extension/layers/ide/core",
+    "extension/layers/ide/ui_bridge",
+    "extension/layers/ide/virtual_dom",
+    
+    # Extension SDK
+    "extension/sdk/core",
+    "extension/sdk/testing",
+    "extension/sdk/carets",
+    "extension/sdk/metrics",
+    
+    # Conductor Integration
+    "conductor/bindings",
+    "conductor/orchestration_bridge",
+    "conductor/extension_proxy",
+    
+    # Bootstrap
+    "bootstrap/core",
+    "bootstrap/phase_manager",
+    "bootstrap/health_checker",
+    
+    # IPC Communication Backbone
+    "ipc_bus",
+    "ipc_bus/protocol",
+    "ipc_bus/transport",
+    "ipc_bus/security",
+    
+    # Orchestration Engine
+    "orchestration/core",
+    "orchestration/melody_engine",
+    
+    # Orchestra Kit - Extension Management
+    "kit/core",
+    "kit/harmony_board",
+    "kit/instruments",
+    "kit/operators",
+    "kit/motifs",
+    "kit/marketplace",
+    "kit/installer",
+    "kit/lifecycle",
+    "kit/registry",
+    "kit/security",
+    "kit/manifest",
+    
+    # Infrastructure
+    "permissions",
+    "logging",
+    "hooks",
+    
+    # Applications
+    "desktop",
+    "server",
+    "terminal",
+    
+    # Existing packages
+    "desktop/src-tauri",
+    "extensions/git",
+    "extensions/typescript-lsp",
+    "extensions/native-shell",
+    "crosspty"
 ]
 
 [profile.release]

@@ -1,0 +1,9 @@
+[package]
+name = "sykitinstruments"
+version = "0.1.0"
+edition = "2021"
+authors = ["Symphony Team"]
+description = "AI/ML models for Symphony Orchestra Kit"
+license = "MIT"
+
+[dependencies]

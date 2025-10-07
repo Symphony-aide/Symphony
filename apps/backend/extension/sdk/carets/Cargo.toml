@@ -1,0 +1,9 @@
+[package]
+name = "syexsdcarets"
+version = "0.1.0"
+edition = "2021"
+authors = ["Symphony Team"]
+description = "Developer SDK carets for Symphony extensions"
+license = "MIT"
+
+[dependencies]
