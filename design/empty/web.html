@@ -20,15 +20,9 @@
                         light: "#7BA5FA",
                         dark: "#4A7AD8",
                         accent: "#3B6DD8",
+                        yellow: "#F59E0B",
+                        'yellow-light': "#FCD34D",
                     },
-                    "bg-primary": "#1E1E1E",
-                    "bg-secondary": "#252526",
-                    "bg-tertiary": "#2D2D30",
-                    "border-subtle": "#252530",
-                    "border-default": "#2D2D3A",
-                    "text-primary": "#E8E8F0",
-                    "text-secondary": "#9CA3AF",
-                    "text-tertiary": "#6B7280",
                 },
                 fontFamily: {
                     sans: ["Inter", "system-ui", "sans-serif"],
@@ -64,6 +58,39 @@
     };
 </script>
 <style>
+    /* Theme Colors */
+    :root {
+        /* Light Mode - Warm beige/cream aesthetic */
+        --bg-primary: 232, 229, 217;     /* hsl(45, 20%, 88%) - warm beige */
+        --bg-secondary: 242, 241, 230;   /* hsl(50, 25%, 92%) - lighter cream */
+        --bg-tertiary: 224, 220, 210;    /* hsl(45, 18%, 85%) - muted beige */
+        --border-subtle: 217, 212, 200;  /* hsl(45, 16%, 82%) - subtle border */
+        --border-default: 207, 202, 192; /* hsl(45, 15%, 78%) - default border */
+        --text-primary: 23, 27, 38;      /* hsl(210, 25%, 12%) - dark text */
+        --text-secondary: 78, 84, 95;    /* hsl(210, 12%, 35%) - muted text */
+        --text-tertiary: 130, 135, 145;  /* hsl(210, 10%, 55%) - tertiary text */
+        --accent-bg: 254, 243, 199;      /* warm yellow background */
+        --accent-text: 146, 64, 14;      /* warm yellow text */
+    }
+    
+    .dark {
+        --bg-primary: 30, 30, 30;
+        --bg-secondary: 37, 37, 38;
+        --bg-tertiary: 45, 45, 48;
+        --border-subtle: 37, 37, 48;
+        --border-default: 45, 45, 58;
+        --text-primary: 232, 232, 240;
+        --text-secondary: 156, 163, 175;
+        --text-tertiary: 107, 114, 128;
+        --accent-bg: 68, 64, 60;
+        --accent-text: 252, 211, 77;
+    }
+    
+    body {
+        background-color: rgb(var(--bg-primary));
+        color: rgb(var(--text-primary));
+    }
+    
     .gradient-symphony {
         background: linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%);
     }
@@ -77,13 +104,45 @@
     }
     
     .glass {
-        background: rgba(26, 26, 36, 0.7);
+        background: rgba(var(--bg-secondary), 0.7);
         backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(var(--border-default), 0.3);
     }
     
     * {
         transition: all 0.2s ease;
+    }
+    
+    /* Professional gradient background */
+    .hero-gradient {
+        background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(91, 143, 249, 0.15), transparent),
+                    radial-gradient(ellipse 60% 40% at 50% 120%, rgba(91, 143, 249, 0.1), transparent);
+    }
+    
+    /* Grid overlay - more visible */
+    .grid-pattern {
+        background-image: 
+            linear-gradient(rgba(91, 143, 249, 0.14) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(91, 143, 249, 0.14) 1px, transparent 1px);
+        background-size: 50px 50px;
+    }
+    
+    /* Dark theme grid - more subtle */
+    .dark .grid-pattern {
+        background-image: 
+            linear-gradient(rgba(91, 143, 249, 0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(91, 143, 249, 0.06) 1px, transparent 1px);
+    }
+    
+    /* Interactive grid canvas */
+    #interactive-grid {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
     }
     
     ::-webkit-scrollbar {
@@ -91,48 +150,55 @@
     }
     
     ::-webkit-scrollbar-track {
-        background: #13131A;
+        background: rgb(var(--bg-primary));
     }
     
     ::-webkit-scrollbar-thumb {
-        background: #2D2D3A;
+        background: rgb(var(--border-default));
         border-radius: 4px;
     }
     
     ::-webkit-scrollbar-thumb:hover {
-        background: #3D3D4A;
+        background: rgb(var(--text-tertiary));
     }
 </style>
 </head>
-<body class="bg-bg-primary text-text-primary font-sans antialiased">
+<body class="font-sans antialiased">
 
 <!-- Navigation -->
-<nav class="fixed top-0 left-0 right-0 z-50 bg-bg-secondary/80 backdrop-blur-lg border-b border-border-subtle">
+<nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg border-b" style="background-color: rgba(var(--bg-secondary), 0.8); border-color: rgb(var(--border-subtle));">
+
     <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
             <!-- Logo -->
             <div class="flex items-center space-x-3">
                 <img src="../../assets/rounded.png" alt="Symphony" class="h-8 w-8" />
                 <div>
-                    <h1 class="text-lg font-bold text-text-primary">Symphony</h1>
-                    <p class="text-[9px] text-text-tertiary font-medium tracking-wider">AI-FIRST DEVELOPMENT</p>
+                    <h1 class="text-lg font-bold" style="color: rgb(var(--text-primary));">Symphony</h1>
+                    <p class="text-[9px] font-medium tracking-wider" style="color: rgb(var(--text-tertiary));">AI-FIRST DEVELOPMENT</p>
                 </div>
             </div>
             
             <!-- Nav Links -->
             <div class="hidden md:flex items-center space-x-8">
-                <a href="#features" class="text-sm text-text-secondary hover:text-symphony-primary">Features</a>
-                <a href="#how-it-works" class="text-sm text-text-secondary hover:text-symphony-primary">How It Works</a>
-                <a href="#pricing" class="text-sm text-text-secondary hover:text-symphony-primary">Pricing</a>
-                <a href="#docs" class="text-sm text-text-secondary hover:text-symphony-primary">Documentation</a>
+                <a href="#features" class="text-sm hover:text-symphony-primary transition-colors" style="color: rgb(var(--text-secondary));">Features</a>
+                <a href="#how-it-works" class="text-sm hover:text-symphony-primary transition-colors" style="color: rgb(var(--text-secondary));">How It Works</a>
+                <a href="#pricing" class="text-sm hover:text-symphony-primary transition-colors" style="color: rgb(var(--text-secondary));">Pricing</a>
+                <a href="#docs" class="text-sm hover:text-symphony-primary transition-colors" style="color: rgb(var(--text-secondary));">Documentation</a>
             </div>
             
             <!-- CTA Buttons -->
             <div class="flex items-center space-x-4">
-                <button class="px-4 py-2 text-sm text-text-secondary hover:text-text-primary">
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-lg transition-colors" style="color: rgb(var(--text-secondary));" title="Toggle theme">
+                    <span class="material-icons text-lg dark-icon">light_mode</span>
+                    <span class="material-icons text-lg light-icon hidden">dark_mode</span>
+                </button>
+                
+                <button class="px-4 py-2 text-sm transition-colors" style="color: rgb(var(--text-secondary));">
                     Sign In
                 </button>
-                <button class="px-6 py-2 text-sm font-medium bg-gradient-symphony text-white rounded-lg hover:scale-105 transition-transform shadow-lg shadow-symphony-primary/30">
+                <button class="px-6 py-2 text-sm font-medium bg-gradient-symphony text-white rounded-lg hover:opacity-90 transition-opacity shadow-lg shadow-symphony-primary/30">
                     Get Started
                 </button>
             </div>
@@ -141,91 +207,77 @@
 </nav>
 
 <!-- Hero Section -->
-<section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-    <!-- Interactive Animated Background -->
-    <div class="absolute inset-0 pointer-events-none">
-        <!-- Flowing gradient orbs -->
-        <div class="absolute top-20 left-10 w-72 h-72 bg-symphony-primary/15 rounded-full blur-3xl animate-float"></div>
-        <div class="absolute top-40 right-20 w-64 h-64 bg-symphony-light/12 rounded-full blur-3xl animate-float" style="animation-delay: 1s; animation-duration: 8s;"></div>
-        <div class="absolute bottom-32 left-1/4 w-80 h-80 bg-symphony-accent/10 rounded-full blur-3xl animate-float" style="animation-delay: 2s; animation-duration: 10s;"></div>
-        <div class="absolute bottom-20 right-10 w-96 h-96 bg-symphony-dark/12 rounded-full blur-3xl animate-float" style="animation-delay: 1.5s; animation-duration: 7s;"></div>
-        
-        <!-- Animated grid lines -->
-        <div class="absolute inset-0 opacity-20">
-            <div class="absolute inset-0" style="background-image: linear-gradient(rgba(91, 143, 249, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(91, 143, 249, 0.1) 1px, transparent 1px); background-size: 100px 100px;"></div>
-        </div>
-        
-        <!-- Gradient mesh overlay -->
-        <div class="absolute inset-0 gradient-mesh"></div>
-    </div>
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 hero-gradient grid-pattern">
+    <!-- Interactive Grid Canvas -->
+    <canvas id="interactive-grid"></canvas>
     
-    <div class="relative max-w-7xl mx-auto px-6 py-20 text-center">
-        <!-- Main Headline -->
-        <div class="animate-slide-up">
-            <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-text-primary mb-6 tracking-tight">
-                Compose Software<br/>
-                with <span class="bg-gradient-to-r from-symphony-primary via-symphony-light to-symphony-accent bg-clip-text text-transparent">AI Orchestration</span>
-            </h1>
-            
-            <p class="text-xl md:text-2xl text-text-secondary max-w-3xl mx-auto mb-12 leading-relaxed">
-                The AI-First Development Environment where intelligent agents orchestrate software creation. 
-                <span class="text-text-primary font-medium">You compose, AI implements.</span>
-            </p>
-            
-            <!-- CTA Buttons -->
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-                <button class="group px-8 py-4 bg-gradient-symphony text-white rounded-xl font-semibold text-lg hover:scale-105 transition-all shadow-2xl shadow-symphony-primary/40 flex items-center space-x-2">
-                    <span>Start Composing</span>
-                    <span class="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </button>
-                <button class="px-8 py-4 glass text-text-primary rounded-xl font-semibold text-lg hover:bg-bg-tertiary/80 flex items-center space-x-2">
-                    <span class="material-icons">play_circle</span>
-                    <span>Watch Demo</span>
-                </button>
-            </div>
-            
-            <!-- Stats -->
-            <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
-                <div>
-                    <div class="text-3xl font-bold text-symphony-primary mb-1">10x</div>
-                    <div class="text-sm text-text-tertiary">Faster Development</div>
-                </div>
-                <div>
-                    <div class="text-3xl font-bold text-symphony-light mb-1">100%</div>
-                    <div class="text-sm text-text-tertiary">AI-Orchestrated</div>
-                </div>
-                <div>
-                    <div class="text-3xl font-bold text-symphony-accent mb-1">&lt;1s</div>
-                    <div class="text-sm text-text-tertiary">Startup Time</div>
-                </div>
-            </div>
+    <div class="relative max-w-7xl mx-auto px-6 py-32 text-center">
+        <!-- Badge -->
+        <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full border mb-8" style="border-color: rgb(var(--accent-text) / 0.3); background-color: rgb(var(--accent-bg));">
+            <span class="text-sm font-medium" style="color: rgb(var(--accent-text));">🎩 The Conductor is Ready</span>
         </div>
         
-        <!-- Product Demo Video -->
-        <div class="mt-20 animate-fade-in" style="animation-delay: 0.3s;">
-            <div class="relative max-w-5xl mx-auto">
-                <div class="absolute inset-0 bg-symphony-primary/20 blur-3xl rounded-full"></div>
-                <div class="relative glass rounded-2xl p-2 shadow-2xl">
-                    <div class="relative aspect-video bg-bg-primary rounded-xl overflow-hidden">
-                        <!-- Video placeholder with play button -->
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <div class="text-center">
-                                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-symphony-primary/20 flex items-center justify-center hover:bg-symphony-primary/30 transition-all cursor-pointer group">
-                                    <span class="material-icons text-5xl text-symphony-primary group-hover:scale-110 transition-transform">play_circle</span>
-                                </div>
-                                <p class="text-text-secondary font-medium">Watch Symphony in Action</p>
-                                <p class="text-sm text-text-tertiary mt-2">See AI orchestration in real-time</p>
-                            </div>
+        <!-- Main Headline -->
+        <h1 class="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 tracking-tight leading-tight" style="color: rgb(var(--text-primary));">
+            Build software at the<br/>
+            <span class="bg-gradient-to-r from-symphony-primary via-symphony-light to-symphony-primary bg-clip-text text-transparent">speed of thought</span>
+        </h1>
+        
+        <p class="text-xl md:text-2xl max-w-2xl mx-auto mb-12 leading-relaxed" style="color: rgb(var(--text-secondary));">
+            Symphony is an AI-First IDE where the Conductor orchestrates intelligent agents to build, test, and deploy your vision.
+        </p>
+            
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+            <button class="group px-6 py-3 rounded-lg font-medium transition-all flex items-center space-x-2 hover:opacity-90" style="background-color: rgb(var(--text-primary)); color: rgb(var(--bg-primary));">
+                <span>Get Started</span>
+                <span class="material-icons text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+            </button>
+            <button class="px-6 py-3 border rounded-lg font-medium transition-all" style="border-color: rgb(var(--border-default)); color: rgb(var(--text-primary));" onmouseover="this.style.backgroundColor='rgb(var(--bg-secondary))'" onmouseout="this.style.backgroundColor='transparent'">
+                View on GitHub
+            </button>
+        </div>
+        
+        <!-- Social Proof -->
+        <p class="text-sm mb-16" style="color: rgb(var(--text-tertiary));">Trusted by developers building the future</p>
+        
+        <!-- Product Preview -->
+        <div class="relative max-w-6xl mx-auto">
+            <!-- Subtle glow -->
+            <div class="absolute inset-0 bg-gradient-to-t from-symphony-primary/10 to-transparent blur-3xl"></div>
+            
+            <!-- Terminal/IDE Preview -->
+            <div class="relative border rounded-xl overflow-hidden shadow-2xl" style="border-color: rgb(var(--border-default)); background-color: rgb(var(--bg-secondary));">
+                <!-- Terminal Header -->
+                <div class="flex items-center justify-between px-4 py-3 border-b" style="border-color: rgb(var(--border-subtle));">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+                    </div>
+                    <div class="text-xs font-mono" style="color: rgb(var(--text-tertiary));">symphony-ide</div>
+                    <div class="w-16"></div>
+                </div>
+                
+                <!-- Terminal Content -->
+                <div class="p-6 font-mono text-sm">
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-symphony-primary">$</span>
+                            <span style="color: rgb(var(--text-primary));">symphony create web-app</span>
                         </div>
-                        <!-- Simulated code editor preview in background -->
-                        <div class="absolute inset-0 opacity-30">
-                            <div class="p-8 font-mono text-xs text-symphony-light">
-                                <div class="mb-2">🎩 <span class="text-text-primary">Conductor:</span> Analyzing project requirements...</div>
-                                <div class="mb-2 ml-4">├─ <span class="text-symphony-accent">Planning</span> architecture</div>
-                                <div class="mb-2 ml-4">├─ <span class="text-symphony-light">Generating</span> components</div>
-                                <div class="mb-2 ml-4">└─ <span class="text-green-500">Testing</span> integration</div>
-                                <div class="mt-4 text-green-500">✓ Project ready in 47 seconds</div>
+                        <div class="ml-4" style="color: rgb(var(--text-secondary));">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <span class="text-symphony-primary">🎩</span>
+                                <span>Conductor analyzing requirements...</span>
                             </div>
+                            <div class="ml-6 space-y-1" style="color: rgb(var(--text-tertiary));">
+                                <div>✓ Planning architecture</div>
+                                <div>✓ Generating React components</div>
+                                <div>✓ Setting up routing</div>
+                                <div>✓ Configuring build system</div>
+                            </div>
+                            <div class="mt-3 text-green-400">✓ Project ready in 12 seconds</div>
                         </div>
                     </div>
                 </div>
@@ -533,6 +585,234 @@
         </div>
     </div>
 </footer>
+
+<script>
+// Theme Toggle Functionality
+const themeToggle = document.getElementById('theme-toggle');
+const html = document.documentElement;
+const darkIcon = themeToggle.querySelector('.dark-icon');
+const lightIcon = themeToggle.querySelector('.light-icon');
+
+// Check for saved theme preference or default to dark
+const currentTheme = localStorage.getItem('theme') || 'dark';
+if (currentTheme === 'light') {
+    html.classList.remove('dark');
+    darkIcon.classList.add('hidden');
+    lightIcon.classList.remove('hidden');
+}
+
+themeToggle.addEventListener('click', () => {
+    html.classList.toggle('dark');
+    
+    if (html.classList.contains('dark')) {
+        localStorage.setItem('theme', 'dark');
+        darkIcon.classList.remove('hidden');
+        lightIcon.classList.add('hidden');
+    } else {
+        localStorage.setItem('theme', 'light');
+        darkIcon.classList.add('hidden');
+        lightIcon.classList.remove('hidden');
+    }
+});
+
+// ===== Interactive Grid System =====
+const canvas = document.getElementById('interactive-grid');
+const ctx = canvas.getContext('2d');
+const section = canvas.parentElement;
+
+let width, height;
+let mouseX = 0, mouseY = 0;
+let targetMouseX = 0, targetMouseY = 0;
+const gridSize = 50;
+const nodes = [];
+const maxDistance = 200;
+let animationTime = 0;
+
+// Resize canvas
+function resizeCanvas() {
+    width = section.offsetWidth;
+    height = section.offsetHeight;
+    canvas.width = width;
+    canvas.height = height;
+    initNodes();
+}
+
+// Initialize grid nodes
+function initNodes() {
+    nodes.length = 0;
+    const cols = Math.ceil(width / gridSize) + 1;
+    const rows = Math.ceil(height / gridSize) + 1;
+    
+    for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+            nodes.push({
+                x: i * gridSize,
+                y: j * gridSize,
+                originalX: i * gridSize,
+                originalY: j * gridSize,
+                vx: 0,
+                vy: 0
+            });
+        }
+    }
+}
+
+// Smooth mouse tracking
+function updateMouse() {
+    mouseX += (targetMouseX - mouseX) * 0.1;
+    mouseY += (targetMouseY - mouseY) * 0.1;
+}
+
+// Get theme-aware colors
+function getGridColors() {
+    const isDark = html.classList.contains('dark');
+    return {
+        line: isDark ? 'rgba(91, 143, 249, 0.08)' : 'rgba(91, 143, 249, 0.16)',
+        highlight: isDark ? 'rgba(91, 143, 249, 0.3)' : 'rgba(91, 143, 249, 0.4)',
+        glow: isDark ? 'rgba(91, 143, 249, 0.15)' : 'rgba(91, 143, 249, 0.25)',
+        node: isDark ? 'rgba(91, 143, 249, 0.4)' : 'rgba(91, 143, 249, 0.5)'
+    };
+}
+
+// Draw animated grid
+function draw() {
+    ctx.clearRect(0, 0, width, height);
+    const colors = getGridColors();
+    animationTime += 0.01;
+    
+    // Update and draw nodes
+    nodes.forEach((node, index) => {
+        // Calculate distance from mouse
+        const dx = mouseX - node.x;
+        const dy = mouseY - node.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // Mouse interaction - repel nodes
+        if (distance < maxDistance) {
+            const force = (maxDistance - distance) / maxDistance;
+            const angle = Math.atan2(dy, dx);
+            node.vx -= Math.cos(angle) * force * 2;
+            node.vy -= Math.sin(angle) * force * 2;
+        }
+        
+        // Wave animation
+        const wave = Math.sin(animationTime + node.originalX * 0.01 + node.originalY * 0.01) * 2;
+        
+        // Apply velocity and damping
+        node.vx *= 0.85;
+        node.vy *= 0.85;
+        node.x += node.vx + Math.cos(animationTime * 0.5 + index * 0.1) * 0.3;
+        node.y += node.vy + wave;
+        
+        // Spring back to original position
+        node.x += (node.originalX - node.x) * 0.05;
+        node.y += (node.originalY - node.y) * 0.05;
+        
+        // Draw node glow if near mouse
+        if (distance < maxDistance) {
+            const alpha = 1 - distance / maxDistance;
+            const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, 30);
+            gradient.addColorStop(0, colors.glow.replace(/[\d.]+\)$/, `${alpha * 0.3})`));
+            gradient.addColorStop(1, 'transparent');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(node.x - 30, node.y - 30, 60, 60);
+        }
+    });
+    
+    // Draw connecting lines
+    ctx.strokeStyle = colors.line;
+    ctx.lineWidth = 1;
+    
+    for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        
+        // Draw horizontal lines
+        const rightNode = nodes.find(n => 
+            Math.abs(n.originalY - node.originalY) < 1 && 
+            n.originalX === node.originalX + gridSize
+        );
+        if (rightNode) {
+            const dx = mouseX - (node.x + rightNode.x) / 2;
+            const dy = mouseY - (node.y + rightNode.y) / 2;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < maxDistance) {
+                const alpha = 1 - distance / maxDistance;
+                ctx.strokeStyle = colors.highlight.replace(/[\d.]+\)$/, `${alpha})`);;
+                ctx.lineWidth = 2;
+            } else {
+                ctx.strokeStyle = colors.line;
+                ctx.lineWidth = 1;
+            }
+            
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(rightNode.x, rightNode.y);
+            ctx.stroke();
+        }
+        
+        // Draw vertical lines
+        const bottomNode = nodes.find(n => 
+            Math.abs(n.originalX - node.originalX) < 1 && 
+            n.originalY === node.originalY + gridSize
+        );
+        if (bottomNode) {
+            const dx = mouseX - (node.x + bottomNode.x) / 2;
+            const dy = mouseY - (node.y + bottomNode.y) / 2;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < maxDistance) {
+                const alpha = 1 - distance / maxDistance;
+                ctx.strokeStyle = colors.highlight.replace(/[\d.]+\)$/, `${alpha})`);;
+                ctx.lineWidth = 2;
+            } else {
+                ctx.strokeStyle = colors.line;
+                ctx.lineWidth = 1;
+            }
+            
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(bottomNode.x, bottomNode.y);
+            ctx.stroke();
+        }
+    }
+    
+    // Draw cursor glow
+    if (mouseX > 0 && mouseY > 0) {
+        const gradient = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 150);
+        gradient.addColorStop(0, colors.glow);
+        gradient.addColorStop(0.5, colors.glow.replace(/[\d.]+\)$/, '0.05)'));
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(mouseX - 150, mouseY - 150, 300, 300);
+    }
+}
+
+// Animation loop
+function animate() {
+    updateMouse();
+    draw();
+    requestAnimationFrame(animate);
+}
+
+// Mouse move handler
+section.addEventListener('mousemove', (e) => {
+    const rect = section.getBoundingClientRect();
+    targetMouseX = e.clientX - rect.left;
+    targetMouseY = e.clientY - rect.top;
+});
+
+// Mouse leave handler
+section.addEventListener('mouseleave', () => {
+    targetMouseX = -1000;
+    targetMouseY = -1000;
+});
+
+// Initialize
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+animate();
+</script>
 
 </body>
 </html>
