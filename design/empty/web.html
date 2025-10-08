@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Symphony - AI-First Development Environment</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    symphony: {
+                        primary: "#5B8FF9",
+                        blue: "#5B8FF9",
+                        light: "#7BA5FA",
+                        dark: "#4A7AD8",
+                        accent: "#3B6DD8",
+                    },
+                    "bg-primary": "#1E1E1E",
+                    "bg-secondary": "#252526",
+                    "bg-tertiary": "#2D2D30",
+                    "border-subtle": "#252530",
+                    "border-default": "#2D2D3A",
+                    "text-primary": "#E8E8F0",
+                    "text-secondary": "#9CA3AF",
+                    "text-tertiary": "#6B7280",
+                },
+                fontFamily: {
+                    sans: ["Inter", "system-ui", "sans-serif"],
+                    mono: ["JetBrains Mono", "monospace"],
+                },
+                animation: {
+                    'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    'float': 'float 6s ease-in-out infinite',
+                    'glow': 'glow 2s ease-in-out infinite alternate',
+                    'slide-up': 'slideUp 0.6s ease-out',
+                    'fade-in': 'fadeIn 0.8s ease-out',
+                },
+                keyframes: {
+                    float: {
+                        '0%, 100%': { transform: 'translateY(0px)' },
+                        '50%': { transform: 'translateY(-20px)' },
+                    },
+                    glow: {
+                        '0%': { opacity: '0.5' },
+                        '100%': { opacity: '1' },
+                    },
+                    slideUp: {
+                        '0%': { transform: 'translateY(30px)', opacity: '0' },
+                        '100%': { transform: 'translateY(0)', opacity: '1' },
+                    },
+                    fadeIn: {
+                        '0%': { opacity: '0' },
+                        '100%': { opacity: '1' },
+                    },
+                },
+            },
+        },
+    };
+</script>
+<style>
+    .gradient-symphony {
+        background: linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%);
+    }
+    
+    .gradient-mesh {
+        background: 
+            radial-gradient(at 27% 37%, rgba(91, 143, 249, 0.12) 0px, transparent 50%),
+            radial-gradient(at 97% 21%, rgba(74, 122, 216, 0.12) 0px, transparent 50%),
+            radial-gradient(at 52% 99%, rgba(59, 109, 216, 0.10) 0px, transparent 50%),
+            radial-gradient(at 10% 29%, rgba(123, 165, 250, 0.08) 0px, transparent 50%);
+    }
+    
+    .glass {
+        background: rgba(26, 26, 36, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    * {
+        transition: all 0.2s ease;
+    }
+    
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #13131A;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #2D2D3A;
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #3D3D4A;
+    }
+</style>
+</head>
+<body class="bg-bg-primary text-text-primary font-sans antialiased">
+
+<!-- Navigation -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-bg-secondary/80 backdrop-blur-lg border-b border-border-subtle">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <img src="../../assets/rounded.png" alt="Symphony" class="h-8 w-8" />
+                <div>
+                    <h1 class="text-lg font-bold text-text-primary">Symphony</h1>
+                    <p class="text-[9px] text-text-tertiary font-medium tracking-wider">AI-FIRST DEVELOPMENT</p>
+                </div>
+            </div>
+            
+            <!-- Nav Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#features" class="text-sm text-text-secondary hover:text-symphony-primary">Features</a>
+                <a href="#how-it-works" class="text-sm text-text-secondary hover:text-symphony-primary">How It Works</a>
+                <a href="#pricing" class="text-sm text-text-secondary hover:text-symphony-primary">Pricing</a>
+                <a href="#docs" class="text-sm text-text-secondary hover:text-symphony-primary">Documentation</a>
+            </div>
+            
+            <!-- CTA Buttons -->
+            <div class="flex items-center space-x-4">
+                <button class="px-4 py-2 text-sm text-text-secondary hover:text-text-primary">
+                    Sign In
+                </button>
+                <button class="px-6 py-2 text-sm font-medium bg-gradient-symphony text-white rounded-lg hover:scale-105 transition-transform shadow-lg shadow-symphony-primary/30">
+                    Get Started
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <!-- Interactive Animated Background -->
+    <div class="absolute inset-0 pointer-events-none">
+        <!-- Flowing gradient orbs -->
+        <div class="absolute top-20 left-10 w-72 h-72 bg-symphony-primary/15 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute top-40 right-20 w-64 h-64 bg-symphony-light/12 rounded-full blur-3xl animate-float" style="animation-delay: 1s; animation-duration: 8s;"></div>
+        <div class="absolute bottom-32 left-1/4 w-80 h-80 bg-symphony-accent/10 rounded-full blur-3xl animate-float" style="animation-delay: 2s; animation-duration: 10s;"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-symphony-dark/12 rounded-full blur-3xl animate-float" style="animation-delay: 1.5s; animation-duration: 7s;"></div>
+        
+        <!-- Animated grid lines -->
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute inset-0" style="background-image: linear-gradient(rgba(91, 143, 249, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(91, 143, 249, 0.1) 1px, transparent 1px); background-size: 100px 100px;"></div>
+        </div>
+        
+        <!-- Gradient mesh overlay -->
+        <div class="absolute inset-0 gradient-mesh"></div>
+    </div>
+    
+    <div class="relative max-w-7xl mx-auto px-6 py-20 text-center">
+        <!-- Main Headline -->
+        <div class="animate-slide-up">
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-text-primary mb-6 tracking-tight">
+                Compose Software<br/>
+                with <span class="bg-gradient-to-r from-symphony-primary via-symphony-light to-symphony-accent bg-clip-text text-transparent">AI Orchestration</span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-text-secondary max-w-3xl mx-auto mb-12 leading-relaxed">
+                The AI-First Development Environment where intelligent agents orchestrate software creation. 
+                <span class="text-text-primary font-medium">You compose, AI implements.</span>
+            </p>
+            
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                <button class="group px-8 py-4 bg-gradient-symphony text-white rounded-xl font-semibold text-lg hover:scale-105 transition-all shadow-2xl shadow-symphony-primary/40 flex items-center space-x-2">
+                    <span>Start Composing</span>
+                    <span class="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </button>
+                <button class="px-8 py-4 glass text-text-primary rounded-xl font-semibold text-lg hover:bg-bg-tertiary/80 flex items-center space-x-2">
+                    <span class="material-icons">play_circle</span>
+                    <span>Watch Demo</span>
+                </button>
+            </div>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+                <div>
+                    <div class="text-3xl font-bold text-symphony-primary mb-1">10x</div>
+                    <div class="text-sm text-text-tertiary">Faster Development</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-symphony-light mb-1">100%</div>
+                    <div class="text-sm text-text-tertiary">AI-Orchestrated</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-symphony-accent mb-1">&lt;1s</div>
+                    <div class="text-sm text-text-tertiary">Startup Time</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Demo Video -->
+        <div class="mt-20 animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="relative max-w-5xl mx-auto">
+                <div class="absolute inset-0 bg-symphony-primary/20 blur-3xl rounded-full"></div>
+                <div class="relative glass rounded-2xl p-2 shadow-2xl">
+                    <div class="relative aspect-video bg-bg-primary rounded-xl overflow-hidden">
+                        <!-- Video placeholder with play button -->
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-symphony-primary/20 flex items-center justify-center hover:bg-symphony-primary/30 transition-all cursor-pointer group">
+                                    <span class="material-icons text-5xl text-symphony-primary group-hover:scale-110 transition-transform">play_circle</span>
+                                </div>
+                                <p class="text-text-secondary font-medium">Watch Symphony in Action</p>
+                                <p class="text-sm text-text-tertiary mt-2">See AI orchestration in real-time</p>
+                            </div>
+                        </div>
+                        <!-- Simulated code editor preview in background -->
+                        <div class="absolute inset-0 opacity-30">
+                            <div class="p-8 font-mono text-xs text-symphony-light">
+                                <div class="mb-2">🎩 <span class="text-text-primary">Conductor:</span> Analyzing project requirements...</div>
+                                <div class="mb-2 ml-4">├─ <span class="text-symphony-accent">Planning</span> architecture</div>
+                                <div class="mb-2 ml-4">├─ <span class="text-symphony-light">Generating</span> components</div>
+                                <div class="mb-2 ml-4">└─ <span class="text-green-500">Testing</span> integration</div>
+                                <div class="mt-4 text-green-500">✓ Project ready in 47 seconds</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-32 bg-bg-secondary">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-bold text-text-primary mb-6">
+                Revolutionary <span class="text-symphony-primary">AI-First</span> Architecture
+            </h2>
+            <p class="text-xl text-text-secondary max-w-3xl mx-auto">
+                Built from the ground up for AI orchestration, not bolted on as an afterthought
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Feature 1: The Conductor -->
+            <div class="glass rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-xl hover:shadow-symphony-primary/10">
+                <div class="w-16 h-16 rounded-xl bg-symphony-primary/10 flex items-center justify-center mb-6">
+                    <span class="text-4xl">🎩</span>
+                </div>
+                <h3 class="text-2xl font-bold text-text-primary mb-4">The Conductor</h3>
+                <p class="text-text-secondary mb-4">
+                    Intelligent orchestrator that manages AI agents, coordinates workflows, and ensures harmony across your development process.
+                </p>
+                <ul class="space-y-2 text-sm text-text-tertiary">
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-primary text-base">check_circle</span>
+                        <span>Dynamic model activation</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-primary text-base">check_circle</span>
+                        <span>Adaptive failure handling</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-primary text-base">check_circle</span>
+                        <span>Artifact flow management</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Feature 2: Melodies -->
+            <div class="glass rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-xl hover:shadow-symphony-light/10">
+                <div class="w-16 h-16 rounded-xl bg-symphony-light/10 flex items-center justify-center mb-6">
+                    <span class="text-4xl">🎵</span>
+                </div>
+                <h3 class="text-2xl font-bold text-text-primary mb-4">Melodies</h3>
+                <p class="text-text-secondary mb-4">
+                    Composable workflows that you can drag, drop, and customize. Share templates across teams or use ready-made solutions.
+                </p>
+                <ul class="space-y-2 text-sm text-text-tertiary">
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-light text-base">check_circle</span>
+                        <span>Visual workflow composition</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-light text-base">check_circle</span>
+                        <span>Reusable templates</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-light text-base">check_circle</span>
+                        <span>Marketplace integration</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Feature 3: Harmony Board -->
+            <div class="glass rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-xl hover:shadow-symphony-accent/10">
+                <div class="w-16 h-16 rounded-xl bg-symphony-accent/10 flex items-center justify-center mb-6">
+                    <span class="text-4xl">🎛️</span>
+                </div>
+                <h3 class="text-2xl font-bold text-text-primary mb-4">Harmony Board</h3>
+                <p class="text-text-secondary mb-4">
+                    Real-time visualization of your AI agents at work. Monitor workflows, track progress, and debug with complete transparency.
+                </p>
+                <ul class="space-y-2 text-sm text-text-tertiary">
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-accent text-base">check_circle</span>
+                        <span>Real-time monitoring</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-accent text-base">check_circle</span>
+                        <span>Data flow tracking</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-accent text-base">check_circle</span>
+                        <span>Issue detection</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section id="how-it-works" class="py-32 gradient-mesh">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-bold text-text-primary mb-6">
+                From Vision to Reality in <span class="text-symphony-primary">Minutes</span>
+            </h2>
+            <p class="text-xl text-text-secondary max-w-3xl mx-auto">
+                Symphony transforms how you build software. You provide the vision, AI handles the implementation.
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+            <div class="space-y-8">
+                <!-- Step 1 -->
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-symphony-primary/10 flex items-center justify-center text-symphony-primary font-bold text-xl">
+                        1
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-text-primary mb-2">Describe Your Vision</h3>
+                        <p class="text-text-secondary">
+                            Tell Symphony what you want to build. Natural language, sketches, or requirements - the Conductor understands it all.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-symphony-light/10 flex items-center justify-center text-symphony-light font-bold text-xl">
+                        2
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-text-primary mb-2">AI Orchestrates</h3>
+                        <p class="text-text-secondary">
+                            The Conductor activates specialized AI agents, coordinates their work, and ensures everything fits together perfectly.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-symphony-accent/10 flex items-center justify-center text-symphony-accent font-bold text-xl">
+                        3
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-text-primary mb-2">Review & Refine</h3>
+                        <p class="text-text-secondary">
+                            Watch your software take shape in real-time. Provide feedback, make adjustments, and guide the creative process.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass rounded-2xl p-8">
+                <div class="aspect-video bg-bg-primary rounded-xl flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-symphony-primary/10 flex items-center justify-center animate-pulse">
+                            <span class="material-icons text-4xl text-symphony-primary">play_circle</span>
+                        </div>
+                        <p class="text-text-secondary">Interactive Demo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modes Section -->
+<section class="py-32 bg-bg-secondary">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-bold text-text-primary mb-6">
+                Two Modes, Infinite Possibilities
+            </h2>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Normal Mode -->
+            <div class="glass rounded-2xl p-10 hover:scale-105 transition-all">
+                <div class="text-5xl mb-6">🎼</div>
+                <h3 class="text-3xl font-bold text-text-primary mb-4">Normal Mode</h3>
+                <p class="text-text-secondary mb-6">
+                    You're in control. AI assists with specific tasks while you maintain full oversight of the development process.
+                </p>
+                <ul class="space-y-3 text-text-tertiary">
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-primary">check</span>
+                        <span>Manual workflow control</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-primary">check</span>
+                        <span>Step-by-step guidance</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-primary">check</span>
+                        <span>Full transparency</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Maestro Mode -->
+            <div class="glass rounded-2xl p-10 hover:scale-105 transition-all border-2 border-symphony-primary/30">
+                <div class="flex items-center space-x-2 mb-6">
+                    <div class="text-5xl">🎩</div>
+                    <span class="px-3 py-1 bg-symphony-primary/20 text-symphony-primary text-xs font-bold rounded-full">RECOMMENDED</span>
+                </div>
+                <h3 class="text-3xl font-bold text-text-primary mb-4">Maestro Mode</h3>
+                <p class="text-text-secondary mb-6">
+                    Full AI orchestration. Describe your goal and let the Conductor handle everything - from planning to implementation to testing.
+                </p>
+                <ul class="space-y-3 text-text-tertiary">
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-primary">check</span>
+                        <span>Complete automation</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-primary">check</span>
+                        <span>Intelligent decision-making</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="material-icons text-symphony-primary">check</span>
+                        <span>End-to-end solutions</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-32 gradient-mesh">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+        <h2 class="text-5xl md:text-6xl font-bold text-text-primary mb-6">
+            Ready to Compose the Future?
+        </h2>
+        <p class="text-xl text-text-secondary mb-12">
+            Join thousands of developers who are building software 10x faster with AI orchestration
+        </p>
+        
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+            <button class="px-10 py-5 bg-gradient-symphony text-white rounded-xl font-bold text-lg hover:scale-105 transition-all shadow-2xl shadow-symphony-primary/40">
+                Start Free Trial
+            </button>
+            <button class="px-10 py-5 glass text-text-primary rounded-xl font-bold text-lg hover:bg-bg-tertiary/80">
+                Schedule Demo
+            </button>
+        </div>
+        
+        <p class="text-sm text-text-tertiary">
+            No credit card required • 14-day free trial • Cancel anytime
+        </p>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-bg-secondary border-t border-border-subtle py-16">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-4 gap-12 mb-12">
+            <!-- Brand -->
+            <div class="col-span-2">
+                <div class="flex items-center space-x-3 mb-4">
+                    <img src="../../assets/rounded.png" alt="Symphony" class="h-8 w-8" />
+                    <div>
+                        <h3 class="text-lg font-bold text-text-primary">Symphony</h3>
+                        <p class="text-[9px] text-text-tertiary font-medium tracking-wider">AI-FIRST DEVELOPMENT</p>
+                    </div>
+                </div>
+                <p class="text-text-secondary mb-6 max-w-sm">
+                    The AI-First Development Environment where intelligent agents orchestrate software creation.
+                </p>
+            </div>
+            
+            <!-- Product -->
+            <div>
+                <h4 class="text-sm font-bold text-text-primary mb-4">Product</h4>
+                <ul class="space-y-2 text-sm text-text-secondary">
+                    <li><a href="#" class="hover:text-symphony-primary">Features</a></li>
+                    <li><a href="#" class="hover:text-symphony-primary">Pricing</a></li>
+                    <li><a href="#" class="hover:text-symphony-primary">Documentation</a></li>
+                    <li><a href="#" class="hover:text-symphony-primary">Extensions</a></li>
+                </ul>
+            </div>
+            
+            <!-- Company -->
+            <div>
+                <h4 class="text-sm font-bold text-text-primary mb-4">Company</h4>
+                <ul class="space-y-2 text-sm text-text-secondary">
+                    <li><a href="#" class="hover:text-symphony-primary">About</a></li>
+                    <li><a href="#" class="hover:text-symphony-primary">Blog</a></li>
+                    <li><a href="#" class="hover:text-symphony-primary">Careers</a></li>
+                    <li><a href="#" class="hover:text-symphony-primary">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="border-t border-border-subtle pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-sm text-text-tertiary">
+                © 2025 Symphony. All rights reserved.
+            </p>
+            <div class="flex items-center space-x-6 mt-4 md:mt-0">
+                <a href="#" class="text-text-tertiary hover:text-symphony-primary text-sm">Privacy</a>
+                <a href="#" class="text-text-tertiary hover:text-symphony-primary text-sm">Terms</a>
+                <a href="#" class="text-text-tertiary hover:text-symphony-primary text-sm">Security</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
