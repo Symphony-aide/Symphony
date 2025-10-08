@@ -109,6 +109,14 @@
         border: 1px solid rgba(var(--border-default), 0.3);
     }
     
+    /* Glassmorphism navigation */
+    .nav-glass {
+        background: rgba(var(--bg-secondary), 0.6);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border-bottom: 1px solid rgba(var(--border-subtle), 0.5);
+    }
+    
     * {
         transition: all 0.2s ease;
     }
@@ -142,7 +150,149 @@
         width: 100%;
         height: 100%;
         pointer-events: none;
-        z-index: 1;
+        z-index: 0;
+    }
+    
+    /* Musical font styling */
+    .musical-text {
+        font-family: 'Georgia', 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+        font-style: italic;
+        letter-spacing: 0.02em;
+    }
+    
+    /* Outlined musical symbol */
+    .musical-symbol {
+        font-family: 'Arial Unicode MS', 'Segoe UI Symbol', sans-serif;
+        font-size: 1em;
+        color: transparent;
+        -webkit-text-stroke: 2px;
+        display: inline-block;
+        background: linear-gradient(135deg, #5B8FF9 0%, #7BA5FA 50%, #5B8FF9 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-stroke-color: currentColor;
+    }
+    
+    .dark .musical-symbol {
+        -webkit-text-stroke-color: #7BA5FA;
+    }
+    
+    :root .musical-symbol {
+        -webkit-text-stroke-color: #5B8FF9;
+    }
+    
+    /* Video Frame Component */
+    .video-frame-outer {
+        background: linear-gradient(145deg, rgba(91, 143, 249, 0.15), rgba(74, 122, 216, 0.1));
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(91, 143, 249, 0.2);
+        border-radius: 20px;
+        padding: 16px;
+        width: 100%;
+        box-shadow: 
+            0 30px 90px rgba(0, 0, 0, 0.3),
+            0 10px 40px rgba(91, 143, 249, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .video-frame-outer:hover {
+        transform: translateY(-4px);
+        box-shadow: 
+            0 35px 100px rgba(0, 0, 0, 0.4),
+            0 15px 50px rgba(91, 143, 249, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+    
+    .video-frame-inner {
+        background: rgb(var(--bg-secondary));
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgb(var(--border-default));
+        box-shadow: 
+            inset 0 2px 4px rgba(0, 0, 0, 0.1),
+            inset 0 -1px 2px rgba(255, 255, 255, 0.05);
+    }
+    
+    .video-frame-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        background: rgba(var(--bg-tertiary), 0.5);
+        border-bottom: 1px solid rgb(var(--border-subtle));
+    }
+    
+    .video-frame-dots {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .video-frame-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        transition: transform 0.2s;
+    }
+    
+    .video-frame-dot:hover {
+        transform: scale(1.2);
+    }
+    
+    .video-frame-content {
+        aspect-ratio: 16 / 9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at center, rgba(91, 143, 249, 0.03) 0%, transparent 70%);
+        position: relative;
+    }
+    
+    .video-placeholder {
+        text-align: center;
+        color: rgb(var(--text-tertiary));
+    }
+    
+    .video-placeholder-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+        opacity: 0.3;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    }
+    
+    /* Decorative corner accents */
+    .video-frame-outer::before,
+    .video-frame-outer::after {
+        content: '';
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        border: 2px solid rgba(91, 143, 249, 0.3);
+        pointer-events: none;
+        transition: border-color 0.3s;
+    }
+    
+    .video-frame-outer:hover::before,
+    .video-frame-outer:hover::after {
+        border-color: rgba(91, 143, 249, 0.5);
+    }
+    
+    .video-frame-outer::before {
+        top: 12px;
+        left: 12px;
+        border-right: none;
+        border-bottom: none;
+        border-radius: 20px 0 0 0;
+    }
+    
+    .video-frame-outer::after {
+        bottom: 12px;
+        right: 12px;
+        border-left: none;
+        border-top: none;
+        border-radius: 0 0 20px 0;
     }
     
     ::-webkit-scrollbar {
@@ -166,7 +316,7 @@
 <body class="font-sans antialiased">
 
 <!-- Navigation -->
-<nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg border-b" style="background-color: rgba(var(--bg-secondary), 0.8); border-color: rgb(var(--border-subtle));">
+<nav class="fixed top-0 left-0 right-0 z-50 nav-glass">
 
     <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
@@ -198,7 +348,7 @@
                 <button class="px-4 py-2 text-sm transition-colors" style="color: rgb(var(--text-secondary));">
                     Sign In
                 </button>
-                <button class="px-6 py-2 text-sm font-medium bg-gradient-symphony text-white rounded-lg hover:opacity-90 transition-opacity shadow-lg shadow-symphony-primary/30">
+                <button class="px-6 py-2 text-sm font-medium text-gray-700 dark:text-white bg-gradient-symphony rounded-lg hover:opacity-90 transition-opacity shadow-lg shadow-symphony-primary/30">
                     Get Started
                 </button>
             </div>
@@ -211,20 +361,15 @@
     <!-- Interactive Grid Canvas -->
     <canvas id="interactive-grid"></canvas>
     
-    <div class="relative max-w-7xl mx-auto px-6 py-32 text-center">
-        <!-- Badge -->
-        <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full border mb-8" style="border-color: rgb(var(--accent-text) / 0.3); background-color: rgb(var(--accent-bg));">
-            <span class="text-sm font-medium" style="color: rgb(var(--accent-text));">🎩 The Conductor is Ready</span>
-        </div>
-        
+    <div class="relative max-w-7xl mx-auto px-6 py-32 text-center z-10">
         <!-- Main Headline -->
-        <h1 class="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 tracking-tight leading-tight" style="color: rgb(var(--text-primary));">
-            Build software at the<br/>
-            <span class="bg-gradient-to-r from-symphony-primary via-symphony-light to-symphony-primary bg-clip-text text-transparent">speed of thought</span>
+        <h1 class="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 tracking-tight leading-tight musical-text" style="color: rgb(var(--text-primary));">
+            Wh<span class="musical-symbol" style="margin-right: 10px; margin-left: 2px;">𝄢</span>re You C<span class="musical-symbol">𝄞</span>nduct,<br/>
+            <span class="bg-gradient-to-r from-symphony-primary via-symphony-light to-symphony-primary bg-clip-text text-transparent">AI Per<span class="musical-symbol"><u>♪</u></span> orms</span>
         </h1>
         
         <p class="text-xl md:text-2xl max-w-2xl mx-auto mb-12 leading-relaxed" style="color: rgb(var(--text-secondary));">
-            Symphony is an AI-First IDE where the Conductor orchestrates intelligent agents to build, test, and deploy your vision.
+            The first AI-First Dev♩lopment Environment
         </p>
             
         <!-- CTA Buttons -->
@@ -241,44 +386,31 @@
         <!-- Social Proof -->
         <p class="text-sm mb-16" style="color: rgb(var(--text-tertiary));">Trusted by developers building the future</p>
         
-        <!-- Product Preview -->
+        <!-- Product Demo Frame -->
         <div class="relative max-w-6xl mx-auto">
             <!-- Subtle glow -->
             <div class="absolute inset-0 bg-gradient-to-t from-symphony-primary/10 to-transparent blur-3xl"></div>
             
-            <!-- Terminal/IDE Preview -->
-            <div class="relative border rounded-xl overflow-hidden shadow-2xl" style="border-color: rgb(var(--border-default)); background-color: rgb(var(--bg-secondary));">
-                <!-- Terminal Header -->
-                <div class="flex items-center justify-between px-4 py-3 border-b" style="border-color: rgb(var(--border-subtle));">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
-                        <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                        <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+            <!-- Video Frame Component -->
+            <div class="relative video-frame-outer">
+                <div class="video-frame-inner">
+                    <!-- Frame Header -->
+                    <div class="video-frame-header">
+                        <div class="video-frame-dots">
+                            <div class="video-frame-dot bg-red-500/60"></div>
+                            <div class="video-frame-dot bg-yellow-500/60"></div>
+                            <div class="video-frame-dot bg-green-500/60"></div>
+                        </div>
+                        <div class="text-xs font-medium" style="color: rgb(var(--text-tertiary));">Symphony IDE Demo</div>
+                        <div class="w-16"></div>
                     </div>
-                    <div class="text-xs font-mono" style="color: rgb(var(--text-tertiary));">symphony-ide</div>
-                    <div class="w-16"></div>
-                </div>
-                
-                <!-- Terminal Content -->
-                <div class="p-6 font-mono text-sm">
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-symphony-primary">$</span>
-                            <span style="color: rgb(var(--text-primary));">symphony create web-app</span>
-                        </div>
-                        <div class="ml-4" style="color: rgb(var(--text-secondary));">
-                            <div class="flex items-center space-x-2 mb-2">
-                                <span class="text-symphony-primary">🎩</span>
-                                <span>Conductor analyzing requirements...</span>
-                            </div>
-                            <div class="ml-6 space-y-1" style="color: rgb(var(--text-tertiary));">
-                                <div>✓ Planning architecture</div>
-                                <div>✓ Generating React components</div>
-                                <div>✓ Setting up routing</div>
-                                <div>✓ Configuring build system</div>
-                            </div>
-                            <div class="mt-3 text-green-400">✓ Project ready in 12 seconds</div>
-                        </div>
+                    
+                    <!-- Video Content Area -->
+                    <div class="video-frame-content">
+                        <video controls autoplay muted loop class="w-full h-full object-cover">
+                            <source src="../../assets/demo.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
                     </div>
                 </div>
             </div>

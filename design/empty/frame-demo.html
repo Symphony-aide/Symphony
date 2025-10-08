@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Copilot Frame</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #6b5b95 0%, #4a3f6b 50%, #3d3565 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+        }
+
+        .outer-container {
+            background: linear-gradient(145deg, rgba(106, 90, 205, 0.4), rgba(75, 63, 114, 0.4));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            padding: 18px;
+            width: 100%;
+            max-width: 1440px;
+            height: 92vh;
+            box-shadow: 
+                0 30px 90px rgba(0, 0, 0, 0.5),
+                0 10px 40px rgba(106, 90, 205, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .outer-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 35px 100px rgba(0, 0, 0, 0.6),
+                0 15px 50px rgba(106, 90, 205, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .inner-container {
+            background: linear-gradient(to bottom, #252526 0%, #1e1e1e 100%);
+            border-radius: 12px;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.3),
+                inset 0 -1px 2px rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(62, 62, 66, 0.5);
+        }
+
+        .video-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            background: radial-gradient(circle at center, rgba(30, 30, 30, 0.8) 0%, #1e1e1e 100%);
+        }
+
+        video {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 8px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .placeholder {
+            color: #858585;
+            font-size: 15px;
+            text-align: center;
+            font-weight: 400;
+            letter-spacing: 0.2px;
+        }
+
+        .placeholder-icon {
+            font-size: 72px;
+            margin-bottom: 24px;
+            opacity: 0.2;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .placeholder p {
+            opacity: 0.7;
+        }
+
+        /* Decorative corner accents */
+        .outer-container::before,
+        .outer-container::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            pointer-events: none;
+        }
+
+        .outer-container::before {
+            top: 14px;
+            left: 14px;
+            border-right: none;
+            border-bottom: none;
+            border-radius: 20px 0 0 0;
+        }
+
+        .outer-container::after {
+            bottom: 14px;
+            right: 14px;
+            border-left: none;
+            border-top: none;
+            border-radius: 0 0 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+            
+            .outer-container {
+                height: 85vh;
+                border-radius: 16px;
+                padding: 12px;
+            }
+
+            .video-wrapper {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="outer-container">
+        <div class="inner-container">
+            <div class="video-wrapper">
+                <!-- Add your video here -->
+                <!-- <video controls autoplay muted loop>
+                    <source src="your-video.mp4" type="video/mp4">
+                </video> -->
+                
+                <div class="placeholder">
+                    <div class="placeholder-icon">🎬</div>
+                    <p>Place your video demo here</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
