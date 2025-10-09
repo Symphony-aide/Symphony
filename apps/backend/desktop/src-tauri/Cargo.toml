@@ -19,7 +19,7 @@ sveditor-core = { path = "../../core", features = ["local_client"] }
 sveditor-core-api  = { path = "../../core_api"}
 tracing = "0.1.41"
 tracing-subscriber = {version="0.3.19", features= ["env-filter", "std"] }
-git-for-symphony = { path = "../../extensions/git" }
+git-for-symphony = { path = "../../developed_extensions/git" }
 typescript-lsp-symphony = { path = "../../extensions/typescript-lsp" }
 native-shell-symphony = { path = "../../extensions/native-shell" }
 anyhow = "1.0.98"

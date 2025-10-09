@@ -1,5 +1,6 @@
 [workspace]
 resolver = "2"
+
 members = [
     # Core Foundation
     "core",
@@ -71,11 +72,22 @@ members = [
     
     # Existing packages
     "desktop/src-tauri",
-    "extensions/git",
+    "developed_extensions/git",
     "extensions/typescript-lsp",
     "extensions/native-shell",
     "crosspty"
 ]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Symphony Team"]
+license = "MIT"
+repository = "https://github.com/Symphony-Code-Editor/Symphony-App/tree/main"
+homepage = "https://github.com/Symphony-Code-Editor/Symphony-App/tree/main"
+
+[workspace.dependencies]
+# Core dependencies shared across workspace
 
 [profile.release]
 lto = true
