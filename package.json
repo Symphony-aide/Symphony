@@ -21,7 +21,7 @@
     "dev": "turbo run dev --parallel",
     "prepare": "husky install",
     "sb:build": "storybook build -c .storybook -o ./dist/storybook/build/",
-    "sb:watch": "concurrently 'pnpm run tw:watch' 'pnpm run sb'",
+    "sb:watch": "concurrently \"pnpm run tw:watch\" \"pnpm run sb\"",
     "sb": "storybook dev -p 6006",
     "tw": "cd apps/web && npx tailwind -i src/index.css -o ../../dist/styles/tailwind.css",
     "tw:watch": "cd apps/web && npx tailwind -i src/index.css -o ../../dist/styles/tailwind.css --watch"
@@ -53,6 +53,7 @@
     "autoprefixer": "^10.4.0",
     "check-dependency-version-consistency": "^5.0.1",
     "commitlint": "^19.8.1",
+    "concurrently": "^9.2.1",
     "config": "workspace:*",
     "cross-env": "^7.0.3",
     "eslint": "^9.30.1",

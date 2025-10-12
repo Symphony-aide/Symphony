@@ -1,5 +1,7 @@
 // ActionButtons.jsx
 import React from "react";
+import { Button } from "ui";
+import { Input } from "ui";
 
 const ActionButtons = ({
 	onNewFile,
@@ -15,28 +17,39 @@ const ActionButtons = ({
 	return (
 		<>
 			<div className='flex items-center gap-2'>
-				<button
+				<Button
 					onClick={onNewFile}
-					className='bg-green-600 text-white px-2 py-1 rounded mb-2 hover:bg-green-500'
+					variant="default"
+					size="sm"
+					className='bg-green-600 hover:bg-green-500 mb-2'
 				>
 					New File
-				</button>
-				<button
+				</Button>
+				<Button
 					onClick={() => onCreateFolder("")}
-					className='bg-blue-600 text-white px-2 py-1 rounded mb-2 hover:bg-blue-500'
+					variant="default"
+					size="sm"
+					className='bg-blue-600 hover:bg-blue-500 mb-2'
 				>
 					New Folder
-				</button>
+				</Button>
 			</div>
-			<label className='bg-gray-700 text-white px-2 py-1 rounded cursor-pointer text-center hover:bg-gray-600'>
-				Upload File
-				<input
-					type='file'
-					onChange={handleUploadInput}
-					accept='.js,.ts,.txt,.json,.jsx,.tsx,.md,.html,.css'
-					className='hidden'
-				/>
-			</label>
+			<Button
+				variant="secondary"
+				size="sm"
+				className='bg-gray-700 hover:bg-gray-600 relative overflow-hidden'
+				asChild
+			>
+				<label className='cursor-pointer'>
+					Upload File
+					<Input
+						type='file'
+						onChange={handleUploadInput}
+						accept='.js,.ts,.txt,.json,.jsx,.tsx,.md,.html,.css'
+						className='absolute inset-0 opacity-0 cursor-pointer'
+					/>
+				</label>
+			</Button>
 		</>
 	);
 };

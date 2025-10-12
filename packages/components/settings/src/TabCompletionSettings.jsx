@@ -1,5 +1,6 @@
 // TabCompletionSettings.jsx
 import React, { useState, useEffect } from "react";
+import { Checkbox, Label, Card } from "ui";
 
 export default function TabCompletionSettings({ enabled, onChange }) {
 	const [isEnabled, setIsEnabled] = useState(enabled);
@@ -9,15 +10,19 @@ export default function TabCompletionSettings({ enabled, onChange }) {
 	}, [isEnabled]);
 
 	return (
-		<div className='p-4 bg-gray-800 text-white rounded shadow space-y-3'>
+		<Card className='p-4 bg-slate-800 text-white space-y-3'>
 			<h2 className='text-lg font-bold'>Tab Completion Settings</h2>
 
 			<div className='flex items-center space-x-2'>
-				<input type='checkbox' checked={isEnabled} onChange={e => setIsEnabled(e.target.checked)} />
-				<span>Enable Tab Completion</span>
+				<Checkbox 
+					checked={isEnabled} 
+					onCheckedChange={setIsEnabled}
+					className='border-slate-600'
+				/>
+				<Label>Enable Tab Completion</Label>
 			</div>
 
-			<p className='text-sm text-gray-400'>When enabled, pressing Tab will auto-complete code suggestions.</p>
-		</div>
+			<p className='text-sm text-slate-400'>When enabled, pressing Tab will auto-complete code suggestions.</p>
+		</Card>
 	);
 }

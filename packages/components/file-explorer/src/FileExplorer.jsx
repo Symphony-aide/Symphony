@@ -1,5 +1,5 @@
 // FileExplorer.jsx
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import FileTreeNode from "./components/FileTreeNode";
 import FilterControls from "./components/FilterControls";
 import SearchTab from "./components/SearchTab";
@@ -7,6 +7,8 @@ import ContextMenu from "./components/ContextMenu";
 import ActionButtons from "./components/ActionButtons";
 import { useFolderOperations } from "./hooks/useFolderOperations";
 import { useFileTree } from "./hooks/useFileTree.jsx";
+import { Button } from "ui";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "ui";
 
 export default function FileExplorer({
 	files,
@@ -175,31 +177,31 @@ export default function FileExplorer({
 			{/* Header */}
 			<div className='flex items-center justify-between mb-4 relative'>
 				<h2 className='text-xs tracking-widest text-gray-300'>EXPLORER</h2>
-				<button onClick={() => onOpenSettings("shortcuts")} className='hover:text-gray-400' title='Settings'>
+				<Button 
+					variant="ghost" 
+					size="sm"
+					onClick={() => onOpenSettings("shortcuts")} 
+					className='hover:text-gray-400 p-1' 
+					title='Settings'
+				>
 					⚙️
-				</button>
+				</Button>
 			</div>
 
 			{/* Tabs */}
-			<div className='flex space-x-2 mb-3'>
-				<button
-					onClick={() => setActiveTab("files")}
-					className={`flex-grow px-2 py-1 rounded ${activeTab === "files" ? "bg-gray-700" : "hover:bg-gray-700"}`}
-				>
-					Files
-				</button>
-				<button
-					onClick={() => setActiveTab("search")}
-					className={`flex-grow px-2 py-1 rounded ${activeTab === "search" ? "bg-gray-700" : "hover:bg-gray-700"}`}
-				>
-					Search
-				</button>
-			</div>
+			<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-3">
+				<TabsList className="inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground w-full">
+					<TabsTrigger value="files" className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow flex-1">
+						Files
+					</TabsTrigger>
+					<TabsTrigger value="search" className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow flex-1">
+						Search
+					</TabsTrigger>
+				</TabsList>
 
-			{/* Content */}
-			<div className='flex-grow overflow-y-auto'>
-				{activeTab === "files" && (
-					<>
+				{/* Content */}
+				<div className='flex-grow overflow-y-auto'>
+					<TabsContent value="files">
 						{/* Filters */}
 						<FilterControls
 							extFilter={extFilter}
@@ -246,28 +248,26 @@ export default function FileExplorer({
 								/>
 							)}
 						</div>
-					</>
-				)}
 
-				{activeTab === "search" && (
-					<SearchTab
-						searchTerm={searchTerm}
-						setSearchTerm={setSearchTerm}
-						visibleFilesFlat={visibleFilesFlat}
-						onSelectFile={onSelectFile}
-						setActiveTab={setActiveTab}
-					/>
-				)}
-			</div>
+						{/* Actions */}
+						<ActionButtons
+							onNewFile={onNewFile}
+							onCreateFolder={createFolder}
+							onUploadFile={onUploadFile}
+						/>
+					</TabsContent>
 
-			{/* Actions */}
-			{activeTab === "files" && (
-				<ActionButtons
-					onNewFile={onNewFile}
-					onCreateFolder={createFolder}
-					onUploadFile={onUploadFile}
-				/>
-			)}
+					<TabsContent value="search">
+						<SearchTab
+							searchTerm={searchTerm}
+							setSearchTerm={setSearchTerm}
+							visibleFilesFlat={visibleFilesFlat}
+							onSelectFile={onSelectFile}
+							setActiveTab={setActiveTab}
+						/>
+					</TabsContent>
+				</div>
+			</Tabs>
 
 			{/* Context menu */}
 			<ContextMenu

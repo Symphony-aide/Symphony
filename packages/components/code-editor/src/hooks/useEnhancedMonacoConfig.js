@@ -108,43 +108,89 @@ export function useEnhancedMonacoConfig() {
 
   const addCustomTokenProviders = useCallback((monaco, language) => {
     // Add custom token providers for enhanced highlighting
-    if (language === 'javascript' || language === 'typescript') {
-      // Enhanced JavaScript/TypeScript token recognition
-      monaco.languages.setTokensProvider(language, {
-        getInitialState: () => ({ inComment: false }),
-        tokenize: (line, state) => {
-          const tokens = [];
-          let currentIndex = 0;
-          
-          // Simple tokenization for demonstration
-          // In a real implementation, you'd use a proper lexer
-          const patterns = [
-            { regex: /\/\*[\s\S]*?\*\/|\/\/.*$/g, type: 'comment' },
-            { regex: /\b(function|class|const|let|var|if|else|for|while|return|import|export|default)\b/g, type: 'keyword' },
-            { regex: /\b(true|false|null|undefined)\b/g, type: 'constant' },
-            { regex: /"[^"]*"|'[^']*'|`[^`]*`/g, type: 'string' },
-            { regex: /\b\d+(\.\d+)?\b/g, type: 'number' },
-            { regex: /\b[A-Z][a-zA-Z0-9]*\b/g, type: 'type' },
-          ];
-          
-          for (const pattern of patterns) {
-            let match;
-            while ((match = pattern.regex.exec(line)) !== null) {
-              if (match.index >= currentIndex) {
-                tokens.push({
-                  startIndex: match.index,
-                  scopes: pattern.type
-                });
+    try {
+      if (language === 'javascript' || language === 'typescript') {
+        // Enhanced JavaScript/TypeScript token recognition
+        monaco.languages.setTokensProvider(language, {
+          getInitialState: () => ({ 
+            inComment: false,
+            clone: function() {
+              return { ...this, clone: this.clone, equals: this.equals };
+            },
+            equals: function(other) {
+              return other && this.inComment === other.inComment;
+            }
+          }),
+          tokenize: (line, state) => {
+            try {
+              const tokens = [];
+              let currentIndex = 0;
+              
+              // Simple tokenization for demonstration
+              // In a real implementation, you'd use a proper lexer
+              const patterns = [
+                { regex: /\/\*[\s\S]*?\*\/|\/\/.*$/g, type: 'comment' },
+                { regex: /\b(function|class|const|let|var|if|else|for|while|return|import|export|default)\b/g, type: 'keyword' },
+                { regex: /\b(true|false|null|undefined)\b/g, type: 'constant' },
+                { regex: /"[^"]*"|'[^']*'|`[^`]*`/g, type: 'string' },
+                { regex: /\b\d+(\.\d+)?\b/g, type: 'number' },
+                { regex: /\b[A-Z][a-zA-Z0-9]*\b/g, type: 'type' },
+              ];
+              
+              for (const pattern of patterns) {
+                // Reset regex lastIndex to avoid issues with global regexes
+                pattern.regex.lastIndex = 0;
+                let match;
+                while ((match = pattern.regex.exec(line)) !== null) {
+                  if (match.index >= currentIndex) {
+                    tokens.push({
+                      startIndex: match.index,
+                      scopes: pattern.type
+                    });
+                  }
+                  // Prevent infinite loops with zero-width matches
+                  if (match.index === pattern.regex.lastIndex) {
+                    pattern.regex.lastIndex++;
+                  }
+                }
               }
+              
+              // Create a new state object that has a clone and equals method
+              const newState = {
+                ...state,
+                clone: function() {
+                  return { ...this, clone: this.clone, equals: this.equals };
+                },
+                equals: function(other) {
+                  return other && this.inComment === other.inComment;
+                }
+              };
+              
+              return {
+                tokens: tokens.sort((a, b) => a.startIndex - b.startIndex),
+                endState: newState
+              };
+            } catch (error) {
+              console.warn('Tokenization error:', error);
+              const fallbackState = {
+                inComment: false,
+                clone: function() {
+                  return { ...this, clone: this.clone, equals: this.equals };
+                },
+                equals: function(other) {
+                  return other && this.inComment === other.inComment;
+                }
+              };
+              return {
+                tokens: [],
+                endState: fallbackState
+              };
             }
           }
-          
-          return {
-            tokens: tokens.sort((a, b) => a.startIndex - b.startIndex),
-            endState: state
-          };
-        }
-      });
+        });
+      }
+    } catch (error) {
+      console.warn('Failed to set custom token provider:', error);
     }
   }, []);
 

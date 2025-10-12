@@ -1,5 +1,6 @@
 // AutoSaveSettings.jsx
 import React, { useState, useEffect } from "react";
+import { Checkbox, Input, Label, Card } from "ui";
 
 export default function AutoSaveSettings({ enabled, interval, onChange }) {
 	const [isEnabled, setIsEnabled] = useState(enabled);
@@ -10,26 +11,30 @@ export default function AutoSaveSettings({ enabled, interval, onChange }) {
 	}, [isEnabled, saveInterval]);
 
 	return (
-		<div className='p-4 bg-gray-800 text-white rounded shadow space-y-3'>
+		<Card className='p-4 bg-slate-800 text-white space-y-3'>
 			<h2 className='text-lg font-bold'>Auto Save Settings</h2>
 
 			<div className='flex items-center space-x-2'>
-				<input type='checkbox' checked={isEnabled} onChange={e => setIsEnabled(e.target.checked)} />
-				<span>Enable Auto Save</span>
+				<Checkbox 
+					checked={isEnabled} 
+					onCheckedChange={setIsEnabled}
+					className='border-slate-600'
+				/>
+				<Label>Enable Auto Save</Label>
 			</div>
 
 			<div className='flex items-center space-x-2'>
-				<label className='text-sm text-gray-300'>Save every:</label>
-				<input
+				<Label className='text-sm text-slate-300'>Save every:</Label>
+				<Input
 					type='number'
 					min={1}
 					value={saveInterval}
 					onChange={e => setSaveInterval(Number(e.target.value))}
-					className='w-16 p-1 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500'
+					className='w-16 bg-slate-700 border-slate-600 text-black !text-black'
+					style={{ color: 'black' }}
 				/>
-
 				<span>seconds</span>
 			</div>
-		</div>
+		</Card>
 	);
 }
