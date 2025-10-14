@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Symphony - AI-First Development Environment</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        symphony: {
+                            primary: "#5B8FF9",
+                            blue: "#5B8FF9",
+                            light: "#7BA5FA",
+                            dark: "#4A7AD8",
+                            accent: "#3B6DD8",
+                        },
+                        "bg-primary": "#1E1E1E",
+                        "bg-secondary": "#252526",
+                        "bg-tertiary": "#2D2D30",
+                        "border-subtle": "#252530",
+                        "border-default": "#2D2D3A",
+                        "text-primary": "#E8E8F0",
+                        "text-secondary": "#9CA3AF",
+                        "text-tertiary": "#6B7280",
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "system-ui", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        glow: {
+                            '0%': { opacity: '0.5' },
+                            '100%': { opacity: '1' },
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        .material-icons { font-size: 20px; }
+        .gradient-symphony { background: linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%); }
+        .gradient-mesh {
+            background: 
+                radial-gradient(at 27% 37%, rgba(91, 143, 249, 0.12) 0px, transparent 50%),
+                radial-gradient(at 97% 21%, rgba(74, 122, 216, 0.12) 0px, transparent 50%),
+                radial-gradient(at 52% 99%, rgba(59, 109, 216, 0.10) 0px, transparent 50%),
+                radial-gradient(at 10% 29%, rgba(123, 165, 250, 0.08) 0px, transparent 50%);
+        }
+        * { transition: all 0.2s ease; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #13131A; }
+        ::-webkit-scrollbar-thumb { background: #2D2D3A; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3D3D4A; }
+        .glass { background: rgba(26, 26, 36, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .musical-lines { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; overflow: hidden; }
+        .musical-lines svg { width: 100%; height: 100%; }
+        @keyframes wave-flow { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.6; } }
+        .musical-line { animation: wave-flow 4s ease-in-out infinite; }
+        .musical-line:nth-child(1) { animation-delay: 0s; }
+        .musical-line:nth-child(2) { animation-delay: 0.8s; }
+        .musical-line:nth-child(3) { animation-delay: 1.6s; }
+        .blob-tab { position: relative; background: rgba(91, 143, 249, 0.15); backdrop-filter: blur(8px); border: 1px solid rgba(91, 143, 249, 0.3); border-bottom: none; border-radius: 8px 8px 0 0; padding: 6px 20px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .blob-tab::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #5B8FF9, #7BA5FA); border-radius: 2px 2px 0 0; }
+        .blob-tab::after { content: ''; position: absolute; bottom: -1px; left: -1px; right: -1px; height: 1px; background: #1E1E1E; z-index: 1; }
+        .blob-tab:hover { background: rgba(91, 143, 249, 0.2); transform: translateY(-1px); }
+    </style>
+</head>
+<body class="bg-bg-primary text-text-primary font-sans antialiased" x-data="{
+    activeTab: 'welcome',
+    activeSidebar: 'explorer',
+    activeMode: 'normal',
+    curves: [
+        { id: 'waveGrad1', offset: 0, scale: 1, strokeWidth: 2 },
+        { id: 'waveGrad2', offset: 30, scale: 1.2, strokeWidth: 1.8 },
+        { id: 'waveGrad3', offset: 60, scale: 1.4, strokeWidth: 1.5 }
+    ]
+}">
+    <div class="flex flex-col h-screen">
+        <header class="flex items-center justify-between px-6 py-3 border-b border-border-subtle bg-bg-secondary/50 backdrop-blur-sm">
+            <div class="flex items-center space-x-3">
+                <div class="relative">
+                    <img src="../../assets/rounded.png" alt="Symphony" class="h-7 w-7" />
+                </div>
+                <div>
+                    <h1 class="text-base font-semibold tracking-tight text-text-primary">Symphony</h1>
+                    <p class="text-[10px] text-text-tertiary font-medium tracking-wide">AI-First DEVELOPMENT</p>
+                </div>
+                <div class="flex items-center ml-24 right-0 space-x-1 bg-bg-tertiary rounded-lg p-1">
+                    <button :class="activeMode === 'normal' ? 'px-3 py-1.5 text-xs font-medium rounded-md bg-symphony-primary text-white' : 'px-3 py-1.5 text-xs font-medium rounded-md text-text-tertiary hover:text-text-primary hover:bg-bg-secondary'" @click="activeMode = 'normal'">🎼 Normal</button>
+                    <button :class="activeMode === 'maestro' ? 'px-3 py-1.5 text-xs font-medium rounded-md bg-symphony-primary text-white' : 'px-3 py-1.5 text-xs font-medium rounded-md text-text-tertiary hover:text-text-primary hover:bg-bg-secondary'" @click="activeMode = 'maestro'">🎩 Maestro</button>
+                </div>
+            </div>
+            <div class="relative w-96">
+                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary text-lg">search</span>
+                <input class="w-full bg-bg-tertiary border border-border-default rounded-lg py-2 pl-10 pr-4 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50 focus:border-symphony-primary" placeholder="Search or jump to... (⌘K)" type="search"/>
+            </div>
+            <div class="flex items-center space-x-2 relative">
+                <button class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary relative" title="AI Assistant">
+                    <span class="material-icons text-lg">psychology</span>
+                    <div class="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-bg-secondary"></div>
+                </button>
+                <div class="relative">
+                    <button class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary">
+                        <span class="material-icons text-lg">notifications_none</span>
+                    </button>
+                    <div class="absolute top-1 right-1 w-2 h-2 bg-symphony-primary rounded-full animate-pulse"></div>
+                    <div class="absolute top-12 right-0 w-80 glass rounded-xl shadow-2xl border border-border-default overflow-hidden z-50 hidden">
+                        <div class="bg-bg-secondary/80 px-4 py-3 border-b border-border-subtle">
+                            <h3 class="text-sm font-semibold text-text-primary">Notifications</h3>
+                        </div>
+                        <div class="max-h-96 overflow-y-auto">
+                            <div class="px-4 py-3 hover:bg-bg-tertiary/50 border-b border-border-subtle cursor-pointer">
+                                <div class="flex items-start space-x-3">
+                                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-symphony-primary/10 flex items-center justify-center">
+                                        <span class="material-icons text-sm text-symphony-primary">check_circle</span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-text-primary">Build Successful</p>
+                                        <p class="text-xs text-text-tertiary mt-1">Your project compiled without errors</p>
+                                        <p class="text-xs text-text-tertiary mt-1">2 minutes ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="px-4 py-3 hover:bg-bg-tertiary/50 border-b border-border-subtle cursor-pointer">
+                                <div class="flex items-start space-x-3">
+                                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-symphony-light/10 flex items-center justify-center">
+                                        <span class="material-icons text-sm text-symphony-light">extension</span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-text-primary">Extension Update Available</p>
+                                        <p class="text-xs text-text-tertiary mt-1">Rust Analyzer v0.3.2 is ready to install</p>
+                                        <p class="text-xs text-text-tertiary mt-1">1 hour ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="px-4 py-3 hover:bg-bg-tertiary/50 cursor-pointer">
+                                <div class="flex items-start space-x-3">
+                                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-symphony-accent/10 flex items-center justify-center">
+                                        <span class="material-icons text-sm text-symphony-accent">smart_toy</span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-text-primary">AI Agent Ready</p>
+                                        <p class="text-xs text-text-tertiary mt-1">GPT-4 Assistant is now available</p>
+                                        <p class="text-xs text-text-tertiary mt-1">3 hours ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-4 py-2 bg-bg-secondary/80 border-t border-border-subtle">
+                            <button class="text-xs text-symphony-primary hover:text-symphony-light w-full text-center">View All Notifications</button>
+                        </div>
+                    </div>
+                </div>
+                <button class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary">
+                    <span class="material-icons text-lg">settings</span>
+                </button>
+            </div>
+        </header>
+        <div class="flex flex-1 overflow-hidden">
+            <aside class="w-14 bg-bg-secondary border-r border-border-subtle flex flex-col items-center py-4 gap-1">
+                <div class="flex-1 flex flex-col gap-1">
+                    <button :class="activeSidebar === 'explorer' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Explorer" @click="activeSidebar = 'explorer'">
+                        <span class="material-icons text-lg">folder_open</span>
+                        <div x-show="activeSidebar === 'explorer'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
+                    </button>
+                    <button :class="activeSidebar === 'harmony' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Harmony Board" @click="activeSidebar = 'harmony'">
+                        <span class="material-icons text-lg">dashboard</span>
+                        <div x-show="activeSidebar === 'harmony'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
+                    </button>
+                    <button :class="activeSidebar === 'source' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Source Control" @click="activeSidebar = 'source'">
+                        <span class="material-icons text-lg">source</span>
+                        <div x-show="activeSidebar === 'source'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
+                    </button>
+                    <button :class="activeSidebar === 'orchestra' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="AI Orchestra" @click="activeSidebar = 'orchestra'">
+                        <span class="material-icons text-lg">smart_toy</span>
+                        <div x-show="activeSidebar === 'orchestra'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
+                    </button>
+                    <button :class="activeSidebar === 'extensions' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Extensions" @click="activeSidebar = 'extensions'">
+                        <span class="material-icons text-lg">extension</span>
+                        <div x-show="activeSidebar === 'extensions'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
+                    </button>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <button class="p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="Settings">
+                        <span class="material-icons text-lg">tune</span>
+                    </button>
+                    <div class="relative group cursor-pointer" title="Account">
+                        <div class="w-8 h-8 rounded-full bg-gradient-symphony flex items-center justify-center text-white text-xs font-semibold shadow-lg ring-2 ring-bg-secondary hover:ring-symphony-primary/50 transition-all">
+                            <span class="font-bold">U</span>
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-bg-secondary"></div>
+                    </div>
+                </div>
+            </aside>
+            <main class="flex-1 flex flex-col bg-bg-primary relative gradient-mesh">
+                <div class="bg-bg-secondary/30 border-b border-border-subtle flex items-center justify-between h-10">
+                    <div class="flex items-center h-full">
+                        <button :class="activeTab === 'welcome' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'welcome'">
+                            <span :class="activeTab === 'welcome' ? 'material-icons text-base' : 'material-icons text-sm'">description</span>
+                            <span>Welcome</span>
+                        </button>
+                        <button :class="activeTab === 'getting-started' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'getting-started'">
+                            <span :class="activeTab === 'getting-started' ? 'material-icons text-base' : 'material-icons text-sm'">code</span>
+                            <span>Getting Started</span>
+                        </button>
+                        <button :class="activeTab === 'documentation' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'documentation'">
+                            <span :class="activeTab === 'documentation' ? 'material-icons text-base' : 'material-icons text-sm'">help_outline</span>
+                            <span>Documentation</span>
+                        </button>
+                    </div>
+                    <button class="p-1 mx-2 rounded hover:bg-bg-tertiary text-text-tertiary hover:text-text-primary">
+                        <span class="material-icons text-sm">more_horiz</span>
+                    </button>
+                </div>
+                <div class="flex-1 flex overflow-hidden relative">
+                    <div class="musical-lines">
+                        <svg viewBox="0 0 1000 800" preserveAspectRatio="none" id="musical-svg">
+                            <defs>
+                                <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#5B8FF9;stop-opacity:0.6" />
+                                    <stop offset="100%" style="stop-color:#5B8FF9;stop-opacity:0.2" />
+                                </linearGradient>
+                                <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#7BA5FA;stop-opacity:0.5" />
+                                    <stop offset="100%" style="stop-color:#7BA5FA;stop-opacity:0.15" />
+                                </linearGradient>
+                                <linearGradient id="waveGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#4A7AD8;stop-opacity:0.4" />
+                                    <stop offset="100%" style="stop-color:#4A7AD8;stop-opacity:0.1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <script>
+                        // Generate musical wave curves
+                        document.addEventListener('alpine:initialized', () => {
+                            const svg = document.getElementById('musical-svg');
+                            const curves = [
+                                { id: 'waveGrad1', offset: 0, scale: 1, strokeWidth: 2, delay: '0s' },
+                                { id: 'waveGrad2', offset: 30, scale: 1.2, strokeWidth: 1.8, delay: '0.8s' },
+                                { id: 'waveGrad3', offset: 60, scale: 1.4, strokeWidth: 1.5, delay: '1.6s' }
+                            ];
+                            
+                            curves.forEach((curve, index) => {
+                                let pathData = '';
+                                const points = 300;
+                                
+                                for (let i = 0; i < points; i++) {
+                                    const x = (i / points) * 1000;
+                                    const xShifted = (i / points) * 10 + 0.5;
+                                    const y = (curve.offset + 150 / (xShifted * curve.scale)) + 50;
+                                    
+                                    if (i === 0) {
+                                        pathData += `M ${x} ${y}`;
+                                    } else {
+                                        pathData += ` L ${x} ${y}`;
+                                    }
+                                }
+                                
+                                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                                path.setAttribute('class', 'musical-line');
+                                path.setAttribute('d', pathData);
+                                path.setAttribute('fill', 'none');
+                                path.setAttribute('stroke', `url(#${curve.id})`);
+                                path.setAttribute('stroke-width', curve.strokeWidth);
+                                path.setAttribute('stroke-linecap', 'round');
+                                path.style.animationDelay = curve.delay;
+                                
+                                svg.appendChild(path);
+                            });
+                        });
+                    </script>
+                    <div class="flex-1 flex items-center justify-center p-12">
+                        <div class="max-w-2xl w-full text-center space-y-8">
+                            <div class="flex justify-center mb-8">
+                                <div class="relative animate-float">
+                                    <img src="../../assets/logo.png" alt="Symphony" class="h-32 w-32 drop-shadow-2xl" />
+                                    <div class="absolute inset-0 bg-symphony-primary/20 blur-3xl rounded-full animate-pulse-slow"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <h1 class="text-4xl font-bold text-text-primary tracking-tight">
+                                    Welcome to <span class="text-symphony-primary">Symphony</span>
+                                </h1>
+                                <p class="text-lg text-text-secondary max-w-xl mx-auto">
+                                    The AI-First Development Environment where intelligent agents orchestrate software creation
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 max-w-xl mx-auto mt-8">
+                                <button class="group glass rounded-xl p-6 hover:bg-bg-tertiary/80 transition-all hover:scale-105 hover:shadow-xl hover:shadow-symphony-primary/10">
+                                    <div class="flex flex-col items-center space-y-3">
+                                        <div class="p-3 rounded-lg bg-symphony-primary/10 group-hover:bg-symphony-primary/20">
+                                            <span class="material-icons text-2xl text-symphony-primary">folder_open</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary">Open Folder</h3>
+                                            <p class="text-sm text-text-tertiary mt-1">Start with an existing project</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="group glass rounded-xl p-6 hover:bg-bg-tertiary/80 transition-all hover:scale-105 hover:shadow-xl hover:shadow-symphony-light/10">
+                                    <div class="flex flex-col items-center space-y-3">
+                                        <div class="p-3 rounded-lg bg-symphony-light/10 group-hover:bg-symphony-light/20">
+                                            <span class="material-icons text-2xl text-symphony-light">note_add</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary">New File</h3>
+                                            <p class="text-sm text-text-tertiary mt-1">Create a new file</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="group glass rounded-xl p-6 hover:bg-bg-tertiary/80 transition-all hover:scale-105 hover:shadow-xl hover:shadow-symphony-dark/10">
+                                    <div class="flex flex-col items-center space-y-3">
+                                        <div class="p-3 rounded-lg bg-symphony-dark/10 group-hover:bg-symphony-dark/20">
+                                            <span class="material-icons text-2xl text-symphony-dark">cloud_download</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary">Clone Repository</h3>
+                                            <p class="text-sm text-text-tertiary mt-1">Clone from Git</p>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button class="group glass rounded-xl p-6 hover:bg-bg-tertiary/80 transition-all hover:scale-105 hover:shadow-xl hover:shadow-symphony-accent/10">
+                                    <div class="flex flex-col items-center space-y-3">
+                                        <div class="p-3 rounded-lg bg-symphony-accent/10 group-hover:bg-symphony-accent/20">
+                                            <span class="material-icons text-2xl text-symphony-accent">auto_awesome</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary">AI Orchestra</h3>
+                                            <p class="text-sm text-text-tertiary mt-1">Start with AI agents</p>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-center space-x-6 text-sm mt-8">
+                                <button class="text-text-secondary hover:text-symphony-primary flex items-center space-x-1">
+                                    <span class="material-icons text-sm">history</span>
+                                    <span>Recent</span>
+                                </button>
+                                <span class="text-text-tertiary">•</span>
+                                <button class="text-text-secondary hover:text-symphony-light flex items-center space-x-1">
+                                    <span class="material-icons text-sm">help_outline</span>
+                                    <span>Getting Started</span>
+                                </button>
+                                <span class="text-text-tertiary">•</span>
+                                <button class="text-text-secondary hover:text-symphony-dark flex items-center space-x-1">
+                                    <span class="material-icons text-sm">book</span>
+                                    <span>Documentation</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <footer class="bg-bg-secondary border-t border-border-subtle px-4 py-1.5 flex items-center justify-between text-xs">
+            <div class="flex items-center space-x-4">
+                <button class="flex items-center space-x-1.5 hover:bg-bg-tertiary px-2 py-1 rounded text-text-secondary hover:text-text-primary">
+                    <span class="material-icons text-sm">source</span>
+                    <span>main</span>
+                </button>
+                <div class="flex items-center space-x-2 text-text-tertiary">
+                    <div class="flex items-center space-x-1">
+                        <span class="material-icons text-sm">cloud_done</span>
+                        <span>Synced</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-1.5 text-text-tertiary">
+                    <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                    <span>Conductor Ready</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="px-2 py-1 rounded text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary">
+                    <span>🎼 Normal Mode</span>
+                </button>
+                <button class="px-2 py-1 rounded text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary">UTF-8</button>
+                <div class="text-text-tertiary flex items-center space-x-1">
+                    <span class="material-icons text-sm">info</span>
+                    <span>v0.1.7</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
