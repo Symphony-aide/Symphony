@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Settings - Symphony</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        symphony: {
+                            primary: "#5B8FF9",
+                            blue: "#5B8FF9",
+                            light: "#7BA5FA",
+                            dark: "#4A7AD8",
+                            accent: "#3B6DD8",
+                        },
+                        "bg-primary": "#1E1E1E",
+                        "bg-secondary": "#252526",
+                        "bg-tertiary": "#2D2D30",
+                        "border-subtle": "#252530",
+                        "border-default": "#2D2D3A",
+                        "text-primary": "#E8E8F0",
+                        "text-secondary": "#9CA3AF",
+                        "text-tertiary": "#6B7280",
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "system-ui", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"],
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        .material-icons { font-size: 20px; }
+        .gradient-symphony { background: linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%); }
+        * { transition: all 0.2s ease; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #13131A; }
+        ::-webkit-scrollbar-thumb { background: #2D2D3A; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3D3D4A; }
+        .glass { background: rgba(26, 26, 36, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    </style>
+</head>
+<body class="bg-bg-primary text-text-primary font-sans antialiased" x-data="{
+    activeCategory: 'workspace',
+    searchQuery: ''
+}">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-bg-secondary border-r border-border-subtle flex flex-col">
+            <!-- Header -->
+            <div class="px-4 py-4 border-b border-border-subtle">
+                <div class="flex items-center space-x-3 mb-4">
+                    <button @click="window.location.href = '../OpenPage/index.html'" class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary" title="Back">
+                        <span class="material-icons text-lg">arrow_back</span>
+                    </button>
+                    <div>
+                        <h1 class="text-base font-semibold text-text-primary">Settings</h1>
+                        <p class="text-xs text-text-tertiary">Configure Symphony IDE</p>
+                    </div>
+                </div>
+                <!-- Search -->
+                <div class="relative">
+                    <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary text-sm">search</span>
+                    <input x-model="searchQuery" class="w-full bg-bg-tertiary border border-border-default rounded-lg py-2 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50 focus:border-symphony-primary" placeholder="Search settings..." type="search"/>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <nav class="flex-1 overflow-y-auto py-2 px-2">
+                <div class="mb-4">
+                    <p class="px-3 text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-2">User</p>
+                    <button @click="activeCategory = 'workspace'" :class="activeCategory === 'workspace' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                        <span class="material-icons text-lg">work</span>
+                        <span>Workspace</span>
+                    </button>
+                    
+                    <button @click="activeCategory = 'files'" :class="activeCategory === 'files' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                        <span class="material-icons text-lg">folder</span>
+                        <span>Files</span>
+                    </button>
+                    
+                    <button @click="activeCategory = 'search'" :class="activeCategory === 'search' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                        <span class="material-icons text-lg">search</span>
+                        <span>Search</span>
+                    </button>
+                </div>
+
+                <div class="mb-4">
+                    <p class="px-3 text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-2">Features</p>
+                    <button @click="activeCategory = 'text-editor'" :class="activeCategory === 'text-editor' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                        <span class="material-icons text-lg">edit_note</span>
+                        <span>Text Editor</span>
+                    </button>
+                    
+                    <button @click="activeCategory = 'terminal'" :class="activeCategory === 'terminal' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                        <span class="material-icons text-lg">terminal</span>
+                        <span>Terminal</span>
+                    </button>
+                    
+                    <button @click="activeCategory = 'scm'" :class="activeCategory === 'scm' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                        <span class="material-icons text-lg">source</span>
+                        <span>Source Control</span>
+                    </button>
+                    
+                    <button @click="activeCategory = 'debug'" :class="activeCategory === 'debug' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                        <span class="material-icons text-lg">bug_report</span>
+                        <span>Debug</span>
+                    </button>
+                </div>
+
+                <div class="mb-4">
+                    <p class="px-3 text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-2">Application</p>
+                    <button @click="activeCategory = 'window'" :class="activeCategory === 'window' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                        <span class="material-icons text-lg">web_asset</span>
+                        <span>Window</span>
+                    </button>
+                    
+                    <button @click="activeCategory = 'security'" :class="activeCategory === 'security' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                        <span class="material-icons text-lg">security</span>
+                        <span>Security</span>
+                    </button>
+                    
+                    <button @click="activeCategory = 'extensions'" :class="activeCategory === 'extensions' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                        <span class="material-icons text-lg">extension</span>
+                        <span>Extensions</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Footer Actions -->
+            <div class="px-4 py-3 border-t border-border-subtle space-y-2">
+                <button class="w-full px-3 py-2 text-sm text-symphony-primary hover:bg-symphony-primary/10 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                    <span class="material-icons text-base">file_download</span>
+                    <span>Export Settings</span>
+                </button>
+                <button class="w-full px-3 py-2 text-sm text-text-secondary hover:bg-bg-tertiary rounded-lg transition-colors flex items-center justify-center space-x-2">
+                    <span class="material-icons text-base">restore</span>
+                    <span>Reset All</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <div class="max-w-4xl mx-auto p-8">
+                <!-- Workspace Settings -->
+                <div x-show="activeCategory === 'workspace'" class="space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-text-primary mb-2">Workspace</h2>
+                        <p class="text-sm text-text-secondary">Configure workspace behavior and file handling</p>
+                    </div>
+
+                    <div class="glass rounded-xl p-6 space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-text-primary mb-2">Startup Behavior</label>
+                            <select class="w-full bg-bg-tertiary border border-border-default rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50">
+                                <option>Reopen last workspace</option>
+                                <option>Show welcome page</option>
+                                <option>Open new empty window</option>
+                                <option>Restore previous session</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-semibold text-text-primary mb-1">Trust Workspace Files</h3>
+                                <p class="text-xs text-text-tertiary">Automatically trust files in opened workspaces</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-bg-tertiary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-symphony-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-symphony-primary"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-semibold text-text-primary mb-1">Enable Workspace Folders</h3>
+                                <p class="text-xs text-text-tertiary">Allow multiple root folders in workspace</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-bg-tertiary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-symphony-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-symphony-primary"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Editor Settings -->
+                <div x-show="activeCategory === 'text-editor'" class="space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-text-primary mb-2">Text Editor</h2>
+                        <p class="text-sm text-text-secondary">Customize the code editor experience</p>
+                    </div>
+
+                    <div class="glass rounded-xl p-6 space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-text-primary mb-2">Font Family</label>
+                            <input type="text" value="JetBrains Mono, Consolas, monospace" class="w-full bg-bg-tertiary border border-border-default rounded-lg px-3 py-2 text-sm font-mono text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50"/>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-text-primary mb-2">Font Size</label>
+                            <div class="flex items-center space-x-4">
+                                <input type="range" min="10" max="24" value="14" class="flex-1 h-2 bg-bg-tertiary rounded-lg appearance-none cursor-pointer accent-symphony-primary">
+                                <span class="text-sm text-text-primary font-mono w-12 text-right">14px</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-text-primary mb-2">Tab Size</label>
+                            <input type="number" value="4" min="1" max="8" class="w-32 bg-bg-tertiary border border-border-default rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50"/>
+                        </div>
+
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-semibold text-text-primary mb-1">Word Wrap</h3>
+                                <p class="text-xs text-text-tertiary">Wrap lines that exceed viewport width</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-bg-tertiary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-symphony-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-symphony-primary"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-semibold text-text-primary mb-1">Minimap</h3>
+                                <p class="text-xs text-text-tertiary">Show code overview on the side</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-bg-tertiary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-symphony-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-symphony-primary"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-semibold text-text-primary mb-1">Bracket Pair Colorization</h3>
+                                <p class="text-xs text-text-tertiary">Use colors to identify matching brackets</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-bg-tertiary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-symphony-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-symphony-primary"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terminal Settings -->
+                <div x-show="activeCategory === 'terminal'" class="space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-text-primary mb-2">Terminal</h2>
+                        <p class="text-sm text-text-secondary">Configure integrated terminal behavior</p>
+                    </div>
+
+                    <div class="glass rounded-xl p-6 space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-text-primary mb-2">Shell Path</label>
+                            <input type="text" placeholder="Auto-detect" class="w-full bg-bg-tertiary border border-border-default rounded-lg px-3 py-2 text-sm font-mono text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50"/>
+                            <p class="text-xs text-text-tertiary mt-1">Leave empty to use system default shell</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-text-primary mb-2">Font Size</label>
+                            <input type="number" value="13" min="8" max="24" class="w-32 bg-bg-tertiary border border-border-default rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50"/>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-text-primary mb-2">Cursor Style</label>
+                            <select class="w-full bg-bg-tertiary border border-border-default rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50">
+                                <option>Block</option>
+                                <option>Underline</option>
+                                <option>Bar</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-semibold text-text-primary mb-1">Copy on Selection</h3>
+                                <p class="text-xs text-text-tertiary">Automatically copy selected text to clipboard</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-bg-tertiary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-symphony-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-symphony-primary"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Extensions Settings -->
+                <div x-show="activeCategory === 'extensions'" class="space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-text-primary mb-2">Extensions</h2>
+                        <p class="text-sm text-text-secondary">Manage extension behavior and updates</p>
+                    </div>
+
+                    <div class="glass rounded-xl p-6 space-y-6">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-semibold text-text-primary mb-1">Auto Update</h3>
+                                <p class="text-xs text-text-tertiary">Automatically update extensions</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-bg-tertiary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-symphony-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-symphony-primary"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-semibold text-text-primary mb-1">Auto Check Updates</h3>
+                                <p class="text-xs text-text-tertiary">Check for extension updates on startup</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-bg-tertiary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-symphony-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-symphony-primary"></div>
+                            </label>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-text-primary mb-2">Extension Install Location</label>
+                            <input type="text" value="~/.symphony/extensions" class="w-full bg-bg-tertiary border border-border-default rounded-lg px-3 py-2 text-sm font-mono text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div x-show="activeCategory === 'security'" class="space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-text-primary mb-2">Security</h2>
+                        <p class="text-sm text-text-secondary">Configure security and privacy settings</p>
+                    </div>
+
+                    <div class="glass rounded-xl p-6 space-y-6">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-semibold text-text-primary mb-1">Workspace Trust</h3>
+                                <p class="text-xs text-text-tertiary">Require explicit trust for workspace files</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-bg-tertiary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-symphony-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-symphony-primary"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-semibold text-text-primary mb-1">Allow Extension Recommendations</h3>
+                                <p class="text-xs text-text-tertiary">Show extension recommendations based on files</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-bg-tertiary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-symphony-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-symphony-primary"></div>
+                            </label>
+                        </div>
+
+                        <div class="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                            <div class="flex items-start space-x-3">
+                                <span class="material-icons text-yellow-400 text-lg">warning</span>
+                                <div>
+                                    <p class="text-sm font-medium text-text-primary">Security Notice</p>
+                                    <p class="text-xs text-text-tertiary mt-1">Only install extensions from trusted sources. Malicious extensions can access your files and data.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

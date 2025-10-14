@@ -86,14 +86,15 @@
     activeTab: 'welcome',
     activeSidebar: 'explorer',
     activeMode: 'normal',
+    profileDropdownOpen: false,
     curves: [
         { id: 'waveGrad1', offset: 0, scale: 1, strokeWidth: 2 },
         { id: 'waveGrad2', offset: 30, scale: 1.2, strokeWidth: 1.8 },
         { id: 'waveGrad3', offset: 60, scale: 1.4, strokeWidth: 1.5 }
     ]
-}">
+}" @click.away="profileDropdownOpen = false">
     <div class="flex flex-col h-screen">
-        <header class="flex items-center justify-between px-6 py-3 border-b border-border-subtle bg-bg-secondary/50 backdrop-blur-sm">
+        <header class="flex items-center justify-between px-6 py-3 border-b border-border-subtle bg-bg-secondary/50 backdrop-blur-sm relative z-50">
             <div class="flex items-center space-x-3">
                 <div class="relative">
                     <img src="../../assets/rounded.png" alt="Symphony" class="h-7 w-7" />
@@ -112,53 +113,278 @@
                 <input class="w-full bg-bg-tertiary border border-border-default rounded-lg py-2 pl-10 pr-4 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50 focus:border-symphony-primary" placeholder="Search or jump to... (⌘K)" type="search"/>
             </div>
             <div class="flex items-center space-x-2 relative">
-                <button class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary relative" title="AI Assistant">
-                    <span class="material-icons text-lg">psychology</span>
-                    <div class="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-bg-secondary"></div>
-                </button>
-                <div class="relative">
-                    <button class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary">
-                        <span class="material-icons text-lg">notifications_none</span>
+                <div class="relative z-50" x-data="{ aiChatOpen: false }">
+                    <button @click="aiChatOpen = !aiChatOpen" class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary relative" title="AI Assistant">
+                        <span class="material-icons text-lg">psychology</span>
+                        <div class="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-bg-secondary"></div>
                     </button>
-                    <div class="absolute top-1 right-1 w-2 h-2 bg-symphony-primary rounded-full animate-pulse"></div>
-                    <div class="absolute top-12 right-0 w-80 glass rounded-xl shadow-2xl border border-border-default overflow-hidden z-50 hidden">
-                        <div class="bg-bg-secondary/80 px-4 py-3 border-b border-border-subtle">
-                            <h3 class="text-sm font-semibold text-text-primary">Notifications</h3>
+                    
+                    <!-- AI Chat Box -->
+                    <div x-show="aiChatOpen"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 scale-95 translate-y-2"
+                         @click.away="aiChatOpen = false"
+                         class="fixed bottom-4 right-4 w-96 h-[600px] rounded-xl shadow-2xl border border-border-default overflow-hidden flex flex-col"
+                         style="display: none; background: rgba(37, 37, 38, 0.98); backdrop-filter: blur(12px); z-index: 9999;">
+                        
+                        <!-- Chat Header -->
+                        <div class="bg-bg-secondary/80 px-4 py-3 border-b border-border-subtle flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-lg bg-gradient-symphony flex items-center justify-center">
+                                    <span class="material-icons text-sm text-white">psychology</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-semibold text-text-primary">Conductor AI</h3>
+                                    <div class="flex items-center space-x-1">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                                        <p class="text-xs text-text-tertiary">Online</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button @click="aiChatOpen = false" class="p-1 rounded-lg hover:bg-bg-tertiary text-text-tertiary hover:text-text-primary">
+                                <span class="material-icons text-lg">close</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Chat Messages -->
+                        <div class="flex-1 overflow-y-auto p-4 space-y-4">
+                            <!-- AI Welcome Message -->
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 rounded-lg bg-symphony-primary/10 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-icons text-sm text-symphony-primary">psychology</span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="bg-bg-tertiary rounded-lg rounded-tl-none p-3">
+                                        <p class="text-sm text-text-primary">Hello! I'm the Conductor, your AI orchestration assistant. I can help you with:</p>
+                                        <ul class="text-xs text-text-secondary mt-2 space-y-1 ml-4 list-disc">
+                                            <li>Code generation and refactoring</li>
+                                            <li>Workflow automation</li>
+                                            <li>Project architecture guidance</li>
+                                            <li>Debugging and optimization</li>
+                                        </ul>
+                                        <p class="text-sm text-text-primary mt-2">How can I assist you today?</p>
+                                    </div>
+                                    <span class="text-xs text-text-tertiary mt-1 block">Just now</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Example User Message (hidden by default) -->
+                            <div class="flex items-start space-x-3 justify-end" style="display: none;">
+                                <div class="flex-1 flex justify-end">
+                                    <div class="max-w-[80%]">
+                                        <div class="bg-symphony-primary rounded-lg rounded-tr-none p-3">
+                                            <p class="text-sm text-white">Help me refactor this function</p>
+                                        </div>
+                                        <span class="text-xs text-text-tertiary mt-1 block text-right">Just now</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat Input -->
+                        <div class="border-t border-border-subtle p-4">
+                            <div class="flex items-end space-x-2">
+                                <div class="flex-1 relative">
+                                    <textarea 
+                                        class="w-full bg-bg-tertiary border border-border-default rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50 focus:border-symphony-primary resize-none"
+                                        placeholder="Ask Conductor anything..."
+                                        rows="2"
+                                    ></textarea>
+                                </div>
+                                <button class="p-2.5 rounded-lg bg-symphony-primary hover:bg-symphony-light text-white transition-colors">
+                                    <span class="material-icons text-lg">send</span>
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="flex items-center space-x-2 text-xs text-text-tertiary">
+                                    <button class="hover:text-text-primary transition-colors" title="Attach file">
+                                        <span class="material-icons text-sm">attach_file</span>
+                                    </button>
+                                    <button class="hover:text-text-primary transition-colors" title="Code snippet">
+                                        <span class="material-icons text-sm">code</span>
+                                    </button>
+                                    <button class="hover:text-text-primary transition-colors" title="Voice input">
+                                        <span class="material-icons text-sm">mic</span>
+                                    </button>
+                                </div>
+                                <span class="text-xs text-text-tertiary">⌘ + Enter to send</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative z-50" x-data="{ notifOpen: false, expandedNotif: null }">
+                    <button @click="notifOpen = !notifOpen" class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary relative">
+                        <span class="material-icons text-lg">notifications_none</span>
+                        <div class="absolute top-1 right-1 w-2 h-2 bg-symphony-primary rounded-full animate-pulse"></div>
+                    </button>
+                    <div x-show="notifOpen"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 scale-95 translate-y-2"
+                         @click.away="notifOpen = false"
+                         class="absolute top-12 right-0 w-96 rounded-xl shadow-2xl border border-border-default overflow-hidden"
+                         style="display: none; background: rgba(37, 37, 38, 0.98); backdrop-filter: blur(12px); z-index: 9999;">
+                        <div class="bg-bg-secondary/80 px-4 py-2.5 border-b border-border-subtle flex items-center justify-between">
+                            <h3 class="text-xs font-semibold text-text-primary uppercase tracking-wider">Notifications</h3>
+                            <span class="text-xs text-text-tertiary">4 new</span>
                         </div>
                         <div class="max-h-96 overflow-y-auto">
-                            <div class="px-4 py-3 hover:bg-bg-tertiary/50 border-b border-border-subtle cursor-pointer">
+                            <!-- Success Notification -->
+                            <div class="border-b border-border-subtle px-4 py-2.5 hover:bg-bg-tertiary/50 cursor-pointer transition-colors" @click="expandedNotif = expandedNotif === 1 ? null : 1">
                                 <div class="flex items-start space-x-3">
-                                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-symphony-primary/10 flex items-center justify-center">
-                                        <span class="material-icons text-sm text-symphony-primary">check_circle</span>
+                                    <div class="relative flex-shrink-0">
+                                        <div class="w-9 h-9 rounded-lg bg-bg-tertiary flex items-center justify-center">
+                                            <span class="text-base font-bold text-symphony-primary">RS</span>
+                                        </div>
+                                        <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-green-500 flex items-center justify-center border-2 border-bg-secondary">
+                                            <span class="material-icons text-[9px] text-white">check</span>
+                                        </div>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-text-primary">Build Successful</p>
-                                        <p class="text-xs text-text-tertiary mt-1">Your project compiled without errors</p>
-                                        <p class="text-xs text-text-tertiary mt-1">2 minutes ago</p>
+                                        <div class="flex items-center justify-between mb-0.5">
+                                            <p class="text-xs font-semibold text-text-primary">Rust Compiler</p>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-[10px] text-text-tertiary">2m ago</span>
+                                                <button class="text-text-tertiary hover:text-text-primary transition-colors">
+                                                    <span class="material-icons text-sm" x-show="expandedNotif !== 1">expand_more</span>
+                                                    <span class="material-icons text-sm" x-show="expandedNotif === 1" style="display: none;">expand_less</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-text-primary font-medium">Build Successful</p>
+                                        <p class="text-[11px] text-text-tertiary mt-0.5" :class="expandedNotif === 1 ? '' : 'line-clamp-1'">Your project compiled without errors</p>
+                                        
+                                        <div x-show="expandedNotif === 1" 
+                                             x-transition:enter="transition ease-out duration-200"
+                                             x-transition:enter-start="opacity-0 max-h-0"
+                                             x-transition:enter-end="opacity-100 max-h-40"
+                                             x-transition:leave="transition ease-in duration-150"
+                                             x-transition:leave-start="opacity-100 max-h-40"
+                                             x-transition:leave-end="opacity-0 max-h-0"
+                                             class="overflow-hidden"
+                                             style="display: none;">
+                                            <div class="text-[11px] text-text-secondary space-y-1.5 pt-2 mt-2 border-t border-border-subtle">
+                                                <p><span class="font-semibold text-text-primary">Status:</span> Completed successfully</p>
+                                                <p><span class="font-semibold text-text-primary">Duration:</span> 1.2s</p>
+                                                <p><span class="font-semibold text-text-primary">Output:</span> 0 warnings, 0 errors</p>
+                                                <p class="pt-1">Your Rust project has been compiled successfully with all optimizations enabled. Binary size: 2.4 MB</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="px-4 py-3 hover:bg-bg-tertiary/50 border-b border-border-subtle cursor-pointer">
+                            
+                            <!-- Warning Notification -->
+                            <div class="border-b border-border-subtle px-4 py-2.5 hover:bg-bg-tertiary/50 cursor-pointer transition-colors" @click="expandedNotif = expandedNotif === 2 ? null : 2">
                                 <div class="flex items-start space-x-3">
-                                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-symphony-light/10 flex items-center justify-center">
-                                        <span class="material-icons text-sm text-symphony-light">extension</span>
+                                    <div class="relative flex-shrink-0">
+                                        <div class="w-9 h-9 rounded-lg bg-bg-tertiary flex items-center justify-center">
+                                            <span class="text-base font-bold text-symphony-light">TS</span>
+                                        </div>
+                                        <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-yellow-500 flex items-center justify-center border-2 border-bg-secondary">
+                                            <span class="material-icons text-[9px] text-white">priority_high</span>
+                                        </div>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-text-primary">Extension Update Available</p>
-                                        <p class="text-xs text-text-tertiary mt-1">Rust Analyzer v0.3.2 is ready to install</p>
-                                        <p class="text-xs text-text-tertiary mt-1">1 hour ago</p>
+                                        <div class="flex items-center justify-between mb-0.5">
+                                            <p class="text-xs font-semibold text-text-primary">TypeScript LSP</p>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-[10px] text-text-tertiary">15m ago</span>
+                                                <button class="text-text-tertiary hover:text-text-primary transition-colors">
+                                                    <span class="material-icons text-sm" x-show="expandedNotif !== 2">expand_more</span>
+                                                    <span class="material-icons text-sm" x-show="expandedNotif === 2" style="display: none;">expand_less</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-text-primary font-medium">Deprecated API Usage</p>
+                                        <p class="text-[11px] text-text-tertiary mt-0.5" :class="expandedNotif === 2 ? '' : 'line-clamp-1'">Function 'oldMethod()' will be removed in v2.0</p>
+                                        
+                                        <div x-show="expandedNotif === 2" class="overflow-hidden" style="display: none;">
+                                            <div class="text-[11px] text-text-secondary space-y-1.5 pt-2 mt-2 border-t border-border-subtle">
+                                                <p><span class="font-semibold text-text-primary">File:</span> src/utils/helpers.ts:42</p>
+                                                <p><span class="font-semibold text-text-primary">Severity:</span> Warning</p>
+                                                <p class="pt-1">The function 'oldMethod()' has been deprecated and will be removed in version 2.0. Please migrate to 'newMethod()' instead.</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="px-4 py-3 hover:bg-bg-tertiary/50 cursor-pointer">
+                            
+                            <!-- Error Notification -->
+                            <div class="border-b border-border-subtle px-4 py-2.5 hover:bg-bg-tertiary/50 cursor-pointer transition-colors" @click="expandedNotif = expandedNotif === 3 ? null : 3">
                                 <div class="flex items-start space-x-3">
-                                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-symphony-accent/10 flex items-center justify-center">
-                                        <span class="material-icons text-sm text-symphony-accent">smart_toy</span>
+                                    <div class="relative flex-shrink-0">
+                                        <div class="w-9 h-9 rounded-lg bg-bg-tertiary flex items-center justify-center">
+                                            <span class="text-base font-bold text-symphony-dark">GC</span>
+                                        </div>
+                                        <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-red-500 flex items-center justify-center border-2 border-bg-secondary">
+                                            <span class="material-icons text-[9px] text-white">close</span>
+                                        </div>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-text-primary">AI Agent Ready</p>
-                                        <p class="text-xs text-text-tertiary mt-1">GPT-4 Assistant is now available</p>
-                                        <p class="text-xs text-text-tertiary mt-1">3 hours ago</p>
+                                        <div class="flex items-center justify-between mb-0.5">
+                                            <p class="text-xs font-semibold text-text-primary">Git Client</p>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-[10px] text-text-tertiary">1h ago</span>
+                                                <button class="text-text-tertiary hover:text-text-primary transition-colors">
+                                                    <span class="material-icons text-sm" x-show="expandedNotif !== 3">expand_more</span>
+                                                    <span class="material-icons text-sm" x-show="expandedNotif === 3" style="display: none;">expand_less</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-text-primary font-medium">Merge Conflict Detected</p>
+                                        <p class="text-[11px] text-text-tertiary mt-0.5" :class="expandedNotif === 3 ? '' : 'line-clamp-1'">3 conflicts in main.rs require resolution</p>
+                                        
+                                        <div x-show="expandedNotif === 3" class="overflow-hidden" style="display: none;">
+                                            <div class="text-[11px] text-text-secondary space-y-1.5 pt-2 mt-2 border-t border-border-subtle">
+                                                <p><span class="font-semibold text-text-primary">Branch:</span> feature/new-ui → main</p>
+                                                <p><span class="font-semibold text-text-primary">Conflicts:</span> 3 files</p>
+                                                <p class="pt-1">Conflicts detected in main.rs, utils.rs, and config.toml. Please resolve these conflicts before merging.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Info Notification -->
+                            <div class="px-4 py-2.5 hover:bg-bg-tertiary/50 cursor-pointer transition-colors" @click="expandedNotif = expandedNotif === 4 ? null : 4">
+                                <div class="flex items-start space-x-3">
+                                    <div class="relative flex-shrink-0">
+                                        <div class="w-9 h-9 rounded-lg bg-bg-tertiary flex items-center justify-center">
+                                            <span class="material-icons text-base text-symphony-primary">extension</span>
+                                        </div>
+                                        <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-symphony-primary flex items-center justify-center border-2 border-bg-secondary">
+                                            <span class="material-icons text-[9px] text-white">info</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between mb-0.5">
+                                            <p class="text-xs font-semibold text-text-primary">Extension Manager</p>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-[10px] text-text-tertiary">3h ago</span>
+                                                <button class="text-text-tertiary hover:text-text-primary transition-colors">
+                                                    <span class="material-icons text-sm" x-show="expandedNotif !== 4">expand_more</span>
+                                                    <span class="material-icons text-sm" x-show="expandedNotif === 4" style="display: none;">expand_less</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-text-primary font-medium">Update Available</p>
+                                        <p class="text-[11px] text-text-tertiary mt-0.5" :class="expandedNotif === 4 ? '' : 'line-clamp-1'">Rust Analyzer v0.3.2 is ready to install</p>
+                                        
+                                        <div x-show="expandedNotif === 4" class="overflow-hidden" style="display: none;">
+                                            <div class="text-[11px] text-text-secondary space-y-1.5 pt-2 mt-2 border-t border-border-subtle">
+                                                <p><span class="font-semibold text-text-primary">Extension:</span> Rust Analyzer</p>
+                                                <p><span class="font-semibold text-text-primary">Version:</span> v0.3.1 → v0.3.2</p>
+                                                <p class="pt-1">New features: Improved macro expansion, better type inference, and performance optimizations.</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -168,13 +394,13 @@
                         </div>
                     </div>
                 </div>
-                <button class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary">
+                <button @click="window.location.href = '../SettingsPage/index.html'" class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary" title="Settings">
                     <span class="material-icons text-lg">settings</span>
                 </button>
             </div>
         </header>
         <div class="flex flex-1 overflow-hidden">
-            <aside class="w-14 bg-bg-secondary border-r border-border-subtle flex flex-col items-center py-4 gap-1">
+            <aside class="w-14 bg-bg-secondary border-r border-border-subtle flex flex-col items-center py-4 gap-1 relative z-40">
                 <div class="flex-1 flex flex-col gap-1">
                     <button :class="activeSidebar === 'explorer' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Explorer" @click="activeSidebar = 'explorer'">
                         <span class="material-icons text-lg">folder_open</span>
@@ -198,14 +424,85 @@
                     </button>
                 </div>
                 <div class="flex flex-col gap-1">
-                    <button class="p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="Settings">
+                    <button class="p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="Settings" @click="window.location.href = '../PreferencesPage/index.html'">
                         <span class="material-icons text-lg">tune</span>
                     </button>
-                    <div class="relative group cursor-pointer" title="Account">
-                        <div class="w-8 h-8 rounded-full bg-gradient-symphony flex items-center justify-center text-white text-xs font-semibold shadow-lg ring-2 ring-bg-secondary hover:ring-symphony-primary/50 transition-all">
-                            <span class="font-bold">U</span>
+                    <div class="relative z-50" x-data="{ open: false }">
+                        <div class="cursor-pointer relative" title="Account" @click="open = !open">
+                            <div class="w-8 h-8 rounded-full bg-gradient-symphony flex items-center justify-center text-white text-xs font-semibold shadow-lg ring-2 ring-bg-secondary hover:ring-symphony-primary/50 transition-all">
+                                <span class="font-bold">U</span>
+                            </div>
+                            <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-bg-secondary"></div>
                         </div>
-                        <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-bg-secondary"></div>
+                        
+                        <!-- Profile Dropdown -->
+                        <div x-show="open" 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 scale-95 translate-y-2"
+                             @click.away="open = false"
+                             class="fixed bottom-16 left-16 w-64 rounded-xl shadow-2xl border border-border-default overflow-hidden"
+                             style="display: none; background: rgba(37, 37, 38, 0.98); backdrop-filter: blur(12px); z-index: 9999;">
+                            <!-- Profile Header -->
+                            <div class="bg-bg-secondary/80 px-4 py-3 border-b border-border-subtle">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-symphony flex items-center justify-center text-white font-semibold shadow-lg">
+                                        <span class="font-bold">U</span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-semibold text-text-primary truncate">User Name</p>
+                                        <p class="text-xs text-text-tertiary truncate">user@symphony.dev</p>
+                                    </div>
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Menu Items -->
+                            <div class="py-2">
+                                <button class="w-full px-4 py-2.5 flex items-center space-x-3 hover:bg-bg-tertiary/50 transition-colors text-left">
+                                    <span class="material-icons text-lg text-symphony-primary">person</span>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-text-primary">Profile</p>
+                                        <p class="text-xs text-text-tertiary">View and edit profile</p>
+                                    </div>
+                                </button>
+                                
+                                <button @click="window.location.href = '../PreferencesPage/index.html'" class="w-full px-4 py-2.5 flex items-center space-x-3 hover:bg-bg-tertiary/50 transition-colors text-left">
+                                    <span class="material-icons text-lg text-symphony-light">settings</span>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-text-primary">Preferences</p>
+                                        <p class="text-xs text-text-tertiary">Customize Symphony</p>
+                                    </div>
+                                </button>
+                                
+                                <button class="w-full px-4 py-2.5 flex items-center space-x-3 hover:bg-bg-tertiary/50 transition-colors text-left">
+                                    <span class="material-icons text-lg text-symphony-dark">workspace_premium</span>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-text-primary">Upgrade</p>
+                                        <p class="text-xs text-text-tertiary">Get Symphony Pro</p>
+                                    </div>
+                                </button>
+                                
+                                <div class="border-t border-border-subtle my-2"></div>
+                                
+                                <button class="w-full px-4 py-2.5 flex items-center space-x-3 hover:bg-bg-tertiary/50 transition-colors text-left">
+                                    <span class="material-icons text-lg text-text-tertiary">help_outline</span>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-text-primary">Help & Support</p>
+                                    </div>
+                                </button>
+                                
+                                <button class="w-full px-4 py-2.5 flex items-center space-x-3 hover:bg-red-500/10 transition-colors text-left group">
+                                    <span class="material-icons text-lg text-text-tertiary group-hover:text-red-400">logout</span>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-text-primary group-hover:text-red-400">Sign Out</p>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </aside>
