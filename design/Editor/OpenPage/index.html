@@ -719,23 +719,18 @@ This uses **Result** type for error handling and the **?** operator for propagat
                 <div class="flex-1 flex flex-col gap-1">
                     <button :class="activeSidebar === 'explorer' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Explorer" @click="activeSidebar = 'explorer'">
                         <span class="material-icons text-lg">folder_open</span>
-                        <div x-show="activeSidebar === 'explorer'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
                     </button>
                     <button :class="activeSidebar === 'harmony' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Harmony Board" @click="activeSidebar = 'harmony'">
                         <span class="material-icons text-lg">dashboard</span>
-                        <div x-show="activeSidebar === 'harmony'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
                     </button>
                     <button :class="activeSidebar === 'source' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Source Control" @click="activeSidebar = 'source'">
                         <span class="material-icons text-lg">source</span>
-                        <div x-show="activeSidebar === 'source'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
                     </button>
                     <button :class="activeSidebar === 'orchestra' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="AI Orchestra" @click="activeSidebar = 'orchestra'">
                         <span class="material-icons text-lg">smart_toy</span>
-                        <div x-show="activeSidebar === 'orchestra'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
                     </button>
                     <button :class="activeSidebar === 'extensions' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Extensions" @click="activeSidebar = 'extensions'">
                         <span class="material-icons text-lg">extension</span>
-                        <div x-show="activeSidebar === 'extensions'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
                     </button>
                 </div>
                 <div class="flex flex-col gap-1">
@@ -824,22 +819,83 @@ This uses **Result** type for error handling and the **?** operator for propagat
             <main class="flex-1 flex flex-col bg-bg-primary relative gradient-mesh">
                 <div class="bg-bg-secondary/30 border-b border-border-subtle flex items-center justify-between h-10">
                     <div class="flex items-center h-full">
-                        <button :class="activeTab === 'welcome' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'welcome'">
+                        <div :class="activeTab === 'welcome' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium group' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'welcome'">
                             <span :class="activeTab === 'welcome' ? 'material-icons text-base' : 'material-icons text-sm'">description</span>
                             <span>Welcome</span>
-                        </button>
-                        <button :class="activeTab === 'getting-started' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'getting-started'">
+                            <button @click.stop="activeTab = 'getting-started'" class="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-bg-tertiary/50 transition-all ml-1">
+                                <span class="material-icons text-xs text-text-tertiary hover:text-text-primary">close</span>
+                            </button>
+                        </div>
+                        <div :class="activeTab === 'getting-started' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium group' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'getting-started'">
                             <span :class="activeTab === 'getting-started' ? 'material-icons text-base' : 'material-icons text-sm'">code</span>
                             <span>Getting Started</span>
-                        </button>
-                        <button :class="activeTab === 'documentation' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'documentation'">
+                            <button @click.stop="activeTab = 'welcome'" class="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-bg-tertiary/50 transition-all ml-1">
+                                <span class="material-icons text-xs text-text-tertiary hover:text-text-primary">close</span>
+                            </button>
+                        </div>
+                        <div :class="activeTab === 'documentation' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium group' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'documentation'">
                             <span :class="activeTab === 'documentation' ? 'material-icons text-base' : 'material-icons text-sm'">help_outline</span>
                             <span>Documentation</span>
-                        </button>
+                            <button @click.stop="activeTab = 'welcome'" class="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-bg-tertiary/50 transition-all ml-1">
+                                <span class="material-icons text-xs text-text-tertiary hover:text-text-primary">close</span>
+                            </button>
+                        </div>
                     </div>
-                    <button class="p-1 mx-2 rounded hover:bg-bg-tertiary text-text-tertiary hover:text-text-primary">
-                        <span class="material-icons text-sm">more_horiz</span>
-                    </button>
+                    <div class="relative" x-data="{ tabMenuOpen: false }">
+                        <button @click="tabMenuOpen = !tabMenuOpen" class="p-1 mx-2 rounded hover:bg-bg-tertiary text-text-tertiary hover:text-text-primary">
+                            <span class="material-icons text-sm">more_horiz</span>
+                        </button>
+                        <div x-show="tabMenuOpen" @click.away="tabMenuOpen = false" class="absolute top-full right-0 mt-2 w-64 glass backdrop-blur-xl border border-border-subtle rounded-xl shadow-2xl z-50" style="display: none;">
+                            <div class="p-3">
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Save All
+                                </button>
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Save All & Close
+                                </button>
+                                <div class="border-t border-border-subtle my-2"></div>
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Pin All Tabs
+                                </button>
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Unpin All Tabs
+                                </button>
+                                <div class="border-t border-border-subtle my-2"></div>
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Close All Tabs
+                                </button>
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Close Saved Tabs
+                                </button>
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Close Inactive Tabs
+                                </button>
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Close Other Tabs
+                                </button>
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Close Tabs to the Right
+                                </button>
+                                <div class="border-t border-border-subtle my-2"></div>
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Reopen Closed Tab
+                                </button>
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Copy Tab Path
+                                </button>
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Reveal in File Explorer
+                                </button>
+                                <div class="border-t border-border-subtle my-2"></div>
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Split Editor Right
+                                </button>
+                                <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                                    Split Editor Down
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="flex-1 flex overflow-hidden relative">
                     <div class="musical-lines">
@@ -899,7 +955,8 @@ This uses **Result** type for error handling and the **?** operator for propagat
                             });
                         });
                     </script>
-                    <div class="flex-1 flex items-center justify-center p-12">
+                    <!-- Welcome Tab Content -->
+                    <div x-show="activeTab === 'welcome'" class="flex-1 flex items-center justify-center p-12">
                         <div class="max-w-2xl w-full text-center space-y-8">
                             <div class="flex justify-center mb-8">
                                 <div class="relative animate-float">
@@ -979,10 +1036,493 @@ This uses **Result** type for error handling and the **?** operator for propagat
                             </div>
                         </div>
                     </div>
+
+                    <!-- Getting Started Tab Content -->
+                    <div x-show="activeTab === 'getting-started'" class="flex-1 overflow-auto p-12" style="display: none;">
+                        <div class="max-w-4xl mx-auto prose prose-invert">
+                            <div class="mb-8">
+                                <h1 class="text-4xl font-bold text-text-primary mb-3">🚀 Getting Started with Symphony</h1>
+                                <p class="text-lg text-text-secondary">Master the AI-First Development Environment in minutes</p>
+                            </div>
+
+                            <div class="space-y-8">
+                                <section class="glass rounded-xl p-6">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">rocket_launch</span>
+                                        Installation & Setup
+                                    </h2>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary mb-2">📦 System Requirements</h3>
+                                            <ul class="text-sm text-text-secondary space-y-1 ml-4">
+                                                <li>• <strong>OS:</strong> Windows 10+, macOS 11+, Linux (Ubuntu 20.04+)</li>
+                                                <li>• <strong>RAM:</strong> 8GB minimum, 16GB recommended</li>
+                                                <li>• <strong>Storage:</strong> 2GB for installation + project space</li>
+                                                <li>• <strong>GPU:</strong> Optional for AI model acceleration</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary mb-2">⚡ Quick Install</h3>
+                                            <pre class="bg-bg-secondary rounded-lg p-4 overflow-x-auto"><code class="text-sm text-symphony-light"># Using installer (recommended)
+curl -fsSL https://symphony.dev/install.sh | sh
+
+# Or via package manager
+brew install symphony        # macOS
+winget install symphony      # Windows
+sudo snap install symphony   # Linux</code></pre>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary mb-2">🎯 First Launch</h3>
+                                            <ol class="space-y-2 list-decimal list-inside text-text-primary text-sm">
+                                                <li><strong class="text-symphony-light">Open Symphony</strong> - Launch from applications or run <code class="px-2 py-0.5 bg-bg-tertiary rounded text-symphony-primary">symphony</code> in terminal</li>
+                                                <li><strong class="text-symphony-light">Choose Mode</strong> - Select 🎼 Normal or 🎩 Maestro mode</li>
+                                                <li><strong class="text-symphony-light">Open Project</strong> - Click "Open Folder" or drag-drop your codebase</li>
+                                                <li><strong class="text-symphony-light">Activate AI</strong> - Press <code class="px-2 py-0.5 bg-bg-tertiary rounded text-symphony-primary">Ctrl+Shift+P</code> to access Conductor</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="glass rounded-xl p-6">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">psychology</span>
+                                        AI Modes
+                                    </h2>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="bg-bg-tertiary/50 rounded-lg p-4">
+                                            <h3 class="font-semibold text-text-primary mb-2 flex items-center">
+                                                🎼 Normal Mode
+                                            </h3>
+                                            <p class="text-sm text-text-secondary">Traditional IDE experience with AI assistance on demand. Perfect for developers who want control.</p>
+                                        </div>
+                                        <div class="bg-bg-tertiary/50 rounded-lg p-4">
+                                            <h3 class="font-semibold text-text-primary mb-2 flex items-center">
+                                                🎩 Maestro Mode
+                                            </h3>
+                                            <p class="text-sm text-text-secondary">Full AI orchestration with intelligent workflow automation. Let the Conductor lead your development.</p>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="glass rounded-xl p-6">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">extension</span>
+                                        Extension System
+                                    </h2>
+                                    <p class="text-text-secondary mb-4">Symphony's power comes from three types of extensions:</p>
+                                    <div class="space-y-3">
+                                        <div class="flex items-start space-x-3">
+                                            <span class="text-2xl">🎻</span>
+                                            <div>
+                                                <h3 class="font-semibold text-text-primary">Instruments</h3>
+                                                <p class="text-sm text-text-secondary">AI/ML models that power intelligent features</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start space-x-3">
+                                            <span class="text-2xl">⚙️</span>
+                                            <div>
+                                                <h3 class="font-semibold text-text-primary">Operators</h3>
+                                                <p class="text-sm text-text-secondary">Workflow utilities and data processing tools</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start space-x-3">
+                                            <span class="text-2xl">🧩</span>
+                                            <div>
+                                                <h3 class="font-semibold text-text-primary">Motifs</h3>
+                                                <p class="text-sm text-text-secondary">UI enhancements and specialized editors</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="glass rounded-xl p-6">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">keyboard</span>
+                                        Keyboard Shortcuts
+                                    </h2>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary mb-2 text-sm">⌨️ General</h3>
+                                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                                <div class="flex justify-between items-center p-2 bg-bg-tertiary/30 rounded">
+                                                    <span class="text-text-secondary">Command Palette</span>
+                                                    <code class="px-2 py-0.5 bg-bg-secondary rounded text-symphony-primary">Ctrl+Shift+P</code>
+                                                </div>
+                                                <div class="flex justify-between items-center p-2 bg-bg-tertiary/30 rounded">
+                                                    <span class="text-text-secondary">Quick Search</span>
+                                                    <code class="px-2 py-0.5 bg-bg-secondary rounded text-symphony-primary">Ctrl+K</code>
+                                                </div>
+                                                <div class="flex justify-between items-center p-2 bg-bg-tertiary/30 rounded">
+                                                    <span class="text-text-secondary">Settings</span>
+                                                    <code class="px-2 py-0.5 bg-bg-secondary rounded text-symphony-primary">Ctrl+,</code>
+                                                </div>
+                                                <div class="flex justify-between items-center p-2 bg-bg-tertiary/30 rounded">
+                                                    <span class="text-text-secondary">Toggle Sidebar</span>
+                                                    <code class="px-2 py-0.5 bg-bg-secondary rounded text-symphony-primary">Ctrl+B</code>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary mb-2 text-sm">🤖 AI Features</h3>
+                                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                                <div class="flex justify-between items-center p-2 bg-bg-tertiary/30 rounded">
+                                                    <span class="text-text-secondary">AI Chat</span>
+                                                    <code class="px-2 py-0.5 bg-bg-secondary rounded text-symphony-primary">Ctrl+I</code>
+                                                </div>
+                                                <div class="flex justify-between items-center p-2 bg-bg-tertiary/30 rounded">
+                                                    <span class="text-text-secondary">Conductor Panel</span>
+                                                    <code class="px-2 py-0.5 bg-bg-secondary rounded text-symphony-primary">Ctrl+Shift+C</code>
+                                                </div>
+                                                <div class="flex justify-between items-center p-2 bg-bg-tertiary/30 rounded">
+                                                    <span class="text-text-secondary">Harmony Board</span>
+                                                    <code class="px-2 py-0.5 bg-bg-secondary rounded text-symphony-primary">Ctrl+Shift+H</code>
+                                                </div>
+                                                <div class="flex justify-between items-center p-2 bg-bg-tertiary/30 rounded">
+                                                    <span class="text-text-secondary">Generate Code</span>
+                                                    <code class="px-2 py-0.5 bg-bg-secondary rounded text-symphony-primary">Ctrl+Shift+G</code>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary mb-2 text-sm">📝 Editor</h3>
+                                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                                <div class="flex justify-between items-center p-2 bg-bg-tertiary/30 rounded">
+                                                    <span class="text-text-secondary">Toggle Terminal</span>
+                                                    <code class="px-2 py-0.5 bg-bg-secondary rounded text-symphony-primary">Ctrl+`</code>
+                                                </div>
+                                                <div class="flex justify-between items-center p-2 bg-bg-tertiary/30 rounded">
+                                                    <span class="text-text-secondary">Multi-cursor</span>
+                                                    <code class="px-2 py-0.5 bg-bg-secondary rounded text-symphony-primary">Alt+Click</code>
+                                                </div>
+                                                <div class="flex justify-between items-center p-2 bg-bg-tertiary/30 rounded">
+                                                    <span class="text-text-secondary">Format Document</span>
+                                                    <code class="px-2 py-0.5 bg-bg-secondary rounded text-symphony-primary">Shift+Alt+F</code>
+                                                </div>
+                                                <div class="flex justify-between items-center p-2 bg-bg-tertiary/30 rounded">
+                                                    <span class="text-text-secondary">Go to Definition</span>
+                                                    <code class="px-2 py-0.5 bg-bg-secondary rounded text-symphony-primary">F12</code>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="glass rounded-xl p-6">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">school</span>
+                                        Learning Path
+                                    </h2>
+                                    <div class="space-y-3">
+                                        <div class="flex items-start space-x-3 p-3 bg-bg-tertiary/30 rounded-lg">
+                                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-symphony-primary/20 flex items-center justify-center text-symphony-primary font-bold text-sm">1</div>
+                                            <div>
+                                                <h3 class="font-semibold text-text-primary text-sm">Master the Basics</h3>
+                                                <p class="text-xs text-text-secondary mt-1">Learn file navigation, editor features, and basic shortcuts</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start space-x-3 p-3 bg-bg-tertiary/30 rounded-lg">
+                                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-symphony-light/20 flex items-center justify-center text-symphony-light font-bold text-sm">2</div>
+                                            <div>
+                                                <h3 class="font-semibold text-text-primary text-sm">Explore AI Features</h3>
+                                                <p class="text-xs text-text-secondary mt-1">Try AI chat, code generation, and intelligent suggestions</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start space-x-3 p-3 bg-bg-tertiary/30 rounded-lg">
+                                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-symphony-dark/20 flex items-center justify-center text-symphony-dark font-bold text-sm">3</div>
+                                            <div>
+                                                <h3 class="font-semibold text-text-primary text-sm">Build Workflows</h3>
+                                                <p class="text-xs text-text-secondary mt-1">Create Melodies and use the Harmony Board for complex tasks</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start space-x-3 p-3 bg-bg-tertiary/30 rounded-lg">
+                                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-symphony-accent/20 flex items-center justify-center text-symphony-accent font-bold text-sm">4</div>
+                                            <div>
+                                                <h3 class="font-semibold text-text-primary text-sm">Extend Symphony</h3>
+                                                <p class="text-xs text-text-secondary mt-1">Install extensions and build your own Instruments/Operators</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="glass rounded-xl p-6 bg-symphony-primary/5 border border-symphony-primary/20">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">tips_and_updates</span>
+                                        Pro Tips & Best Practices
+                                    </h2>
+                                    <ul class="space-y-2 text-text-primary text-sm">
+                                        <li class="flex items-start">
+                                            <span class="material-icons text-symphony-light text-sm mr-2 mt-0.5">check_circle</span>
+                                            <span>Use <strong>Workspace Settings</strong> to configure AI behavior per-project</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <span class="material-icons text-symphony-light text-sm mr-2 mt-0.5">check_circle</span>
+                                            <span>Enable <strong>Auto-save</strong> to prevent losing work during AI operations</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <span class="material-icons text-symphony-light text-sm mr-2 mt-0.5">check_circle</span>
+                                            <span>The <strong>Harmony Board</strong> visualizes AI workflow execution in real-time</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <span class="material-icons text-symphony-light text-sm mr-2 mt-0.5">check_circle</span>
+                                            <span>Create custom <strong>Melodies</strong> for repetitive tasks and share with your team</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <span class="material-icons text-symphony-light text-sm mr-2 mt-0.5">check_circle</span>
+                                            <span>The Conductor <strong>learns from your patterns</strong> - the more you use it, the smarter it gets</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <span class="material-icons text-symphony-light text-sm mr-2 mt-0.5">check_circle</span>
+                                            <span>Use <strong>Git integration</strong> to track AI-generated changes separately</span>
+                                        </li>
+                                    </ul>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Documentation Tab Content -->
+                    <div x-show="activeTab === 'documentation'" class="flex-1 overflow-auto p-12" style="display: none;">
+                        <div class="max-w-4xl mx-auto prose prose-invert">
+                            <div class="mb-8">
+                                <h1 class="text-4xl font-bold text-text-primary mb-3">📖 Symphony Documentation</h1>
+                                <p class="text-lg text-text-secondary">Complete technical reference for the AI-First Development Environment</p>
+                            </div>
+
+                            <div class="space-y-8">
+                                <section class="glass rounded-xl p-6">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">architecture</span>
+                                        Core Architecture
+                                    </h2>
+                                    <p class="text-text-secondary mb-4">Symphony is built on a <strong>Dual Ensemble Architecture (DEA)</strong>:</p>
+                                    <div class="space-y-3">
+                                        <div class="bg-bg-tertiary/50 rounded-lg p-4">
+                                            <h3 class="font-semibold text-symphony-light mb-2">🦀 Rust Microkernel</h3>
+                                            <p class="text-sm text-text-secondary">High-performance core with 46 packages organized in 11 categories. Handles all IDE operations, IPC, and extension management with sub-millisecond latency.</p>
+                                        </div>
+                                        <div class="bg-bg-tertiary/50 rounded-lg p-4">
+                                            <h3 class="font-semibold text-symphony-light mb-2">🐍 Python Conductor</h3>
+                                            <p class="text-sm text-text-secondary">Reinforcement learning orchestration engine that intelligently coordinates AI agents and workflows. Learns from your development patterns.</p>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="glass rounded-xl p-6">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">hub</span>
+                                        The Pit - AIDE Layer
+                                    </h2>
+                                    <p class="text-text-secondary mb-4">In-process Rust extensions with 50-100ns latency:</p>
+                                    <div class="grid grid-cols-2 gap-3 text-sm">
+                                        <div class="p-3 bg-bg-tertiary/30 rounded">
+                                            <strong class="text-symphony-primary">Pool Manager</strong>
+                                            <p class="text-text-tertiary mt-1">AI model lifecycle management</p>
+                                        </div>
+                                        <div class="p-3 bg-bg-tertiary/30 rounded">
+                                            <strong class="text-symphony-primary">DAG Tracker</strong>
+                                            <p class="text-text-tertiary mt-1">Workflow execution engine</p>
+                                        </div>
+                                        <div class="p-3 bg-bg-tertiary/30 rounded">
+                                            <strong class="text-symphony-primary">Artifact Store</strong>
+                                            <p class="text-text-tertiary mt-1">Content-addressable storage</p>
+                                        </div>
+                                        <div class="p-3 bg-bg-tertiary/30 rounded">
+                                            <strong class="text-symphony-primary">Arbitration Engine</strong>
+                                            <p class="text-text-tertiary mt-1">Resource conflict resolution</p>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="glass rounded-xl p-6">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">dashboard</span>
+                                        Orchestration Components
+                                    </h2>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary mb-2 flex items-center">
+                                                <span class="mr-2">🎩</span> The Conductor
+                                            </h3>
+                                            <p class="text-sm text-text-secondary">Makes intelligent decisions about workflow execution. Skips unnecessary steps, retries with different approaches, and balances quality with speed.</p>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary mb-2 flex items-center">
+                                                <span class="mr-2">🎵</span> Melodies
+                                            </h3>
+                                            <p class="text-sm text-text-secondary">Composable workflows with visual drag-drop composition. Create reusable templates and share them with your team.</p>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary mb-2 flex items-center">
+                                                <span class="mr-2">🎛️</span> Harmony Board
+                                            </h3>
+                                            <p class="text-sm text-text-secondary">Real-time workflow visualization. Monitor agents, track data flow, detect issues, and debug orchestration problems.</p>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="glass rounded-xl p-6">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">speed</span>
+                                        Performance Targets
+                                    </h2>
+                                    <div class="grid grid-cols-2 gap-3 text-sm">
+                                        <div class="p-3 bg-bg-tertiary/30 rounded border-l-2 border-symphony-primary">
+                                            <div class="font-semibold text-text-primary">Pool Manager</div>
+                                            <div class="text-text-tertiary">50-100ns allocation</div>
+                                        </div>
+                                        <div class="p-3 bg-bg-tertiary/30 rounded border-l-2 border-symphony-light">
+                                            <div class="font-semibold text-text-primary">IPC Bus</div>
+                                            <div class="text-text-tertiary">0.1-0.3ms latency</div>
+                                        </div>
+                                        <div class="p-3 bg-bg-tertiary/30 rounded border-l-2 border-symphony-dark">
+                                            <div class="font-semibold text-text-primary">Artifact Store</div>
+                                            <div class="text-text-tertiary">1-5ms store/retrieve</div>
+                                        </div>
+                                        <div class="p-3 bg-bg-tertiary/30 rounded border-l-2 border-symphony-accent">
+                                            <div class="font-semibold text-text-primary">Virtual DOM</div>
+                                            <div class="text-text-tertiary">1-5ms serialization</div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="glass rounded-xl p-6">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">api</span>
+                                        Extension Development
+                                    </h2>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary mb-2 text-sm">🛠️ Creating Extensions</h3>
+                                            <pre class="bg-bg-secondary rounded-lg p-4 overflow-x-auto"><code class="text-sm text-symphony-light"># Create a new extension
+carets new my-extension --type instrument
+
+# Develop with hot-reload
+carets dev
+
+# Run tests
+carets test
+
+# Build for production
+carets build
+
+# Publish to Orchestra Kit
+carets publish</code></pre>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary mb-2 text-sm">📜 Extension Manifest</h3>
+                                            <pre class="bg-bg-secondary rounded-lg p-4 overflow-x-auto"><code class="text-sm text-symphony-light">[package]
+name = "my-instrument"
+version = "1.0.0"
+type = "instrument"
+
+[capabilities]
+file_system = ["read", "write"]
+network = ["https://api.example.com"]
+ai_models = ["gpt-4", "claude-3"]
+
+[dependencies]
+symphony-sdk = "0.1.0"</code></pre>
+                                        </div>
+                                        <div class="bg-bg-tertiary/30 rounded-lg p-3">
+                                            <p class="text-xs text-text-secondary">🔒 <strong>Security:</strong> Extensions are sandboxed with capability-based permissions, resource limits, and signature verification.</p>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="glass rounded-xl p-6">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">settings_suggest</span>
+                                        Configuration
+                                    </h2>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary mb-2 text-sm">⚙️ User Settings</h3>
+                                            <p class="text-xs text-text-secondary mb-2">Global configuration at <code class="px-2 py-0.5 bg-bg-tertiary rounded text-symphony-primary">~/.symphony/settings.json</code></p>
+                                            <pre class="bg-bg-secondary rounded-lg p-3 overflow-x-auto"><code class="text-xs text-symphony-light">{
+  "editor.fontSize": 14,
+  "ai.model": "conductor-v1",
+  "ai.temperature": 0.7,
+  "theme": "symphony-dark",
+  "telemetry.enabled": false
+}</code></pre>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-text-primary mb-2 text-sm">📁 Workspace Settings</h3>
+                                            <p class="text-xs text-text-secondary mb-2">Project-specific at <code class="px-2 py-0.5 bg-bg-tertiary rounded text-symphony-primary">.symphony/workspace.json</code></p>
+                                            <pre class="bg-bg-secondary rounded-lg p-3 overflow-x-auto"><code class="text-xs text-symphony-light">{
+  "ai.contextWindow": 8192,
+  "workflow.autoSave": true,
+  "git.aiCommitMessages": true,
+  "extensions.enabled": ["rust-analyzer", "prettier"]
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="glass rounded-xl p-6">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">integration_instructions</span>
+                                        CLI Reference
+                                    </h2>
+                                    <div class="grid grid-cols-2 gap-3 text-xs">
+                                        <div class="p-3 bg-bg-tertiary/30 rounded">
+                                            <code class="text-symphony-primary">symphony open &lt;path&gt;</code>
+                                            <p class="text-text-tertiary mt-1">Open project folder</p>
+                                        </div>
+                                        <div class="p-3 bg-bg-tertiary/30 rounded">
+                                            <code class="text-symphony-primary">symphony new &lt;name&gt;</code>
+                                            <p class="text-text-tertiary mt-1">Create new project</p>
+                                        </div>
+                                        <div class="p-3 bg-bg-tertiary/30 rounded">
+                                            <code class="text-symphony-primary">symphony ai chat</code>
+                                            <p class="text-text-tertiary mt-1">Start AI chat session</p>
+                                        </div>
+                                        <div class="p-3 bg-bg-tertiary/30 rounded">
+                                            <code class="text-symphony-primary">symphony melody run</code>
+                                            <p class="text-text-tertiary mt-1">Execute workflow</p>
+                                        </div>
+                                        <div class="p-3 bg-bg-tertiary/30 rounded">
+                                            <code class="text-symphony-primary">symphony ext install</code>
+                                            <p class="text-text-tertiary mt-1">Install extension</p>
+                                        </div>
+                                        <div class="p-3 bg-bg-tertiary/30 rounded">
+                                            <code class="text-symphony-primary">symphony --version</code>
+                                            <p class="text-text-tertiary mt-1">Show version info</p>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="glass rounded-xl p-6 bg-symphony-primary/5 border border-symphony-primary/20">
+                                    <h2 class="text-2xl font-semibold text-symphony-primary mb-4 flex items-center">
+                                        <span class="material-icons mr-2">menu_book</span>
+                                        Additional Resources
+                                    </h2>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <a href="#" class="flex items-center space-x-2 p-3 bg-bg-tertiary/30 rounded hover:bg-bg-tertiary/50 transition-colors">
+                                            <span class="material-icons text-symphony-primary">code</span>
+                                            <span class="text-text-primary">API Reference</span>
+                                        </a>
+                                        <a href="#" class="flex items-center space-x-2 p-3 bg-bg-tertiary/30 rounded hover:bg-bg-tertiary/50 transition-colors">
+                                            <span class="material-icons text-symphony-light">school</span>
+                                            <span class="text-text-primary">Tutorials</span>
+                                        </a>
+                                        <a href="#" class="flex items-center space-x-2 p-3 bg-bg-tertiary/30 rounded hover:bg-bg-tertiary/50 transition-colors">
+                                            <span class="material-icons text-symphony-dark">forum</span>
+                                            <span class="text-text-primary">Community</span>
+                                        </a>
+                                        <a href="#" class="flex items-center space-x-2 p-3 bg-bg-tertiary/30 rounded hover:bg-bg-tertiary/50 transition-colors">
+                                            <span class="material-icons text-symphony-accent">bug_report</span>
+                                            <span class="text-text-primary">Issue Tracker</span>
+                                        </a>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </main>
         </div>
-        <footer class="bg-bg-secondary border-t border-border-subtle px-4 py-1.5 flex items-center justify-between text-xs">
+        <footer class="bg-bg-secondary border-t border-border-subtle px-4 py-1.5 flex items-center justify-between text-xs" x-data="{ contextMenu: false, contextX: 0, contextY: 0 }" @contextmenu.prevent="contextMenu = true; contextX = $event.clientX; contextY = $event.clientY" @click.away="contextMenu = false">
             <div class="flex items-center space-x-4">
                 <button class="flex items-center space-x-1.5 hover:bg-bg-tertiary px-2 py-1 rounded text-text-secondary hover:text-text-primary">
                     <span class="material-icons text-sm">source</span>
@@ -1007,6 +1547,52 @@ This uses **Result** type for error handling and the **?** operator for propagat
                 <div class="text-text-tertiary flex items-center space-x-1">
                     <span class="material-icons text-sm">info</span>
                     <span>v0.1.7</span>
+                </div>
+            </div>
+            
+            <!-- Bottom Bar Context Menu -->
+            <div x-show="contextMenu" 
+                 :style="`position: fixed; top: ${contextY}px; left: ${contextX}px; transform: translate(-50%, calc(-100% - 8px));`"
+                 class="w-64 glass backdrop-blur-xl border border-border-subtle rounded-xl shadow-2xl z-50"
+                 style="display: none;">
+                <div class="p-3">
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Editor Version</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Encoding</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Line/Column</span>
+                        <span class="text-xs text-text-tertiary opacity-30">○</span>
+                    </button>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Git Branch</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Language Mode</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <div class="border-t border-border-subtle my-2"></div>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Conductor Status</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Sync Status</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Notifications</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <div class="border-t border-border-subtle my-2"></div>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                        Customize Status Bar...
+                    </button>
                 </div>
             </div>
         </footer>
