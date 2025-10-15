@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symphony - Project Editor</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        symphony: {
+                            primary: "#5B8FF9",
+                            blue: "#5B8FF9",
+                            light: "#7BA5FA",
+                            dark: "#4A7AD8",
+                            accent: "#3B6DD8",
+                        },
+                        'bg-primary': '#1E1E1E',
+                        'bg-secondary': '#252526',
+                        'bg-tertiary': '#2D2D30',
+                        'border-subtle': '#252530',
+                        'border-default': '#2D2D3A',
+                        'text-primary': '#E8E8F0',
+                        'text-secondary': '#9CA3AF',
+                        'text-tertiary': '#6B7280',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        glow: {
+                            '0%': { opacity: '0.5' },
+                            '100%': { opacity: '1' },
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-symphony { background: linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%); }
+        .gradient-mesh {
+            background: 
+                radial-gradient(at 27% 37%, rgba(91, 143, 249, 0.12) 0px, transparent 50%),
+                radial-gradient(at 97% 21%, rgba(74, 122, 216, 0.12) 0px, transparent 50%),
+                radial-gradient(at 52% 99%, rgba(59, 109, 216, 0.10) 0px, transparent 50%),
+                radial-gradient(at 10% 29%, rgba(123, 165, 250, 0.08) 0px, transparent 50%);
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.15); }
+        .glass { background: rgba(26, 26, 36, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .file-tree-item { cursor: pointer; user-select: none; transition: all 0.2s ease; }
+        .file-tree-item:hover { background: rgba(91, 143, 249, 0.1); }
+        .code-editor { font-family: 'JetBrains Mono', monospace; tab-size: 4; }
+        .line-numbers { user-select: none; }
+        /* Symphony Syntax Highlighting */
+        .syntax-keyword { color: #7BA5FA; font-weight: 600; }
+        .syntax-function { color: #5B8FF9; }
+        .syntax-string { color: #98C379; }
+        .syntax-number { color: #D19A66; }
+        .syntax-comment { color: #6B7280; font-style: italic; }
+        .syntax-type { color: #E5C07B; }
+        .syntax-macro { color: #C678DD; }
+        .syntax-operator { color: #ABB2BF; }
+        .syntax-variable { color: #E06C75; }
+        .blob-tab { 
+            position: relative; 
+            background: rgba(91, 143, 249, 0.08); 
+            backdrop-filter: blur(8px); 
+            border: 1px solid rgba(91, 143, 249, 0.2); 
+            border-bottom: none; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .blob-tab.active { 
+            background: rgba(91, 143, 249, 0.15); 
+            border-color: rgba(91, 143, 249, 0.4);
+        }
+        .blob-tab.active::before { 
+            content: ''; 
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            height: 2px; 
+            background: linear-gradient(90deg, #5B8FF9, #7BA5FA); 
+        }
+        .blob-tab:hover { background: rgba(91, 143, 249, 0.12); transform: translateY(-1px); }
+    </style>
+</head>
+<body class="bg-bg-primary text-text-primary h-screen overflow-hidden flex flex-col gradient-mesh">
+    <!-- Top Bar -->
+    <div class="h-14 bg-bg-secondary/80 backdrop-blur-xl border-b border-border-subtle flex items-center justify-between px-6 flex-shrink-0 relative z-50" x-data="{ 
+        showFileSystem: true, 
+        showTerminal: false, 
+        showAIChat: false 
+    }">
+        <div class="flex items-center space-x-6">
+            <div class="flex items-center space-x-3">
+                <img src="../../assets/rounded.png" alt="Symphony" class="w-7 h-7 animate-pulse-slow" />
+                <div>
+                    <h1 class="text-sm font-semibold tracking-tight text-text-primary">Symphony</h1>
+                    <p class="text-[10px] text-text-tertiary font-medium tracking-wide">AI-First DEVELOPMENT</p>
+                </div>
+            </div>
+            <div class="h-8 w-px bg-border-subtle"></div>
+            <div class="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-bg-tertiary/50 border border-border-subtle">
+                <span class="material-icons text-sm text-symphony-primary">folder</span>
+                <span class="text-xs text-text-primary font-medium">my-rust-project</span>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <!-- Panel Toggle Buttons -->
+            <button 
+                @click="showFileSystem = !showFileSystem"
+                :class="showFileSystem ? 'p-2 rounded-lg bg-symphony-primary/20 text-symphony-primary' : 'p-2 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary'"
+                class="transition-all hover:scale-105"
+                title="Toggle File System">
+                <span class="material-icons text-lg">folder_open</span>
+            </button>
+            <button 
+                @click="showTerminal = !showTerminal"
+                :class="showTerminal ? 'p-2 rounded-lg bg-symphony-primary/20 text-symphony-primary' : 'p-2 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary'"
+                class="transition-all hover:scale-105"
+                title="Toggle Terminal">
+                <span class="material-icons text-lg">terminal</span>
+            </button>
+            <button 
+                @click="showAIChat = !showAIChat"
+                :class="showAIChat ? 'p-2 rounded-lg bg-symphony-primary/20 text-symphony-primary' : 'p-2 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary'"
+                class="transition-all hover:scale-105 relative"
+                title="Toggle AI Chat">
+                <span class="material-icons text-lg">chat</span>
+                <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full border border-bg-secondary"></div>
+            </button>
+            <div class="h-6 w-px bg-border-subtle"></div>
+            <button class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-all hover:scale-105" title="Settings">
+                <span class="material-icons text-lg">settings</span>
+            </button>
+            <button class="p-2 rounded-lg hover:bg-symphony-primary/20 text-text-secondary hover:text-symphony-primary transition-all hover:scale-105 relative" title="AI Assistant">
+                <span class="material-icons text-lg">psychology</span>
+                <div class="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-bg-secondary"></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-14 bg-bg-secondary border-r border-border-subtle flex flex-col items-center py-4 gap-1 relative z-40" x-data="{ activeSidebar: 'explorer' }">
+            <div class="flex-1 flex flex-col gap-1">
+                <button :class="activeSidebar === 'explorer' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Explorer" @click="activeSidebar = 'explorer'">
+                    <span class="material-icons text-lg">folder_open</span>
+                    <div x-show="activeSidebar === 'explorer'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
+                </button>
+                <button :class="activeSidebar === 'harmony' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Harmony Board" @click="activeSidebar = 'harmony'">
+                    <span class="material-icons text-lg">dashboard</span>
+                    <div x-show="activeSidebar === 'harmony'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
+                </button>
+                <button :class="activeSidebar === 'source' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Source Control" @click="activeSidebar = 'source'">
+                    <span class="material-icons text-lg">source</span>
+                    <div x-show="activeSidebar === 'source'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
+                </button>
+                <button :class="activeSidebar === 'orchestra' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="AI Orchestra" @click="activeSidebar = 'orchestra'">
+                    <span class="material-icons text-lg">smart_toy</span>
+                    <div x-show="activeSidebar === 'orchestra'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
+                </button>
+                <button :class="activeSidebar === 'extensions' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Extensions" @click="activeSidebar = 'extensions'">
+                    <span class="material-icons text-lg">extension</span>
+                    <div x-show="activeSidebar === 'extensions'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
+                </button>
+            </div>
+            <div class="flex flex-col gap-1">
+                <button class="p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="Settings">
+                    <span class="material-icons text-lg">tune</span>
+                </button>
+                <div class="relative z-50" x-data="{ open: false }">
+                    <div class="cursor-pointer relative" title="Account" @click="open = !open">
+                        <div class="w-8 h-8 rounded-full bg-gradient-symphony flex items-center justify-center text-white text-xs font-semibold shadow-lg ring-2 ring-bg-secondary hover:ring-symphony-primary/50 transition-all">
+                            <span class="font-bold">U</span>
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-bg-secondary"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex overflow-hidden" x-data="{
+        activeFile: 'main.rs',
+        openFiles: [
+            { name: 'main.rs', path: 'src/main.rs', language: 'rust', modified: true },
+            { name: 'config.toml', path: 'Cargo.toml', language: 'toml', modified: false },
+            { name: 'utils.rs', path: 'src/utils.rs', language: 'rust', modified: false }
+        ],
+        fileTree: [
+            { 
+                name: 'src', 
+                type: 'folder', 
+                expanded: true,
+                children: [
+                    { name: 'main.rs', type: 'file', icon: 'description' },
+                    { name: 'utils.rs', type: 'file', icon: 'description' },
+                    { name: 'lib.rs', type: 'file', icon: 'description' },
+                    {
+                        name: 'components',
+                        type: 'folder',
+                        expanded: false,
+                        children: [
+                            { name: 'button.rs', type: 'file', icon: 'description' },
+                            { name: 'input.rs', type: 'file', icon: 'description' }
+                        ]
+                    }
+                ]
+            },
+            { 
+                name: 'tests', 
+                type: 'folder', 
+                expanded: false,
+                children: [
+                    { name: 'integration.rs', type: 'file', icon: 'description' },
+                    { name: 'unit.rs', type: 'file', icon: 'description' }
+                ]
+            },
+            { name: 'Cargo.toml', type: 'file', icon: 'description' },
+            { name: 'Cargo.lock', type: 'file', icon: 'lock' },
+            { name: 'README.md', type: 'file', icon: 'description' },
+            { name: '.gitignore', type: 'file', icon: 'visibility_off' }
+        ],
+        toggleFolder(item) {
+            item.expanded = !item.expanded;
+        },
+        closeFile(fileName) {
+            const index = this.openFiles.findIndex(f => f.name === fileName);
+            if (index !== -1) {
+                this.openFiles.splice(index, 1);
+                if (this.activeFile === fileName && this.openFiles.length > 0) {
+                    this.activeFile = this.openFiles[0].name;
+                }
+            }
+        }
+    }">
+        <!-- File Explorer Sidebar -->
+        <div class="w-72 bg-bg-secondary/50 backdrop-blur-xl border-r border-border-subtle flex flex-col flex-shrink-0">
+            <div class="px-4 py-1.5 border-b border-border-subtle bg-bg-tertiary/30">
+                <div class="flex items-center justify-between mb-1.5">
+                    <span class="text-[10px] font-semibold text-text-primary uppercase tracking-wider">Explorer</span>
+                    <button class="p-1 rounded hover:bg-bg-tertiary text-text-tertiary hover:text-text-primary transition-all" title="Collapse All">
+                        <span class="material-icons text-sm">unfold_less</span>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-2 px-2 py-1.5 rounded-lg bg-bg-secondary/50 border border-border-subtle">
+                    <span class="material-icons text-xs text-symphony-primary">folder</span>
+                    <span class="text-xs text-text-primary font-medium flex-1 truncate">MY-RUST-PROJECT</span>
+                </div>
+            </div>
+            <div class="px-3 py-2 border-b border-border-subtle/50 flex items-center justify-between">
+                <span class="text-[10px] font-semibold text-text-tertiary uppercase tracking-wider">Files</span>
+                <div class="flex items-center space-x-0.5">
+                    <button class="p-1 rounded hover:bg-symphony-primary/20 text-text-tertiary hover:text-symphony-primary transition-all" title="New File">
+                        <span class="material-icons text-xs">note_add</span>
+                    </button>
+                    <button class="p-1 rounded hover:bg-symphony-primary/20 text-text-tertiary hover:text-symphony-primary transition-all" title="New Folder">
+                        <span class="material-icons text-xs">create_new_folder</span>
+                    </button>
+                    <button class="p-1 rounded hover:bg-symphony-primary/20 text-text-tertiary hover:text-symphony-primary transition-all" title="Refresh">
+                        <span class="material-icons text-xs">refresh</span>
+                    </button>
+                    <button class="p-1 rounded hover:bg-symphony-primary/20 text-text-tertiary hover:text-symphony-primary transition-all" title="More Actions">
+                        <span class="material-icons text-xs">more_horiz</span>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-2">
+                <template x-for="item in fileTree" :key="item.name">
+                    <div>
+                        <!-- Folder -->
+                        <template x-if="item.type === 'folder'">
+                            <div>
+                                <div @click="toggleFolder(item)" class="file-tree-item flex items-center space-x-1 px-2 py-1 rounded text-sm">
+                                    <span class="material-icons text-sm text-text-tertiary" x-text="item.expanded ? 'expand_more' : 'chevron_right'"></span>
+                                    <span class="material-icons text-sm text-symphony-light">folder</span>
+                                    <span class="text-text-primary" x-text="item.name"></span>
+                                </div>
+                                <div x-show="item.expanded" class="ml-4">
+                                    <template x-for="child in item.children" :key="child.name">
+                                        <div>
+                                            <!-- Nested Folder -->
+                                            <template x-if="child.type === 'folder'">
+                                                <div>
+                                                    <div @click="toggleFolder(child)" class="file-tree-item flex items-center space-x-1 px-2 py-1 rounded text-sm">
+                                                        <span class="material-icons text-sm text-text-tertiary" x-text="child.expanded ? 'expand_more' : 'chevron_right'"></span>
+                                                        <span class="material-icons text-sm text-symphony-light">folder</span>
+                                                        <span class="text-text-secondary" x-text="child.name"></span>
+                                                    </div>
+                                                    <div x-show="child.expanded" class="ml-4">
+                                                        <template x-for="nestedChild in child.children" :key="nestedChild.name">
+                                                            <div class="file-tree-item flex items-center space-x-1 px-2 py-1 rounded text-sm">
+                                                                <span class="material-icons text-sm text-text-tertiary" x-text="nestedChild.icon"></span>
+                                                                <span class="text-text-secondary" x-text="nestedChild.name"></span>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <!-- Nested File -->
+                                            <template x-if="child.type === 'file'">
+                                                <div class="file-tree-item flex items-center space-x-1 px-2 py-1 rounded text-sm">
+                                                    <span class="w-4"></span>
+                                                    <span class="material-icons text-sm text-text-tertiary" x-text="child.icon"></span>
+                                                    <span class="text-text-secondary" x-text="child.name"></span>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                        <!-- File -->
+                        <template x-if="item.type === 'file'">
+                            <div class="file-tree-item flex items-center space-x-1 px-2 py-1 rounded text-sm">
+                                <span class="material-icons text-sm text-text-tertiary" x-text="item.icon"></span>
+                                <span class="text-text-secondary" x-text="item.name"></span>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Editor Area -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- File Tabs -->
+            <div class="h-11 bg-bg-secondary/50 backdrop-blur-xl border-b border-border-subtle flex items-center overflow-x-auto flex-shrink-0">
+                <template x-for="file in openFiles" :key="file.name">
+                    <div 
+                        @click="activeFile = file.name"
+                        :class="activeFile === file.name ? 'blob-tab active' : 'blob-tab'"
+                        class="flex items-center space-x-2 px-4 h-full border-r border-border-subtle cursor-pointer group">
+                        <span class="material-icons text-sm" :class="activeFile === file.name ? 'text-symphony-primary' : 'text-text-tertiary'">description</span>
+                        <span class="text-xs font-medium" :class="activeFile === file.name ? 'text-text-primary' : 'text-text-secondary'" x-text="file.name"></span>
+                        <span x-show="file.modified" class="w-1.5 h-1.5 rounded-full bg-symphony-primary animate-pulse"></span>
+                        <button 
+                            @click.stop="closeFile(file.name)"
+                            class="opacity-0 group-hover:opacity-100 p-1 rounded-lg hover:bg-bg-tertiary/50 transition-all">
+                            <span class="material-icons text-xs text-text-tertiary hover:text-text-primary">close</span>
+                        </button>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Code Editor -->
+            <div class="flex-1 overflow-hidden bg-bg-primary/50 backdrop-blur-sm">
+                <div class="h-full flex">
+                    <!-- Line Numbers -->
+                    <div class="line-numbers bg-bg-secondary/30 px-4 py-4 text-right text-xs text-text-tertiary border-r border-border-subtle/50">
+                        <div class="leading-6">1</div>
+                        <div class="leading-6">2</div>
+                        <div class="leading-6">3</div>
+                        <div class="leading-6">4</div>
+                        <div class="leading-6">5</div>
+                        <div class="leading-6">6</div>
+                        <div class="leading-6">7</div>
+                        <div class="leading-6">8</div>
+                        <div class="leading-6">9</div>
+                        <div class="leading-6">10</div>
+                        <div class="leading-6">11</div>
+                        <div class="leading-6">12</div>
+                        <div class="leading-6">13</div>
+                        <div class="leading-6">14</div>
+                        <div class="leading-6">15</div>
+                        <div class="leading-6">16</div>
+                        <div class="leading-6">17</div>
+                        <div class="leading-6">18</div>
+                        <div class="leading-6">19</div>
+                        <div class="leading-6">20</div>
+                        <div class="leading-6">21</div>
+                        <div class="leading-6">22</div>
+                        <div class="leading-6">23</div>
+                        <div class="leading-6">24</div>
+                        <div class="leading-6">25</div>
+                        <div class="leading-6">26</div>
+                        <div class="leading-6">27</div>
+                        <div class="leading-6">28</div>
+                        <div class="leading-6">29</div>
+                        <div class="leading-6">30</div>
+                        <div class="leading-6">31</div>
+                        <div class="leading-6">32</div>
+                        <div class="leading-6">33</div>
+                        <div class="leading-6">34</div>
+                        <div class="leading-6">35</div>
+                        <div class="leading-6">36</div>
+                        <div class="leading-6">37</div>
+                        <div class="leading-6">38</div>
+                        <div class="leading-6">39</div>
+                        <div class="leading-6">40</div>
+                        <div class="leading-6">41</div>
+                        <div class="leading-6">42</div>
+                        <div class="leading-6">43</div>
+                        <div class="leading-6">44</div>
+                        <div class="leading-6">45</div>
+                        <div class="leading-6">46</div>
+                        <div class="leading-6">47</div>
+                        <div class="leading-6">48</div>
+                        <div class="leading-6">49</div>
+                        <div class="leading-6">50</div>
+                    </div>
+                    <!-- Code Content -->
+                    <div class="flex-1 overflow-auto">
+                        <pre 
+                            class="code-editor w-full h-full text-sm leading-6 p-4"
+                            x-show="activeFile === 'main.rs'"><span class="syntax-comment">// Symphony IDE - Main Entry Point</span>
+<span class="syntax-comment">// AI-First Development Environment</span>
+
+<span class="syntax-keyword">use</span> std::error::Error;
+<span class="syntax-keyword">use</span> tokio::runtime::Runtime;
+<span class="syntax-keyword">use</span> serde::{Deserialize, Serialize};
+
+<span class="syntax-macro">#[derive(Debug, Serialize, Deserialize)]</span>
+<span class="syntax-keyword">struct</span> <span class="syntax-type">Config</span> {
+    model: <span class="syntax-type">String</span>,
+    temperature: <span class="syntax-type">f64</span>,
+    max_tokens: <span class="syntax-type">usize</span>,
+    orchestration_mode: <span class="syntax-type">OrchestrationMode</span>,
+}
+
+<span class="syntax-macro">#[derive(Debug, Serialize, Deserialize)]</span>
+<span class="syntax-keyword">enum</span> <span class="syntax-type">OrchestrationMode</span> {
+    Normal,
+    Maestro,
+}
+
+<span class="syntax-keyword">fn</span> <span class="syntax-function">main</span>() -> <span class="syntax-type">Result</span><<span class="syntax-operator">()</span>, <span class="syntax-type">Box</span><<span class="syntax-keyword">dyn</span> <span class="syntax-type">Error</span>>> {
+    <span class="syntax-function">println!</span>(<span class="syntax-string">"🎼 Symphony - AI-First Development Environment"</span>);
+    <span class="syntax-function">println!</span>(<span class="syntax-string">"   Initializing Conductor AI..."</span>);
+    
+    <span class="syntax-comment">// Load configuration</span>
+    <span class="syntax-keyword">let</span> <span class="syntax-variable">config</span> = <span class="syntax-function">load_config</span>()?;
+    <span class="syntax-function">println!</span>(<span class="syntax-string">"✓ Configuration loaded: {:?}"</span>, config.model);
+    
+    <span class="syntax-comment">// Initialize Conductor AI</span>
+    <span class="syntax-keyword">let</span> <span class="syntax-variable">conductor</span> = <span class="syntax-type">ConductorAI</span>::<span class="syntax-function">new</span>(config);
+    <span class="syntax-function">println!</span>(<span class="syntax-string">"✓ Conductor AI initialized"</span>);
+    
+    <span class="syntax-comment">// Start orchestration</span>
+    <span class="syntax-keyword">match</span> conductor.<span class="syntax-function">orchestrate</span>() {
+        <span class="syntax-type">Ok</span>(result) => {
+            <span class="syntax-function">println!</span>(<span class="syntax-string">"✓ Orchestration completed successfully"</span>);
+            <span class="syntax-function">println!</span>(<span class="syntax-string">"  Result: {:?}"</span>, result);
+        }
+        <span class="syntax-type">Err</span>(e) => {
+            <span class="syntax-function">eprintln!</span>(<span class="syntax-string">"✗ Orchestration failed: {}"</span>, e);
+            <span class="syntax-keyword">return</span> <span class="syntax-type">Err</span>(e);
+        }
+    }
+    
+    <span class="syntax-type">Ok</span>(())
+}
+
+<span class="syntax-keyword">fn</span> <span class="syntax-function">load_config</span>() -> <span class="syntax-type">Result</span><<span class="syntax-type">Config</span>, <span class="syntax-type">Box</span><<span class="syntax-keyword">dyn</span> <span class="syntax-type">Error</span>>> {
+    <span class="syntax-type">Ok</span>(<span class="syntax-type">Config</span> {
+        model: <span class="syntax-string">"conductor-v1"</span>.<span class="syntax-function">to_string</span>(),
+        temperature: <span class="syntax-number">0.7</span>,
+        max_tokens: <span class="syntax-number">4096</span>,
+        orchestration_mode: <span class="syntax-type">OrchestrationMode</span>::Normal,
+    })
+}</pre>
+                        <pre 
+                            class="code-editor w-full h-full text-sm leading-6 p-4"
+                            x-show="activeFile === 'config.toml'"><span class="syntax-comment"># Symphony IDE - Cargo Configuration</span>
+<span class="syntax-comment"># AI-First Development Environment</span>
+
+<span class="syntax-keyword">[package]</span>
+<span class="syntax-variable">name</span> = <span class="syntax-string">"symphony-ide"</span>
+<span class="syntax-variable">version</span> = <span class="syntax-string">"0.1.0"</span>
+<span class="syntax-variable">edition</span> = <span class="syntax-string">"2021"</span>
+<span class="syntax-variable">authors</span> = [<span class="syntax-string">"Symphony Team &lt;team@symphony.dev&gt;"</span>]
+<span class="syntax-variable">description</span> = <span class="syntax-string">"AI-First Development Environment"</span>
+<span class="syntax-variable">license</span> = <span class="syntax-string">"MIT"</span>
+
+<span class="syntax-keyword">[dependencies]</span>
+<span class="syntax-comment"># Async runtime</span>
+<span class="syntax-variable">tokio</span> = { <span class="syntax-variable">version</span> = <span class="syntax-string">"1.35"</span>, <span class="syntax-variable">features</span> = [<span class="syntax-string">"full"</span>] }
+
+<span class="syntax-comment"># Serialization</span>
+<span class="syntax-variable">serde</span> = { <span class="syntax-variable">version</span> = <span class="syntax-string">"1.0"</span>, <span class="syntax-variable">features</span> = [<span class="syntax-string">"derive"</span>] }
+<span class="syntax-variable">serde_json</span> = <span class="syntax-string">"1.0"</span>
+
+<span class="syntax-comment"># AI/ML Integration</span>
+<span class="syntax-variable">pyo3</span> = { <span class="syntax-variable">version</span> = <span class="syntax-string">"0.20"</span>, <span class="syntax-variable">features</span> = [<span class="syntax-string">"auto-initialize"</span>] }
+
+<span class="syntax-comment"># Web framework</span>
+<span class="syntax-variable">axum</span> = <span class="syntax-string">"0.7"</span>
+<span class="syntax-variable">tower</span> = <span class="syntax-string">"0.4"</span>
+
+<span class="syntax-comment"># Database</span>
+<span class="syntax-variable">sqlx</span> = { <span class="syntax-variable">version</span> = <span class="syntax-string">"0.7"</span>, <span class="syntax-variable">features</span> = [<span class="syntax-string">"runtime-tokio-rustls"</span>, <span class="syntax-string">"sqlite"</span>] }
+
+<span class="syntax-comment"># Error handling</span>
+<span class="syntax-variable">anyhow</span> = <span class="syntax-string">"1.0"</span>
+<span class="syntax-variable">thiserror</span> = <span class="syntax-string">"1.0"</span>
+
+<span class="syntax-comment"># Logging</span>
+<span class="syntax-variable">tracing</span> = <span class="syntax-string">"0.1"</span>
+<span class="syntax-variable">tracing-subscriber</span> = { <span class="syntax-variable">version</span> = <span class="syntax-string">"0.3"</span>, <span class="syntax-variable">features</span> = [<span class="syntax-string">"env-filter"</span>] }
+
+<span class="syntax-keyword">[dev-dependencies]</span>
+<span class="syntax-variable">criterion</span> = <span class="syntax-string">"0.5"</span>
+
+<span class="syntax-keyword">[profile.release]</span>
+<span class="syntax-variable">opt-level</span> = <span class="syntax-number">3</span>
+<span class="syntax-variable">lto</span> = <span class="syntax-string">"fat"</span>
+<span class="syntax-variable">codegen-units</span> = <span class="syntax-number">1</span></pre>
+                        <pre 
+                            class="code-editor w-full h-full text-sm leading-6 p-4"
+                            x-show="activeFile === 'utils.rs'"><span class="syntax-comment">// Symphony IDE - Utility Functions</span>
+<span class="syntax-comment">// Data processing and validation utilities</span>
+
+<span class="syntax-keyword">use</span> std::error::Error;
+<span class="syntax-keyword">use</span> std::fmt;
+
+<span class="syntax-macro">#[derive(Debug)]</span>
+<span class="syntax-keyword">pub struct</span> <span class="syntax-type">ValidationError</span> {
+    message: <span class="syntax-type">String</span>,
+}
+
+<span class="syntax-keyword">impl</span> <span class="syntax-type">fmt</span>::<span class="syntax-type">Display</span> <span class="syntax-keyword">for</span> <span class="syntax-type">ValidationError</span> {
+    <span class="syntax-keyword">fn</span> <span class="syntax-function">fmt</span>(&<span class="syntax-keyword">self</span>, f: &<span class="syntax-keyword">mut</span> <span class="syntax-type">fmt</span>::<span class="syntax-type">Formatter</span>) -> <span class="syntax-type">fmt</span>::<span class="syntax-type">Result</span> {
+        <span class="syntax-function">write!</span>(f, <span class="syntax-string">"Validation error: {}"</span>, <span class="syntax-keyword">self</span>.message)
+    }
+}
+
+<span class="syntax-keyword">impl</span> <span class="syntax-type">Error</span> <span class="syntax-keyword">for</span> <span class="syntax-type">ValidationError</span> {}
+
+<span class="syntax-comment">/// Process and transform data with validation</span>
+<span class="syntax-keyword">pub fn</span> <span class="syntax-function">process_data</span>(data: <span class="syntax-type">Vec</span><<span class="syntax-type">String</span>>) -> <span class="syntax-type">Result</span><<span class="syntax-type">Vec</span><<span class="syntax-type">String</span>>, <span class="syntax-type">Box</span><<span class="syntax-keyword">dyn</span> <span class="syntax-type">Error</span>>> {
+    data.<span class="syntax-function">into_iter</span>()
+        .<span class="syntax-function">map</span>(|s| {
+            <span class="syntax-keyword">if</span> s.<span class="syntax-function">is_empty</span>() {
+                <span class="syntax-type">Err</span>(<span class="syntax-type">Box</span>::<span class="syntax-function">new</span>(<span class="syntax-type">ValidationError</span> {
+                    message: <span class="syntax-string">"Empty string not allowed"</span>.<span class="syntax-function">to_string</span>(),
+                }))
+            } <span class="syntax-keyword">else</span> {
+                <span class="syntax-type">Ok</span>(s.<span class="syntax-function">to_uppercase</span>())
+            }
+        })
+        .<span class="syntax-function">collect</span>()
+}
+
+<span class="syntax-comment">/// Validate and sanitize input strings</span>
+<span class="syntax-keyword">pub fn</span> <span class="syntax-function">sanitize_input</span>(input: &<span class="syntax-keyword">str</span>) -> <span class="syntax-type">String</span> {
+    input
+        .<span class="syntax-function">trim</span>()
+        .<span class="syntax-function">replace</span>(<span class="syntax-string">"\n"</span>, <span class="syntax-string">" "</span>)
+        .<span class="syntax-function">replace</span>(<span class="syntax-string">"\t"</span>, <span class="syntax-string">" "</span>)
+}
+
+<span class="syntax-comment">/// Calculate similarity score between two strings</span>
+<span class="syntax-keyword">pub fn</span> <span class="syntax-function">similarity_score</span>(a: &<span class="syntax-keyword">str</span>, b: &<span class="syntax-keyword">str</span>) -> <span class="syntax-type">f64</span> {
+    <span class="syntax-keyword">let</span> <span class="syntax-variable">a_len</span> = a.<span class="syntax-function">len</span>() <span class="syntax-keyword">as</span> <span class="syntax-type">f64</span>;
+    <span class="syntax-keyword">let</span> <span class="syntax-variable">b_len</span> = b.<span class="syntax-function">len</span>() <span class="syntax-keyword">as</span> <span class="syntax-type">f64</span>;
+    <span class="syntax-keyword">let</span> <span class="syntax-variable">max_len</span> = a_len.<span class="syntax-function">max</span>(b_len);
+    
+    <span class="syntax-keyword">if</span> max_len == <span class="syntax-number">0.0</span> {
+        <span class="syntax-keyword">return</span> <span class="syntax-number">1.0</span>;
+    }
+    
+    <span class="syntax-number">1.0</span> - (<span class="syntax-function">levenshtein_distance</span>(a, b) <span class="syntax-keyword">as</span> <span class="syntax-type">f64</span> / max_len)
+}
+
+<span class="syntax-comment">/// Calculate Levenshtein distance between strings</span>
+<span class="syntax-keyword">fn</span> <span class="syntax-function">levenshtein_distance</span>(a: &<span class="syntax-keyword">str</span>, b: &<span class="syntax-keyword">str</span>) -> <span class="syntax-type">usize</span> {
+    <span class="syntax-keyword">let</span> <span class="syntax-variable">a_chars</span>: <span class="syntax-type">Vec</span><<span class="syntax-keyword">char</span>> = a.<span class="syntax-function">chars</span>().<span class="syntax-function">collect</span>();
+    <span class="syntax-keyword">let</span> <span class="syntax-variable">b_chars</span>: <span class="syntax-type">Vec</span><<span class="syntax-keyword">char</span>> = b.<span class="syntax-function">chars</span>().<span class="syntax-function">collect</span>();
+    <span class="syntax-keyword">let</span> <span class="syntax-variable">a_len</span> = a_chars.<span class="syntax-function">len</span>();
+    <span class="syntax-keyword">let</span> <span class="syntax-variable">b_len</span> = b_chars.<span class="syntax-function">len</span>();
+    
+    <span class="syntax-keyword">if</span> a_len == <span class="syntax-number">0</span> {
+        <span class="syntax-keyword">return</span> b_len;
+    }
+    <span class="syntax-keyword">if</span> b_len == <span class="syntax-number">0</span> {
+        <span class="syntax-keyword">return</span> a_len;
+    }
+    
+    <span class="syntax-comment">// Implementation details...</span>
+    <span class="syntax-number">0</span>
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <footer class="bg-bg-secondary border-t border-border-subtle px-4 py-1.5 flex items-center justify-between text-xs">
+        <div class="flex items-center space-x-4">
+            <button class="flex items-center space-x-1.5 hover:bg-bg-tertiary px-2 py-1 rounded text-text-secondary hover:text-text-primary">
+                <span class="material-icons text-sm">source</span>
+                <span>main</span>
+            </button>
+            <div class="flex items-center space-x-2 text-text-tertiary">
+                <div class="flex items-center space-x-1">
+                    <span class="material-icons text-sm">cloud_done</span>
+                    <span>Synced</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-1.5 text-text-tertiary">
+                <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                <span>Conductor Ready</span>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button class="px-2 py-1 rounded text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary">
+                <span>🎼 Normal Mode</span>
+            </button>
+            <button class="px-2 py-1 rounded text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary">UTF-8</button>
+            <div class="text-text-tertiary flex items-center space-x-1">
+                <span class="material-icons text-sm">info</span>
+                <span>v0.1.7</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

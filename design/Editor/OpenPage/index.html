@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -80,6 +81,69 @@
         .blob-tab::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #5B8FF9, #7BA5FA); border-radius: 2px 2px 0 0; }
         .blob-tab::after { content: ''; position: absolute; bottom: -1px; left: -1px; right: -1px; height: 1px; background: #1E1E1E; z-index: 1; }
         .blob-tab:hover { background: rgba(91, 143, 249, 0.2); transform: translateY(-1px); }
+        .prose { color: #E8E8F0; }
+        .prose p { margin-top: 0.5em; margin-bottom: 0.5em; }
+        .prose ul { margin-top: 0.5em; margin-bottom: 0.5em; }
+        .prose li { margin-top: 0.25em; margin-bottom: 0.25em; }
+        .prose strong { color: #5B8FF9; font-weight: 600; }
+        .prose code { background: #2D2D30; padding: 0.2em 0.4em; border-radius: 4px; font-size: 0.9em; color: #7BA5FA; }
+        .prose pre { background: #2D2D30; padding: 1em; border-radius: 8px; overflow-x: auto; margin: 0.5em 0; }
+        .prose pre code { background: transparent; padding: 0; color: #E8E8F0; }
+        @keyframes border-beam {
+            0% { offset-distance: 0%; }
+            100% { offset-distance: 100%; }
+        }
+        .border-beam-container {
+            position: relative;
+            border-radius: 12px;
+        }
+        .border-beam {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            border: 2px solid transparent;
+            background: linear-gradient(#1E1E1E, #1E1E1E) padding-box,
+                        linear-gradient(90deg, transparent, #5B8FF9, #7BA5FA, transparent) border-box;
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .border-beam::before {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(91, 143, 249, 0.8) 0%, transparent 70%);
+            border-radius: 50%;
+            offset-path: rect(0 auto auto 0 round 12px);
+            offset-rotate: 0deg;
+            animation: border-beam 4s linear infinite;
+            will-change: offset-distance;
+        }
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        /* Search loader animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .search-loader {
+            animation: spin 0.8s linear infinite;
+        }
     </style>
 </head>
 <body class="bg-bg-primary text-text-primary font-sans antialiased" x-data="{
@@ -108,116 +172,367 @@
                     <button :class="activeMode === 'maestro' ? 'px-3 py-1.5 text-xs font-medium rounded-md bg-symphony-primary text-white' : 'px-3 py-1.5 text-xs font-medium rounded-md text-text-tertiary hover:text-text-primary hover:bg-bg-secondary'" @click="activeMode = 'maestro'">🎩 Maestro</button>
                 </div>
             </div>
-            <div class="relative w-96">
+            <div class="relative w-96" x-data="{ 
+                searchOpen: false, 
+                searchQuery: '', 
+                isSearching: false,
+                searchResults: [],
+                searchTimeout: null,
+                allItems: [
+                    { type: 'file', name: 'main.rs', path: 'src/main.rs', icon: 'description' },
+                    { type: 'file', name: 'config.toml', path: 'Cargo.toml', icon: 'description' },
+                    { type: 'file', name: 'utils.rs', path: 'src/utils.rs', icon: 'description' },
+                    { type: 'file', name: 'App.jsx', path: 'apps/web/App.jsx', icon: 'description' },
+                    { type: 'file', name: 'index.html', path: 'design/Editor/OpenPage/index.html', icon: 'description' },
+                    { type: 'symbol', name: 'process_data()', path: 'src/main.rs:42', icon: 'code' },
+                    { type: 'symbol', name: 'ConductorAI', path: 'src/conductor.rs:15', icon: 'code' },
+                    { type: 'symbol', name: 'handleSubmit()', path: 'apps/web/App.jsx:89', icon: 'code' },
+                    { type: 'command', name: 'Open Settings', path: 'Preferences', icon: 'settings' },
+                    { type: 'command', name: 'Toggle Terminal', path: 'View', icon: 'terminal' },
+                    { type: 'command', name: 'Git: Commit', path: 'Source Control', icon: 'commit' },
+                    { type: 'command', name: 'Run Build Task', path: 'Tasks', icon: 'play_arrow' }
+                ],
+                performSearch() {
+                    clearTimeout(this.searchTimeout);
+                    this.isSearching = true;
+                    
+                    this.searchTimeout = setTimeout(() => {
+                        if (this.searchQuery.trim() === '') {
+                            this.searchResults = [];
+                        } else {
+                            this.searchResults = this.allItems.filter(item => 
+                                item.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                                item.path.toLowerCase().includes(this.searchQuery.toLowerCase())
+                            );
+                        }
+                        this.isSearching = false;
+                    }, 400);
+                }
+            }">
                 <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary text-lg">search</span>
-                <input class="w-full bg-bg-tertiary border border-border-default rounded-lg py-2 pl-10 pr-4 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50 focus:border-symphony-primary" placeholder="Search or jump to... (⌘K)" type="search"/>
+                <input 
+                    @focus="searchOpen = true"
+                    @input="searchQuery = $event.target.value; performSearch()"
+                    @keydown.escape="searchOpen = false; searchQuery = ''; searchResults = []"
+                    x-model="searchQuery"
+                    class="w-full bg-bg-tertiary border border-border-default rounded-lg py-2 pl-10 pr-4 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50 focus:border-symphony-primary" 
+                    placeholder="Search or jump to... (⌘K)" 
+                    type="search"/>
+                
+                <!-- Search Modal -->
+                <div x-show="searchOpen"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+                     x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
+                     @click.away="searchOpen = false"
+                     class="absolute top-full left-0 right-0 mt-2 bg-bg-secondary border border-border-subtle rounded-lg shadow-2xl overflow-hidden z-50"
+                     style="display: none; max-height: 400px;">
+                    
+                    <!-- Loading State -->
+                    <div x-show="isSearching" class="flex items-center justify-center py-8">
+                        <span class="material-icons text-symphony-primary search-loader text-3xl">refresh</span>
+                    </div>
+                    
+                    <!-- Results -->
+                    <div x-show="!isSearching" class="max-h-96 overflow-y-auto">
+                        <!-- No Results -->
+                        <div x-show="searchResults.length === 0" class="px-4 py-8 text-center">
+                            <span class="material-icons text-text-tertiary text-4xl mb-2">search_off</span>
+                            <p class="text-sm text-text-secondary">No results found</p>
+                        </div>
+                        
+                        <!-- Results List -->
+                        <div x-show="searchResults.length > 0">
+                            <template x-for="item in searchResults" :key="item.name + item.path">
+                                <button class="w-full px-4 py-2.5 text-left hover:bg-bg-tertiary transition-colors border-b border-border-subtle last:border-b-0 flex items-center space-x-3">
+                                    <span class="material-icons text-text-tertiary text-lg" x-text="item.icon"></span>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-text-primary font-medium truncate" x-text="item.name"></p>
+                                        <p class="text-xs text-text-tertiary truncate" x-text="item.path"></p>
+                                    </div>
+                                    <span class="px-2 py-0.5 text-[10px] font-medium rounded" 
+                                          :class="{
+                                              'bg-blue-500/20 text-blue-400': item.type === 'file',
+                                              'bg-purple-500/20 text-purple-400': item.type === 'symbol',
+                                              'bg-green-500/20 text-green-400': item.type === 'command'
+                                          }"
+                                          x-text="item.type"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div x-show="!isSearching && searchResults.length > 0" class="px-4 py-2 bg-bg-tertiary border-t border-border-subtle flex items-center justify-between text-xs text-text-tertiary">
+                        <span>↑↓ Navigate</span>
+                        <span>↵ Open</span>
+                        <span>ESC Close</span>
+                    </div>
+                </div>
             </div>
-            <div class="flex items-center space-x-2 relative">
-                <div class="relative z-50" x-data="{ aiChatOpen: false }">
-                    <button @click="aiChatOpen = !aiChatOpen" class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary relative" title="AI Assistant">
+            <div class="flex items-center space-x-2 relative" x-data="{ aiChatOpen: false }">
+                <div class="relative z-50">
+                    <button @click="aiChatOpen = !aiChatOpen" class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary relative" title="AI Assistant" x-show="!aiChatOpen">
                         <span class="material-icons text-lg">psychology</span>
                         <div class="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-bg-secondary"></div>
                     </button>
                     
-                    <!-- AI Chat Box -->
+                    <!-- Backdrop Overlay -->
                     <div x-show="aiChatOpen"
                          x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 scale-95 translate-y-2"
-                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                         x-transition:enter-start="opacity-0"
+                         x-transition:enter-end="opacity-100"
                          x-transition:leave="transition ease-in duration-150"
-                         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 scale-95 translate-y-2"
-                         @click.away="aiChatOpen = false"
-                         class="fixed bottom-4 right-4 w-96 h-[600px] rounded-xl shadow-2xl border border-border-default overflow-hidden flex flex-col"
-                         style="display: none; background: rgba(37, 37, 38, 0.98); backdrop-filter: blur(12px); z-index: 9999;">
+                         x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0"
+                         class="fixed inset-0 bg-black/50 backdrop-blur-sm"
+                         style="display: none; z-index: 9998;"
+                         @click="aiChatOpen = false">
+                    </div>
+                    
+                    <!-- AI Chat Panel -->
+                    <div x-show="aiChatOpen"
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="transform translate-x-full"
+                         x-transition:enter-end="transform translate-x-0"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="transform translate-x-0"
+                         x-transition:leave-end="transform translate-x-full"
+                         class="fixed top-0 right-0 w-96 h-screen shadow-2xl border-l border-border-default flex flex-col pointer-events-auto"
+                         style="display: none; background: #1E1E1E; z-index: 10000;">
                         
                         <!-- Chat Header -->
-                        <div class="bg-bg-secondary/80 px-4 py-3 border-b border-border-subtle flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 rounded-lg bg-gradient-symphony flex items-center justify-center">
-                                    <span class="material-icons text-sm text-white">psychology</span>
-                                </div>
-                                <div>
-                                    <h3 class="text-sm font-semibold text-text-primary">Conductor AI</h3>
-                                    <div class="flex items-center space-x-1">
-                                        <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                                        <p class="text-xs text-text-tertiary">Online</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <button @click="aiChatOpen = false" class="p-1 rounded-lg hover:bg-bg-tertiary text-text-tertiary hover:text-text-primary">
-                                <span class="material-icons text-lg">close</span>
+                        <div class="px-3 py-1.5 border-b border-border-subtle flex items-center justify-between flex-shrink-0 relative" style="background: #1E1E1E;" x-data="{ historyOpen: false }">
+                            <button @click="historyOpen = !historyOpen" class="flex items-center space-x-2 flex-1 min-w-0 px-2 py-1 rounded-lg hover:bg-bg-tertiary transition-colors text-left">
+                                <span class="text-xs text-text-tertiary truncate flex-1">Current conversation with Conductor AI about Rust refactoring...</span>
+                                <span class="material-icons text-sm text-text-tertiary flex-shrink-0" x-show="!historyOpen">expand_more</span>
+                                <span class="material-icons text-sm text-text-tertiary flex-shrink-0" x-show="historyOpen" style="display: none;">expand_less</span>
                             </button>
-                        </div>
-                        
-                        <!-- Chat Messages -->
-                        <div class="flex-1 overflow-y-auto p-4 space-y-4">
-                            <!-- AI Welcome Message -->
-                            <div class="flex items-start space-x-3">
-                                <div class="w-8 h-8 rounded-lg bg-symphony-primary/10 flex items-center justify-center flex-shrink-0">
-                                    <span class="material-icons text-sm text-symphony-primary">psychology</span>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="bg-bg-tertiary rounded-lg rounded-tl-none p-3">
-                                        <p class="text-sm text-text-primary">Hello! I'm the Conductor, your AI orchestration assistant. I can help you with:</p>
-                                        <ul class="text-xs text-text-secondary mt-2 space-y-1 ml-4 list-disc">
-                                            <li>Code generation and refactoring</li>
-                                            <li>Workflow automation</li>
-                                            <li>Project architecture guidance</li>
-                                            <li>Debugging and optimization</li>
-                                        </ul>
-                                        <p class="text-sm text-text-primary mt-2">How can I assist you today?</p>
+                            
+                            <!-- Conversation History Dropdown -->
+                            <div x-show="historyOpen"
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+                                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-150"
+                                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
+                                 @click.away="historyOpen = false"
+                                 class="absolute top-full left-0 right-0 mt-1 mx-3 bg-bg-secondary border border-border-subtle rounded-lg shadow-xl overflow-hidden z-50"
+                                 style="display: none;">
+                                <div class="max-h-64 overflow-y-auto">
+                                    <div class="px-3 py-2 border-b border-border-subtle">
+                                        <p class="text-xs font-semibold text-text-primary">Recent Conversations</p>
                                     </div>
-                                    <span class="text-xs text-text-tertiary mt-1 block">Just now</span>
+                                    <button class="w-full px-3 py-2 text-left hover:bg-bg-tertiary transition-colors border-b border-border-subtle">
+                                        <p class="text-xs text-text-primary font-medium truncate">Current: Rust refactoring patterns</p>
+                                        <p class="text-[10px] text-text-tertiary mt-0.5">Active now</p>
+                                    </button>
+                                    <button class="w-full px-3 py-2 text-left hover:bg-bg-tertiary transition-colors border-b border-border-subtle">
+                                        <p class="text-xs text-text-secondary truncate">TypeScript error handling best practices</p>
+                                        <p class="text-[10px] text-text-tertiary mt-0.5">2 hours ago</p>
+                                    </button>
+                                    <button class="w-full px-3 py-2 text-left hover:bg-bg-tertiary transition-colors border-b border-border-subtle">
+                                        <p class="text-xs text-text-secondary truncate">React performance optimization tips</p>
+                                        <p class="text-[10px] text-text-tertiary mt-0.5">Yesterday</p>
+                                    </button>
+                                    <button class="w-full px-3 py-2 text-left hover:bg-bg-tertiary transition-colors border-b border-border-subtle">
+                                        <p class="text-xs text-text-secondary truncate">Database schema design for Symphony</p>
+                                        <p class="text-[10px] text-text-tertiary mt-0.5">2 days ago</p>
+                                    </button>
+                                    <button class="w-full px-3 py-2 text-left hover:bg-bg-tertiary transition-colors">
+                                        <p class="text-xs text-text-secondary truncate">Implementing WebSocket connections</p>
+                                        <p class="text-[10px] text-text-tertiary mt-0.5">3 days ago</p>
+                                    </button>
                                 </div>
                             </div>
                             
-                            <!-- Example User Message (hidden by default) -->
-                            <div class="flex items-start space-x-3 justify-end" style="display: none;">
+                            <div class="flex items-center space-x-1 ml-2">
+                                <button class="p-1 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors" title="New conversation">
+                                    <span class="material-icons text-base">add</span>
+                                </button>
+                                <button class="p-1 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors" title="Melody workflows">
+                                    <span class="material-icons text-base">auto_awesome</span>
+                                </button>
+                                <button @click="aiChatOpen = false" class="p-1 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors" title="Close">
+                                    <span class="material-icons text-base">close</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat Messages -->
+                        <div class="flex-1 overflow-y-auto p-4 space-y-4" style="background: #1a1a1a;">
+                            <!-- AI Welcome Message -->
+                            <div class="flex items-start space-x-2.5">
+                                <img src="../../assets/Conductor.png" alt="Conductor AI" class="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+                                <div class="flex-1">
+                                    <div class="flex items-baseline space-x-2 mb-1">
+                                        <span class="text-xs font-medium text-text-secondary">Conductor</span>
+                                    </div>
+                                    <div class="bg-bg-secondary rounded-lg rounded-tl-sm p-3 text-sm text-text-primary prose prose-invert prose-sm max-w-none">
+                                        <div class="markdown-content"></div>
+                                        <script>
+                                            document.currentScript.previousElementSibling.innerHTML = marked.parse(`Hello! I'm the **Conductor**, your AI orchestration assistant.
+
+I can help you with:
+- Code generation and refactoring
+- Workflow automation  
+- Project architecture guidance
+- Debugging and optimization
+
+How can I assist you today?`);
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- User Message 1 -->
+                            <div class="flex items-start space-x-2.5 justify-end">
                                 <div class="flex-1 flex justify-end">
-                                    <div class="max-w-[80%]">
-                                        <div class="bg-symphony-primary rounded-lg rounded-tr-none p-3">
-                                            <p class="text-sm text-white">Help me refactor this function</p>
+                                    <div class="max-w-[85%]">
+                                        <div class="flex items-baseline space-x-2 mb-1 justify-end">
+                                            <span class="text-sm font-semibold text-text-primary">You</span>
                                         </div>
-                                        <span class="text-xs text-text-tertiary mt-1 block text-right">Just now</span>
+                                        <div class="bg-symphony-primary rounded-lg rounded-tr-sm p-3 text-sm text-white">
+                                            <p>Can you help me refactor this Rust function to be more idiomatic?</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- AI Response with Code -->
+                            <div class="flex items-start space-x-2.5">
+                                <img src="../../assets/Conductor.png" alt="Conductor AI" class="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+                                <div class="flex-1">
+                                    <div class="flex items-baseline space-x-2 mb-1">
+                                        <span class="text-xs font-medium text-text-secondary">Conductor</span>
+                                    </div>
+                                    <div class="bg-bg-secondary rounded-lg rounded-tl-sm p-3 text-sm text-text-primary prose prose-invert prose-sm max-w-none">
+                                        <div class="markdown-content"></div>
+                                        <script>
+                                            document.currentScript.previousElementSibling.innerHTML = marked.parse(`Absolutely! I'd be happy to help refactor your Rust code. Here's a more idiomatic approach:
+
+\`\`\`rust
+// Instead of this:
+fn process_data(data: Vec<String>) -> Vec<String> {
+    let mut result = Vec::new();
+    for item in data {
+        result.push(item.to_uppercase());
+    }
+    result
+}
+
+// Use this:
+fn process_data(data: Vec<String>) -> Vec<String> {
+    data.into_iter()
+        .map(|s| s.to_uppercase())
+        .collect()
+}
+\`\`\`
+
+**Key improvements:**
+- Uses iterator methods instead of manual loops
+- More functional and concise
+- Better performance with \`into_iter()\`
+- Follows Rust idioms`);
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- User Message 2 -->
+                            <div class="flex items-start space-x-2.5 justify-end">
+                                <div class="flex-1 flex justify-end">
+                                    <div class="max-w-[85%]">
+                                        <div class="flex items-baseline space-x-2 mb-1 justify-end">
+                                            <span class="text-sm font-semibold text-text-primary">You</span>
+                                        </div>
+                                        <div class="bg-symphony-primary rounded-lg rounded-tr-sm p-3 text-sm text-white">
+                                            <p>Perfect! Can you also show me how to add error handling?</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- AI Response with Error Handling -->
+                            <div class="flex items-start space-x-2.5">
+                                <img src="../../assets/Conductor.png" alt="Conductor AI" class="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+                                <div class="flex-1">
+                                    <div class="flex items-baseline space-x-2 mb-1">
+                                        <span class="text-xs font-medium text-text-secondary">Conductor</span>
+                                    </div>
+                                    <div class="bg-bg-secondary rounded-lg rounded-tl-sm p-3 text-sm text-text-primary prose prose-invert prose-sm max-w-none">
+                                        <div class="markdown-content"></div>
+                                        <script>
+                                            document.currentScript.previousElementSibling.innerHTML = marked.parse(`Great question! Here's how to add proper error handling:
+
+\`\`\`rust
+use std::error::Error;
+
+fn process_data(data: Vec<String>) -> Result<Vec<String>, Box<dyn Error>> {
+    data.into_iter()
+        .map(|s| {
+            if s.is_empty() {
+                Err("Empty string not allowed".into())
+            } else {
+                Ok(s.to_uppercase())
+            }
+        })
+        .collect()
+}
+\`\`\`
+
+This uses **Result** type for error handling and the **?** operator for propagation. The \`collect()\` method automatically handles the \`Result\` conversion.`);
+                                        </script>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Chat Input -->
-                        <div class="border-t border-border-subtle p-4">
-                            <div class="flex items-end space-x-2">
-                                <div class="flex-1 relative">
-                                    <textarea 
-                                        class="w-full bg-bg-tertiary border border-border-default rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50 focus:border-symphony-primary resize-none"
-                                        placeholder="Ask Conductor anything..."
-                                        rows="2"
-                                    ></textarea>
-                                </div>
-                                <button class="p-2.5 rounded-lg bg-symphony-primary hover:bg-symphony-light text-white transition-colors">
+                        <div class="border-t border-border-subtle px-4 py-3 flex-shrink-0" style="background: #1E1E1E;">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <button class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg hover:bg-bg-tertiary text-text-tertiary hover:text-text-primary transition-colors text-xs" title="Attach file">
+                                    <span class="material-icons text-sm">attach_file</span>
+                                    <span>Attach</span>
+                                </button>
+                                <button class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg hover:bg-bg-tertiary text-text-tertiary hover:text-text-primary transition-colors text-xs" title="Insert code">
+                                    <span class="material-icons text-sm">code</span>
+                                    <span>Code</span>
+                                </button>
+                                <button class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg hover:bg-bg-tertiary text-text-tertiary hover:text-text-primary transition-colors text-xs" title="Voice input">
+                                    <span class="material-icons text-sm">mic</span>
+                                    <span>Voice</span>
+                                </button>
+                            </div>
+                            <div class="relative border-beam-container" x-data="{ isTyping: false }">
+                                <div x-show="isTyping" class="border-beam" style="display: none;"></div>
+                                <textarea 
+                                    @input="isTyping = $event.target.value.length > 0; $el.style.height = '44px'; $el.style.height = $el.scrollHeight + 'px'"
+                                    class="w-full bg-bg-secondary/50 border border-border-subtle rounded-xl px-4 py-3 pr-14 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-transparent focus:bg-bg-secondary resize-none transition-all"
+                                    placeholder="Ask Conductor anything..."
+                                    rows="1"
+                                    style="min-height: 44px; max-height: 200px; height: 44px;"
+                                ></textarea>
+                                <button class="absolute right-2 bottom-2 w-9 h-9 rounded-lg bg-bg-tertiary hover:bg-symphony-primary/20 border border-border-subtle hover:border-symphony-primary/50 text-text-secondary hover:text-symphony-primary transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
                                     <span class="material-icons text-lg">send</span>
                                 </button>
                             </div>
-                            <div class="flex items-center justify-between mt-2">
-                                <div class="flex items-center space-x-2 text-xs text-text-tertiary">
-                                    <button class="hover:text-text-primary transition-colors" title="Attach file">
-                                        <span class="material-icons text-sm">attach_file</span>
-                                    </button>
-                                    <button class="hover:text-text-primary transition-colors" title="Code snippet">
-                                        <span class="material-icons text-sm">code</span>
-                                    </button>
-                                    <button class="hover:text-text-primary transition-colors" title="Voice input">
-                                        <span class="material-icons text-sm">mic</span>
-                                    </button>
-                                </div>
-                                <span class="text-xs text-text-tertiary">⌘ + Enter to send</span>
+                            <div class="flex items-center justify-between mt-2 text-xs text-text-tertiary">
+                                <span>Shift + Enter for new line</span>
+                                <span class="flex items-center space-x-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                    <span>Conductor Model</span>
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="relative z-50" x-data="{ notifOpen: false, expandedNotif: null }">
-                    <button @click="notifOpen = !notifOpen" class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary relative">
+                    <button @click="notifOpen = !notifOpen" class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary relative" x-show="!aiChatOpen">
                         <span class="material-icons text-lg">notifications_none</span>
                         <div class="absolute top-1 right-1 w-2 h-2 bg-symphony-primary rounded-full animate-pulse"></div>
                     </button>
@@ -600,8 +915,8 @@
                                     The AI-First Development Environment where intelligent agents orchestrate software creation
                                 </p>
                             </div>
-                            <div class="grid grid-cols-2 gap-4 max-w-xl mx-auto mt-8">
-                                <button class="group glass rounded-xl p-6 hover:bg-bg-tertiary/80 transition-all hover:scale-105 hover:shadow-xl hover:shadow-symphony-primary/10">
+                            <div class="grid grid-cols-2 gap-4">
+                                <a href="../ProjectPage/index.html" class="group glass rounded-xl p-6 hover:bg-bg-tertiary/80 transition-all hover:scale-105 hover:shadow-xl hover:shadow-symphony-primary/10">
                                     <div class="flex flex-col items-center space-y-3">
                                         <div class="p-3 rounded-lg bg-symphony-primary/10 group-hover:bg-symphony-primary/20">
                                             <span class="material-icons text-2xl text-symphony-primary">folder_open</span>
@@ -611,8 +926,8 @@
                                             <p class="text-sm text-text-tertiary mt-1">Start with an existing project</p>
                                         </div>
                                     </div>
-                                </button>
-                                <button class="group glass rounded-xl p-6 hover:bg-bg-tertiary/80 transition-all hover:scale-105 hover:shadow-xl hover:shadow-symphony-light/10">
+                                </a>
+                                <a href="../ProjectPage/index.html" class="group glass rounded-xl p-6 hover:bg-bg-tertiary/80 transition-all hover:scale-105 hover:shadow-xl hover:shadow-symphony-light/10">
                                     <div class="flex flex-col items-center space-y-3">
                                         <div class="p-3 rounded-lg bg-symphony-light/10 group-hover:bg-symphony-light/20">
                                             <span class="material-icons text-2xl text-symphony-light">note_add</span>
@@ -622,7 +937,7 @@
                                             <p class="text-sm text-text-tertiary mt-1">Create a new file</p>
                                         </div>
                                     </div>
-                                </button>
+                                </a>
                                 <button class="group glass rounded-xl p-6 hover:bg-bg-tertiary/80 transition-all hover:scale-105 hover:shadow-xl hover:shadow-symphony-dark/10">
                                     <div class="flex flex-col items-center space-y-3">
                                         <div class="p-3 rounded-lg bg-symphony-dark/10 group-hover:bg-symphony-dark/20">
