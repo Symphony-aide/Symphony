@@ -56,6 +56,8 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; }
+        [x-cloak] { display: none !important; }
+        .context-menu-container[style*="display: none"] { display: none !important; }
         .gradient-symphony { background: linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%); }
         .gradient-mesh {
             background: 
@@ -206,6 +208,13 @@
 
         <div class="flex-1 flex overflow-hidden" x-data="{
         activeFile: 'main.rs',
+        tabContextMenu: false,
+        contextMenuX: 0,
+        contextMenuY: 0,
+        contextMenuFile: null,
+        init() {
+            this.tabContextMenu = false;
+        },
         openFiles: [
             { name: 'main.rs', path: 'src/main.rs', language: 'rust', modified: true },
             { name: 'config.toml', path: 'Cargo.toml', language: 'toml', modified: false },
@@ -256,8 +265,45 @@
                     this.activeFile = this.openFiles[0].name;
                 }
             }
+        },
+        openTabContextMenu(event, file) {
+            event.preventDefault();
+            console.log('Context menu triggered', file, event.clientX, event.clientY);
+            this.contextMenuFile = file;
+            this.contextMenuX = event.clientX;
+            this.contextMenuY = event.clientY;
+            this.tabContextMenu = true;
+            console.log('Menu state:', this.tabContextMenu);
+        },
+        closeOthers(fileName) {
+            this.openFiles = this.openFiles.filter(f => f.name === fileName);
+            this.activeFile = fileName;
+            this.tabContextMenu = false;
+        },
+        closeToRight(fileName) {
+            const index = this.openFiles.findIndex(f => f.name === fileName);
+            this.openFiles = this.openFiles.slice(0, index + 1);
+            this.tabContextMenu = false;
+        },
+        closeToLeft(fileName) {
+            const index = this.openFiles.findIndex(f => f.name === fileName);
+            this.openFiles = this.openFiles.slice(index);
+            this.tabContextMenu = false;
+        },
+        closeAll() {
+            this.openFiles = [];
+            this.activeFile = null;
+            this.tabContextMenu = false;
+        },
+        copyPath(path) {
+            navigator.clipboard.writeText(path);
+            this.tabContextMenu = false;
+        },
+        copyRelativePath(path) {
+            navigator.clipboard.writeText(path);
+            this.tabContextMenu = false;
         }
-    }">
+    }" @click="if (tabContextMenu && !$event.target.closest('.context-menu-container')) { tabContextMenu = false; }">
         <!-- File Explorer Sidebar -->
         <div class="w-72 bg-bg-secondary/50 backdrop-blur-xl border-r border-border-subtle flex flex-col flex-shrink-0">
             <div class="px-4 py-1.5 border-b border-border-subtle bg-bg-tertiary/30">
@@ -353,6 +399,7 @@
                 <template x-for="file in openFiles" :key="file.name">
                     <div 
                         @click="activeFile = file.name"
+                        @contextmenu="openTabContextMenu($event, file)"
                         :class="activeFile === file.name ? 'blob-tab active' : 'blob-tab'"
                         class="flex items-center space-x-2 px-4 h-full border-r border-border-subtle cursor-pointer group">
                         <span class="material-icons text-sm" :class="activeFile === file.name ? 'text-symphony-primary' : 'text-text-tertiary'">description</span>
@@ -607,6 +654,64 @@
                 </div>
             </div>
 
+            </div>
+        </div>
+        
+        <!-- Tab Context Menu -->
+        <div x-show="tabContextMenu"
+             :style="`position: fixed; top: ${contextMenuY}px; left: ${contextMenuX}px; z-index: 99999;`"
+             class="w-64 bg-bg-secondary border border-border-subtle rounded-lg shadow-2xl overflow-hidden context-menu-container"
+             @click.stop>
+            <div class="py-1">
+                <button @click="closeFile(contextMenuFile?.name)" class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-3">
+                    <span class="material-icons text-base text-text-tertiary">close</span>
+                    <span>Close</span>
+                    <span class="ml-auto text-xs text-text-tertiary">Ctrl+W</span>
+                </button>
+                <button @click="closeOthers(contextMenuFile?.name)" class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-3">
+                    <span class="material-icons text-base text-text-tertiary">tab_unselected</span>
+                    <span>Close Others</span>
+                </button>
+                <button @click="closeToRight(contextMenuFile?.name)" class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-3">
+                    <span class="material-icons text-base text-text-tertiary">arrow_forward</span>
+                    <span>Close to the Right</span>
+                </button>
+                <button @click="closeToLeft(contextMenuFile?.name)" class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-3">
+                    <span class="material-icons text-base text-text-tertiary">arrow_back</span>
+                    <span>Close to the Left</span>
+                </button>
+                <button @click="closeAll()" class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-3">
+                    <span class="material-icons text-base text-text-tertiary">close_fullscreen</span>
+                    <span>Close All</span>
+                    <span class="ml-auto text-xs text-text-tertiary">Ctrl+K W</span>
+                </button>
+                <div class="border-t border-border-subtle my-1"></div>
+                <button @click="copyPath(contextMenuFile?.path)" class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-3">
+                    <span class="material-icons text-base text-text-tertiary">content_copy</span>
+                    <span>Copy Path</span>
+                </button>
+                <button @click="copyRelativePath(contextMenuFile?.path)" class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-3">
+                    <span class="material-icons text-base text-text-tertiary">content_copy</span>
+                    <span>Copy Relative Path</span>
+                </button>
+                <div class="border-t border-border-subtle my-1"></div>
+                <button class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-3">
+                    <span class="material-icons text-base text-text-tertiary">folder_open</span>
+                    <span>Reveal in Explorer</span>
+                </button>
+                <button class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-3">
+                    <span class="material-icons text-base text-text-tertiary">terminal</span>
+                    <span>Open in Terminal</span>
+                </button>
+                <div class="border-t border-border-subtle my-1"></div>
+                <button class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-3">
+                    <span class="material-icons text-base text-text-tertiary">compare_arrows</span>
+                    <span>Split Editor Right</span>
+                </button>
+                <button class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-3">
+                    <span class="material-icons text-base text-text-tertiary">vertical_split</span>
+                    <span>Split Editor Down</span>
+                </button>
             </div>
         </div>
     </div>
