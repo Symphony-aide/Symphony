@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Orchestra Kit - Symphony Marketplace</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        symphony: {
+                            primary: "#5B8FF9",
+                            blue: "#5B8FF9",
+                            light: "#7BA5FA",
+                            dark: "#4A7AD8",
+                            accent: "#3B6DD8",
+                        },
+                        "bg-primary": "#1E1E1E",
+                        "bg-secondary": "#252526",
+                        "bg-tertiary": "#2D2D30",
+                        "border-subtle": "#252530",
+                        "border-default": "#2D2D3A",
+                        "text-primary": "#E8E8F0",
+                        "text-secondary": "#9CA3AF",
+                        "text-tertiary": "#6B7280",
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "system-ui", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"],
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        .material-icons { font-size: 20px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #13131A; }
+        ::-webkit-scrollbar-thumb { background: #2D2D3A; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3D3D4A; }
+        
+        /* Player tag animation */
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .player-shimmer {
+            animation: shimmer 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-bg-primary text-text-primary h-screen overflow-hidden flex flex-col" x-data="{ 
+    activeCategory: 'all',
+    searchQuery: '',
+    sortBy: 'popular',
+    selectedExtension: 'gpt4-conductor',
+    activeSubTab: 'recommended',
+    activeDetailTab: 'details',
+    activeSidebar: 'extensions',
+    activeMode: 'normal',
+    installingExtension: false,
+    installedExtensions: ['nord-theme'],
+    registeredExtensions: [],
+    installMenuOpen: false,
+    filterModalOpen: false,
+    filters: {
+        priceMin: 0,
+        priceMax: 100,
+        payment: [],
+        playerOnly: false,
+        types: [],
+        minRating: 0,
+        minDownloads: 0,
+        publishers: [],
+        lastUpdated: 'any',
+        verified: false,
+        trending: false
+    },
+    getActiveFilterCount() {
+        let count = 0;
+        if (this.filters.payment.length > 0) count++;
+        if (this.filters.playerOnly) count++;
+        if (this.filters.types.length > 0) count++;
+        if (this.filters.minRating > 0) count++;
+        if (this.filters.minDownloads > 0) count++;
+        if (this.filters.lastUpdated !== 'any') count++;
+        if (this.filters.verified) count++;
+        if (this.filters.trending) count++;
+        return count;
+    },
+    installExtension(autoRegister = false) {
+        this.installingExtension = true;
+        this.installMenuOpen = false;
+        setTimeout(() => {
+            this.installingExtension = false;
+            this.installedExtensions.push(this.selectedExtension);
+            if (autoRegister) {
+                this.registeredExtensions.push(this.selectedExtension);
+            }
+        }, 2000);
+    },
+    registerExtension() {
+        this.registeredExtensions.push(this.selectedExtension);
+    }
+}">
+    <div class="flex flex-col h-screen">
+        <!-- Top Bar -->
+        <header class="flex items-center justify-between px-6 py-3 border-b border-border-subtle bg-bg-secondary/50 backdrop-blur-sm relative z-50">
+            <div class="flex items-center space-x-3">
+                <div class="relative">
+                    <img src="../../assets/rounded.png" alt="Symphony" class="h-7 w-7" />
+                </div>
+                <div>
+                    <h1 class="text-base font-semibold tracking-tight text-text-primary">Symphony</h1>
+                    <p class="text-[10px] text-text-tertiary font-medium tracking-wide">AI-FIRST DEVELOPMENT</p>
+                </div>
+                <div class="flex items-center ml-24 right-0 space-x-1 bg-bg-tertiary rounded-lg p-1">
+                    <button :class="activeMode === 'normal' ? 'px-3 py-1.5 text-xs font-medium rounded-md bg-symphony-primary text-white' : 'px-3 py-1.5 text-xs font-medium rounded-md text-text-tertiary hover:text-text-primary hover:bg-bg-secondary'" @click="activeMode = 'normal'">🎼 Normal</button>
+                    <button :class="activeMode === 'maestro' ? 'px-3 py-1.5 text-xs font-medium rounded-md bg-symphony-primary text-white' : 'px-3 py-1.5 text-xs font-medium rounded-md text-text-tertiary hover:text-text-primary hover:bg-bg-secondary'" @click="activeMode = 'maestro'">🎩 Maestro</button>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 relative" x-data="{ notifOpen: false, expandedNotif: null, aiChatOpen: false }">
+                <div class="relative z-50">
+                    <button @click="aiChatOpen = !aiChatOpen" class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary relative" title="AI Assistant" x-show="!aiChatOpen">
+                        <span class="material-icons text-lg">psychology</span>
+                        <div class="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-bg-secondary"></div>
+                    </button>
+                    
+                    <!-- Backdrop Overlay -->
+                    <div x-show="aiChatOpen"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0"
+                         x-transition:enter-end="opacity-100"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0"
+                         class="fixed inset-0 bg-black/50 backdrop-blur-sm"
+                         style="display: none; z-index: 9998;"
+                         @click="aiChatOpen = false">
+                    </div>
+                    
+                    <!-- AI Chat Panel -->
+                    <div x-show="aiChatOpen"
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="transform translate-x-full"
+                         x-transition:enter-end="transform translate-x-0"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="transform translate-x-0"
+                         x-transition:leave-end="transform translate-x-full"
+                         class="fixed top-0 right-0 w-96 h-screen shadow-2xl border-l border-border-default flex flex-col pointer-events-auto"
+                         style="display: none; background: #1E1E1E; z-index: 10000;">
+                        
+                        <!-- Chat Header -->
+                        <div class="px-3 py-2 border-b border-border-subtle flex items-center justify-between flex-shrink-0">
+                            <div class="flex items-center space-x-2">
+                                <img src="../../assets/Conductor.png" alt="Conductor" class="w-6 h-6 rounded-full" />
+                                <span class="text-sm font-semibold text-text-primary">Conductor AI</span>
+                            </div>
+                            <button @click="aiChatOpen = false" class="p-1 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors">
+                                <span class="material-icons text-base">close</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Chat Messages -->
+                        <div class="flex-1 overflow-y-auto p-4 space-y-4" style="background: #1a1a1a;">
+                            <div class="flex items-start space-x-2.5">
+                                <img src="../../assets/Conductor.png" alt="Conductor AI" class="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+                                <div class="flex-1">
+                                    <div class="bg-bg-secondary rounded-lg rounded-tl-sm p-3 text-sm text-text-primary">
+                                        <p>Hello! I'm the <strong>Conductor</strong>, your AI assistant. I can help you discover and manage extensions in the Orchestra Kit.</p>
+                                        <p class="mt-2">How can I assist you today?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat Input -->
+                        <div class="p-3 border-t border-border-subtle flex-shrink-0">
+                            <div class="flex items-center space-x-2">
+                                <input type="text" placeholder="Ask about extensions..." class="flex-1 px-3 py-2 bg-bg-tertiary border border-border-subtle rounded-lg text-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50" />
+                                <button class="p-2 bg-symphony-primary hover:bg-symphony-dark text-white rounded-lg transition-colors">
+                                    <span class="material-icons text-lg">send</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button @click="notifOpen = !notifOpen" class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary relative" title="Notifications">
+                    <span class="material-icons text-lg">notifications</span>
+                    <div class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-bg-secondary"></div>
+                </button>
+                
+                <!-- Notifications Panel -->
+                <div x-show="notifOpen"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+                     x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
+                     @click.away="notifOpen = false"
+                     class="absolute top-full right-0 mt-2 w-96 bg-bg-secondary border border-border-subtle rounded-lg shadow-2xl overflow-hidden z-50"
+                     style="display: none;">
+                    <div class="px-4 py-3 border-b border-border-subtle">
+                        <h3 class="text-sm font-semibold text-text-primary">Notifications</h3>
+                    </div>
+                    <div class="max-h-96 overflow-y-auto divide-y divide-border-subtle">
+                        <div class="px-4 py-2.5 hover:bg-bg-tertiary/50 cursor-pointer transition-colors">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 rounded-full bg-symphony-primary mt-2 flex-shrink-0"></div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-text-primary font-medium">Extension Update Available</p>
+                                    <p class="text-[11px] text-text-tertiary mt-0.5">GPT-4 Conductor v1.2.1 is ready</p>
+                                    <span class="text-[10px] text-text-tertiary">5m ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-4 py-2 bg-bg-secondary/80 border-t border-border-subtle">
+                        <button class="text-xs text-symphony-primary hover:text-symphony-light w-full text-center">View All</button>
+                    </div>
+                </div>
+                
+                <button @click="window.location.href = '../PreferencesPage/index.html'" class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary" title="Settings">
+                    <span class="material-icons text-lg">settings</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Layout with Sidebar -->
+        <div class="flex flex-1 overflow-hidden">
+            <!-- Sidebar -->
+            <aside class="w-14 bg-bg-secondary border-r border-border-subtle flex flex-col items-center py-4 gap-1 relative z-40">
+                <div class="flex-1 flex flex-col gap-1">
+                    <button :class="activeSidebar === 'explorer' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Explorer" @click="window.location.href = '../OpenPage/index.html'">
+                        <span class="material-icons text-lg">folder_open</span>
+                    </button>
+                    <button :class="activeSidebar === 'harmony' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Harmony Board" @click="activeSidebar = 'harmony'">
+                        <span class="material-icons text-lg">dashboard</span>
+                    </button>
+                    <button :class="activeSidebar === 'source' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Source Control" @click="activeSidebar = 'source'">
+                        <span class="material-icons text-lg">source</span>
+                    </button>
+                    <button :class="activeSidebar === 'orchestra' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="AI Orchestra" @click="activeSidebar = 'orchestra'">
+                        <span class="material-icons text-lg">smart_toy</span>
+                    </button>
+                    <button :class="activeSidebar === 'extensions' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Extensions">
+                        <span class="material-icons text-lg">extension</span>
+                    </button>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <button class="p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="Settings" @click="window.location.href = '../PreferencesPage/index.html'">
+                        <span class="material-icons text-lg">tune</span>
+                    </button>
+                    <div class="relative z-50" x-data="{ open: false }">
+                        <div class="cursor-pointer relative" title="Account" @click="open = !open">
+                            <div class="w-8 h-8 rounded-full bg-gradient-symphony flex items-center justify-center text-white text-xs font-semibold shadow-lg ring-2 ring-bg-secondary hover:ring-symphony-primary/50 transition-all">
+                                <span class="font-bold">U</span>
+                            </div>
+                            <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-bg-secondary"></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="flex flex-1 overflow-hidden">
+            <!-- Left Panel - Extensions List (25%) -->
+            <aside class="w-1/4 bg-bg-primary border-r border-border-subtle flex flex-col overflow-hidden">
+                <!-- Search and Filters -->
+                <div class="p-3 border-b border-border-subtle">
+                    <div class="relative mb-2">
+                        <input type="text" x-model="searchQuery" placeholder="Search extensions..." class="w-full px-3 py-1.5 pr-16 bg-bg-tertiary border border-border-subtle text-xs text-text-primary placeholder-text-tertiary focus:outline-none focus:border-symphony-primary"/>
+                        <div class="absolute right-1 top-1 flex items-center space-x-0.5">
+                            <button @click="searchQuery = ''" x-show="searchQuery.length > 0" class="p-1 hover:bg-bg-primary rounded" title="Clear search">
+                                <span class="material-icons text-xs text-text-tertiary hover:text-text-primary">close</span>
+                            </button>
+                            <button @click="filterModalOpen = true" class="p-1 hover:bg-bg-primary rounded" title="Filter extensions">
+                                <span class="material-icons text-xs text-text-tertiary hover:text-text-primary">tune</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Filters -->
+                    <div class="flex flex-wrap gap-1">
+                        <button @click="activeCategory = 'instruments'" :class="activeCategory === 'instruments' ? 'bg-symphony-primary/20 text-symphony-primary' : 'bg-bg-tertiary text-text-secondary hover:bg-bg-tertiary/70'" class="px-2 py-1 rounded text-[10px] font-medium">
+                            🎻 Instruments
+                        </button>
+                        <button @click="activeCategory = 'operators'" :class="activeCategory === 'operators' ? 'bg-symphony-primary/20 text-symphony-primary' : 'bg-bg-tertiary text-text-secondary hover:bg-bg-tertiary/70'" class="px-2 py-1 rounded text-[10px] font-medium">
+                            ⚙️ Operators
+                        </button>
+                        <button @click="activeCategory = 'motifs'" :class="activeCategory === 'motifs' ? 'bg-symphony-primary/20 text-symphony-primary' : 'bg-bg-tertiary text-text-secondary hover:bg-bg-tertiary/70'" class="px-2 py-1 rounded text-[10px] font-medium">
+                            🧩 Motifs
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sub Tabs -->
+                <div class="border-b border-border-subtle">
+                    <button @click="activeSubTab = 'recommended'" :class="activeSubTab === 'recommended' ? 'bg-bg-secondary text-text-primary' : 'text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary'" class="w-full px-3 py-2 text-left text-xs font-medium flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="material-icons text-xs" :class="activeSubTab === 'recommended' ? 'rotate-90' : ''">chevron_right</span>
+                            <span>Recommended</span>
+                        </div>
+                        <span class="px-1.5 py-0.5 bg-bg-tertiary text-text-tertiary text-[10px] rounded">8</span>
+                    </button>
+                    <button @click="activeSubTab = 'installed'" :class="activeSubTab === 'installed' ? 'bg-bg-secondary text-text-primary' : 'text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary'" class="w-full px-3 py-2 text-left text-xs font-medium flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="material-icons text-xs" :class="activeSubTab === 'installed' ? 'rotate-90' : ''">chevron_right</span>
+                            <span>Installed</span>
+                        </div>
+                        <span class="px-1.5 py-0.5 bg-bg-tertiary text-text-tertiary text-[10px] rounded">1</span>
+                    </button>
+                </div>
+
+                <!-- Extensions List -->
+                <div class="flex-1 overflow-y-auto">
+                    <div x-show="activeSubTab === 'recommended'" class="divide-y divide-border-subtle">
+                    <!-- Extension Item 1 -->
+                    <div @click="selectedExtension = 'gpt4-conductor'" :class="selectedExtension === 'gpt4-conductor' ? 'bg-bg-secondary border-l-2 border-symphony-primary' : 'border-l-2 border-transparent'" class="p-3 hover:bg-bg-secondary cursor-pointer">
+                        <div class="flex items-start space-x-2">
+                            <div class="w-10 h-10 rounded flex items-center justify-center bg-text-tertiary/10 border border-text-tertiary/20 flex-shrink-0">
+                                <span class="material-icons text-lg text-text-secondary">psychology</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h3 class="text-xs font-semibold text-text-primary truncate">GPT-4 Conductor</h3>
+                                    <button class="px-2 py-0.5 text-[10px] bg-bg-tertiary hover:bg-bg-secondary border border-border-subtle text-text-primary rounded">Install</button>
+                                </div>
+                                <p class="text-[10px] text-text-tertiary truncate">OpenAI</p>
+                                <div class="flex items-center space-x-2 text-[10px] text-text-tertiary mt-1">
+                                    <span class="px-1.5 py-0.5 bg-bg-tertiary text-text-tertiary rounded text-[9px]">Instrument</span>
+                                    <span class="relative px-1.5 py-0.3 bg-gradient-to-r from-symphony-primary/20 to-purple-500/20 text-symphony-primary rounded text-[9px] font-medium border border-symphony-primary/30 overflow-hidden">
+                                        <span class="relative z-10"><i>player</i></span>
+                                        <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent player-shimmer w-full"></span>
+                                    </span>
+                                    <div class="flex items-center space-x-0.5">
+                                        <span class="material-icons text-[10px] text-yellow-500">star</span>
+                                        <span>4.9</span>
+                                    </div>
+                                    <span>1.2M</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Extension Item 2 -->
+                    <div @click="selectedExtension = 'claude-sonnet'" :class="selectedExtension === 'claude-sonnet' ? 'bg-bg-secondary border-l-2 border-symphony-primary' : 'border-l-2 border-transparent'" class="p-3 hover:bg-bg-secondary cursor-pointer">
+                        <div class="flex items-start space-x-2">
+                            <div class="w-10 h-10 rounded flex items-center justify-center bg-text-tertiary/10 border border-text-tertiary/20 flex-shrink-0">
+                                <span class="material-icons text-lg text-text-secondary">psychology</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h3 class="text-xs font-semibold text-text-primary truncate">Claude Sonnet</h3>
+                                    <button class="px-2 py-0.5 text-[10px] bg-bg-tertiary hover:bg-bg-secondary border border-border-subtle text-text-primary rounded">Install</button>
+                                </div>
+                                <p class="text-[10px] text-text-tertiary truncate">Anthropic</p>
+                                <div class="flex items-center space-x-2 text-[10px] text-text-tertiary mt-1">
+                                    <span class="px-1.5 py-0.5 bg-bg-tertiary text-text-tertiary rounded text-[9px]">Instrument</span>
+                                    <span class="relative px-1.5 py-0.3 bg-gradient-to-r from-symphony-primary/20 to-purple-500/20 text-symphony-primary rounded text-[9px] font-medium border border-symphony-primary/30 overflow-hidden">
+                                        <span class="relative z-10"><i>player</i></span>
+                                        <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent player-shimmer w-full"></span>
+                                    </span>
+                                    <div class="flex items-center space-x-0.5"><span class="material-icons text-[10px] text-yellow-500">star</span><span>4.8</span></div>
+                                    <span>850K</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Extension Item 3 -->
+                    <div @click="selectedExtension = 'git-flow'" :class="selectedExtension === 'git-flow' ? 'bg-bg-secondary border-l-2 border-symphony-primary' : 'border-l-2 border-transparent'" class="p-3 hover:bg-bg-secondary cursor-pointer group">
+                        <div class="flex items-start space-x-2">
+                            <div class="w-10 h-10 rounded flex items-center justify-center bg-text-tertiary/10 border border-text-tertiary/20 flex-shrink-0">
+                                <span class="material-icons text-lg text-text-secondary">settings</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h3 class="text-xs font-semibold text-text-primary truncate">Git Flow Pro</h3>
+                                    <button class="px-2 py-0.5 text-[10px] bg-bg-tertiary hover:bg-bg-secondary border border-border-subtle text-text-primary rounded">Install</button>
+                                </div>
+                                <p class="text-[10px] text-text-tertiary truncate">Symphony Team</p>
+                                <div class="flex items-center space-x-2 text-[10px] text-text-tertiary mt-1">
+                                    <span class="px-1.5 py-0.5 bg-bg-tertiary text-text-tertiary rounded text-[9px]">Operator</span>
+                                    <div class="flex items-center space-x-0.5"><span class="material-icons text-[10px] text-yellow-500">star</span><span>4.7</span></div>
+                                    <span>620K</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Extension Item 4 -->
+                    <div @click="selectedExtension = 'nord-theme'" :class="selectedExtension === 'nord-theme' ? 'bg-bg-secondary border-l-2 border-symphony-primary' : 'border-l-2 border-transparent'" class="p-3 hover:bg-bg-secondary cursor-pointer group">
+                        <div class="flex items-start space-x-2">
+                            <div class="w-10 h-10 rounded flex items-center justify-center bg-text-tertiary/10 border border-text-tertiary/20 flex-shrink-0">
+                                <span class="material-icons text-lg text-text-secondary">extension</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h3 class="text-xs font-semibold text-text-primary truncate">Nord Theme</h3>
+                                    <button class="px-2 py-0.5 text-[10px] bg-bg-tertiary hover:bg-bg-secondary border border-border-subtle text-text-secondary rounded">Installed</button>
+                                </div>
+                                <p class="text-[10px] text-text-tertiary truncate">Arctic Studios</p>
+                                <div class="flex items-center space-x-2 text-[10px] text-text-tertiary mt-1">
+                                    <span class="px-1.5 py-0.5 bg-bg-tertiary text-text-tertiary rounded text-[9px]">Motif</span>
+                                    <div class="flex items-center space-x-0.5"><span class="material-icons text-[10px] text-yellow-500">star</span><span>4.9</span></div>
+                                    <span>1.5M</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Extension Item 5 -->
+                    <div @click="selectedExtension = 'llama'" :class="selectedExtension === 'llama' ? 'bg-bg-secondary border-l-2 border-symphony-primary' : 'border-l-2 border-transparent'" class="p-3 hover:bg-bg-secondary cursor-pointer group">
+                        <div class="flex items-start space-x-2">
+                            <div class="w-10 h-10 rounded flex items-center justify-center bg-text-tertiary/10 border border-text-tertiary/20 flex-shrink-0">
+                                <span class="material-icons text-lg text-text-secondary">psychology</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h3 class="text-xs font-semibold text-text-primary truncate">Llama 3.1</h3>
+                                    <button class="px-2 py-0.5 text-[10px] bg-bg-tertiary hover:bg-bg-secondary border border-border-subtle text-text-primary rounded">Install</button>
+                                </div>
+                                <p class="text-[10px] text-text-tertiary truncate">Meta</p>
+                                <div class="flex items-center space-x-2 text-[10px] text-text-tertiary mt-1">
+                                    <span class="px-1.5 py-0.5 bg-bg-tertiary text-text-tertiary rounded text-[9px]">Instrument</span>
+                                    <div class="flex items-center space-x-0.5"><span class="material-icons text-[10px] text-yellow-500">star</span><span>4.6</span></div>
+                                    <span>420K</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Extension Item 6 -->
+                    <div @click="selectedExtension = 'docker'" :class="selectedExtension === 'docker' ? 'bg-bg-secondary border-l-2 border-symphony-primary' : 'border-l-2 border-transparent'" class="p-3 hover:bg-bg-secondary cursor-pointer group">
+                        <div class="flex items-start space-x-2">
+                            <div class="w-10 h-10 rounded flex items-center justify-center bg-text-tertiary/10 border border-text-tertiary/20 flex-shrink-0">
+                                <span class="material-icons text-lg text-text-secondary">settings</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h3 class="text-xs font-semibold text-text-primary truncate">Docker Compose</h3>
+                                    <button class="px-2 py-0.5 text-[10px] bg-bg-tertiary hover:bg-bg-secondary border border-border-subtle text-text-primary rounded">Install</button>
+                                </div>
+                                <p class="text-[10px] text-text-tertiary truncate">Docker Inc</p>
+                                <div class="flex items-center space-x-2 text-[10px] text-text-tertiary mt-1">
+                                    <span class="px-1.5 py-0.5 bg-bg-tertiary text-text-tertiary rounded text-[9px]">Operator</span>
+                                    <div class="flex items-center space-x-0.5"><span class="material-icons text-[10px] text-yellow-500">star</span><span>4.5</span></div>
+                                    <span>380K</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Extension Item 7 -->
+                    <div @click="selectedExtension = 'material-icons'" :class="selectedExtension === 'material-icons' ? 'bg-bg-secondary border-l-2 border-symphony-primary' : 'border-l-2 border-transparent'" class="p-3 hover:bg-bg-secondary cursor-pointer group">
+                        <div class="flex items-start space-x-2">
+                            <div class="w-10 h-10 rounded flex items-center justify-center bg-text-tertiary/10 border border-text-tertiary/20 flex-shrink-0">
+                                <span class="material-icons text-lg text-text-secondary">extension</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h3 class="text-xs font-semibold text-text-primary truncate">Material Icons</h3>
+                                    <button class="px-2 py-0.5 text-[10px] bg-bg-tertiary hover:bg-bg-secondary border border-border-subtle text-text-primary rounded">Install</button>
+                                </div>
+                                <p class="text-[10px] text-text-tertiary truncate">Google</p>
+                                <div class="flex items-center space-x-2 text-[10px] text-text-tertiary mt-1">
+                                    <span class="px-1.5 py-0.5 bg-bg-tertiary text-text-tertiary rounded text-[9px]">Motif</span>
+                                    <div class="flex items-center space-x-0.5"><span class="material-icons text-[10px] text-yellow-500">star</span><span>4.8</span></div>
+                                    <span>920K</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Extension Item 8 -->
+                    <div @click="selectedExtension = 'prettier'" :class="selectedExtension === 'prettier' ? 'bg-bg-secondary border-l-2 border-symphony-primary' : 'border-l-2 border-transparent'" class="p-3 hover:bg-bg-secondary cursor-pointer group">
+                        <div class="flex items-start space-x-2">
+                            <div class="w-10 h-10 rounded flex items-center justify-center bg-text-tertiary/10 border border-text-tertiary/20 flex-shrink-0">
+                                <span class="material-icons text-lg text-text-secondary">settings</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h3 class="text-xs font-semibold text-text-primary truncate">Prettier Formatter</h3>
+                                    <button class="px-2 py-0.5 text-[10px] bg-bg-tertiary hover:bg-bg-secondary border border-border-subtle text-text-primary rounded">Install</button>
+                                </div>
+                                <p class="text-[10px] text-text-tertiary truncate">Prettier</p>
+                                <div class="flex items-center space-x-2 text-[10px] text-text-tertiary mt-1">
+                                    <span class="px-1.5 py-0.5 bg-bg-tertiary text-text-tertiary rounded text-[9px]">Operator</span>
+                                    <div class="flex items-center space-x-0.5"><span class="material-icons text-[10px] text-yellow-500">star</span><span>4.7</span></div>
+                                    <span>2.1M</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- Installed Tab -->
+                    <div x-show="activeSubTab === 'installed'" class="divide-y divide-border-subtle" style="display: none;">
+                        <!-- Installed Extension -->
+                        <div @click="selectedExtension = 'nord-theme'" :class="selectedExtension === 'nord-theme' ? 'bg-bg-secondary border-l-2 border-symphony-primary' : 'border-l-2 border-transparent'" class="p-3 hover:bg-bg-secondary cursor-pointer group">
+                            <div class="flex items-start space-x-2">
+                                    <div class="w-10 h-10 rounded flex items-center justify-center bg-text-tertiary/10 border border-text-tertiary/20 flex-shrink-0">
+                                    <span class="material-icons text-lg text-text-secondary">extension</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <h3 class="text-xs font-semibold text-text-primary truncate">Nord Theme</h3>
+                                        <button class="px-2 py-0.5 text-[10px] bg-bg-tertiary hover:bg-bg-secondary border border-border-subtle text-text-secondary rounded">Installed</button>
+                                    </div>
+                                    <p class="text-[10px] text-text-tertiary truncate">Arctic Studios</p>
+                                    <div class="flex items-center space-x-2 text-[10px] text-text-tertiary mt-1">
+                                        <span class="px-1.5 py-0.5 bg-bg-tertiary text-text-tertiary rounded text-[9px]">Motif</span>
+                                        <div class="flex items-center space-x-0.5"><span class="material-icons text-[10px] text-yellow-500">star</span><span>4.9</span></div>
+                                        <span>1.5M</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Panel - Extension Details (75%) -->
+            <main class="flex-1 bg-bg-primary overflow-y-auto">
+                <div x-show="selectedExtension === 'gpt4-conductor'" class="p-8">
+                    <div class="max-w-4xl">
+                        <!-- Header -->
+                        <div class="flex items-start space-x-4 mb-6">
+                            <div class="w-20 h-20 rounded-lg flex items-center justify-center bg-symphony-primary/10 border border-symphony-primary/20 flex-shrink-0">
+                                <span class="material-icons text-symphony-primary" style="font-size: 48px;">psychology</span>
+                            </div>
+                            <div class="flex-1">
+                                <h1 class="text-2xl font-bold text-text-primary mb-1">GPT-4 Conductor</h1>
+                                <p class="text-sm text-text-secondary mb-3">Advanced AI orchestration with GPT-4 integration</p>
+                                <div class="flex items-center space-x-4 text-sm">
+                                    <div class="flex items-center space-x-1">
+                                        <span class="material-icons text-sm text-yellow-500">star</span>
+                                        <span class="text-text-primary font-medium">4.9</span>
+                                        <span class="text-text-tertiary">(2,345 reviews)</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1">
+                                        <span class="material-icons text-sm text-symphony-primary">download</span>
+                                        <span class="text-text-secondary">1.2M downloads</span>
+                                    </div>
+                                    <span class="px-2 py-1 bg-symphony-primary/10 text-symphony-primary text-xs rounded">Instrument</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <!-- Show Install button with dropdown for non-installed extensions -->
+                                <div x-show="!installedExtensions.includes(selectedExtension) && !installingExtension" class="relative flex">
+                                    <button @click="installExtension()"
+                                            class="px-4 py-2 bg-symphony-primary hover:bg-symphony-dark text-white text-sm font-medium rounded-l-md transition-all flex items-center space-x-1.5">
+                                        <span class="material-icons text-base">download</span>
+                                        <span>Install</span>
+                                    </button>
+                                    <button @click="installMenuOpen = !installMenuOpen"
+                                            class="px-2 py-2 bg-symphony-primary hover:bg-symphony-dark text-white text-sm font-medium rounded-r-md border-l border-white/20 transition-all">
+                                        <span class="material-icons text-base">arrow_drop_down</span>
+                                    </button>
+                                    
+                                    <!-- Install Options Menu -->
+                                    <div x-show="installMenuOpen"
+                                         x-transition:enter="transition ease-out duration-200"
+                                         x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+                                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                         x-transition:leave="transition ease-in duration-150"
+                                         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                                         x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
+                                         @click.away="installMenuOpen = false"
+                                         class="absolute top-full right-0 mt-2 w-56 bg-bg-secondary border border-border-subtle rounded-lg shadow-2xl overflow-hidden z-50"
+                                         style="display: none;">
+                                        <button @click="installExtension(false)" class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-2">
+                                            <span class="material-icons text-base">download</span>
+                                            <span>Install Only</span>
+                                        </button>
+                                        <button @click="installExtension(true)" class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-2 border-t border-border-subtle">
+                                            <span class="material-icons text-base">bolt</span>
+                                            <span>Install & Register</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Show Installing progress -->
+                                <button x-show="installingExtension" 
+                                        disabled
+                                        class="px-4 py-2 bg-symphony-primary/50 text-white text-sm font-medium rounded-md flex items-center space-x-1.5 cursor-not-allowed">
+                                    <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span>Installing...</span>
+                                </button>
+                                
+                                <!-- Show Installed status + Register button for installed extensions -->
+                                <div x-show="installedExtensions.includes(selectedExtension) && !installingExtension" class="flex items-center space-x-2" style="display: none;">
+                                    <div class="px-3 py-2 bg-bg-tertiary border border-border-subtle text-text-secondary text-sm font-medium rounded-md flex items-center space-x-1.5">
+                                        <span class="material-icons text-base">check_circle</span>
+                                        <span>Installed</span>
+                                    </div>
+                                    <button x-show="!registeredExtensions.includes(selectedExtension)"
+                                            @click="registerExtension()"
+                                            class="px-4 py-2 bg-symphony-primary hover:bg-symphony-dark text-white text-sm font-medium rounded-md transition-all flex items-center space-x-1.5">
+                                        <span class="material-icons text-base">app_registration</span>
+                                        <span>Register to Conductor</span>
+                                    </button>
+                                    <div x-show="registeredExtensions.includes(selectedExtension)" 
+                                         class="px-3 py-2 bg-green-600/20 border border-green-600/30 text-green-500 text-sm font-medium rounded-md flex items-center space-x-1.5">
+                                        <span class="material-icons text-base">verified</span>
+                                        <span>Registered</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tabs -->
+                        <div class="border-b border-border-subtle mb-6">
+                            <div class="flex space-x-6">
+                                <button @click="activeDetailTab = 'details'" :class="activeDetailTab === 'details' ? 'text-symphony-primary border-b-2 border-symphony-primary' : 'text-text-tertiary hover:text-text-primary border-b-2 border-transparent'" class="px-1 py-3 text-sm font-medium">Details</button>
+                                <button @click="activeDetailTab = 'changelog'" :class="activeDetailTab === 'changelog' ? 'text-symphony-primary border-b-2 border-symphony-primary' : 'text-text-tertiary hover:text-text-primary border-b-2 border-transparent'" class="px-1 py-3 text-sm font-medium">Changelog</button>
+                                <button @click="activeDetailTab = 'reviews'" :class="activeDetailTab === 'reviews' ? 'text-symphony-primary border-b-2 border-symphony-primary' : 'text-text-tertiary hover:text-text-primary border-b-2 border-transparent'" class="px-1 py-3 text-sm font-medium">Reviews</button>
+                            </div>
+                        </div>
+
+                        <!-- Details Tab -->
+                        <div x-show="activeDetailTab === 'details'">
+                        <!-- Description -->
+                        <section class="mb-8">
+                            <h2 class="text-lg font-semibold text-text-primary mb-3">Description</h2>
+                            <div class="text-sm text-text-secondary space-y-3">
+                                <p>GPT-4 Conductor is a powerful AI orchestration extension that brings OpenAI's GPT-4 capabilities directly into Symphony. This extension enables intelligent code generation, refactoring, and workflow automation with state-of-the-art language understanding.</p>
+                                <p>Perfect for developers who want to leverage cutting-edge AI to accelerate their development workflow, reduce repetitive tasks, and improve code quality through intelligent suggestions and automated refactoring.</p>
+                            </div>
+                        </section>
+
+                        <!-- Features -->
+                        <section class="mb-8">
+                            <h2 class="text-lg font-semibold text-text-primary mb-3">Features</h2>
+                            <ul class="space-y-2 text-sm text-text-secondary">
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons text-sm text-symphony-primary mt-0.5">check_circle</span>
+                                    <span>Intelligent code generation with context awareness</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons text-sm text-symphony-primary mt-0.5">check_circle</span>
+                                    <span>Automated refactoring and code optimization</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons text-sm text-symphony-primary mt-0.5">check_circle</span>
+                                    <span>Natural language to code conversion</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons text-sm text-symphony-primary mt-0.5">check_circle</span>
+                                    <span>Multi-language support (Python, JavaScript, Rust, and more)</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons text-sm text-symphony-primary mt-0.5">check_circle</span>
+                                    <span>Workflow automation with AI-driven decision making</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons text-sm text-symphony-primary mt-0.5">check_circle</span>
+                                    <span>Real-time code suggestions and completions</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons text-sm text-symphony-primary mt-0.5">check_circle</span>
+                                    <span>Integrated debugging assistance with error explanation</span>
+                                </li>
+                                <li class="flex items-start space-x-2">
+                                    <span class="material-icons text-sm text-symphony-primary mt-0.5">check_circle</span>
+                                    <span>Documentation generation from code</span>
+                                </li>
+                            </ul>
+                        </section>
+
+                        <!-- Use Cases -->
+                        <section class="mb-8">
+                            <h2 class="text-lg font-semibold text-text-primary mb-3">Use Cases</h2>
+                            <div class="grid grid-cols-1 gap-4">
+                                <div class="bg-bg-secondary rounded-lg p-4">
+                                    <h3 class="text-sm font-semibold text-text-primary mb-2 flex items-center space-x-2">
+                                        <span class="material-icons text-sm text-symphony-primary">code</span>
+                                        <span>Rapid Prototyping</span>
+                                    </h3>
+                                    <p class="text-xs text-text-secondary">Quickly generate boilerplate code and implement features using natural language descriptions. Perfect for hackathons and proof-of-concepts.</p>
+                                </div>
+                                <div class="bg-bg-secondary rounded-lg p-4">
+                                    <h3 class="text-sm font-semibold text-text-primary mb-2 flex items-center space-x-2">
+                                        <span class="material-icons text-sm text-symphony-primary">auto_fix_high</span>
+                                        <span>Code Refactoring</span>
+                                    </h3>
+                                    <p class="text-xs text-text-secondary">Modernize legacy code, improve performance, and apply best practices automatically with AI-powered suggestions.</p>
+                                </div>
+                                <div class="bg-bg-secondary rounded-lg p-4">
+                                    <h3 class="text-sm font-semibold text-text-primary mb-2 flex items-center space-x-2">
+                                        <span class="material-icons text-sm text-symphony-primary">school</span>
+                                        <span>Learning & Exploration</span>
+                                    </h3>
+                                    <p class="text-xs text-text-secondary">Learn new programming languages and frameworks with AI-guided examples and explanations tailored to your experience level.</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Getting Started -->
+                        <section class="mb-8">
+                            <h2 class="text-lg font-semibold text-text-primary mb-3">Getting Started</h2>
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 rounded-full bg-symphony-primary/20 flex items-center justify-center flex-shrink-0">
+                                        <span class="text-xs font-semibold text-symphony-primary">1</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-semibold text-text-primary mb-1">Install the Extension</h3>
+                                        <p class="text-xs text-text-secondary">Click the Install button above to add GPT-4 Conductor to your Symphony workspace.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 rounded-full bg-symphony-primary/20 flex items-center justify-center flex-shrink-0">
+                                        <span class="text-xs font-semibold text-symphony-primary">2</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-semibold text-text-primary mb-1">Configure API Key</h3>
+                                        <p class="text-xs text-text-secondary">Add your OpenAI API key in Settings → Extensions → GPT-4 Conductor. Get your key from <a href="#" class="text-symphony-primary hover:underline">platform.openai.com</a>.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 rounded-full bg-symphony-primary/20 flex items-center justify-center flex-shrink-0">
+                                        <span class="text-xs font-semibold text-symphony-primary">3</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-semibold text-text-primary mb-1">Start Coding</h3>
+                                        <p class="text-xs text-text-secondary">Use Ctrl+Shift+G (Cmd+Shift+G on Mac) to open the AI assistant panel and start generating code.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Requirements -->
+                        <section class="mb-8">
+                            <h2 class="text-lg font-semibold text-text-primary mb-3">Requirements</h2>
+                            <div class="bg-bg-secondary rounded-lg p-4 text-sm text-text-secondary space-y-2">
+                                <div class="flex items-center space-x-2">
+                                    <span class="material-icons text-sm text-text-tertiary">info</span>
+                                    <span>Symphony v0.1.5 or higher</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="material-icons text-sm text-text-tertiary">key</span>
+                                    <span>OpenAI API key required</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="material-icons text-sm text-text-tertiary">memory</span>
+                                    <span>Minimum 4GB RAM recommended</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="material-icons text-sm text-text-tertiary">storage</span>
+                                    <span>50MB disk space</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Support & Resources -->
+                        <section class="mb-8">
+                            <h2 class="text-lg font-semibold text-text-primary mb-3">Support & Resources</h2>
+                            <div class="grid grid-cols-2 gap-3">
+                                <a href="#" class="flex items-center space-x-2 p-3 bg-bg-secondary hover:bg-bg-tertiary rounded-lg text-sm text-text-secondary hover:text-text-primary">
+                                    <span class="material-icons text-sm">description</span>
+                                    <span>Documentation</span>
+                                </a>
+                                <a href="#" class="flex items-center space-x-2 p-3 bg-bg-secondary hover:bg-bg-tertiary rounded-lg text-sm text-text-secondary hover:text-text-primary">
+                                    <span class="material-icons text-sm">bug_report</span>
+                                    <span>Report Issue</span>
+                                </a>
+                                <a href="#" class="flex items-center space-x-2 p-3 bg-bg-secondary hover:bg-bg-tertiary rounded-lg text-sm text-text-secondary hover:text-text-primary">
+                                    <span class="material-icons text-sm">forum</span>
+                                    <span>Community Forum</span>
+                                </a>
+                                <a href="#" class="flex items-center space-x-2 p-3 bg-bg-secondary hover:bg-bg-tertiary rounded-lg text-sm text-text-secondary hover:text-text-primary">
+                                    <span class="material-icons text-sm">code</span>
+                                    <span>Source Code</span>
+                                </a>
+                            </div>
+                        </section>
+
+                        <!-- More Info -->
+                        <section>
+                            <h2 class="text-lg font-semibold text-text-primary mb-3">More Information</h2>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-text-tertiary">Publisher</span>
+                                    <p class="text-text-primary font-medium">OpenAI</p>
+                                </div>
+                                <div>
+                                    <span class="text-text-tertiary">Version</span>
+                                    <p class="text-text-primary font-medium">1.2.0</p>
+                                </div>
+                                <div>
+                                    <span class="text-text-tertiary">Last Updated</span>
+                                    <p class="text-text-primary font-medium">2 days ago</p>
+                                </div>
+                                <div>
+                                    <span class="text-text-tertiary">License</span>
+                                    <p class="text-text-primary font-medium">MIT</p>
+                                </div>
+                                <div>
+                                    <span class="text-text-tertiary">Category</span>
+                                    <p class="text-text-primary font-medium">Instrument</p>
+                                </div>
+                                <div>
+                                    <span class="text-text-tertiary">Size</span>
+                                    <p class="text-text-primary font-medium">48.2 MB</p>
+                                </div>
+                            </div>
+                        </section>
+                        </div>
+
+                        <!-- Changelog Tab -->
+                        <div x-show="activeDetailTab === 'changelog'" style="display: none;">
+                            <section class="mb-8">
+                                <div class="space-y-6">
+                                    <!-- Version 1.2.0 -->
+                                    <div class="border-l-2 border-symphony-primary pl-4">
+                                        <div class="flex items-center space-x-3 mb-2">
+                                            <h3 class="text-base font-semibold text-text-primary">Version 1.2.0</h3>
+                                            <span class="px-2 py-0.5 bg-green-500/10 text-green-500 text-xs rounded">Latest</span>
+                                            <span class="text-xs text-text-tertiary">2 days ago</span>
+                                        </div>
+                                        <ul class="space-y-2 text-sm text-text-secondary">
+                                            <li class="flex items-start space-x-2">
+                                                <span class="text-green-500 mt-0.5">✓</span>
+                                                <span><strong>Added:</strong> Support for GPT-4 Turbo model with improved performance</span>
+                                            </li>
+                                            <li class="flex items-start space-x-2">
+                                                <span class="text-green-500 mt-0.5">✓</span>
+                                                <span><strong>Added:</strong> New code refactoring suggestions for Rust and TypeScript</span>
+                                            </li>
+                                            <li class="flex items-start space-x-2">
+                                                <span class="text-blue-500 mt-0.5">↻</span>
+                                                <span><strong>Improved:</strong> Context awareness for multi-file operations</span>
+                                            </li>
+                                            <li class="flex items-start space-x-2">
+                                                <span class="text-red-500 mt-0.5">✗</span>
+                                                <span><strong>Fixed:</strong> Memory leak in long-running sessions</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Version 1.1.5 -->
+                                    <div class="border-l-2 border-border-subtle pl-4">
+                                        <div class="flex items-center space-x-3 mb-2">
+                                            <h3 class="text-base font-semibold text-text-primary">Version 1.1.5</h3>
+                                            <span class="text-xs text-text-tertiary">1 week ago</span>
+                                        </div>
+                                        <ul class="space-y-2 text-sm text-text-secondary">
+                                            <li class="flex items-start space-x-2">
+                                                <span class="text-blue-500 mt-0.5">↻</span>
+                                                <span><strong>Improved:</strong> Response time reduced by 30%</span>
+                                            </li>
+                                            <li class="flex items-start space-x-2">
+                                                <span class="text-red-500 mt-0.5">✗</span>
+                                                <span><strong>Fixed:</strong> Code completion not working in nested functions</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Version 1.1.0 -->
+                                    <div class="border-l-2 border-border-subtle pl-4">
+                                        <div class="flex items-center space-x-3 mb-2">
+                                            <h3 class="text-base font-semibold text-text-primary">Version 1.1.0</h3>
+                                            <span class="text-xs text-text-tertiary">3 weeks ago</span>
+                                        </div>
+                                        <ul class="space-y-2 text-sm text-text-secondary">
+                                            <li class="flex items-start space-x-2">
+                                                <span class="text-green-500 mt-0.5">✓</span>
+                                                <span><strong>Added:</strong> Natural language to code conversion</span>
+                                            </li>
+                                            <li class="flex items-start space-x-2">
+                                                <span class="text-green-500 mt-0.5">✓</span>
+                                                <span><strong>Added:</strong> Workflow automation features</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
+                        <!-- Reviews Tab -->
+                        <div x-show="activeDetailTab === 'reviews'" style="display: none;">
+                            <section class="mb-8">
+                                <!-- Rating Summary -->
+                                <div class="bg-bg-secondary rounded-lg p-6 mb-6">
+                                    <div class="flex items-center space-x-8">
+                                        <div class="text-center">
+                                            <div class="text-4xl font-bold text-text-primary mb-1">4.9</div>
+                                            <div class="flex items-center justify-center space-x-1 mb-1">
+                                                <span class="material-icons text-sm text-yellow-500">star</span>
+                                                <span class="material-icons text-sm text-yellow-500">star</span>
+                                                <span class="material-icons text-sm text-yellow-500">star</span>
+                                                <span class="material-icons text-sm text-yellow-500">star</span>
+                                                <span class="material-icons text-sm text-yellow-500">star_half</span>
+                                            </div>
+                                            <div class="text-xs text-text-tertiary">2,345 reviews</div>
+                                        </div>
+                                        <div class="flex-1 space-y-2">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-xs text-text-tertiary w-8">5★</span>
+                                                <div class="flex-1 h-2 bg-bg-tertiary rounded-full overflow-hidden">
+                                                    <div class="h-full bg-yellow-500" style="width: 85%"></div>
+                                                </div>
+                                                <span class="text-xs text-text-tertiary w-12">1,993</span>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-xs text-text-tertiary w-8">4★</span>
+                                                <div class="flex-1 h-2 bg-bg-tertiary rounded-full overflow-hidden">
+                                                    <div class="h-full bg-yellow-500" style="width: 10%"></div>
+                                                </div>
+                                                <span class="text-xs text-text-tertiary w-12">235</span>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-xs text-text-tertiary w-8">3★</span>
+                                                <div class="flex-1 h-2 bg-bg-tertiary rounded-full overflow-hidden">
+                                                    <div class="h-full bg-yellow-500" style="width: 3%"></div>
+                                                </div>
+                                                <span class="text-xs text-text-tertiary w-12">70</span>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-xs text-text-tertiary w-8">2★</span>
+                                                <div class="flex-1 h-2 bg-bg-tertiary rounded-full overflow-hidden">
+                                                    <div class="h-full bg-yellow-500" style="width: 1%"></div>
+                                                </div>
+                                                <span class="text-xs text-text-tertiary w-12">23</span>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-xs text-text-tertiary w-8">1★</span>
+                                                <div class="flex-1 h-2 bg-bg-tertiary rounded-full overflow-hidden">
+                                                    <div class="h-full bg-yellow-500" style="width: 1%"></div>
+                                                </div>
+                                                <span class="text-xs text-text-tertiary w-12">24</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Reviews List -->
+                                <div class="space-y-4">
+                                    <!-- Review 1 -->
+                                    <div class="border-b border-border-subtle pb-4">
+                                        <div class="flex items-start space-x-3 mb-2">
+                                            <div class="w-8 h-8 rounded-full bg-symphony-primary/20 flex items-center justify-center text-symphony-primary text-xs font-semibold">
+                                                JD
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="flex items-center space-x-2 mb-1">
+                                                    <span class="text-sm font-semibold text-text-primary">John Doe</span>
+                                                    <div class="flex items-center">
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                    </div>
+                                                    <span class="text-xs text-text-tertiary">3 days ago</span>
+                                                </div>
+                                                <p class="text-sm text-text-secondary">Absolutely game-changing! GPT-4 Conductor has transformed my workflow. The code generation is incredibly accurate and saves me hours every day.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Review 2 -->
+                                    <div class="border-b border-border-subtle pb-4">
+                                        <div class="flex items-start space-x-3 mb-2">
+                                            <div class="w-8 h-8 rounded-full bg-symphony-primary/20 flex items-center justify-center text-symphony-primary text-xs font-semibold">
+                                                SK
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="flex items-center space-x-2 mb-1">
+                                                    <span class="text-sm font-semibold text-text-primary">Sarah Kim</span>
+                                                    <div class="flex items-center">
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                    </div>
+                                                    <span class="text-xs text-text-tertiary">1 week ago</span>
+                                                </div>
+                                                <p class="text-sm text-text-secondary">Best AI extension for Symphony. The refactoring suggestions are spot-on and the natural language to code feature is mind-blowing.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Review 3 -->
+                                    <div class="border-b border-border-subtle pb-4">
+                                        <div class="flex items-start space-x-3 mb-2">
+                                            <div class="w-8 h-8 rounded-full bg-symphony-primary/20 flex items-center justify-center text-symphony-primary text-xs font-semibold">
+                                                MR
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="flex items-center space-x-2 mb-1">
+                                                    <span class="text-sm font-semibold text-text-primary">Mike Rodriguez</span>
+                                                    <div class="flex items-center">
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                        <span class="material-icons text-xs text-yellow-500">star</span>
+                                                        <span class="material-icons text-xs text-text-tertiary">star</span>
+                                                    </div>
+                                                    <span class="text-xs text-text-tertiary">2 weeks ago</span>
+                                                </div>
+                                                <p class="text-sm text-text-secondary">Great extension overall. Sometimes the suggestions need refinement, but it's still incredibly helpful for rapid prototyping.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <footer class="bg-bg-secondary border-t border-border-subtle px-4 py-1.5 flex items-center justify-between text-xs" x-data="{ contextMenu: false, contextX: 0, contextY: 0 }" @contextmenu.prevent="contextMenu = true; contextX = $event.clientX; contextY = $event.clientY" @click.away="contextMenu = false">
+            <div class="flex items-center space-x-4">
+                <button class="flex items-center space-x-1.5 hover:bg-bg-tertiary px-2 py-1 rounded text-text-secondary hover:text-text-primary">
+                    <span class="material-icons text-sm">source</span>
+                    <span>main</span>
+                </button>
+                <div class="flex items-center space-x-2 text-text-tertiary">
+                    <div class="flex items-center space-x-1">
+                        <span class="material-icons text-sm">cloud_done</span>
+                        <span>Synced</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-1.5 text-text-tertiary">
+                    <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                    <span>Conductor Ready</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="px-2 py-1 rounded text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary">
+                    <span>🎼 Normal Mode</span>
+                </button>
+                <button class="px-2 py-1 rounded text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary">UTF-8</button>
+                <div class="text-text-tertiary flex items-center space-x-1">
+                    <span class="material-icons text-sm">info</span>
+                    <span>v0.1.7</span>
+                </div>
+            </div>
+            
+            <!-- Bottom Bar Context Menu -->
+            <div x-show="contextMenu" 
+                 :style="`position: fixed; top: ${contextY}px; left: ${contextX}px; transform: translate(-50%, calc(-100% - 8px));`"
+                 class="w-64 glass backdrop-blur-xl border border-border-subtle rounded-xl shadow-2xl z-50"
+                 style="display: none;">
+                <div class="p-3">
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Editor Version</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Encoding</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Line/Column</span>
+                        <span class="text-xs text-text-tertiary opacity-30">○</span>
+                    </button>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Git Branch</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Language Mode</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <div class="border-t border-border-subtle my-2"></div>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Conductor Status</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Sync Status</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg flex items-center justify-between transition-all">
+                        <span>Notifications</span>
+                        <span class="text-xs text-symphony-primary">✓</span>
+                    </button>
+                    <div class="border-t border-border-subtle my-2"></div>
+                    <button class="w-full px-4 py-2.5 text-left text-sm text-text-primary hover:bg-symphony-primary/10 rounded-lg transition-all">
+                        Customize Status Bar...
+                    </button>
+                </div>
+            </div>
+        </footer>
+        
+        <!-- Filter Modal -->
+        <div x-show="filterModalOpen"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
+             style="display: none;"
+             @click.self="filterModalOpen = false">
+            <div x-show="filterModalOpen"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-95"
+                 class="bg-bg-secondary border border-border-subtle rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+                
+                <!-- Modal Header -->
+                <div class="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-text-primary">Filter Extensions</h2>
+                    <button @click="filterModalOpen = false" class="p-1 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary">
+                        <span class="material-icons text-lg">close</span>
+                    </button>
+                </div>
+                
+                <!-- Modal Content -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                    <!-- Price Range Filter -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-text-primary mb-3">Price Range</h3>
+                        <div class="space-y-2">
+                            <button @click="filters.payment = 'all'" :class="filters.payment === 'all' ? 'bg-symphony-primary text-white' : 'bg-bg-tertiary text-text-secondary hover:bg-bg-tertiary/70'" class="w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors">All Extensions</button>
+                            <button @click="filters.payment = 'free'" :class="filters.payment === 'free' ? 'bg-symphony-primary text-white' : 'bg-bg-tertiary text-text-secondary hover:bg-bg-tertiary/70'" class="w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors">Free Only</button>
+                            <button @click="filters.payment = 'paid'" :class="filters.payment === 'paid' ? 'bg-symphony-primary text-white' : 'bg-bg-tertiary text-text-secondary hover:bg-bg-tertiary/70'" class="w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors">Paid Only</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Player Filter -->
+                    <div>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" x-model="filters.playerOnly" class="w-4 h-4 rounded border-border-subtle bg-bg-tertiary checked:bg-symphony-primary focus:ring-0 cursor-pointer">
+                            <div>
+                                <span class="text-sm font-semibold text-text-primary">Player Extensions Only</span>
+                                <p class="text-xs text-text-tertiary">Show only extensions registerable with Conductor</p>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <!-- Extension Type Filter -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-text-primary mb-3">Extension Type</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-bg-tertiary">
+                                <input type="checkbox" value="instrument" x-model="filters.types" class="w-4 h-4 rounded border-border-subtle bg-bg-tertiary checked:bg-symphony-primary focus:ring-0 cursor-pointer">
+                                <span class="text-sm text-text-primary">🎻 Instruments (AI/ML Models)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-bg-tertiary">
+                                <input type="checkbox" value="operator" x-model="filters.types" class="w-4 h-4 rounded border-border-subtle bg-bg-tertiary checked:bg-symphony-primary focus:ring-0 cursor-pointer">
+                                <span class="text-sm text-text-primary">⚙️ Operators (Workflow Tools)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-bg-tertiary">
+                                <input type="checkbox" value="motif" x-model="filters.types" class="w-4 h-4 rounded border-border-subtle bg-bg-tertiary checked:bg-symphony-primary focus:ring-0 cursor-pointer">
+                                <span class="text-sm text-text-primary">🧩 Motifs (UI/Themes)</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Rating Filter -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-text-primary mb-3">Minimum Rating</h3>
+                        <div class="flex items-center space-x-2">
+                            <template x-for="star in [1,2,3,4,5]" :key="star">
+                                <button class="p-1">
+                                    <span class="material-icons text-lg text-yellow-500">star</span>
+                                </button>
+                            </template>
+                            <span class="text-sm text-text-secondary ml-2">& Up</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Downloads Filter -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-text-primary mb-3">Popularity</h3>
+                        <div class="space-y-2">
+                            <button class="w-full px-3 py-2 rounded-lg text-sm font-medium bg-bg-tertiary text-text-secondary hover:bg-bg-tertiary/70 transition-colors text-left">1M+ Downloads</button>
+                            <button class="w-full px-3 py-2 rounded-lg text-sm font-medium bg-bg-tertiary text-text-secondary hover:bg-bg-tertiary/70 transition-colors text-left">500K+ Downloads</button>
+                            <button class="w-full px-3 py-2 rounded-lg text-sm font-medium bg-bg-tertiary text-text-secondary hover:bg-bg-tertiary/70 transition-colors text-left">100K+ Downloads</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Publisher Filter -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-text-primary mb-3">Publisher</h3>
+                        <input type="text" placeholder="Search publishers..." class="w-full px-3 py-2 bg-bg-tertiary border border-border-subtle rounded-lg text-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50">
+                    </div>
+                </div>
+                
+                <!-- Modal Footer -->
+                <div class="px-6 py-4 border-t border-border-subtle flex items-center justify-between">
+                    <button @click="filters = { priceRange: [0, 100], payment: 'all', playerOnly: false, types: [] }" class="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
+                        Reset Filters
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <button @click="filterModalOpen = false" class="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
+                            Cancel
+                        </button>
+                        <button @click="filterModalOpen = false" class="px-6 py-2 bg-symphony-primary hover:bg-symphony-dark text-white text-sm font-medium rounded-lg transition-colors">
+                            Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

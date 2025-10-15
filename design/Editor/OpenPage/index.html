@@ -729,7 +729,7 @@ This uses **Result** type for error handling and the **?** operator for propagat
                     <button :class="activeSidebar === 'orchestra' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="AI Orchestra" @click="activeSidebar = 'orchestra'">
                         <span class="material-icons text-lg">smart_toy</span>
                     </button>
-                    <button :class="activeSidebar === 'extensions' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Extensions" @click="activeSidebar = 'extensions'">
+                    <button :class="activeSidebar === 'extensions' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Extensions" @click="window.location.href = '../OrchestraKit/index.html'">
                         <span class="material-icons text-lg">extension</span>
                     </button>
                 </div>
