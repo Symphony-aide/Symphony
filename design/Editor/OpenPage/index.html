@@ -151,6 +151,32 @@
     activeSidebar: 'explorer',
     activeMode: 'normal',
     profileDropdownOpen: false,
+    showAllProjectsMenu: false,
+    showProjects: true,
+    openTabs: ['welcome', 'getting-started', 'documentation'],
+    recentProjects: [
+        { name: 'symphony-ide', path: '/projects/symphony-ide', language: 'Rust', lastOpened: '2 hours ago', icon: 'folder' },
+        { name: 'my-rust-project', path: '/projects/my-rust-project', language: 'Rust', lastOpened: 'Yesterday', icon: 'folder' },
+        { name: 'web-dashboard', path: '/projects/web-dashboard', language: 'TypeScript', lastOpened: '3 days ago', icon: 'folder' }
+    ],
+    allProjects: [
+        { name: 'symphony-ide', path: '/projects/symphony-ide', language: 'Rust', lastOpened: '2 hours ago', icon: 'folder' },
+        { name: 'my-rust-project', path: '/projects/my-rust-project', language: 'Rust', lastOpened: 'Yesterday', icon: 'folder' },
+        { name: 'web-dashboard', path: '/projects/web-dashboard', language: 'TypeScript', lastOpened: '3 days ago', icon: 'folder' },
+        { name: 'react-native-app', path: '/projects/react-native-app', language: 'JavaScript', lastOpened: '1 week ago', icon: 'folder' },
+        { name: 'python-ml-toolkit', path: '/projects/python-ml-toolkit', language: 'Python', lastOpened: '2 weeks ago', icon: 'folder' },
+        { name: 'go-microservice', path: '/projects/go-microservice', language: 'Go', lastOpened: '3 weeks ago', icon: 'folder' },
+        { name: 'vue-admin-panel', path: '/projects/vue-admin-panel', language: 'Vue', lastOpened: '1 month ago', icon: 'folder' }
+    ],
+    closeTab(tab) {
+        const index = this.openTabs.indexOf(tab);
+        if (index !== -1) {
+            this.openTabs.splice(index, 1);
+            if (this.activeTab === tab && this.openTabs.length > 0) {
+                this.activeTab = this.openTabs[0];
+            }
+        }
+    },
     curves: [
         { id: 'waveGrad1', offset: 0, scale: 1, strokeWidth: 2 },
         { id: 'waveGrad2', offset: 30, scale: 1.2, strokeWidth: 1.8 },
@@ -817,29 +843,35 @@ This uses **Result** type for error handling and the **?** operator for propagat
                 </div>
             </aside>
             <main class="flex-1 flex flex-col bg-bg-primary relative gradient-mesh">
-                <div class="bg-bg-secondary/30 border-b border-border-subtle flex items-center justify-between h-10">
+                <div x-show="openTabs.length > 0" class="bg-bg-secondary/30 border-b border-border-subtle flex items-center justify-between h-10">
                     <div class="flex items-center h-full">
-                        <div :class="activeTab === 'welcome' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium group' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'welcome'">
-                            <span :class="activeTab === 'welcome' ? 'material-icons text-base' : 'material-icons text-sm'">description</span>
-                            <span>Welcome</span>
-                            <button @click.stop="activeTab = 'getting-started'" class="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-bg-tertiary/50 transition-all ml-1">
-                                <span class="material-icons text-xs text-text-tertiary hover:text-text-primary">close</span>
-                            </button>
-                        </div>
-                        <div :class="activeTab === 'getting-started' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium group' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'getting-started'">
-                            <span :class="activeTab === 'getting-started' ? 'material-icons text-base' : 'material-icons text-sm'">code</span>
-                            <span>Getting Started</span>
-                            <button @click.stop="activeTab = 'welcome'" class="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-bg-tertiary/50 transition-all ml-1">
-                                <span class="material-icons text-xs text-text-tertiary hover:text-text-primary">close</span>
-                            </button>
-                        </div>
-                        <div :class="activeTab === 'documentation' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium group' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'documentation'">
-                            <span :class="activeTab === 'documentation' ? 'material-icons text-base' : 'material-icons text-sm'">help_outline</span>
-                            <span>Documentation</span>
-                            <button @click.stop="activeTab = 'welcome'" class="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-bg-tertiary/50 transition-all ml-1">
-                                <span class="material-icons text-xs text-text-tertiary hover:text-text-primary">close</span>
-                            </button>
-                        </div>
+                        <template x-if="openTabs.includes('welcome')">
+                            <div :class="activeTab === 'welcome' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium group' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'welcome'">
+                                <span :class="activeTab === 'welcome' ? 'material-icons text-base' : 'material-icons text-sm'">description</span>
+                                <span>Welcome</span>
+                                <button @click.stop="closeTab('welcome')" class="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-bg-tertiary/50 transition-all ml-1">
+                                    <span class="material-icons text-xs text-text-tertiary hover:text-text-primary">close</span>
+                                </button>
+                            </div>
+                        </template>
+                        <template x-if="openTabs.includes('getting-started')">
+                            <div :class="activeTab === 'getting-started' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium group' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'getting-started'">
+                                <span :class="activeTab === 'getting-started' ? 'material-icons text-base' : 'material-icons text-sm'">code</span>
+                                <span>Getting Started</span>
+                                <button @click.stop="closeTab('getting-started')" class="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-bg-tertiary/50 transition-all ml-1">
+                                    <span class="material-icons text-xs text-text-tertiary hover:text-text-primary">close</span>
+                                </button>
+                            </div>
+                        </template>
+                        <template x-if="openTabs.includes('documentation')">
+                            <div :class="activeTab === 'documentation' ? 'blob-tab flex items-center space-x-2 text-sm text-symphony-primary font-medium group' : 'group relative px-4 h-full flex items-center space-x-2 text-xs border-r border-border-subtle text-text-tertiary hover:bg-bg-tertiary/50 hover:text-text-primary'" @click="activeTab = 'documentation'">
+                                <span :class="activeTab === 'documentation' ? 'material-icons text-base' : 'material-icons text-sm'">help_outline</span>
+                                <span>Documentation</span>
+                                <button @click.stop="closeTab('documentation')" class="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-bg-tertiary/50 transition-all ml-1">
+                                    <span class="material-icons text-xs text-text-tertiary hover:text-text-primary">close</span>
+                                </button>
+                            </div>
+                        </template>
                     </div>
                     <div class="relative" x-data="{ tabMenuOpen: false }">
                         <button @click="tabMenuOpen = !tabMenuOpen" class="p-1 mx-2 rounded hover:bg-bg-tertiary text-text-tertiary hover:text-text-primary">
@@ -955,8 +987,217 @@ This uses **Result** type for error handling and the **?** operator for propagat
                             });
                         });
                     </script>
+                    <!-- Floating Toggle Button -->
+                    <button @click="showProjects = !showProjects" 
+                            x-show="openTabs.length === 0"
+                            class="fixed bottom-8 right-8 p-4 bg-symphony-primary hover:bg-symphony-light text-white rounded-full shadow-2xl hover:shadow-symphony-primary/50 transition-all hover:scale-110 z-50 flex items-center space-x-2"
+                            :title="showProjects ? 'Hide Projects' : 'Show Projects'">
+                        <span class="material-icons" x-text="showProjects ? 'visibility_off' : 'visibility'"></span>
+                        <span class="text-sm font-medium" x-text="showProjects ? 'Hide Projects' : 'Show Projects'"></span>
+                    </button>
+
+                    <!-- No Tabs Open - Returned User State -->
+                    <div x-show="openTabs.length === 0" class="flex-1 overflow-auto">
+                        <div class="max-w-3xl mx-auto py-8 px-6 space-y-6">
+                            <div class="flex justify-center mb-8">
+                                <div class="relative animate-float">
+                                    <img src="../../assets/logo.png" alt="Symphony" class="h-24 w-24 drop-shadow-2xl" />
+                                    <div class="absolute inset-0 bg-symphony-primary/20 blur-3xl rounded-full"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-3 text-center">
+                                <h1 class="text-4xl font-bold text-text-primary tracking-tight">
+                                    <span class="text-symphony-primary">Symphony</span>
+                                </h1>
+                                <p class="text-base text-text-secondary max-w-xl mx-auto">
+                                    Continue where you left off or start something new
+                                </p>
+                            </div>
+                            
+                            <!-- Recent Projects -->
+                            <div x-show="showProjects && recentProjects.length > 0" class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <h2 class="text-lg font-semibold text-text-primary flex items-center space-x-2">
+                                        <span class="material-icons text-base text-symphony-primary">history</span>
+                                        <span>Recent Projects</span>
+                                    </h2>
+                                    <div class="relative">
+                                        <button @click="showAllProjectsMenu = !showAllProjectsMenu" class="px-4 py-2 text-sm text-symphony-primary hover:text-symphony-light flex items-center space-x-1 glass rounded-lg hover:bg-bg-tertiary/80 transition-all">
+                                            <span class="material-icons text-sm">folder_open</span>
+                                            <span>Show All</span>
+                                        </button>
+                                        
+                                        <!-- All Projects Dropdown -->
+                                        <div x-show="showAllProjectsMenu" 
+                                             @click.away="showAllProjectsMenu = false"
+                                             x-transition:enter="transition ease-out duration-200"
+                                             x-transition:enter-start="opacity-0 scale-95"
+                                             x-transition:enter-end="opacity-100 scale-100"
+                                             x-transition:leave="transition ease-in duration-150"
+                                             x-transition:leave-start="opacity-100 scale-100"
+                                             x-transition:leave-end="opacity-0 scale-95"
+                                             class="absolute right-0 top-full mt-2 w-96 glass border border-border-subtle rounded-xl shadow-2xl overflow-hidden z-50"
+                                             style="display: none;">
+                                            <div class="p-4 border-b border-border-subtle">
+                                                <h3 class="text-sm font-semibold text-text-primary">All Projects</h3>
+                                            </div>
+                                            <div class="max-h-96 overflow-y-auto">
+                                                <template x-for="project in allProjects" :key="project.path">
+                                                    <a href="../ProjectPage/index.html" 
+                                                       @click="showAllProjectsMenu = false"
+                                                       class="flex items-center justify-between p-4 hover:bg-bg-tertiary/50 transition-all border-b border-border-subtle/30 last:border-b-0">
+                                                        <div class="flex items-center space-x-3">
+                                                            <div class="p-2 rounded-lg bg-symphony-primary/10">
+                                                                <span class="material-icons text-base text-symphony-primary" x-text="project.icon"></span>
+                                                            </div>
+                                                            <div>
+                                                                <h4 class="text-sm font-semibold text-text-primary" x-text="project.name"></h4>
+                                                                <p class="text-xs text-text-tertiary" x-text="project.path"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="text-right">
+                                                            <p class="text-xs text-text-tertiary" x-text="project.language"></p>
+                                                            <p class="text-xs text-text-tertiary" x-text="project.lastOpened"></p>
+                                                        </div>
+                                                    </a>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Search Bar -->
+                                <div class="relative">
+                                    <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary text-sm">search</span>
+                                    <input type="text" placeholder="Search projects..." class="w-full pl-10 pr-4 py-2.5 bg-bg-secondary/50 border border-border-subtle rounded-lg text-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:border-symphony-primary/50 focus:bg-bg-secondary transition-all" />
+                                </div>
+                                
+                                <div class="grid grid-cols-1 gap-3">
+                                    <template x-for="project in recentProjects" :key="project.path">
+                                        <a href="../ProjectPage/index.html" class="group glass rounded-lg p-4 hover:bg-bg-tertiary/80 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-symphony-primary/10 flex items-center justify-between">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="p-3 rounded-lg bg-symphony-primary/10 group-hover:bg-symphony-primary/20">
+                                                    <span class="material-icons text-xl text-symphony-primary" x-text="project.icon"></span>
+                                                </div>
+                                                <div class="text-left">
+                                                    <h3 class="font-semibold text-text-primary" x-text="project.name"></h3>
+                                                    <p class="text-xs text-text-tertiary" x-text="project.path"></p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-6">
+                                                <div class="text-right">
+                                                    <p class="text-xs text-text-tertiary" x-text="project.language"></p>
+                                                    <p class="text-xs text-text-tertiary" x-text="project.lastOpened"></p>
+                                                </div>
+                                                <span class="material-icons text-text-tertiary group-hover:text-symphony-primary">arrow_forward</span>
+                                            </div>
+                                        </a>
+                                    </template>
+                                </div>
+                            </div>
+                            <!-- No Projects Message -->
+                            <div x-show="!showProjects || recentProjects.length === 0" class="text-center py-12">
+                                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-symphony-primary/10 mb-4">
+                                    <span class="material-icons text-4xl text-symphony-primary">folder_off</span>
+                                </div>
+                                <h3 class="text-xl font-semibold text-text-primary mb-2">No Projects Yet</h3>
+                                <p class="text-text-secondary mb-6">Start by opening a folder or creating a new project</p>
+                                <div class="flex items-center justify-center space-x-3">
+                                    <a href="../ProjectPage/index.html" class="px-6 py-3 bg-symphony-primary hover:bg-symphony-light text-white rounded-lg transition-all flex items-center space-x-2">
+                                        <span class="material-icons text-sm">folder_open</span>
+                                        <span>Open Folder</span>
+                                    </a>
+                                    <button class="px-6 py-3 glass hover:bg-bg-tertiary/80 text-text-primary rounded-lg transition-all flex items-center space-x-2">
+                                        <span class="material-icons text-sm">add</span>
+                                        <span>New Project</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Quick Commands -->
+                            <div class="space-y-4">
+                                <h2 class="text-lg font-semibold text-text-primary flex items-center space-x-2">
+                                    <span class="material-icons text-base text-symphony-primary">bolt</span>
+                                    <span>Quick Commands</span>
+                                </h2>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <a href="../ProjectPage/index.html" class="group glass rounded-lg p-4 hover:bg-bg-tertiary/80 transition-all hover:scale-[1.02] flex items-center space-x-3">
+                                        <div class="p-2 rounded-lg bg-symphony-primary/10 group-hover:bg-symphony-primary/20">
+                                            <span class="material-icons text-lg text-symphony-primary">folder_open</span>
+                                        </div>
+                                        <div class="text-left flex-1">
+                                            <h3 class="text-sm font-semibold text-text-primary">Open Folder</h3>
+                                            <p class="text-xs text-text-tertiary">Ctrl+K O</p>
+                                        </div>
+                                    </a>
+                                    <button class="group glass rounded-lg p-4 hover:bg-bg-tertiary/80 transition-all hover:scale-[1.02] flex items-center space-x-3">
+                                        <div class="p-2 rounded-lg bg-symphony-light/10 group-hover:bg-symphony-light/20">
+                                            <span class="material-icons text-lg text-symphony-light">search</span>
+                                        </div>
+                                        <div class="text-left flex-1">
+                                            <h3 class="text-sm font-semibold text-text-primary">Quick Search</h3>
+                                            <p class="text-xs text-text-tertiary">Ctrl+P</p>
+                                        </div>
+                                    </button>
+                                    <button class="group glass rounded-lg p-4 hover:bg-bg-tertiary/80 transition-all hover:scale-[1.02] flex items-center space-x-3">
+                                        <div class="p-2 rounded-lg bg-symphony-dark/10 group-hover:bg-symphony-dark/20">
+                                            <span class="material-icons text-lg text-symphony-dark">terminal</span>
+                                        </div>
+                                        <div class="text-left flex-1">
+                                            <h3 class="text-sm font-semibold text-text-primary">New Terminal</h3>
+                                            <p class="text-xs text-text-tertiary">Ctrl+`</p>
+                                        </div>
+                                    </button>
+                                    <button class="group glass rounded-lg p-4 hover:bg-bg-tertiary/80 transition-all hover:scale-[1.02] flex items-center space-x-3">
+                                        <div class="p-2 rounded-lg bg-symphony-accent/10 group-hover:bg-symphony-accent/20">
+                                            <span class="material-icons text-lg text-symphony-accent">auto_awesome</span>
+                                        </div>
+                                        <div class="text-left flex-1">
+                                            <h3 class="text-sm font-semibold text-text-primary">AI Maestro</h3>
+                                            <p class="text-xs text-text-tertiary">Ctrl+Shift+M</p>
+                                        </div>
+                                    </button>
+                                    <button class="group glass rounded-lg p-4 hover:bg-bg-tertiary/80 transition-all hover:scale-[1.02] flex items-center space-x-3">
+                                        <div class="p-2 rounded-lg bg-green-500/10 group-hover:bg-green-500/20">
+                                            <span class="material-icons text-lg text-green-400">source</span>
+                                        </div>
+                                        <div class="text-left flex-1">
+                                            <h3 class="text-sm font-semibold text-text-primary">Source Control</h3>
+                                            <p class="text-xs text-text-tertiary">Ctrl+Shift+G</p>
+                                        </div>
+                                    </button>
+                                    <button class="group glass rounded-lg p-4 hover:bg-bg-tertiary/80 transition-all hover:scale-[1.02] flex items-center space-x-3">
+                                        <div class="p-2 rounded-lg bg-orange-500/10 group-hover:bg-orange-500/20">
+                                            <span class="material-icons text-lg text-orange-400">extension</span>
+                                        </div>
+                                        <div class="text-left flex-1">
+                                            <h3 class="text-sm font-semibold text-text-primary">Extensions</h3>
+                                            <p class="text-xs text-text-tertiary">Ctrl+Shift+X</p>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-center space-x-6 text-sm mt-8">
+                                <button class="text-text-secondary hover:text-symphony-primary flex items-center space-x-1">
+                                    <span class="material-icons text-sm">history</span>
+                                    <span>Recent</span>
+                                </button>
+                                <span class="text-text-tertiary">•</span>
+                                <button class="text-text-secondary hover:text-symphony-light flex items-center space-x-1">
+                                    <span class="material-icons text-sm">help_outline</span>
+                                    <span>Getting Started</span>
+                                </button>
+                                <span class="text-text-tertiary">•</span>
+                                <button class="text-text-secondary hover:text-symphony-dark flex items-center space-x-1">
+                                    <span class="material-icons text-sm">book</span>
+                                    <span>Documentation</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Welcome Tab Content -->
-                    <div x-show="activeTab === 'welcome'" class="flex-1 flex items-center justify-center p-12">
+                    <div x-show="activeTab === 'welcome' && openTabs.includes('welcome')" class="flex-1 flex items-center justify-center p-12">
                         <div class="max-w-2xl w-full text-center space-y-8">
                             <div class="flex justify-center mb-8">
                                 <div class="relative animate-float">
@@ -1019,17 +1260,12 @@ This uses **Result** type for error handling and the **?** operator for propagat
                                 </button>
                             </div>
                             <div class="flex items-center justify-center space-x-6 text-sm mt-8">
-                                <button class="text-text-secondary hover:text-symphony-primary flex items-center space-x-1">
-                                    <span class="material-icons text-sm">history</span>
-                                    <span>Recent</span>
-                                </button>
-                                <span class="text-text-tertiary">•</span>
-                                <button class="text-text-secondary hover:text-symphony-light flex items-center space-x-1">
-                                    <span class="material-icons text-sm">help_outline</span>
+                                <button @click="activeTab = 'getting-started'" class="text-text-secondary hover:text-symphony-primary flex items-center space-x-1">
+                                    <span class="material-icons text-sm">rocket_launch</span>
                                     <span>Getting Started</span>
                                 </button>
                                 <span class="text-text-tertiary">•</span>
-                                <button class="text-text-secondary hover:text-symphony-dark flex items-center space-x-1">
+                                <button @click="activeTab = 'documentation'" class="text-text-secondary hover:text-symphony-light flex items-center space-x-1">
                                     <span class="material-icons text-sm">book</span>
                                     <span>Documentation</span>
                                 </button>
@@ -1038,7 +1274,7 @@ This uses **Result** type for error handling and the **?** operator for propagat
                     </div>
 
                     <!-- Getting Started Tab Content -->
-                    <div x-show="activeTab === 'getting-started'" class="flex-1 overflow-auto p-12" style="display: none;">
+                    <div x-show="activeTab === 'getting-started' && openTabs.includes('getting-started')" class="flex-1 overflow-auto p-12" style="display: none;">
                         <div class="max-w-4xl mx-auto prose prose-invert">
                             <div class="mb-8">
                                 <h1 class="text-4xl font-bold text-text-primary mb-3">🚀 Getting Started with Symphony</h1>
@@ -1281,7 +1517,7 @@ sudo snap install symphony   # Linux</code></pre>
                     </div>
 
                     <!-- Documentation Tab Content -->
-                    <div x-show="activeTab === 'documentation'" class="flex-1 overflow-auto p-12" style="display: none;">
+                    <div x-show="activeTab === 'documentation' && openTabs.includes('documentation')" class="flex-1 overflow-auto p-12" style="display: none;">
                         <div class="max-w-4xl mx-auto prose prose-invert">
                             <div class="mb-8">
                                 <h1 class="text-4xl font-bold text-text-primary mb-3">📖 Symphony Documentation</h1>
