@@ -746,9 +746,9 @@ This uses **Result** type for error handling and the **?** operator for propagat
                     <button :class="activeSidebar === 'explorer' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Explorer" @click="activeSidebar = 'explorer'">
                         <span class="material-icons text-lg">folder_open</span>
                     </button>
-                    <button :class="activeSidebar === 'harmony' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Harmony Board" @click="activeSidebar = 'harmony'">
+                    <a href="../HarmonyBoard/index.html" :class="activeSidebar === 'harmony' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Harmony Board">
                         <span class="material-icons text-lg">dashboard</span>
-                    </button>
+                    </a>
                     <button :class="activeSidebar === 'source' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Source Control" @click="activeSidebar = 'source'">
                         <span class="material-icons text-lg">source</span>
                     </button>
