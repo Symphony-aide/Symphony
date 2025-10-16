@@ -109,13 +109,13 @@
         .blob-tab:hover { background: rgba(91, 143, 249, 0.12); transform: translateY(-1px); }
     </style>
 </head>
-<body class="bg-bg-primary text-text-primary h-screen overflow-hidden flex flex-col gradient-mesh">
+<body class="bg-bg-primary text-text-primary h-screen overflow-hidden flex flex-col gradient-mesh" x-data="{ 
+    showFileSystem: true, 
+    showTerminal: false, 
+    showAIChat: false 
+}">
     <!-- Top Bar -->
-    <div class="h-14 bg-bg-secondary/80 backdrop-blur-xl border-b border-border-subtle flex items-center justify-between px-6 flex-shrink-0 relative z-50" x-data="{ 
-        showFileSystem: true, 
-        showTerminal: false, 
-        showAIChat: false 
-    }">
+    <div class="h-14 bg-bg-secondary/80 backdrop-blur-xl border-b border-border-subtle flex items-center justify-between px-6 flex-shrink-0 relative z-50">
         <div class="flex items-center space-x-6">
             <div class="flex items-center space-x-3">
                 <img src="../../assets/rounded.png" alt="Symphony" class="w-7 h-7 animate-pulse-slow" />
@@ -212,8 +212,12 @@
         contextMenuX: 0,
         contextMenuY: 0,
         contextMenuFile: null,
+        explorerMenuOpen: false,
+        explorerMenuX: 0,
+        explorerMenuY: 0,
         init() {
             this.tabContextMenu = false;
+            this.explorerMenuOpen = false;
         },
         openFiles: [
             { name: 'main.rs', path: 'src/main.rs', language: 'rust', modified: true },
@@ -265,6 +269,7 @@
                     this.activeFile = this.openFiles[0].name;
                 }
             }
+            this.tabContextMenu = false;
         },
         openTabContextMenu(event, file) {
             event.preventDefault();
@@ -302,10 +307,18 @@
         copyRelativePath(path) {
             navigator.clipboard.writeText(path);
             this.tabContextMenu = false;
+        },
+        openExplorerMenu(event) {
+            event.stopPropagation();
+            const button = event.target.closest('button');
+            const rect = button.getBoundingClientRect();
+            this.explorerMenuX = rect.right - 256;
+            this.explorerMenuY = rect.bottom + 4;
+            this.explorerMenuOpen = true;
         }
-    }" @click="if (tabContextMenu && !$event.target.closest('.context-menu-container')) { tabContextMenu = false; }">
+    }" @click="if (tabContextMenu && !$event.target.closest('.context-menu-container')) { tabContextMenu = false; } if (explorerMenuOpen && !$event.target.closest('.explorer-menu-container')) { explorerMenuOpen = false; }">
         <!-- File Explorer Sidebar -->
-        <div class="w-72 bg-bg-secondary/50 backdrop-blur-xl border-r border-border-subtle flex flex-col flex-shrink-0">
+        <div class="w-72 bg-bg-secondary/50 backdrop-blur-xl border-r border-border-subtle flex flex-col flex-shrink-0 relative z-50">
             <div class="px-4 py-1.5 border-b border-border-subtle bg-bg-tertiary/30">
                 <div class="flex items-center justify-between mb-1.5">
                     <span class="text-[10px] font-semibold text-text-primary uppercase tracking-wider">Explorer</span>
@@ -330,7 +343,7 @@
                     <button class="p-1 rounded hover:bg-symphony-primary/20 text-text-tertiary hover:text-symphony-primary transition-all" title="Refresh">
                         <span class="material-icons text-xs">refresh</span>
                     </button>
-                    <button class="p-1 rounded hover:bg-symphony-primary/20 text-text-tertiary hover:text-symphony-primary transition-all" title="More Actions">
+                    <button @click="openExplorerMenu($event)" class="p-1 rounded hover:bg-symphony-primary/20 text-text-tertiary hover:text-symphony-primary transition-all" title="More Actions">
                         <span class="material-icons text-xs">more_horiz</span>
                     </button>
                 </div>
@@ -390,10 +403,71 @@
                     </div>
                 </template>
             </div>
+            
+            <!-- File Explorer More Actions Menu -->
+            <div x-show="explorerMenuOpen"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-95"
+                 :style="`position: fixed; top: ${explorerMenuY}px; left: ${explorerMenuX}px;`"
+                 class="w-64 bg-bg-secondary border border-border-subtle rounded-lg shadow-2xl overflow-hidden explorer-menu-container"
+                 style="display: none; z-index: 999999;"
+                 @click.stop>
+                <div class="py-1">
+                    <button @click="explorerMenuOpen = false" class="w-full px-3 py-1.5 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex items-center justify-between">
+                        <span>Sort by Name</span>
+                    </button>
+                    <button @click="explorerMenuOpen = false" class="w-full px-3 py-1.5 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex items-center justify-between">
+                        <span>Sort by Modified Date</span>
+                    </button>
+                    <button @click="explorerMenuOpen = false" class="w-full px-3 py-1.5 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex items-center justify-between">
+                        <span>Sort by Type</span>
+                    </button>
+                    
+                    <div class="border-t border-border-subtle my-1"></div>
+                    
+                    <button @click="explorerMenuOpen = false" class="w-full px-3 py-1.5 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex items-center justify-between">
+                        <span>Open Folder...</span>
+                        <span class="text-xs text-text-tertiary">Ctrl+K O</span>
+                    </button>
+                    <button @click="explorerMenuOpen = false" class="w-full px-3 py-1.5 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex items-center justify-between">
+                        <span>Add Folder to Workspace...</span>
+                    </button>
+                    <button @click="explorerMenuOpen = false" class="w-full px-3 py-1.5 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex items-center justify-between">
+                        <span>Find in Folder...</span>
+                        <span class="text-xs text-text-tertiary">Ctrl+Shift+F</span>
+                    </button>
+                    
+                    <div class="border-t border-border-subtle my-1"></div>
+                    
+                    <button @click="explorerMenuOpen = false" class="w-full px-3 py-1.5 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex items-center justify-between">
+                        <span>Save Workspace As...</span>
+                    </button>
+                    <button @click="explorerMenuOpen = false" class="w-full px-3 py-1.5 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex items-center justify-between">
+                        <span>Close Folder</span>
+                        <span class="text-xs text-text-tertiary">Ctrl+K F</span>
+                    </button>
+                    
+                    <div class="border-t border-border-subtle my-1"></div>
+                    
+                    <button @click="explorerMenuOpen = false" class="w-full px-3 py-1.5 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex items-center justify-between">
+                        <span>Show Hidden Files</span>
+                    </button>
+                    <button @click="explorerMenuOpen = false" class="w-full px-3 py-1.5 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex items-center justify-between">
+                        <span>Show Ignored Files</span>
+                    </button>
+                    <button @click="explorerMenuOpen = false" class="w-full px-3 py-1.5 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex items-center justify-between">
+                        <span>Collapse All Folders</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Editor Area -->
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col overflow-hidden relative z-10">
             <!-- File Tabs -->
             <div class="h-11 bg-bg-secondary/50 backdrop-blur-xl border-b border-border-subtle flex items-center overflow-x-auto flex-shrink-0">
                 <template x-for="file in openFiles" :key="file.name">
@@ -657,13 +731,182 @@
             </div>
         </div>
         
+        <!-- Terminal Panel -->
+        <div x-show="showTerminal"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-full"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 translate-y-full"
+             class="fixed bottom-0 left-14 right-0 h-80 bg-bg-secondary/95 backdrop-blur-xl border-t border-border-subtle shadow-2xl z-40 flex flex-col"
+             style="display: none;"
+             x-data="{
+                activeTerminalTab: 'bash',
+                splitView: false,
+                terminalTabs: [
+                    { 
+                        id: 'bash', 
+                        name: 'bash', 
+                        type: 'shell',
+                        content: [
+                            { type: 'output', text: 'Symphony Terminal v0.1.7' },
+                            { type: 'output', text: 'Type `help` for available commands' },
+                            { type: 'prompt', text: '~/my-rust-project $' },
+                            { type: 'command', text: 'cargo build --release' },
+                            { type: 'success', text: '   Compiling symphony-ide v0.1.0' },
+                            { type: 'output', text: '   Compiling tokio v1.35.0' },
+                            { type: 'output', text: '   Compiling serde v1.0.193' },
+                            { type: 'output', text: '   Compiling axum v0.7.0' },
+                            { type: 'success', text: '    Finished release [optimized] target(s) in 2m 34s' },
+                            { type: 'prompt', text: '~/my-rust-project $' }
+                        ]
+                    },
+                    { 
+                        id: 'powershell', 
+                        name: 'powershell', 
+                        type: 'shell',
+                        content: [
+                            { type: 'output', text: 'Windows PowerShell' },
+                            { type: 'output', text: 'Copyright (C) Microsoft Corporation. All rights reserved.' },
+                            { type: 'output', text: '' },
+                            { type: 'prompt', text: 'PS C:\\Projects\\my-rust-project>' }
+                        ]
+                    }
+                ],
+                getActiveTab() {
+                    return this.terminalTabs.find(t => t.id === this.activeTerminalTab);
+                },
+                addTerminalTab() {
+                    const newTab = {
+                        id: 'terminal-' + Date.now(),
+                        name: 'bash',
+                        type: 'shell',
+                        content: [
+                            { type: 'output', text: 'Symphony Terminal v0.1.7' },
+                            { type: 'prompt', text: '~/my-rust-project $' }
+                        ]
+                    };
+                    this.terminalTabs.push(newTab);
+                    this.activeTerminalTab = newTab.id;
+                },
+                closeTerminalTab(tabId) {
+                    const index = this.terminalTabs.findIndex(t => t.id === tabId);
+                    if (index !== -1 && this.terminalTabs.length > 1) {
+                        this.terminalTabs.splice(index, 1);
+                        if (this.activeTerminalTab === tabId) {
+                            this.activeTerminalTab = this.terminalTabs[0].id;
+                        }
+                    }
+                },
+                clearTerminal() {
+                    const activeTab = this.getActiveTab();
+                    if (activeTab) {
+                        activeTab.content = [
+                            { type: 'prompt', text: activeTab.name === 'powershell' ? 'PS C:\\Projects\\my-rust-project>' : '~/my-rust-project $' }
+                        ];
+                    }
+                },
+                toggleSplitView() {
+                    this.splitView = !this.splitView;
+                }
+             }">
+            <!-- Terminal Header -->
+            <div class="h-10 bg-bg-tertiary/50 border-b border-border-subtle flex items-center justify-between px-4 flex-shrink-0">
+                <div class="flex items-center space-x-2 flex-1 overflow-x-auto">
+                    <template x-for="tab in terminalTabs" :key="tab.id">
+                        <div @click="activeTerminalTab = tab.id"
+                             :class="activeTerminalTab === tab.id ? 'bg-bg-secondary border-symphony-primary/40' : 'bg-bg-tertiary/30 border-transparent hover:bg-bg-tertiary/60'"
+                             class="flex items-center space-x-2 px-3 py-1.5 rounded-t-lg border-t-2 cursor-pointer transition-all group">
+                            <span class="material-icons text-xs" :class="activeTerminalTab === tab.id ? 'text-symphony-primary' : 'text-text-tertiary'">terminal</span>
+                            <span class="text-xs font-medium" :class="activeTerminalTab === tab.id ? 'text-text-primary' : 'text-text-secondary'" x-text="tab.name"></span>
+                            <button @click.stop="closeTerminalTab(tab.id)"
+                                    x-show="terminalTabs.length > 1"
+                                    class="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-bg-tertiary transition-all">
+                                <span class="material-icons text-xs text-text-tertiary hover:text-text-primary">close</span>
+                            </button>
+                        </div>
+                    </template>
+                    <button @click="addTerminalTab()" class="p-1.5 rounded-lg hover:bg-bg-tertiary text-text-tertiary hover:text-symphony-primary transition-all" title="New Terminal">
+                        <span class="material-icons text-sm">add</span>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-1">
+                    <button @click="toggleSplitView()" :class="splitView ? 'bg-symphony-primary/20 text-symphony-primary' : 'text-text-tertiary hover:text-text-primary'" class="p-1.5 rounded-lg hover:bg-bg-tertiary transition-all" title="Split Terminal">
+                        <span class="material-icons text-sm">vertical_split</span>
+                    </button>
+                    <button @click="clearTerminal()" class="p-1.5 rounded-lg hover:bg-bg-tertiary text-text-tertiary hover:text-text-primary transition-all" title="Clear Terminal">
+                        <span class="material-icons text-sm">delete_sweep</span>
+                    </button>
+                    <button @click="window.location.href='../SettingsPage/index.html#terminal'" class="p-1.5 rounded-lg hover:bg-bg-tertiary text-text-tertiary hover:text-text-primary transition-all" title="Terminal Settings">
+                        <span class="material-icons text-sm">settings</span>
+                    </button>
+                    <div class="w-px h-4 bg-border-subtle mx-1"></div>
+                    <button @click="showTerminal = false" class="p-1.5 rounded-lg hover:bg-bg-tertiary text-text-tertiary hover:text-text-primary transition-all" title="Close Terminal">
+                        <span class="material-icons text-sm">close</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Terminal Content -->
+            <div class="flex-1 overflow-hidden bg-bg-primary/50 backdrop-blur-sm">
+                <div :class="splitView ? 'grid grid-cols-2 gap-2 h-full p-2' : 'h-full'">
+                    <!-- Main Terminal View -->
+                    <div class="h-full overflow-y-auto font-mono text-sm" :class="splitView ? 'border border-border-subtle rounded-lg' : 'p-4'">
+                        <div class="space-y-1" :class="splitView ? 'p-3' : ''">
+                            <template x-for="(line, index) in getActiveTab()?.content || []" :key="index">
+                                <div>
+                                    <div x-show="line.type === 'output'" class="text-text-secondary" x-text="line.text"></div>
+                                    <div x-show="line.type === 'prompt'" class="flex items-center space-x-2">
+                                        <span class="text-symphony-primary font-semibold" x-text="line.text"></span>
+                                        <span class="animate-pulse text-text-primary">_</span>
+                                    </div>
+                                    <div x-show="line.type === 'command'" class="text-text-primary" x-text="line.text"></div>
+                                    <div x-show="line.type === 'error'" class="text-red-400" x-text="line.text"></div>
+                                    <div x-show="line.type === 'success'" class="text-green-400" x-text="line.text"></div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    
+                    <!-- Split Terminal View -->
+                    <div x-show="splitView" class="h-full overflow-y-auto font-mono text-sm border border-border-subtle rounded-lg">
+                        <div class="space-y-1 p-3">
+                            <div class="text-text-secondary">Symphony Terminal v0.1.7 (Split View)</div>
+                            <div class="text-text-secondary">Type `help` for available commands</div>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-symphony-primary font-semibold">~/my-rust-project $</span>
+                                <span class="animate-pulse text-text-primary">_</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Terminal Status Bar -->
+            <div class="h-7 bg-bg-tertiary/30 border-t border-border-subtle flex items-center justify-between px-4 text-xs flex-shrink-0">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-1.5">
+                        <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                        <span class="text-text-tertiary" x-text="getActiveTab()?.name || 'bash'"></span>
+                    </div>
+                    <span class="text-text-tertiary" x-text="getActiveTab()?.name === 'powershell' ? 'C:\\Projects\\my-rust-project' : '~/my-rust-project'"></span>
+                </div>
+                <div class="flex items-center space-x-3 text-text-tertiary">
+                    <span>UTF-8</span>
+                    <span>LF</span>
+                    <span>Process ID: 12345</span>
+                </div>
+            </div>
+        </div>
+        
         <!-- Tab Context Menu -->
         <div x-show="tabContextMenu"
              :style="`position: fixed; top: ${contextMenuY}px; left: ${contextMenuX}px; z-index: 99999;`"
              class="w-64 bg-bg-secondary border border-border-subtle rounded-lg shadow-2xl overflow-hidden context-menu-container"
              @click.stop>
             <div class="py-1">
-                <button @click="closeFile(contextMenuFile?.name)" class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-3">
+                <button onclick="this.closest('.context-menu-container').style.display='none'; const fileName = this.closest('[x-data]').__x.$data.contextMenuFile?.name; if(fileName) { const index = this.closest('[x-data]').__x.$data.openFiles.findIndex(f => f.name === fileName); if(index !== -1) { this.closest('[x-data]').__x.$data.openFiles.splice(index, 1); if(this.closest('[x-data]').__x.$data.activeFile === fileName && this.closest('[x-data]').__x.$data.openFiles.length > 0) { this.closest('[x-data]').__x.$data.activeFile = this.closest('[x-data]').__x.$data.openFiles[0].name; }}}" class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-bg-tertiary transition-colors flex items-center space-x-3">
                     <span class="material-icons text-base text-text-tertiary">close</span>
                     <span>Close</span>
                     <span class="ml-auto text-xs text-text-tertiary">Ctrl+W</span>
