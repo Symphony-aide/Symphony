@@ -73,8 +73,8 @@ members = [
     # Existing packages
     "desktop/src-tauri",
     "developed_extensions/git",
-    "extensions/typescript-lsp",
-    "extensions/native-shell",
+    "developed_extensions/typescript-lsp",
+    "developed_extensions/native-shell",
     "crosspty"
 ]
 

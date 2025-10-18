@@ -1,0 +1,18 @@
+# Environment variables
+.env
+
+# Cargo build artifacts
+/target/
+**/*.rs.bk
+*.pdb
+
+# Log files
+*.log
+logs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
