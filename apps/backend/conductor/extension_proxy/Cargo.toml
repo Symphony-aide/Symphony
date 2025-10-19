@@ -1,0 +1,9 @@
+[package]
+name = "syconexproxy"
+version = "0.1.0"
+edition = "2021"
+authors = ["Symphony Team"]
+description = "Extension interface for Symphony Conductor"
+license = "MIT"
+
+[dependencies]

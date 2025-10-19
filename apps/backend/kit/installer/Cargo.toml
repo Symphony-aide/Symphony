@@ -1,0 +1,9 @@
+[package]
+name = "sykitinstaller"
+version = "0.1.0"
+edition = "2021"
+authors = ["Symphony Team"]
+description = "Installer for Symphony Orchestra Kit"
+license = "MIT"
+
+[dependencies]

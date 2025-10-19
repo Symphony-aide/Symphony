@@ -1,0 +1,9 @@
+[package]
+name = "sykitsecurity"
+version = "0.1.0"
+edition = "2021"
+authors = ["Symphony Team"]
+description = "Sandboxing and permissions for Symphony Orchestra Kit"
+license = "MIT"
+
+[dependencies]

@@ -1,0 +1,9 @@
+[package]
+name = "sykitoperators"
+version = "0.1.0"
+edition = "2021"
+authors = ["Symphony Team"]
+description = "Workflow utilities for Symphony Orchestra Kit"
+license = "MIT"
+
+[dependencies]

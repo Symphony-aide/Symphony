@@ -1,0 +1,9 @@
+[package]
+name = "syipcsecurity"
+version = "0.1.0"
+edition = "2021"
+authors = ["Symphony Team"]
+description = "Message validation for Symphony IPC"
+license = "MIT"
+
+[dependencies]

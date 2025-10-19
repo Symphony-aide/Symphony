@@ -1,0 +1,9 @@
+[package]
+name = "syexsdmetrics"
+version = "0.1.0"
+edition = "2021"
+authors = ["Symphony Team"]
+description = "Performance monitoring for Symphony extensions"
+license = "MIT"
+
+[dependencies]

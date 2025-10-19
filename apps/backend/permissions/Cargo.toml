@@ -1,0 +1,9 @@
+[package]
+name = "sypermissions"
+version = "0.1.0"
+edition = "2021"
+authors = ["Symphony Team"]
+description = "Permissions system for Symphony"
+license = "MIT"
+
+[dependencies]

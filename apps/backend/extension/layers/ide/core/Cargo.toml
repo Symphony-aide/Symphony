@@ -1,0 +1,9 @@
+[package]
+name = "syexlyidcore"
+version = "0.1.0"
+edition = "2021"
+authors = ["Symphony Team"]
+description = "Core IDE layer functionality for Symphony"
+license = "MIT"
+
+[dependencies]
