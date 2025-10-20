@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Symphony IDE - Activity Diagram: System Bootstrap</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+      overflow: auto;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 100%;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    h1 {
+      font-size: 1.75rem;
+      font-weight: bold;
+      color: #111827;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+    
+    button {
+      padding: 0.625rem 1.25rem;
+      background: linear-gradient(135deg, #333333 0%, #1a1a1a 100%);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+    
+    .diagram-wrapper {
+      background: white;
+      border-radius: 8px;
+      border: 2px solid #d1d5db;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+    
+    svg {
+      width: 100%;
+      height: auto;
+      min-width: 100%;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Symphony IDE - Activity Diagram: System Bootstrap (Phased Initialization)</h1>
+      <div class="buttons">
+        <button onclick="saveToPNG()">💾 Save as PNG</button>
+        <button onclick="saveToPDF()">📄 Save as PDF</button>
+      </div>
+    </div>
+    
+    <div class="diagram-wrapper">
+      <svg id="diagram" viewBox="0 0 1400 1800" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#1f2937" />
+          </marker>
+          
+          <marker id="arrowhead-error" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#ef4444" />
+          </marker>
+
+          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+            <feOffset dx="2" dy="2" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.15"/>
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        
+        <!-- Swimlanes -->
+        <rect x="50" y="80" width="450" height="1650" fill="#f0f9ff" stroke="#4a90e2" stroke-width="2" stroke-dasharray="8,4"/>
+        <text x="275" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Bootstrap System</text>
+        
+        <rect x="500" y="80" width="450" height="1650" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8,4"/>
+        <text x="725" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Components</text>
+        
+        <rect x="950" y="80" width="400" height="1650" fill="#fee2e2" stroke="#ef4444" stroke-width="2" stroke-dasharray="8,4"/>
+        <text x="1150" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Error Handling</text>
+        
+        <!-- Initial Node -->
+        <circle cx="275" cy="130" r="15" fill="#1f2937" filter="url(#shadow)"/>
+        <text x="310" y="135" font-size="11" font-style="italic" fill="#6b7280">&lt;&lt;start&gt;&gt;</text>
+        
+        <!-- Phase 1: Foundation -->
+        <rect x="150" y="180" width="250" height="70" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="3" filter="url(#shadow)"/>
+        <text x="275" y="205" text-anchor="middle" font-size="15" font-weight="bold" fill="#0284c7">PHASE 1: FOUNDATION</text>
+        <text x="275" y="225" text-anchor="middle" font-size="12" fill="#1f2937">Load Type System</text>
+        <text x="275" y="240" text-anchor="middle" font-size="12" fill="#1f2937">Load Configuration</text>
+        
+        <path d="M 275 145 L 275 180" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Fork: Parallel Phase 1 -->
+        <rect x="225" y="280" width="100" height="8" rx="2" fill="#1f2937" filter="url(#shadow)"/>
+        
+        <path d="M 275 250 L 275 280" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Action: Load Types -->
+        <rect x="585" y="320" width="180" height="60" rx="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="675" y="348" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Load Types Package</text>
+        <text x="675" y="363" text-anchor="middle" font-size="11" fill="#6b7280">(Zero-Cost Abstractions)</text>
+        
+        <path d="M 275 288 L 675 320" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Action: Load Config -->
+        <rect x="585" y="410" width="180" height="60" rx="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="675" y="438" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Load Config Manager</text>
+        <text x="675" y="453" text-anchor="middle" font-size="11" fill="#6b7280">(TOML/JSON/YAML)</text>
+        
+        <path d="M 275 288 L 675 410" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Decision: Phase 1 Success? -->
+        <path d="M 275 510 L 325 560 L 275 610 L 225 560 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2" filter="url(#shadow)"/>
+        <text x="275" y="565" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">Success?</text>
+        
+        <path d="M 675 380 L 675 560 L 325 560" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <path d="M 675 470 L 675 560" stroke="#1f2937" stroke-width="2" fill="none"/>
+        
+        <!-- Guard: [Failed] -->
+        <path d="M 325 560 L 1150 560 L 1150 620" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowhead-error)"/>
+        <text x="720" y="550" font-size="12" font-style="italic" fill="#ef4444" font-weight="600">[failed]</text>
+        
+        <!-- Action: Rollback & Exit -->
+        <rect x="1060" y="620" width="180" height="60" rx="15" fill="#ffffff" stroke="#ef4444" stroke-width="2" filter="url(#shadow)"/>
+        <text x="1150" y="648" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Rollback & Exit</text>
+        <text x="1150" y="663" text-anchor="middle" font-size="11" fill="#6b7280">(Cleanup)</text>
+        
+        <!-- Flow Final (Error) -->
+        <circle cx="1150" cy="720" r="15" fill="#ffffff" stroke="#ef4444" stroke-width="3" filter="url(#shadow)"/>
+        <circle cx="1150" cy="720" r="10" fill="#ef4444"/>
+        
+        <path d="M 1150 680 L 1150 705" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowhead-error)"/>
+        
+        <!-- Guard: [Success] -->
+        <path d="M 275 610 L 275 670" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="290" y="640" font-size="12" font-style="italic" fill="#10b981" font-weight="600">[success]</text>
+        
+        <!-- Phase 2: IPC -->
+        <rect x="150" y="670" width="250" height="70" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="3" filter="url(#shadow)"/>
+        <text x="275" y="695" text-anchor="middle" font-size="15" font-weight="bold" fill="#f59e0b">PHASE 2: IPC</text>
+        <text x="275" y="715" text-anchor="middle" font-size="12" fill="#1f2937">Initialize Message Bus</text>
+        <text x="275" y="730" text-anchor="middle" font-size="12" fill="#1f2937">Setup Transport Layer</text>
+        
+        <!-- Action: Init IPC Bus -->
+        <rect x="585" y="770" width="180" height="60" rx="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="675" y="798" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Initialize IPC Bus</text>
+        <text x="675" y="813" text-anchor="middle" font-size="11" fill="#6b7280">(0.1-0.3ms latency)</text>
+        
+        <path d="M 275 740 L 275 800 L 585 800" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Decision: Phase 2 Success? -->
+        <path d="M 275 860 L 325 910 L 275 960 L 225 910 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="275" y="915" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">Success?</text>
+        
+        <path d="M 675 830 L 675 910 L 325 910" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Guard: [Failed] -->
+        <path d="M 325 910 L 1150 910 L 1150 620" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowhead-error)"/>
+        <text x="720" y="900" font-size="12" font-style="italic" fill="#ef4444" font-weight="600">[failed]</text>
+        
+        <!-- Guard: [Success] -->
+        <path d="M 275 960 L 275 1020" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="290" y="990" font-size="12" font-style="italic" fill="#10b981" font-weight="600">[success]</text>
+        
+        <!-- Phase 3: The Pit (Parallel) -->
+        <rect x="150" y="1020" width="250" height="70" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="3" filter="url(#shadow)"/>
+        <text x="275" y="1045" text-anchor="middle" font-size="15" font-weight="bold" fill="#16a34a">PHASE 3: THE PIT</text>
+        <text x="275" y="1065" text-anchor="middle" font-size="12" fill="#1f2937">Initialize All Pit Components</text>
+        <text x="275" y="1080" text-anchor="middle" font-size="11" fill="#6b7280">(Parallel Initialization)</text>
+        
+        <!-- Fork: Parallel Pit Init -->
+        <rect x="225" y="1120" width="100" height="8" rx="2" fill="#1f2937" filter="url(#shadow)"/>
+        
+        <path d="M 275 1090 L 275 1120" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Parallel Actions -->
+        <rect x="535" y="1160" width="160" height="50" rx="12" fill="#ffffff" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+        <text x="615" y="1190" text-anchor="middle" font-size="12" font-weight="500" fill="#1f2937">Pool Manager</text>
+        
+        <rect x="705" y="1160" width="160" height="50" rx="12" fill="#ffffff" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+        <text x="785" y="1190" text-anchor="middle" font-size="12" font-weight="500" fill="#1f2937">DAG Tracker</text>
+        
+        <rect x="535" y="1270" width="160" height="50" rx="12" fill="#ffffff" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+        <text x="615" y="1300" text-anchor="middle" font-size="12" font-weight="500" fill="#1f2937">Artifact Store</text>
+        
+        <rect x="705" y="1270" width="160" height="50" rx="12" fill="#ffffff" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+        <text x="785" y="1300" text-anchor="middle" font-size="12" font-weight="500" fill="#1f2937">Arbitration Engine</text>
+        
+        <rect x="620" y="1380" width="160" height="50" rx="12" fill="#ffffff" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+        <text x="700" y="1410" text-anchor="middle" font-size="12" font-weight="500" fill="#1f2937">Stale Manager</text>
+        
+        <path d="M 275 1128 L 615 1160" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <path d="M 275 1128 L 785 1160" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <path d="M 275 1128 L 615 1270" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <path d="M 275 1128 L 785 1270" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <path d="M 275 1128 L 700 1380" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Return connections from parallel components to join -->
+        <path d="M 615 1210 L 275 1464" stroke="#1f2937" stroke-width="2" fill="none"/>
+        <path d="M 785 1210 L 275 1464" stroke="#1f2937" stroke-width="2" fill="none"/>
+        <path d="M 615 1320 L 275 1464" stroke="#1f2937" stroke-width="2" fill="none"/>
+        <path d="M 785 1320 L 275 1464" stroke="#1f2937" stroke-width="2" fill="none"/>
+        <path d="M 700 1430 L 275 1464" stroke="#1f2937" stroke-width="2" fill="none"/>
+        
+        <!-- Join: Pit Complete -->
+        <rect x="225" y="1460" width="100" height="8" rx="2" fill="#1f2937" filter="url(#shadow)"/>
+        
+        <!-- Phase 4: Conductor -->
+        <rect x="150" y="1500" width="250" height="70" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="3" filter="url(#shadow)"/>
+        <text x="275" y="1525" text-anchor="middle" font-size="15" font-weight="bold" fill="#f59e0b">PHASE 4: CONDUCTOR</text>
+        <text x="275" y="1545" text-anchor="middle" font-size="12" fill="#1f2937">Load Python RL Model</text>
+        <text x="275" y="1560" text-anchor="middle" font-size="11" fill="#6b7280">(PyO3 ~0.01ms overhead)</text>
+        
+        <path d="M 275 1468 L 275 1500" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Action: Init Conductor -->
+        <rect x="585" y="1520" width="180" height="60" rx="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="675" y="1548" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Initialize Conductor</text>
+        <text x="675" y="1563" text-anchor="middle" font-size="11" fill="#6b7280">(Load Trained Weights)</text>
+        
+        <path d="M 275 1570 L 275 1550 L 585 1550" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Action: Health Check -->
+        <rect x="185" y="1610" width="180" height="60" rx="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="275" y="1638" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Run Health Checks</text>
+        <text x="275" y="1653" text-anchor="middle" font-size="11" fill="#6b7280">(Validate All Systems)</text>
+        
+        <path d="M 675 1580 L 675 1640 L 365 1640" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Final Node (Success) -->
+        <circle cx="275" cy="1710" r="15" fill="#ffffff" stroke="#16a34a" stroke-width="3" filter="url(#shadow)"/>
+        <circle cx="275" cy="1710" r="10" fill="#16a34a"/>
+        <text x="310" y="1715" font-size="11" font-style="italic" fill="#6b7280">&lt;&lt;ready&gt;&gt;</text>
+        
+        <path d="M 275 1670 L 275 1695" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    async function saveToPNG() {
+      const svg = document.getElementById('diagram');
+      
+      try {
+        const viewBox = svg.getAttribute('viewBox').split(' ');
+        const svgWidth = parseFloat(viewBox[2]);
+        const svgHeight = parseFloat(viewBox[3]);
+        
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.left = '-9999px';
+        tempContainer.style.width = svgWidth + 'px';
+        tempContainer.style.height = svgHeight + 'px';
+        tempContainer.style.padding = '20px';
+        tempContainer.style.backgroundColor = '#ffffff';
+        
+        const svgClone = svg.cloneNode(true);
+        svgClone.setAttribute('width', svgWidth);
+        svgClone.setAttribute('height', svgHeight);
+        tempContainer.appendChild(svgClone);
+        document.body.appendChild(tempContainer);
+        
+        const canvas = await html2canvas(tempContainer, {
+          scale: 3,
+          backgroundColor: '#ffffff',
+          logging: false,
+          useCORS: true,
+          allowTaint: true,
+          width: svgWidth + 40,
+          height: svgHeight + 40
+        });
+        
+        document.body.removeChild(tempContainer);
+        
+        canvas.toBlob(function(blob) {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = 'symphony-system-bootstrap.png';
+          link.click();
+          URL.revokeObjectURL(link.href);
+        }, 'image/png', 1.0);
+        
+      } catch (error) {
+        console.error('Error generating PNG:', error);
+        alert('Error generating PNG. Please try again.');
+      }
+    }
+
+    function saveToPDF() {
+      window.print();
+    }
+  </script>
+  
+  <style media="print">
+    body {
+      padding: 0;
+      margin: 0;
+    }
+    .buttons {
+      display: none;
+    }
+    .container {
+      box-shadow: none;
+      max-width: 100%;
+    }
+  </style>
+</body>
+</html>

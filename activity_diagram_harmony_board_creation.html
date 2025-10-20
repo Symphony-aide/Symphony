@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Symphony IDE - Activity Diagram: Harmony Board Melody Creation</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+      overflow: auto;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 100%;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    h1 {
+      font-size: 1.75rem;
+      font-weight: bold;
+      color: #111827;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+    
+    button {
+      padding: 0.625rem 1.25rem;
+      background: linear-gradient(135deg, #333333 0%, #1a1a1a 100%);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+    
+    .diagram-wrapper {
+      background: white;
+      border-radius: 8px;
+      border: 2px solid #d1d5db;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+    
+    svg {
+      width: 100%;
+      height: auto;
+      min-width: 100%;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Symphony IDE - Activity Diagram: Harmony Board Melody Creation (Drag & Drop)</h1>
+      <div class="buttons">
+        <button onclick="saveToPNG()">💾 Save as PNG</button>
+        <button onclick="saveToPDF()">📄 Save as PDF</button>
+      </div>
+    </div>
+    
+    <div class="diagram-wrapper">
+      <svg id="diagram" viewBox="0 0 1200 1700" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#1f2937" />
+          </marker>
+          
+          <marker id="arrowhead-dashed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#6b7280" />
+          </marker>
+
+          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+            <feOffset dx="2" dy="2" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.15"/>
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        
+        <!-- Swimlanes -->
+        <rect x="50" y="80" width="350" height="1550" fill="#f0f9ff" stroke="#4a90e2" stroke-width="2" stroke-dasharray="8,4"/>
+        <text x="225" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Developer/Creator</text>
+        
+        <rect x="400" y="80" width="350" height="1550" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8,4"/>
+        <text x="575" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">🎛️ Harmony Board</text>
+        
+        <rect x="750" y="80" width="400" height="1550" fill="#e8f4f8" stroke="#4a90e2" stroke-width="2" stroke-dasharray="8,4"/>
+        <text x="950" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Polyphony Store</text>
+        
+        <!-- Initial Node -->
+        <circle cx="225" cy="130" r="15" fill="#1f2937" filter="url(#shadow)"/>
+        <text x="260" y="135" font-size="11" font-style="italic" fill="#6b7280">&lt;&lt;start&gt;&gt;</text>
+        
+        <!-- Action: Open Harmony Board -->
+        <rect x="135" y="180" width="180" height="60" rx="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="225" y="208" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Open Harmony Board</text>
+        <text x="225" y="223" text-anchor="middle" font-size="11" fill="#6b7280">(Creation Mode)</text>
+        
+        <path d="M 225 145 L 225 180" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Object Flow -->
+        <path d="M 225 240 L 575 290" stroke="#6b7280" stroke-width="2" stroke-dasharray="4,3" fill="none" marker-end="url(#arrowhead-dashed)"/>
+        <text x="380" y="260" font-size="11" font-style="italic" fill="#6b7280">{request}</text>
+        
+        <!-- Action: Load Node Palette -->
+        <rect x="485" y="290" width="180" height="60" rx="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="318" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Load Node Palette</text>
+        <text x="575" y="333" text-anchor="middle" font-size="11" fill="#6b7280">(Instruments, Operators, Motifs)</text>
+        
+        <!-- Action: Drag Node to Canvas -->
+        <rect x="135" y="380" width="180" height="60" rx="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="225" y="415" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Drag Node to Canvas</text>
+        
+        <path d="M 575 350 L 575 410 L 315 410" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Action: Configure Node -->
+        <rect x="135" y="470" width="180" height="60" rx="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="225" y="498" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Configure Node</text>
+        <text x="225" y="513" text-anchor="middle" font-size="11" fill="#6b7280">(Set Parameters)</text>
+        
+        <path d="M 225 440 L 225 470" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Action: Connect Nodes -->
+        <rect x="135" y="560" width="180" height="60" rx="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="225" y="595" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Connect Nodes (Draw Edge)</text>
+        
+        <path d="M 225 530 L 225 560" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Object Flow: Connection -->
+        <path d="M 225 620 L 575 670" stroke="#6b7280" stroke-width="2" stroke-dasharray="4,3" fill="none" marker-end="url(#arrowhead-dashed)"/>
+        <text x="380" y="640" font-size="11" font-style="italic" fill="#6b7280">{edge data}</text>
+        
+        <!-- Action: Validate Connection -->
+        <rect x="485" y="670" width="180" height="60" rx="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="698" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Validate Connection</text>
+        <text x="575" y="713" text-anchor="middle" font-size="11" fill="#6b7280">(Type Safety Check)</text>
+        
+        <!-- Decision: Valid Connection? -->
+        <path d="M 575 760 L 625 810 L 575 860 L 525 810 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="815" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">Valid?</text>
+        
+        <path d="M 575 730 L 575 760" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Guard: [Invalid] -->
+        <path d="M 525 810 L 225 810 L 225 880" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="370" y="800" font-size="12" font-style="italic" fill="#ef4444" font-weight="600">[invalid]</text>
+        
+        <!-- Action: Show Error -->
+        <rect x="135" y="880" width="180" height="60" rx="15" fill="#ffffff" stroke="#ef4444" stroke-width="2" filter="url(#shadow)"/>
+        <text x="225" y="908" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Show Error</text>
+        <text x="225" y="923" text-anchor="middle" font-size="11" fill="#6b7280">(Type Mismatch)</text>
+        
+        <!-- Loop back -->
+        <path d="M 225 940 L 225 970 L 60 970 L 60 590 L 135 590" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="70" y="780" font-size="11" font-style="italic" fill="#6b7280">[retry]</text>
+        
+        <!-- Guard: [Valid] -->
+        <path d="M 575 860 L 575 920" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="590" y="890" font-size="12" font-style="italic" fill="#10b981" font-weight="600">[valid]</text>
+        
+        <!-- Decision: More Nodes? -->
+        <path d="M 575 920 L 625 970 L 575 1020 L 525 970 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="968" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">More</text>
+        <text x="575" y="983" text-anchor="middle" font-size="11" fill="#6b7280">Nodes?</text>
+        
+        <!-- Guard: [Yes] - loop back -->
+        <path d="M 525 970 L 100 970 L 100 410 L 135 410" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="110" y="690" font-size="12" font-style="italic" fill="#10b981" font-weight="600">[yes]</text>
+        
+        <!-- Guard: [No] - continue -->
+        <path d="M 575 1020 L 575 1080" stroke="#4a90e2" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="590" y="1050" font-size="12" font-style="italic" fill="#4a90e2" font-weight="600">[no]</text>
+        
+        <!-- Action: Validate Workflow -->
+        <rect x="485" y="1080" width="180" height="60" rx="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="1108" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Validate Workflow</text>
+        <text x="575" y="1123" text-anchor="middle" font-size="11" fill="#6b7280">(Check DAG, Cycles)</text>
+        
+        <!-- Decision: Workflow Valid? -->
+        <path d="M 575 1170 L 625 1220 L 575 1270 L 525 1220 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="1225" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">Valid?</text>
+        
+        <path d="M 575 1140 L 575 1170" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Guard: [Invalid] -->
+        <path d="M 525 1220 L 225 1220 L 225 880" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="370" y="1210" font-size="12" font-style="italic" fill="#ef4444" font-weight="600">[invalid]</text>
+        
+        <!-- Guard: [Valid] -->
+        <path d="M 575 1270 L 575 1330" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="590" y="1300" font-size="12" font-style="italic" fill="#10b981" font-weight="600">[valid]</text>
+        
+        <!-- Action: Save Melody -->
+        <rect x="485" y="1330" width="180" height="60" rx="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="1365" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Save Melody</text>
+        
+        <!-- Object Flow to Polyphony -->
+        <path d="M 665 1360 L 950 1410" stroke="#6b7280" stroke-width="2" stroke-dasharray="4,3" fill="none" marker-end="url(#arrowhead-dashed)"/>
+        <text x="790" y="1380" font-size="11" font-style="italic" fill="#6b7280">{melody DAG}</text>
+        
+        <!-- Action: Store in Polyphony -->
+        <rect x="860" y="1410" width="180" height="60" rx="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="950" y="1438" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Store Melody</text>
+        <text x="950" y="1453" text-anchor="middle" font-size="11" fill="#6b7280">(Database + Index)</text>
+        
+        <!-- Decision: Publish? -->
+        <path d="M 225 1450 L 275 1500 L 225 1550 L 175 1500 Z" fill="#f0f9ff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="225" y="1505" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">Publish?</text>
+        
+        <path d="M 575 1390 L 575 1500 L 275 1500" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Guard: [Yes] -->
+        <path d="M 275 1500 L 860 1500" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="550" y="1490" font-size="12" font-style="italic" fill="#10b981" font-weight="600">[yes]</text>
+        
+        <!-- Action: Publish to Marketplace -->
+        <rect x="860" y="1500" width="180" height="60" rx="15" fill="#ffffff" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+        <text x="950" y="1528" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Publish to Marketplace</text>
+        <text x="950" y="1543" text-anchor="middle" font-size="11" fill="#6b7280">(Set Public)</text>
+        
+        <!-- Merge -->
+        <path d="M 950 1470 L 950 1500" stroke="#1f2937" stroke-width="2" fill="none"/>
+        <path d="M 950 1560 L 950 1590" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Guard: [No] -->
+        <path d="M 225 1550 L 225 1590 L 950 1590" stroke="#4a90e2" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="240" y="1570" font-size="12" font-style="italic" fill="#4a90e2" font-weight="600">[no]</text>
+        
+        <!-- Final Node -->
+        <circle cx="950" cy="1600" r="15" fill="#ffffff" stroke="#1f2937" stroke-width="3" filter="url(#shadow)"/>
+        <circle cx="950" cy="1600" r="10" fill="#1f2937"/>
+        <text x="985" y="1605" font-size="11" font-style="italic" fill="#6b7280">&lt;&lt;complete&gt;&gt;</text>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    async function saveToPNG() {
+      const svg = document.getElementById('diagram');
+      
+      try {
+        const viewBox = svg.getAttribute('viewBox').split(' ');
+        const svgWidth = parseFloat(viewBox[2]);
+        const svgHeight = parseFloat(viewBox[3]);
+        
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.left = '-9999px';
+        tempContainer.style.width = svgWidth + 'px';
+        tempContainer.style.height = svgHeight + 'px';
+        tempContainer.style.padding = '20px';
+        tempContainer.style.backgroundColor = '#ffffff';
+        
+        const svgClone = svg.cloneNode(true);
+        svgClone.setAttribute('width', svgWidth);
+        svgClone.setAttribute('height', svgHeight);
+        tempContainer.appendChild(svgClone);
+        document.body.appendChild(tempContainer);
+        
+        const canvas = await html2canvas(tempContainer, {
+          scale: 3,
+          backgroundColor: '#ffffff',
+          logging: false,
+          useCORS: true,
+          allowTaint: true,
+          width: svgWidth + 40,
+          height: svgHeight + 40
+        });
+        
+        document.body.removeChild(tempContainer);
+        
+        canvas.toBlob(function(blob) {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = 'symphony-harmony-board-creation.png';
+          link.click();
+          URL.revokeObjectURL(link.href);
+        }, 'image/png', 1.0);
+        
+      } catch (error) {
+        console.error('Error generating PNG:', error);
+        alert('Error generating PNG. Please try again.');
+      }
+    }
+
+    function saveToPDF() {
+      window.print();
+    }
+  </script>
+  
+  <style media="print">
+    body {
+      padding: 0;
+      margin: 0;
+    }
+    .buttons {
+      display: none;
+    }
+    .container {
+      box-shadow: none;
+      max-width: 100%;
+    }
+  </style>
+</body>
+</html>

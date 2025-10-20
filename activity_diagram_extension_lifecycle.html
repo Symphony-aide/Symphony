@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Symphony IDE - Activity Diagram: Extension Lifecycle</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+      overflow: auto;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 100%;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    h1 {
+      font-size: 1.75rem;
+      font-weight: bold;
+      color: #111827;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+    
+    button {
+      padding: 0.625rem 1.25rem;
+      background: linear-gradient(135deg, #333333 0%, #1a1a1a 100%);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+    
+    .diagram-wrapper {
+      background: white;
+      border-radius: 8px;
+      border: 2px solid #d1d5db;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+    
+    svg {
+      width: 100%;
+      height: auto;
+      min-width: 100%;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Symphony IDE - Activity Diagram: Extension Lifecycle (Chambering)</h1>
+      <div class="buttons">
+        <button onclick="saveToPNG()">💾 Save as PNG</button>
+        <button onclick="saveToPDF()">📄 Save as PDF</button>
+      </div>
+    </div>
+    
+    <div class="diagram-wrapper">
+      <svg id="diagram" viewBox="0 0 1200 1600" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#1f2937" />
+          </marker>
+          
+          <marker id="arrowhead-dashed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#6b7280" />
+          </marker>
+
+          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+            <feOffset dx="2" dy="2" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.15"/>
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        
+        <!-- Swimlanes -->
+        <rect x="50" y="80" width="350" height="1450" fill="#f0f9ff" stroke="#4a90e2" stroke-width="2" stroke-dasharray="8,4"/>
+        <text x="225" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Developer</text>
+        
+        <rect x="400" y="80" width="350" height="1450" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8,4"/>
+        <text x="575" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Orchestra Kit</text>
+        
+        <rect x="750" y="80" width="400" height="1450" fill="#e8f4f8" stroke="#4a90e2" stroke-width="2" stroke-dasharray="8,4"/>
+        <text x="950" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Extension & Security</text>
+        
+        <!-- Initial Node -->
+        <circle cx="225" cy="130" r="15" fill="#1f2937" filter="url(#shadow)"/>
+        <text x="260" y="135" font-size="11" font-style="italic" fill="#6b7280">&lt;&lt;initial&gt;&gt;</text>
+        
+        <!-- Action: Browse Extensions -->
+        <rect x="135" y="180" width="180" height="60" rx="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="225" y="208" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Browse Extensions</text>
+        <text x="225" y="223" text-anchor="middle" font-size="11" fill="#6b7280">(Grand Stage)</text>
+        
+        <path d="M 225 145 L 225 180" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Action: Select Extension -->
+        <rect x="135" y="270" width="180" height="60" rx="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="225" y="305" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Select Extension</text>
+        
+        <path d="M 225 240 L 225 270" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Object Flow -->
+        <path d="M 225 330 L 575 380" stroke="#6b7280" stroke-width="2" stroke-dasharray="4,3" fill="none" marker-end="url(#arrowhead-dashed)"/>
+        <text x="380" y="350" font-size="11" font-style="italic" fill="#6b7280">{extension ID}</text>
+        
+        <!-- Action: Download Package -->
+        <rect x="485" y="380" width="180" height="60" rx="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="408" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Download Package</text>
+        <text x="575" y="423" text-anchor="middle" font-size="11" fill="#6b7280">(Marketplace)</text>
+        
+        <!-- Fork: Parallel verification -->
+        <rect x="525" y="470" width="100" height="8" rx="2" fill="#1f2937" filter="url(#shadow)"/>
+        <text x="640" y="480" font-size="10" font-style="italic" fill="#6b7280">&lt;&lt;fork&gt;&gt;</text>
+        
+        <path d="M 575 440 L 575 470" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Parallel: Verify Signature -->
+        <rect x="485" y="510" width="180" height="60" rx="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="538" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Verify Signature</text>
+        <text x="575" y="553" text-anchor="middle" font-size="11" fill="#6b7280">(Security Check)</text>
+        
+        <path d="M 575 478 L 575 510" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Parallel: Check Dependencies -->
+        <rect x="810" y="510" width="180" height="60" rx="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="900" y="538" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Check Dependencies</text>
+        <text x="900" y="553" text-anchor="middle" font-size="11" fill="#6b7280">(Resolver)</text>
+        
+        <path d="M 575 478 L 900 510" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Decision: Valid? -->
+        <path d="M 575 600 L 625 650 L 575 700 L 525 650 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="655" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">Valid?</text>
+        
+        <path d="M 575 570 L 575 600" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <path d="M 900 570 L 900 650 L 625 650" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Guard: [Invalid] -->
+        <path d="M 525 650 L 225 650 L 225 720" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="370" y="640" font-size="12" font-style="italic" fill="#ef4444" font-weight="600">[invalid]</text>
+        
+        <!-- Action: Show Error -->
+        <rect x="135" y="720" width="180" height="60" rx="15" fill="#ffffff" stroke="#ef4444" stroke-width="2" filter="url(#shadow)"/>
+        <text x="225" y="755" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Show Error</text>
+        
+        <!-- Flow Final -->
+        <circle cx="225" cy="820" r="15" fill="#ffffff" stroke="#1f2937" stroke-width="3" filter="url(#shadow)"/>
+        <circle cx="225" cy="820" r="10" fill="#1f2937"/>
+        
+        <path d="M 225 780 L 225 805" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Guard: [Valid] -->
+        <path d="M 575 700 L 575 750" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="590" y="725" font-size="12" font-style="italic" fill="#10b981" font-weight="600">[valid]</text>
+        
+        <!-- Action: Install Extension -->
+        <rect x="485" y="750" width="180" height="60" rx="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="778" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Install Extension</text>
+        <text x="575" y="793" text-anchor="middle" font-size="11" fill="#6b7280">(Extract & Setup)</text>
+        
+        <!-- Chambering State: Installed -->
+        <rect x="485" y="840" width="180" height="50" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="870" text-anchor="middle" font-size="13" font-weight="600" fill="#0284c7">State: INSTALLED</text>
+        
+        <path d="M 575 810 L 575 840" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Action: Load Extension -->
+        <rect x="485" y="920" width="180" height="60" rx="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="955" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Load Extension</text>
+        
+        <path d="M 575 890 L 575 920" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Chambering State: Loading -->
+        <rect x="485" y="1010" width="180" height="50" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="1040" text-anchor="middle" font-size="13" font-weight="600" fill="#f59e0b">State: LOADING</text>
+        
+        <path d="M 575 980 L 575 1010" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Fork: Security & Initialization -->
+        <rect x="525" y="1090" width="100" height="8" rx="2" fill="#1f2937" filter="url(#shadow)"/>
+        
+        <path d="M 575 1060 L 575 1090" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Parallel: Check Capabilities -->
+        <rect x="810" y="1130" width="180" height="60" rx="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="900" y="1158" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Check Capabilities</text>
+        <text x="900" y="1173" text-anchor="middle" font-size="11" fill="#6b7280">(Permissions)</text>
+        
+        <path d="M 575 1098 L 900 1130" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Parallel: Initialize Extension -->
+        <rect x="485" y="1130" width="180" height="60" rx="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="1165" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Initialize Extension</text>
+        
+        <path d="M 575 1098 L 575 1130" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Join -->
+        <rect x="525" y="1220" width="100" height="8" rx="2" fill="#1f2937" filter="url(#shadow)"/>
+        
+        <path d="M 575 1190 L 575 1220" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <path d="M 900 1190 L 900 1224 L 625 1224" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Chambering State: Activated -->
+        <rect x="485" y="1260" width="180" height="50" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="1290" text-anchor="middle" font-size="13" font-weight="600" fill="#16a34a">State: ACTIVATED</text>
+        
+        <path d="M 575 1228 L 575 1260" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Action: Execute Extension -->
+        <rect x="485" y="1340" width="180" height="60" rx="15" fill="#ffffff" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="1375" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Execute Extension</text>
+        
+        <path d="M 575 1310 L 575 1340" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Chambering State: Running -->
+        <rect x="485" y="1430" width="180" height="50" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
+        <text x="575" y="1460" text-anchor="middle" font-size="13" font-weight="600" fill="#16a34a">State: RUNNING</text>
+        
+        <path d="M 575 1400 L 575 1430" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Final Node -->
+        <circle cx="575" cy="1510" r="15" fill="#ffffff" stroke="#1f2937" stroke-width="3" filter="url(#shadow)"/>
+        <circle cx="575" cy="1510" r="10" fill="#1f2937"/>
+        <text x="610" y="1515" font-size="11" font-style="italic" fill="#6b7280">&lt;&lt;final&gt;&gt;</text>
+        
+        <path d="M 575 1480 L 575 1495" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    async function saveToPNG() {
+      const svg = document.getElementById('diagram');
+      
+      try {
+        const viewBox = svg.getAttribute('viewBox').split(' ');
+        const svgWidth = parseFloat(viewBox[2]);
+        const svgHeight = parseFloat(viewBox[3]);
+        
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.left = '-9999px';
+        tempContainer.style.width = svgWidth + 'px';
+        tempContainer.style.height = svgHeight + 'px';
+        tempContainer.style.padding = '20px';
+        tempContainer.style.backgroundColor = '#ffffff';
+        
+        const svgClone = svg.cloneNode(true);
+        svgClone.setAttribute('width', svgWidth);
+        svgClone.setAttribute('height', svgHeight);
+        tempContainer.appendChild(svgClone);
+        document.body.appendChild(tempContainer);
+        
+        const canvas = await html2canvas(tempContainer, {
+          scale: 3,
+          backgroundColor: '#ffffff',
+          logging: false,
+          useCORS: true,
+          allowTaint: true,
+          width: svgWidth + 40,
+          height: svgHeight + 40
+        });
+        
+        document.body.removeChild(tempContainer);
+        
+        canvas.toBlob(function(blob) {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = 'symphony-extension-lifecycle.png';
+          link.click();
+          URL.revokeObjectURL(link.href);
+        }, 'image/png', 1.0);
+        
+      } catch (error) {
+        console.error('Error generating PNG:', error);
+        alert('Error generating PNG. Please try again.');
+      }
+    }
+
+    function saveToPDF() {
+      window.print();
+    }
+  </script>
+  
+  <style media="print">
+    body {
+      padding: 0;
+      margin: 0;
+    }
+    .buttons {
+      display: none;
+    }
+    .container {
+      box-shadow: none;
+      max-width: 100%;
+    }
+  </style>
+</body>
+</html>

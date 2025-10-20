@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Symphony IDE - Activity Diagram: Melody Execution Workflow</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+      overflow: auto;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 100%;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    h1 {
+      font-size: 1.75rem;
+      font-weight: bold;
+      color: #111827;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+    
+    button {
+      padding: 0.625rem 1.25rem;
+      background: linear-gradient(135deg, #333333 0%, #1a1a1a 100%);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+    
+    .diagram-wrapper {
+      background: white;
+      border-radius: 8px;
+      border: 2px solid #d1d5db;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+    
+    svg {
+      width: 100%;
+      height: auto;
+      min-width: 100%;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Symphony IDE - Activity Diagram: Melody Execution Workflow</h1>
+      <div class="buttons">
+        <button onclick="saveToPNG()">💾 Save as PNG</button>
+        <button onclick="saveToPDF()">📄 Save as PDF</button>
+      </div>
+    </div>
+    
+    <div class="diagram-wrapper">
+      <svg id="diagram" viewBox="0 0 1000 1400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Arrow marker definition -->
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#1f2937" />
+          </marker>
+          
+          <marker id="arrowhead-dashed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#6b7280" />
+          </marker>
+
+          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+            <feOffset dx="2" dy="2" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.15"/>
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        
+        <!-- Swimlanes (Activity Partitions) -->
+        <rect x="50" y="80" width="280" height="1250" fill="#f0f9ff" stroke="#4a90e2" stroke-width="2" stroke-dasharray="8,4"/>
+        <text x="190" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Developer</text>
+        
+        <rect x="330" y="80" width="280" height="1250" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8,4"/>
+        <text x="470" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">🎩 Conductor (RL)</text>
+        
+        <rect x="610" y="80" width="340" height="1250" fill="#e8f4f8" stroke="#4a90e2" stroke-width="2" stroke-dasharray="8,4"/>
+        <text x="780" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">The Pit & Orchestra Kit</text>
+        
+        <!-- Initial Node (filled circle) -->
+        <circle cx="190" cy="120" r="15" fill="#1f2937" filter="url(#shadow)"/>
+        <text x="250" y="125" font-size="11" font-style="italic" fill="#6b7280">&lt;&lt;initial node&gt;&gt;</text>
+        
+        <!-- Action: Write Prompt -->
+        <rect x="100" y="170" width="180" height="60" rx="15" ry="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="190" y="205" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Write Prompt</text>
+        <text x="310" y="205" font-size="10" font-style="italic" fill="#6b7280">[action]</text>
+        
+        <!-- Control Flow -->
+        <path d="M 190 135 L 190 170" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Object Flow with data token -->
+        <path d="M 190 230 L 470 270" stroke="#6b7280" stroke-width="2" stroke-dasharray="4,3" fill="none" marker-end="url(#arrowhead-dashed)"/>
+        <text x="320" y="245" font-size="11" font-style="italic" fill="#6b7280">{prompt text}</text>
+        <text x="320" y="260" font-size="9" fill="#9ca3af">&lt;&lt;object flow&gt;&gt;</text>
+        
+        <!-- Action: Analyze Prompt -->
+        <rect x="380" y="270" width="180" height="60" rx="15" ry="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="470" y="298" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Analyze Prompt</text>
+        <text x="470" y="315" text-anchor="middle" font-size="11" fill="#6b7280">(Parse Intent)</text>
+        
+        <!-- Control Flow -->
+        <path d="M 470 330 L 470 380" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Decision Node (diamond) -->
+        <path d="M 470 380 L 520 430 L 470 480 L 420 430 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="470" y="428" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">Mode?</text>
+        <text x="470" y="443" text-anchor="middle" font-size="10" fill="#6b7280">(Maestro/Manual)</text>
+        <text x="540" y="435" font-size="10" font-style="italic" fill="#6b7280">&lt;&lt;decision&gt;&gt;</text>
+        
+        <!-- Guard: [Manual] -->
+        <path d="M 420 430 L 190 430 L 190 510" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="300" y="420" font-size="12" font-style="italic" fill="#3b82f6" font-weight="600">[manual]</text>
+        <text x="300" y="435" font-size="9" fill="#9ca3af">&lt;&lt;guard&gt;&gt;</text>
+        
+        <!-- Action: Browse Melodies -->
+        <rect x="100" y="510" width="180" height="60" rx="15" ry="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="190" y="538" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Browse Melodies</text>
+        <text x="190" y="553" text-anchor="middle" font-size="11" fill="#6b7280">(Polyphony Store)</text>
+        
+        <!-- Control Flow -->
+        <path d="M 190 570 L 190 620" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Decision Node: Select Melody? -->
+        <path d="M 190 620 L 240 670 L 190 720 L 140 670 Z" fill="#f0f9ff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="190" y="675" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">Selected?</text>
+        
+        <!-- Guard: [Yes] - proceed to execution -->
+        <path d="M 240 670 L 320 670 L 320 800 L 380 800" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="280" y="660" font-size="12" font-style="italic" fill="#10b981" font-weight="600">[yes]</text>
+        
+        <!-- Guard: [No] - back to prompt -->
+        <path d="M 140 670 L 60 670 L 60 200 L 100 200" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="70" y="660" font-size="12" font-style="italic" fill="#ef4444" font-weight="600">[no]</text>
+        
+        <!-- Guard: [Maestro] from first decision -->
+        <path d="M 470 480 L 470 540" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="485" y="510" font-size="12" font-style="italic" fill="#10b981" font-weight="600">[maestro RL]</text>
+        
+        <!-- Fork Node (synchronization bar) -->
+        <rect x="420" y="540" width="100" height="8" rx="2" fill="#1f2937" filter="url(#shadow)"/>
+        <text x="540" y="550" font-size="10" font-style="italic" fill="#6b7280">&lt;&lt;fork&gt;&gt;</text>
+        
+        <!-- Parallel flows from fork -->
+        <path d="M 450 548 L 450 600" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <path d="M 490 548 L 780 600" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Action: Generate Melody (AI) -->
+        <rect x="360" y="600" width="180" height="60" rx="15" ry="15" fill="#ffffff" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="450" y="628" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Generate Melody</text>
+        <text x="450" y="643" text-anchor="middle" font-size="11" fill="#6b7280">(RL Model)</text>
+        
+        <!-- Action: Allocate Resources (parallel) -->
+        <rect x="690" y="600" width="180" height="60" rx="15" ry="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="780" y="628" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Allocate Resources</text>
+        <text x="780" y="643" text-anchor="middle" font-size="11" fill="#6b7280">(Pool Manager)</text>
+        
+        <!-- Control Flow -->
+        <path d="M 450 660 L 450 710" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Decision Node: Execution routing -->
+        <path d="M 450 710 L 500 760 L 450 810 L 400 760 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="450" y="758" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">Dispatch</text>
+        <text x="450" y="773" text-anchor="middle" font-size="10" fill="#6b7280">to Pit</text>
+        
+        <!-- Guard: [DAG Execution] -->
+        <path d="M 400 760 L 190 760 L 190 840" stroke="#8b5cf6" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="290" y="750" font-size="12" font-style="italic" fill="#8b5cf6" font-weight="600">[DAG tracker]</text>
+        
+        <!-- Action: Execute Workflow -->
+        <rect x="100" y="840" width="180" height="60" rx="15" ry="15" fill="#ffffff" stroke="#8b5cf6" stroke-width="2" filter="url(#shadow)"/>
+        <text x="190" y="868" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Execute Workflow</text>
+        <text x="190" y="883" text-anchor="middle" font-size="11" fill="#6b7280">(Parallel DAG)</text>
+        
+        <!-- Guard: [Artifact Store] -->
+        <path d="M 450 810 L 450 910" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="465" y="860" font-size="12" font-style="italic" fill="#3b82f6" font-weight="600">[store results]</text>
+        
+        <!-- Action: Store Artifacts -->
+        <rect x="360" y="910" width="180" height="60" rx="15" ry="15" fill="#ffffff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+        <text x="450" y="938" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Store Artifacts</text>
+        <text x="450" y="953" text-anchor="middle" font-size="11" fill="#6b7280">(Content-Addressable)</text>
+        
+        <!-- Guard: [Logging] -->
+        <path d="M 500 760 L 780 760 L 780 1010" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <text x="640" y="750" font-size="12" font-style="italic" fill="#10b981" font-weight="600">[log events]</text>
+        
+        <!-- Action: Log Execution -->
+        <rect x="690" y="1010" width="180" height="60" rx="15" ry="15" fill="#ffffff" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+        <text x="780" y="1038" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Log Execution</text>
+        <text x="780" y="1053" text-anchor="middle" font-size="11" fill="#6b7280">(Structured JSON)</text>
+        
+        <!-- Merge flows to join -->
+        <path d="M 190 900 L 190 1100 L 720 1100" stroke="#1f2937" stroke-width="2" fill="none"/>
+        <path d="M 450 970 L 450 1100 L 720 1100" stroke="#1f2937" stroke-width="2" fill="none"/>
+        <path d="M 780 1070 L 780 1100 L 720 1100" stroke="#1f2937" stroke-width="2" fill="none"/>
+        
+        <!-- Merge Node (diamond) -->
+        <path d="M 720 1100 L 745 1125 L 720 1150 L 695 1125 Z" fill="#1f2937" filter="url(#shadow)"/>
+        <text x="760" y="1130" font-size="10" font-style="italic" fill="#6b7280">&lt;&lt;merge node&gt;&gt;</text>
+        
+        <!-- Join from parallel flows -->
+        <path d="M 780 660 L 780 1170 L 720 1170" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Join Node (synchronization bar) -->
+        <rect x="620" y="1166" width="100" height="8" rx="2" fill="#1f2937" filter="url(#shadow)"/>
+        <text x="740" y="1180" font-size="10" font-style="italic" fill="#6b7280">&lt;&lt;join&gt;&gt;</text>
+        
+        <path d="M 720 1150 L 720 1166" stroke="#1f2937" stroke-width="2" fill="none"/>
+        
+        <!-- Action: Update UI & Notify -->
+        <rect x="580" y="1200" width="180" height="60" rx="15" ry="15" fill="#ffffff" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="670" y="1228" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Update UI & Notify</text>
+        <text x="670" y="1243" text-anchor="middle" font-size="11" fill="#6b7280">(Show Results)</text>
+        
+        <!-- Control Flow to final -->
+        <path d="M 620 1260 L 470 1260 L 470 1290" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Final Node (bull's eye) -->
+        <circle cx="470" cy="1300" r="15" fill="#ffffff" stroke="#1f2937" stroke-width="3" filter="url(#shadow)"/>
+        <circle cx="470" cy="1300" r="10" fill="#1f2937"/>
+        <text x="500" y="1305" font-size="11" font-style="italic" fill="#6b7280">&lt;&lt;final node&gt;&gt;</text>
+        
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    async function saveToPNG() {
+      const svg = document.getElementById('diagram');
+      
+      try {
+        // Get the SVG viewBox dimensions for accurate rendering
+        const viewBox = svg.getAttribute('viewBox').split(' ');
+        const svgWidth = parseFloat(viewBox[2]);
+        const svgHeight = parseFloat(viewBox[3]);
+        
+        // Create a temporary container with fixed dimensions
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.left = '-9999px';
+        tempContainer.style.width = svgWidth + 'px';
+        tempContainer.style.height = svgHeight + 'px';
+        tempContainer.style.padding = '20px';
+        tempContainer.style.backgroundColor = '#ffffff';
+        
+        // Clone the SVG and add to temp container
+        const svgClone = svg.cloneNode(true);
+        svgClone.setAttribute('width', svgWidth);
+        svgClone.setAttribute('height', svgHeight);
+        tempContainer.appendChild(svgClone);
+        document.body.appendChild(tempContainer);
+        
+        // Use html2canvas with high quality settings
+        const canvas = await html2canvas(tempContainer, {
+          scale: 3, // Higher scale for better quality (3x resolution)
+          backgroundColor: '#ffffff', // White background instead of transparent
+          logging: false,
+          useCORS: true,
+          allowTaint: true,
+          width: svgWidth + 40, // Add padding
+          height: svgHeight + 40
+        });
+        
+        // Remove temporary container
+        document.body.removeChild(tempContainer);
+        
+        // Convert to blob with high quality
+        canvas.toBlob(function(blob) {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = 'symphony-activity-diagram.png';
+          link.click();
+          URL.revokeObjectURL(link.href);
+        }, 'image/png', 1.0);
+        
+      } catch (error) {
+        console.error('Error generating PNG:', error);
+        alert('Error generating PNG. Please try again.');
+      }
+    }
+
+    function saveToPDF() {
+      window.print();
+    }
+  </script>
+  
+  <style media="print">
+    body {
+      padding: 0;
+      margin: 0;
+    }
+    .buttons {
+      display: none;
+    }
+    .container {
+      box-shadow: none;
+      max-width: 100%;
+    }
+  </style>
+</body>
+</html>
