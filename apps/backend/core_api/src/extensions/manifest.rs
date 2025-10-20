@@ -10,7 +10,7 @@ pub enum ManifestErrors {
     CannotParse,
 }
 
-/// Represents the [extension] section
+/// Represents 
 #[derive(Serialize, Deserialize, PartialEq, Eq, Clone, Debug, Default)]
 pub struct ManifestExtension {
     pub name: String,
@@ -35,7 +35,7 @@ pub struct Manifest {
 
 impl Manifest {
     pub async fn parse(path: &PathBuf) -> Result<Self, ManifestErrors> {
-        let manifest_content = read_to_string(&path)
+        let manifest_content : String = read_to_string(&path)
             .await
             .map_err(|_| ManifestErrors::NotFound)?;
 

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Symphony IDE - Use Case Diagram (Accurate)</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+      overflow: auto;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 100%;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    h1 {
+      font-size: 1.75rem;
+      font-weight: bold;
+      color: #111827;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+    
+    button {
+      padding: 0.625rem 1.25rem;
+      background: linear-gradient(135deg, #333333 0%, #1a1a1a 100%);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+    
+    .diagram-wrapper {
+      background: white;
+      border-radius: 8px;
+      border: 2px solid #d1d5db;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+    
+    svg {
+      width: 100%;
+      height: auto;
+      min-width: 100%;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Symphony IDE - Use Case Diagram</h1>
+      <div class="buttons">
+        <button onclick="saveToPNG()">💾 Save as PNG</button>
+        <button onclick="saveToPDF()">📄 Save as PDF</button>
+      </div>
+    </div>
+    
+    <div class="diagram-wrapper">
+      <svg id="diagram" viewBox="0 0 2400 1600">
+        <defs>
+          <marker id="arrow-black" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#000000" />
+          </marker>
+          
+          <marker id="arrow-include" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L9,3 L0,6" fill="none" stroke="#000000" stroke-width="1.5" />
+          </marker>
+          
+          <marker id="arrow-extend" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L9,3 L0,6" fill="none" stroke="#000000" stroke-width="1.5" />
+          </marker>
+
+          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+            <feOffset dx="2" dy="2" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.15"/>
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- System Boundary -->
+        <rect x="220" y="60" width="1960" height="1500" fill="none" stroke="#000000" stroke-width="3" rx="12"/>
+        <text x="1200" y="45" text-anchor="middle" font-size="24" font-weight="bold" fill="#000000">
+          Symphony IDE System
+        </text>
+
+        <!-- ACTORS - Left Side -->
+        <!-- Developer -->
+        <g id="developer">
+          <circle cx="110" cy="280" r="26" fill="#ffffff" stroke="#000000" stroke-width="2.5"/>
+          <line x1="110" y1="306" x2="110" y2="375" stroke="#000000" stroke-width="2.5"/>
+          <line x1="110" y1="325" x2="75" y2="355" stroke="#000000" stroke-width="2.5"/>
+          <line x1="110" y1="325" x2="145" y2="355" stroke="#000000" stroke-width="2.5"/>
+          <line x1="110" y1="375" x2="75" y2="415" stroke="#000000" stroke-width="2.5"/>
+          <line x1="110" y1="375" x2="145" y2="415" stroke="#000000" stroke-width="2.5"/>
+          <text x="110" y="455" text-anchor="middle" font-size="14" font-weight="bold" fill="#000000">
+            Developer
+          </text>
+        </g>
+
+        <!-- Extension Creator -->
+        <g id="creator">
+          <circle cx="110" cy="900" r="26" fill="#ffffff" stroke="#000000" stroke-width="2.5"/>
+          <line x1="110" y1="926" x2="110" y2="995" stroke="#000000" stroke-width="2.5"/>
+          <line x1="110" y1="945" x2="75" y2="975" stroke="#000000" stroke-width="2.5"/>
+          <line x1="110" y1="945" x2="145" y2="975" stroke="#000000" stroke-width="2.5"/>
+          <line x1="110" y1="995" x2="75" y2="1035" stroke="#000000" stroke-width="2.5"/>
+          <line x1="110" y1="995" x2="145" y2="1035" stroke="#000000" stroke-width="2.5"/>
+          <text x="110" y="1075" text-anchor="middle" font-size="14" font-weight="bold" fill="#000000">
+            Extension Creator
+          </text>
+        </g>
+
+        <!-- ACTORS - Right Side -->
+        <!-- Conductor Core -->
+        <g id="conductor-sys">
+          <circle cx="2290" cy="350" r="26" fill="#ffffff" stroke="#000000" stroke-width="2.5"/>
+          <line x1="2290" y1="376" x2="2290" y2="445" stroke="#000000" stroke-width="2.5"/>
+          <line x1="2290" y1="395" x2="2255" y2="425" stroke="#000000" stroke-width="2.5"/>
+          <line x1="2290" y1="395" x2="2325" y2="425" stroke="#000000" stroke-width="2.5"/>
+          <line x1="2290" y1="445" x2="2255" y2="485" stroke="#000000" stroke-width="2.5"/>
+          <line x1="2290" y1="445" x2="2325" y2="485" stroke="#000000" stroke-width="2.5"/>
+          <text x="2290" y="525" text-anchor="middle" font-size="13" font-weight="bold" fill="#000000">
+            Conductor
+          </text>
+        </g>
+
+        <!-- Orchestra Kit System -->
+        <g id="orchestra-sys">
+          <circle cx="2290" cy="1200" r="26" fill="#ffffff" stroke="#000000" stroke-width="2.5"/>
+          <line x1="2290" y1="1226" x2="2290" y2="1295" stroke="#000000" stroke-width="2.5"/>
+          <line x1="2290" y1="1245" x2="2255" y2="1275" stroke="#000000" stroke-width="2.5"/>
+          <line x1="2290" y1="1245" x2="2325" y2="1275" stroke="#000000" stroke-width="2.5"/>
+          <line x1="2290" y1="1295" x2="2255" y2="1335" stroke="#000000" stroke-width="2.5"/>
+          <line x1="2290" y1="1295" x2="2325" y2="1335" stroke="#000000" stroke-width="2.5"/>
+          <text x="2290" y="1375" text-anchor="middle" font-size="13" font-weight="bold" fill="#000000">
+            Orchestra Kit
+          </text>
+        </g>
+
+        <!-- ========== USE CASES - OPTIMALLY DISTRIBUTED WITH SAFE MARGINS ========== -->
+        <!-- Top Edge - Developer Use Cases -->
+        <ellipse cx="400" cy="180" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="400" y="185" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Create Project</text>
+
+        <ellipse cx="680" cy="160" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="680" y="165" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Open Project</text>
+
+        <ellipse cx="960" cy="180" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="960" y="185" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Configure Project</text>
+
+        <ellipse cx="1240" cy="160" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="1240" y="165" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Edit Source Code</text>
+
+        <ellipse cx="1520" cy="180" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="1520" y="185" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Write Prompt</text>
+
+        <ellipse cx="1800" cy="220" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="1800" y="225" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Browse Melodies</text>
+
+        <!-- Right Edge - Developer Use Cases -->
+        <ellipse cx="2000" cy="380" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="2000" y="385" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Trigger Melody</text>
+
+        <ellipse cx="2050" cy="580" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="2050" y="585" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Execute Task</text>
+
+        <ellipse cx="2050" cy="780" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="2050" y="785" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Monitor Execution</text>
+
+        <ellipse cx="2000" cy="980" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="2000" y="985" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">View Artifacts</text>
+
+        <!-- Bottom Edge - Developer Use Cases -->
+        <ellipse cx="1800" cy="1140" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="1800" y="1145" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Manage Artifacts</text>
+
+        <ellipse cx="1520" cy="1380" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="1520" y="1385" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Version Control</text>
+
+        <ellipse cx="1240" cy="1420" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="1240" y="1425" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Browse Extensions</text>
+
+        <ellipse cx="960" cy="1440" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="960" y="1445" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Install Extension</text>
+
+        <ellipse cx="680" cy="1420" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="680" y="1425" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Configure Extension</text>
+
+        <ellipse cx="400" cy="1380" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="400" y="1385" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Uninstall Extension</text>
+
+        <!-- Left Edge - Extension Creator Use Cases -->
+        <ellipse cx="350" cy="1140" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="350" y="1145" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Develop Instrument</text>
+
+        <ellipse cx="320" cy="980" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="320" y="985" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Publish Extension</text>
+
+        <ellipse cx="320" cy="780" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="320" y="785" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Support Extension</text>
+
+        <ellipse cx="350" cy="580" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="350" y="585" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Create Melody</text>
+
+        <ellipse cx="400" cy="380" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="400" y="385" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Build Addon</text>
+
+        <!-- Interior - Extension Creator Use Cases -->
+        <ellipse cx="680" cy="480" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="680" y="485" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Develop Operator</text>
+
+        <ellipse cx="960" cy="520" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="960" y="525" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Monitor Reviews</text>
+
+        <ellipse cx="1240" cy="480" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="1240" y="485" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">View Analytics</text>
+
+        <ellipse cx="1520" cy="520" rx="85" ry="32" fill="#ffffff" stroke="#000000" stroke-width="2" filter="url(#shadow)"/>
+        <text x="1520" y="525" text-anchor="middle" font-size="11" font-weight="500" fill="#000000">Update Extension</text>
+
+        <!-- ========== CONNECTIONS: DEVELOPER ========== -->
+        <line x1="145" y1="260" x2="315" y2="180" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <line x1="145" y1="270" x2="595" y2="160" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <line x1="145" y1="280" x2="875" y2="180" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 290 Q 700 220, 1155 160" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 300 Q 850 240, 1435 180" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 310 Q 1000 260, 1715 220" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 320 Q 1100 350, 1915 380" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 330 Q 1150 455, 1965 580" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 340 Q 1150 560, 1965 780" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 350 Q 1100 665, 1915 980" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 360 Q 1000 750, 1715 1140" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 370 Q 850 875, 1435 1380" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 380 Q 700 900, 1155 1420" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 390 Q 550 915, 875 1440" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 400 Q 400 910, 595 1420" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 410 Q 270 895, 315 1380" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+
+        <!-- ========== CONNECTIONS: EXTENSION CREATOR ========== -->
+        <line x1="145" y1="880" x2="265" y2="1140" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <line x1="145" y1="890" x2="235" y2="980" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <line x1="145" y1="900" x2="235" y2="780" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 910 Q 245 745, 265 580" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 920 Q 270 650, 315 380" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 930 Q 400 705, 595 480" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 940 Q 550 730, 875 520" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 950 Q 700 715, 1155 480" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+        <path d="M 145 960 Q 850 740, 1435 520" fill="none" stroke="#000000" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+
+        <!-- ========== CONNECTIONS TO CONDUCTOR CORE ========== -->
+        <path d="M 1885 220 Q 2090 270, 2205 320" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrow-black)"/>
+        <path d="M 2085 380 Q 2160 365, 2205 350" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrow-black)"/>
+        <path d="M 2135 580 Q 2200 475, 2220 380" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrow-black)"/>
+
+        <!-- ========== CONNECTIONS TO ORCHESTRA KIT ========== -->
+        <path d="M 2135 780 Q 2200 985, 2205 1150" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrow-black)"/>
+        <path d="M 2085 980 Q 2160 1085, 2210 1180" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrow-black)"/>
+        <path d="M 1885 1140 Q 2090 1170, 2200 1200" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrow-black)"/>
+
+        <!-- ========== INCLUDE RELATIONSHIPS ========== -->
+        <path d="M 485 180 L 595 160" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-include)"/>
+        <path d="M 765 160 L 875 180" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-include)"/>
+        <path d="M 1045 180 L 1155 160" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-include)"/>
+        <path d="M 1325 160 L 1435 180" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-include)"/>
+        <path d="M 1605 180 L 1715 220" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-include)"/>
+        <path d="M 485 380 L 595 480" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-include)"/>
+        <path d="M 765 480 L 875 520" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-include)"/>
+        <path d="M 1045 520 L 1155 480" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-include)"/>
+        <path d="M 1325 480 L 1435 520" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-include)"/>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    async function saveToPNG() {
+      const svg = document.getElementById('diagram');
+      
+      try {
+        // Get the SVG viewBox dimensions for accurate rendering
+        const viewBox = svg.getAttribute('viewBox').split(' ');
+        const svgWidth = parseFloat(viewBox[2]);
+        const svgHeight = parseFloat(viewBox[3]);
+        
+        // Create a temporary container with fixed dimensions
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.left = '-9999px';
+        tempContainer.style.width = svgWidth + 'px';
+        tempContainer.style.height = svgHeight + 'px';
+        tempContainer.style.padding = '20px';
+        tempContainer.style.backgroundColor = '#ffffff';
+        
+        // Clone the SVG and add to temp container
+        const svgClone = svg.cloneNode(true);
+        svgClone.setAttribute('width', svgWidth);
+        svgClone.setAttribute('height', svgHeight);
+        tempContainer.appendChild(svgClone);
+        document.body.appendChild(tempContainer);
+        
+        // Use html2canvas with high quality settings
+        const canvas = await html2canvas(tempContainer, {
+          scale: 3, // Higher scale for better quality (3x resolution)
+          backgroundColor: '#ffffff', // White background instead of transparent
+          logging: false,
+          useCORS: true,
+          allowTaint: true,
+          width: svgWidth + 40, // Add padding
+          height: svgHeight + 40
+        });
+        
+        // Remove temporary container
+        document.body.removeChild(tempContainer);
+        
+        // Convert to blob with high quality
+        canvas.toBlob(function(blob) {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = 'symphony-usecase-diagram.png';
+          link.click();
+          URL.revokeObjectURL(link.href);
+        }, 'image/png', 1.0);
+        
+      } catch (error) {
+        console.error('Error generating PNG:', error);
+        alert('Error generating PNG. Please try again.');
+      }
+    }
+
+    function saveToPDF() {
+      window.print();
+    }
+  </script>
+  
+  <style media="print">
+    body {
+      padding: 0;
+      margin: 0;
+    }
+    .buttons {
+      display: none;
+    }
+    .container {
+      box-shadow: none;
+      max-width: 100%;
+    }
+  </style>
+</body>
+</html>
