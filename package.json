@@ -3,7 +3,8 @@
   "workspaces": [
     "packages/*",
     "apps/web",
-    "packages/components/*"
+    "packages/components/*",
+    "packages/features"
   ],
   "type": "module",
   "scripts": {
