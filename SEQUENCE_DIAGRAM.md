@@ -32,6 +32,7 @@
 - Real-time progress updates via WebSocket to UI
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'actorBkg':'#e0f2fe', 'actorBorder':'#4a90e2', 'actorTextColor':'#1f2937', 'actorLineColor':'#6b7280', 'signalColor':'#1f2937', 'signalTextColor':'#1f2937', 'labelBoxBkgColor':'#f9fafb', 'labelBoxBorderColor':'#d1d5db', 'labelTextColor':'#1f2937', 'loopTextColor':'#1f2937', 'noteBorderColor':'#4a90e2', 'noteBkgColor':'#f0f9ff', 'noteTextColor':'#1f2937', 'activationBorderColor':'#4a90e2', 'activationBkgColor':'#e0f2fe', 'sequenceNumberColor':'#ffffff'}}}%%
 sequenceDiagram
     actor Dev as Developer
     participant UI as Frontend UI

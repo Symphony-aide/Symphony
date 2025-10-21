@@ -27,26 +27,27 @@ This document contains state diagrams for all major state machines in the Sympho
 - Uninstallation can occur from Installed, Loaded, or Activated states
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db'}}}%%
 stateDiagram-v2
-    [*] --> Installed: install(package)
-    
-    Installed --> Loading: load()
-    Loading --> Loaded: success
-    Loading --> Error: load_failed
-    
-    Loaded --> Activated: activate()
-    Loaded --> Uninstalling: uninstall()
-    Activated --> Running: execute()
-    Activated --> Loaded: deactivate()
-    Activated --> Uninstalling: uninstall()
-    
-    Running --> Activated: task_complete
-    Running --> Error: execution_error
-    
-    Error --> Loaded: recover()
-    Error --> Uninstalling: uninstall()
-    
-    Uninstalling --> [*]: cleanup_complete
+    [*] --> Installed : install(package)
+
+    Installed --> Loading : load()
+    Loading --> Loaded : success
+    Loading --> Error : load_failed
+
+    Loaded --> Activated : activate()
+    Loaded --> Uninstalling : uninstall()
+    Activated --> Running : execute()
+    Activated --> Loaded : deactivate()
+    Activated --> Uninstalling : uninstall()
+
+    Running --> Activated : task_complete
+    Running --> Error : execution_error
+
+    Error --> Loaded : recover()
+    Error --> Uninstalling : uninstall()
+
+    Uninstalling --> [*] : cleanup_complete
     
     note right of Installed
         Manifest validated
@@ -87,21 +88,22 @@ stateDiagram-v2
 - **Predictive Pre-warming**: >80% accuracy
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db'}}}%%
 stateDiagram-v2
     [*] --> Unloaded
-    
-    Unloaded --> Loading: allocate() / predictive_prewarm()
-    Loading --> Warming: load_complete
-    Warming --> Ready: warm_complete
-    
-    Ready --> Active: allocate()
-    Active --> Ready: deallocate()
-    
-    Ready --> Cooling: idle_timeout
-    Cooling --> Unloaded: evict_from_cache
-    Cooling --> Ready: access_detected
-    
-    Active --> Active: concurrent_task
+
+    Unloaded --> Loading : allocate() / predictive_prewarm()
+    Loading --> Warming : load_complete
+    Warming --> Ready : warm_complete
+
+    Ready --> Active : allocate()
+    Active --> Ready : deallocate()
+
+    Ready --> Cooling : idle_timeout
+    Cooling --> Unloaded : evict_from_cache
+    Cooling --> Ready : access_detected
+
+    Active --> Active : concurrent_task
     
     note right of Unloaded
         Not in memory
@@ -149,6 +151,7 @@ stateDiagram-v2
 - **Manual Mode**: User selects pre-built Melody
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db'}}}%%
 stateDiagram-v2
     [*] --> Draft : create_melody()
 
@@ -205,28 +208,29 @@ stateDiagram-v2
 - **Rollback**: Automatic on any phase failure
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db'}}}%%
 stateDiagram-v2
     [*] --> Initializing
-    
-    Initializing --> Phase1_Foundation: start()
-    Phase1_Foundation --> Phase2_IPC: phase1_complete
-    Phase2_IPC --> Phase3_Pit: phase2_complete
-    Phase3_Pit --> Phase4_Conductor: phase3_complete
-    Phase4_Conductor --> Phase5_UI: phase4_complete
-    Phase5_UI --> HealthCheck: phase5_complete
-    
-    HealthCheck --> Ready: all_probes_pass
-    HealthCheck --> RollingBack: health_check_failed
-    
-    Phase1_Foundation --> RollingBack: phase1_failed
-    Phase2_IPC --> RollingBack: phase2_failed
-    Phase3_Pit --> RollingBack: phase3_failed
-    Phase4_Conductor --> RollingBack: phase4_failed
-    Phase5_UI --> RollingBack: phase5_failed
-    
-    RollingBack --> Failed: rollback_complete
-    Ready --> [*]: system_running
-    Failed --> [*]: shutdown
+
+    Initializing --> Phase1_Foundation : start()
+    Phase1_Foundation --> Phase2_IPC : phase1_complete
+    Phase2_IPC --> Phase3_Pit : phase2_complete
+    Phase3_Pit --> Phase4_Conductor : phase3_complete
+    Phase4_Conductor --> Phase5_UI : phase4_complete
+    Phase5_UI --> HealthCheck : phase5_complete
+
+    HealthCheck --> Ready : all_probes_pass
+    HealthCheck --> RollingBack : health_check_failed
+
+    Phase1_Foundation --> RollingBack : phase1_failed
+    Phase2_IPC --> RollingBack : phase2_failed
+    Phase3_Pit --> RollingBack : phase3_failed
+    Phase4_Conductor --> RollingBack : phase4_failed
+    Phase5_UI --> RollingBack : phase5_failed
+
+    RollingBack --> Failed : rollback_complete
+    Ready --> [*] : system_running
+    Failed --> [*] : shutdown
     
     state Phase1_Foundation {
         [*] --> LoadTypes
@@ -234,7 +238,7 @@ stateDiagram-v2
         LoadConfig --> InitCore
         InitCore --> [*]
     }
-    
+
     state Phase3_Pit {
         [*] --> ParallelInit
         ParallelInit --> PoolManager
@@ -276,20 +280,21 @@ stateDiagram-v2
 **Deduplication**: 20-40% storage savings through content-addressable hashing
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db'}}}%%
 stateDiagram-v2
-    [*] --> SSD_Hot: artifact_created
-    
-    SSD_Hot --> HDD_Warm: age > 7_days
-    HDD_Warm --> Cloud_Cold: age > 30_days
-    Cloud_Cold --> Deleted: age > retention_period
-    
-    HDD_Warm --> SSD_Hot: access_detected
-    Cloud_Cold --> HDD_Warm: access_detected
-    
-    SSD_Hot --> Deleted: manual_delete
-    HDD_Warm --> Deleted: manual_delete
-    Cloud_Cold --> Deleted: manual_delete
-    
+    [*] --> SSD_Hot : artifact_created
+
+    SSD_Hot --> HDD_Warm : age > 7_days
+    HDD_Warm --> Cloud_Cold : age > 30_days
+    Cloud_Cold --> Deleted : age > retention_period
+
+    HDD_Warm --> SSD_Hot : access_detected
+    Cloud_Cold --> HDD_Warm : access_detected
+
+    SSD_Hot --> Deleted : manual_delete
+    HDD_Warm --> Deleted : manual_delete
+    Cloud_Cold --> Deleted : manual_delete
+
     Deleted --> [*]
     
     note right of SSD_Hot
@@ -334,25 +339,26 @@ stateDiagram-v2
 - **Health Checks**: Every 5 seconds
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db'}}}%%
 stateDiagram-v2
     [*] --> Disconnected
-    
-    Disconnected --> Connecting: connect()
-    Connecting --> Authenticating: transport_established
-    Connecting --> Disconnected: connection_failed
-    
-    Authenticating --> Connected: auth_success
-    Authenticating --> Disconnected: auth_failed
-    
-    Connected --> Degraded: latency_spike / packet_loss
-    Degraded --> Connected: performance_restored
-    Degraded --> Reconnecting: health_check_failed
-    
-    Connected --> Reconnecting: connection_lost
-    Reconnecting --> Connecting: retry_attempt
-    Reconnecting --> Disconnected: max_retries_exceeded
-    
-    Connected --> Disconnected: disconnect()
+
+    Disconnected --> Connecting : connect()
+    Connecting --> Authenticating : transport_established
+    Connecting --> Disconnected : connection_failed
+
+    Authenticating --> Connected : auth_success
+    Authenticating --> Disconnected : auth_failed
+
+    Connected --> Degraded : latency_spike / packet_loss
+    Degraded --> Connected : performance_restored
+    Degraded --> Reconnecting : health_check_failed
+
+    Connected --> Reconnecting : connection_lost
+    Reconnecting --> Connecting : retry_attempt
+    Reconnecting --> Disconnected : max_retries_exceeded
+
+    Connected --> Disconnected : disconnect()
     
     note right of Connected
         0.1-0.3ms latency
@@ -394,21 +400,22 @@ stateDiagram-v2
 - **Reward Calculation**: Based on execution success, speed, quality
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db'}}}%%
 stateDiagram-v2
     [*] --> Idle
-    
-    Idle --> Analyzing: user_prompt_received
-    Idle --> Training: training_mode_enabled
-    
-    Analyzing --> Generating: context_analyzed
-    Generating --> Executing: melody_generated
-    
-    Executing --> Learning: execution_complete
-    Learning --> Idle: policy_updated
-    
-    Executing --> Idle: execution_failed
-    
-    Training --> Idle: training_complete
+
+    Idle --> Analyzing : user_prompt_received
+    Idle --> Training : training_mode_enabled
+
+    Analyzing --> Generating : context_analyzed
+    Generating --> Executing : melody_generated
+
+    Executing --> Learning : execution_complete
+    Learning --> Idle : policy_updated
+
+    Executing --> Idle : execution_failed
+
+    Training --> Idle : training_complete
     
     state Generating {
         [*] --> SelectPlayers
@@ -461,24 +468,25 @@ stateDiagram-v2
 - **Failed**: Installation failed
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db'}}}%%
 stateDiagram-v2
     [*] --> Browsing
-    
-    Browsing --> Downloading: select_extension()
-    Downloading --> Verifying: download_complete
-    Downloading --> Failed: download_failed
-    
-    Verifying --> ResolvingDeps: signature_valid
-    Verifying --> Failed: signature_invalid
-    
-    ResolvingDeps --> Installing: dependencies_resolved
-    ResolvingDeps --> RollingBack: dependency_conflict
-    
-    Installing --> Installed: install_success
-    Installing --> RollingBack: install_failed
-    
-    RollingBack --> Failed: rollback_complete
-    
+
+    Browsing --> Downloading : select_extension()
+    Downloading --> Verifying : download_complete
+    Downloading --> Failed : download_failed
+
+    Verifying --> ResolvingDeps : signature_valid
+    Verifying --> Failed : signature_invalid
+
+    ResolvingDeps --> Installing : dependencies_resolved
+    ResolvingDeps --> RollingBack : dependency_conflict
+
+    Installing --> Installed : install_success
+    Installing --> RollingBack : install_failed
+
+    RollingBack --> Failed : rollback_complete
+
     Installed --> [*]
     Failed --> [*]
     
@@ -520,21 +528,22 @@ stateDiagram-v2
 **Parallel Execution**: Multiple tasks can execute concurrently if dependencies allow
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db'}}}%%
 stateDiagram-v2
     [*] --> Pending
-    
-    Pending --> Ready: dependencies_complete
-    Ready --> Allocated: allocate_player()
-    Allocated --> Executing: player_ready
-    
-    Executing --> Storing: execution_success
-    Storing --> Completed: artifact_stored
-    
-    Executing --> Failed: execution_error
-    Failed --> Retrying: retry_policy_active
-    Retrying --> Allocated: retry_attempt
-    Retrying --> Failed: max_retries_exceeded
-    
+
+    Pending --> Ready : dependencies_complete
+    Ready --> Allocated : allocate_player()
+    Allocated --> Executing : player_ready
+
+    Executing --> Storing : execution_success
+    Storing --> Completed : artifact_stored
+
+    Executing --> Failed : execution_error
+    Failed --> Retrying : retry_policy_active
+    Retrying --> Allocated : retry_attempt
+    Retrying --> Failed : max_retries_exceeded
+
     Completed --> [*]
     Failed --> [*]
     
@@ -579,22 +588,23 @@ stateDiagram-v2
 - **Debugging**: Inspecting execution state and errors
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db'}}}%%
 stateDiagram-v2
     [*] --> Viewing
-    
-    Viewing --> Editing: edit_mode()
-    Editing --> Validating: connection_changed / node_added
-    Validating --> Editing: validation_success
-    Validating --> Editing: validation_failed
-    
-    Editing --> Saving: save()
-    Saving --> Viewing: save_success
-    Saving --> Editing: save_failed
-    
-    Viewing --> Executing: execute_melody()
-    Executing --> Debugging: error_detected / pause()
-    Debugging --> Executing: resume()
-    Executing --> Viewing: execution_complete
+
+    Viewing --> Editing : edit_mode()
+    Editing --> Validating : connection_changed / node_added
+    Validating --> Editing : validation_success
+    Validating --> Editing : validation_failed
+
+    Editing --> Saving : save()
+    Saving --> Viewing : save_success
+    Saving --> Editing : save_failed
+
+    Viewing --> Executing : execute_melody()
+    Executing --> Debugging : error_detected / pause()
+    Debugging --> Executing : resume()
+    Executing --> Viewing : execution_complete
     
     state Editing {
         [*] --> DragDrop

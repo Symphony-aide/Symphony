@@ -9,6 +9,7 @@ This document contains focused class diagrams for the Symphony IDE system, organ
 This diagram shows the foundational components: Core orchestration host, type system, configuration management, and the base Extension API that all extensions implement.
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db', 'noteTextColor':'#1f2937'}}}%%
 classDiagram-v2
     %% ============================================
     %% FOUNDATION LAYER - Core Types & Config
@@ -108,6 +109,7 @@ classDiagram-v2
 This diagram focuses on The Pit's five core components that enable 50-100ns latency execution: Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, and Stale Manager.
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db', 'noteTextColor':'#1f2937'}}}%%
 classDiagram-v2
     %% ============================================
     %% THE PIT - AIDE Layer (In-Process Extensions)
@@ -232,6 +234,7 @@ classDiagram-v2
 This diagram shows the inter-process communication infrastructure and the Python-based Conductor that uses reinforcement learning for intelligent workflow generation.
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db', 'noteTextColor':'#1f2937'}}}%%
 classDiagram-v2
     %% ============================================
     %% IPC COMMUNICATION BACKBONE
@@ -343,6 +346,7 @@ classDiagram-v2
 This diagram covers the complete extension lifecycle: Registry, Marketplace, Installer, Lifecycle (Chambering), Security, and the Carets CLI/SDK toolchain.
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db', 'noteTextColor':'#1f2937'}}}%%
 classDiagram-v2
     %% ============================================
     %% ORCHESTRA KIT - Extension Ecosystem
@@ -469,6 +473,7 @@ classDiagram-v2
 This diagram shows workflow orchestration (Maestro/Manual modes), the visual Harmony Board designer, and the phased bootstrap initialization system.
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db', 'noteTextColor':'#1f2937'}}}%%
 classDiagram-v2
     %% ============================================
     %% ORCHESTRATION ENGINE
@@ -621,6 +626,7 @@ classDiagram-v2
 This diagram covers traditional IDE features (file operations, LSP, UI bridge), the three application types (Desktop, Server, Terminal), and infrastructure services (logging, hooks).
 
 ```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#e0f2fe', 'primaryTextColor':'#1f2937', 'primaryBorderColor':'#4a90e2', 'lineColor':'#6b7280', 'secondaryColor':'#fef3c7', 'tertiaryColor':'#f0f9ff', 'noteBkgColor':'#f9fafb', 'noteBorderColor':'#d1d5db', 'noteTextColor':'#1f2937'}}}%%
 classDiagram-v2
     %% ============================================
     %% IDE LAYER - Traditional Features
