@@ -12,16 +12,21 @@
 - **Developer**: The user interacting with Symphony IDE
 - **Conductor**: AI orchestration engine using reinforcement learning to generate and optimize workflows
 - **The Pit**: High-performance in-process execution layer handling task dispatch and resource management
-- **Pool Manager**: Manages AI model lifecycle with 50-100ns allocation times
+- **Pool Manager**: Manages Player extension lifecycle (Instruments, Operators, Motifs) with 50-100ns allocation times
 - **DAG Tracker**: Executes workflow graphs with parallel task execution
 - **Artifact Store**: Content-addressable storage for generated outputs with quality scoring
+
+**Player Policy**: Extensions configured as "Players" can participate in Melodies. This includes:
+- 🎻 **Instruments**: AI/ML model extensions
+- ⚙️ **Operators**: Workflow utility extensions
+- 🧩 **Motifs**: UI/UX enhancement extensions
 
 **Workflow Modes**:
 1. **Maestro Mode (RL)**: Conductor automatically analyzes context and generates an optimal workflow DAG based on the prompt
 2. **Manual Mode**: User browses and selects a pre-existing Melody from the Polyphony Store
 
 **Performance Characteristics**:
-- Model allocation: 50-100ns (cache hit)
+- Player allocation: 50-100ns (cache hit)
 - Parallel DAG execution for independent tasks
 - Content-addressable storage with automatic deduplication
 - Real-time progress updates via WebSocket to UI
@@ -55,13 +60,13 @@ sequenceDiagram
     Core->>Conductor: Orchestrate Tasks
     Conductor->>Pit: Dispatch Task Batch
     
-    Pit->>PoolMgr: Allocate AI Model
+    Pit->>PoolMgr: Allocate Player Extension
     PoolMgr->>PoolMgr: Check Cache (50-100ns)
-    alt Model Ready
-        PoolMgr-->>Pit: Model Handle
-    else Model Not Loaded
-        PoolMgr->>PoolMgr: Load & Warm Model
-        PoolMgr-->>Pit: Model Handle
+    alt Player Ready
+        PoolMgr-->>Pit: Player Handle
+    else Player Not Loaded
+        PoolMgr->>PoolMgr: Load & Warm Player
+        PoolMgr-->>Pit: Player Handle
     end
     
     Pit->>DAG: Execute Workflow
@@ -70,7 +75,7 @@ sequenceDiagram
     
     loop For Each Task Node
         DAG->>PoolMgr: Execute Task
-        PoolMgr->>PoolMgr: Run AI Model
+        PoolMgr->>PoolMgr: Run Player Extension
         PoolMgr-->>DAG: Task Result
         DAG->>Artifact: Store Result
         Artifact->>Artifact: Content-Addressable Storage
@@ -537,16 +542,16 @@ sequenceDiagram
     
     User->>UI: Open Harmony Board (Creation Mode)
     UI->>Core: getAvailableNodes()
-    Core->>Registry: List Extensions
-    Registry-->>Core: Instruments, Operators, Motifs
-    Core-->>UI: Node Palette
-    UI-->>User: Display Available Nodes
+    Core->>Registry: List Player Extensions
+    Registry-->>Core: 🎻 Instruments, ⚙️ Operators, 🧩 Motifs
+    Core-->>UI: Node Palette (Player Extensions)
+    UI-->>User: Display Available Player Nodes
     
-    User->>UI: Drag Instrument Node
+    User->>UI: Drag Instrument Node (🎻 AI/ML)
     UI->>UI: Add Node to Canvas
-    User->>UI: Drag Operator Node
+    User->>UI: Drag Operator Node (⚙️ Utility)
     UI->>UI: Add Node to Canvas
-    User->>UI: Drag Another Operator
+    User->>UI: Drag Motif Node (🧩 UI/UX)
     UI->>UI: Add Node to Canvas
     
     User->>UI: Connect Nodes (Draw Edge)
@@ -629,7 +634,7 @@ sequenceDiagram
 
 **Key Participants**:
 - **The Pit Core**: Central coordinator for in-process task execution
-- **Pool Manager**: AI model lifecycle manager with predictive pre-warming
+- **Pool Manager**: Player extension lifecycle manager with predictive pre-warming (manages Instruments, Operators, Motifs)
 - **DAG Tracker**: Parallel workflow execution engine with topological sorting
 - **Arbitration Engine**: Resource conflict resolution with fairness policies
 - **Artifact Store**: Content-addressable storage with deduplication (20-40% savings)
@@ -641,11 +646,12 @@ sequenceDiagram
    - Fairness policies ensure equitable resource distribution
    - Fast-path allocation for non-conflicting requests
 
-2. **Model Management**:
-   - **Cache Hit (50-100ns)**: Model already loaded and warm
+2. **Player Extension Management**:
+   - **Cache Hit (50-100ns)**: Player extension already loaded and warm
    - **Cache Miss**: Predictive pre-warming based on usage patterns
    - **State Machine**: Unloaded → Loading → Warming → Ready → Active
-   - **>80% Prediction Accuracy**: Anticipates model needs before requests
+   - **>80% Prediction Accuracy**: Anticipates Player needs before requests
+   - **Supports All Extension Types**: Instruments (AI/ML), Operators (utilities), Motifs (UI/UX)
 
 3. **Parallel Execution**:
    - Topological sort identifies independent tasks
@@ -690,16 +696,16 @@ sequenceDiagram
     Arbitration->>Arbitration: Apply Fairness Policy
     Arbitration-->>Pit: Resources Allocated
     
-    Pit->>PoolMgr: Allocate AI Models
+    Pit->>PoolMgr: Allocate Player Extensions
     PoolMgr->>PoolMgr: Check Cache (50-100ns)
     
     alt Cache Hit
-        PoolMgr-->>Pit: Model Handle (Fast Path)
+        PoolMgr-->>Pit: Player Handle (Fast Path)
     else Cache Miss
         PoolMgr->>PoolMgr: Predictive Pre-warming
-        PoolMgr->>PoolMgr: Load Model
+        PoolMgr->>PoolMgr: Load Player Extension
         PoolMgr->>PoolMgr: State: Unloaded → Loading → Warming → Ready
-        PoolMgr-->>Pit: Model Handle
+        PoolMgr-->>Pit: Player Handle
     end
     
     Pit->>DAG: Execute Workflow
@@ -707,13 +713,13 @@ sequenceDiagram
     DAG->>DAG: Identify Parallel Nodes
     
     par Parallel Execution
-        DAG->>PoolMgr: Execute Task A
+        DAG->>PoolMgr: Execute Task A (Instrument/Operator/Motif)
         PoolMgr-->>DAG: Result A
     and
-        DAG->>PoolMgr: Execute Task B
+        DAG->>PoolMgr: Execute Task B (Instrument/Operator/Motif)
         PoolMgr-->>DAG: Result B
     and
-        DAG->>PoolMgr: Execute Task C
+        DAG->>PoolMgr: Execute Task C (Instrument/Operator/Motif)
         PoolMgr-->>DAG: Result C
     end
     
