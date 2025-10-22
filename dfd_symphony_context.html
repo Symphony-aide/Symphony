@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Symphony IDE - Context Diagram (Level-0)</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+      overflow: auto;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    h1 {
+      color: #1f2937;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+      color: #6b7280;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    
+    button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+      background: #4a90e2;
+      color: white;
+    }
+    
+    button:hover {
+      background: #357abd;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .diagram-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+    }
+    
+    svg {
+      display: block;
+      margin: 0 auto;
+    }
+
+    .legend {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .legend-shape {
+      width: 40px;
+      height: 30px;
+      border: 2px solid;
+      display: inline-block;
+    }
+
+    .legend-shape.process {
+      border-radius: 15px;
+      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+      border-color: #4a90e2;
+    }
+
+    .legend-shape.entity {
+      border-radius: 4px;
+      background: #f3f4f6;
+      border-color: #6b7280;
+    }
+
+    .legend-text {
+      font-size: 0.9rem;
+      color: #374151;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Symphony IDE - Context Diagram (Level-0)</h1>
+      <p class="subtitle">Highest-level view showing Symphony system and its external interactions</p>
+      <div class="buttons">
+        <button onclick="saveToPNG()">💾 Save as PNG</button>
+        <button onclick="saveToPDF()">📄 Save as PDF</button>
+      </div>
+    </div>
+    
+    <div class="diagram-wrapper">
+      <svg id="diagram" viewBox="0 0 1400 1000" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Arrow marker for data flows -->
+          <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#1f2937" />
+          </marker>
+
+          <!-- Shadow filter -->
+          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+            <feOffset dx="2" dy="2" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.2"/>
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+
+          <!-- Gradient for central system -->
+          <linearGradient id="systemGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#e0f2fe;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#bae6fd;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+
+        <!-- Title -->
+        <text x="700" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#1f2937">
+          Symphony IDE - System Context (DFD Level-0)
+        </text>
+        <text x="700" y="55" text-anchor="middle" font-size="13" fill="#6b7280">
+          External entities and their interactions with the Symphony system
+        </text>
+
+        <!-- ============================================ -->
+        <!-- CENTRAL SYSTEM (Process 0) -->
+        <!-- ============================================ -->
+        
+        <rect x="450" y="350" width="500" height="280" rx="30" fill="url(#systemGradient)" stroke="#4a90e2" stroke-width="4" filter="url(#shadow)"/>
+        <text x="700" y="400" text-anchor="middle" font-size="18" font-weight="bold" fill="#0284c7">0</text>
+        <line x1="480" y1="420" x2="920" y2="420" stroke="#4a90e2" stroke-width="2.5"/>
+        <text x="700" y="470" text-anchor="middle" font-size="24" font-weight="600" fill="#1f2937">Symphony IDE</text>
+        <text x="700" y="500" text-anchor="middle" font-size="14" fill="#6b7280">AI-First Development Environment</text>
+        <text x="700" y="525" text-anchor="middle" font-size="13" fill="#6b7280">Rust Core + React UI + Python Conductor</text>
+        <text x="700" y="550" text-anchor="middle" font-size="13" fill="#6b7280">Extension System + Workflow Engine</text>
+        <text x="700" y="575" text-anchor="middle" font-size="13" fill="#6b7280">File Operations + Security + IPC</text>
+        <text x="700" y="600" text-anchor="middle" font-size="13" fill="#6b7280">Artifact Store + Configuration</text>
+
+        <!-- ============================================ -->
+        <!-- EXTERNAL ENTITIES -->
+        <!-- ============================================ -->
+
+        <!-- Top Left: Developer -->
+        <rect x="50" y="100" width="180" height="90" rx="6" fill="#f3f4f6" stroke="#6b7280" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="140" y="140" text-anchor="middle" font-size="16" font-weight="600" fill="#1f2937">Developer</text>
+        <text x="140" y="165" text-anchor="middle" font-size="12" fill="#6b7280">(End User)</text>
+
+        <!-- Top Right: External Instruments -->
+        <rect x="1170" y="100" width="180" height="90" rx="6" fill="#f3f4f6" stroke="#6b7280" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="1260" y="130" text-anchor="middle" font-size="16" font-weight="600" fill="#1f2937">External</text>
+        <text x="1260" y="155" text-anchor="middle" font-size="16" font-weight="600" fill="#1f2937">Instruments</text>
+        <text x="1260" y="175" text-anchor="middle" font-size="12" fill="#6b7280">(AI/ML Models)</text>
+
+        <!-- Right: Extension Marketplace -->
+        <rect x="1170" y="450" width="180" height="90" rx="6" fill="#f3f4f6" stroke="#6b7280" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="1260" y="485" text-anchor="middle" font-size="16" font-weight="600" fill="#1f2937">Extension</text>
+        <text x="1260" y="510" text-anchor="middle" font-size="16" font-weight="600" fill="#1f2937">Marketplace</text>
+        <text x="1260" y="530" text-anchor="middle" font-size="12" fill="#6b7280">(Discovery)</text>
+
+        <!-- Bottom Right: Melody Store (Polyphone) -->
+        <rect x="1170" y="800" width="180" height="90" rx="6" fill="#f3f4f6" stroke="#6b7280" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="1260" y="825" text-anchor="middle" font-size="16" font-weight="600" fill="#1f2937">Melody Store</text>
+        <text x="1260" y="850" text-anchor="middle" font-size="16" font-weight="600" fill="#1f2937">(Polyphone)</text>
+        <text x="1260" y="870" text-anchor="middle" font-size="12" fill="#6b7280">(Workflow Templates)</text>
+
+        <!-- Bottom Left: File System -->
+        <rect x="50" y="800" width="180" height="90" rx="6" fill="#f3f4f6" stroke="#6b7280" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="140" y="835" text-anchor="middle" font-size="16" font-weight="600" fill="#1f2937">File System</text>
+        <text x="140" y="860" text-anchor="middle" font-size="12" fill="#6b7280">(Local/Remote)</text>
+
+        <!-- Left: Operating System -->
+        <rect x="50" y="450" width="180" height="90" rx="6" fill="#f3f4f6" stroke="#6b7280" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="140" y="485" text-anchor="middle" font-size="16" font-weight="600" fill="#1f2937">Operating</text>
+        <text x="140" y="510" text-anchor="middle" font-size="16" font-weight="600" fill="#1f2937">System</text>
+        <text x="140" y="530" text-anchor="middle" font-size="12" fill="#6b7280">(Windows/Linux/macOS)</text>
+
+        <!-- ============================================ -->
+        <!-- DATA FLOWS (Elbow Connectors) -->
+        <!-- ============================================ -->
+
+        <!-- Developer to Symphony -->
+        <path d="M 230 145 L 350 145 L 350 420 L 450 420" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="260" y="137" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="300" y="148" text-anchor="middle" font-size="12" fill="#1f2937">User commands</text>
+
+        <!-- Symphony to Developer -->
+        <path d="M 450 440 L 340 440 L 340 165 L 230 165" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="260" y="157" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="300" y="168" text-anchor="middle" font-size="12" fill="#1f2937">UI feedback</text>
+
+        <!-- External Instruments to Symphony -->
+        <path d="M 1170 145 L 1050 145 L 1050 420 L 950 420" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1060" y="137" width="100" height="16" fill="white" opacity="0.95"/>
+        <text x="1110" y="148" text-anchor="middle" font-size="12" fill="#1f2937">Model outputs</text>
+
+        <!-- Symphony to External Instruments -->
+        <path d="M 950 440 L 1060 440 L 1060 165 L 1170 165" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1060" y="157" width="100" height="16" fill="white" opacity="0.95"/>
+        <text x="1110" y="168" text-anchor="middle" font-size="12" fill="#1f2937">Instrument calls</text>
+
+        <!-- Extension Marketplace to Symphony -->
+        <path d="M 1170 495 L 1070 495 L 1070 480 L 950 480" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1000" y="472" width="60" height="16" fill="white" opacity="0.95"/>
+        <text x="1030" y="483" text-anchor="middle" font-size="12" fill="#1f2937">Extensions</text>
+
+        <!-- Symphony to Extension Marketplace -->
+        <path d="M 950 510 L 1080 510 L 1080 515 L 1170 515" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1000" y="502" width="70" height="16" fill="white" opacity="0.95"/>
+        <text x="1035" y="513" text-anchor="middle" font-size="12" fill="#1f2937">Sync requests</text>
+
+        <!-- Melody Store to Symphony -->
+        <path d="M 1170 845 L 1050 845 L 1050 600 L 950 600" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1060" y="837" width="100" height="16" fill="white" opacity="0.95"/>
+        <text x="1110" y="848" text-anchor="middle" font-size="12" fill="#1f2937">Melody templates</text>
+
+        <!-- Symphony to Melody Store -->
+        <path d="M 950 620 L 1060 620 L 1060 865 L 1170 865" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1060" y="857" width="100" height="16" fill="white" opacity="0.95"/>
+        <text x="1110" y="868" text-anchor="middle" font-size="12" fill="#1f2937">Publish/Sync</text>
+
+        <!-- File System to Symphony -->
+        <path d="M 230 845 L 350 845 L 350 600 L 450 600" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="260" y="837" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="300" y="848" text-anchor="middle" font-size="12" fill="#1f2937">File contents</text>
+
+        <!-- Symphony to File System -->
+        <path d="M 450 620 L 340 620 L 340 865 L 230 865" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="260" y="857" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="300" y="868" text-anchor="middle" font-size="12" fill="#1f2937">File operations</text>
+
+        <!-- Operating System to Symphony -->
+        <path d="M 230 495 L 330 495 L 330 480 L 450 480" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="250" y="472" width="70" height="16" fill="white" opacity="0.95"/>
+        <text x="285" y="483" text-anchor="middle" font-size="12" fill="#1f2937">OS events</text>
+
+        <!-- Symphony to Operating System -->
+        <path d="M 450 510 L 320 510 L 320 515 L 230 515" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="250" y="502" width="70" height="16" fill="white" opacity="0.95"/>
+        <text x="285" y="513" text-anchor="middle" font-size="12" fill="#1f2937">System calls</text>
+
+      </svg>
+    </div>
+
+  </div>
+
+  <script>
+    function saveToPNG() {
+      const diagramWrapper = document.querySelector('.diagram-wrapper');
+      html2canvas(diagramWrapper, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'symphony-dfd-level0-context.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(err => {
+        console.error('Error generating PNG:', err);
+        alert('Failed to generate PNG. Please try again.');
+      });
+    }
+
+    function saveToPDF() {
+      window.print();
+    }
+  </script>
+</body>
+</html>
