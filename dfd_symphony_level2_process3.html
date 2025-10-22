@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Symphony IDE - Data Flow Diagram (Level-2: Process 3.0 Decomposition)</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+      overflow: auto;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 100%;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    h1 {
+      font-size: 1.75rem;
+      font-weight: bold;
+      color: #111827;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+    
+    button {
+      padding: 0.625rem 1.25rem;
+      background: linear-gradient(135deg, #333333 0%, #1a1a1a 100%);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+    
+    .diagram-wrapper {
+      background: white;
+      border-radius: 8px;
+      border: 2px solid #d1d5db;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+    
+    svg {
+      width: 100%;
+      height: auto;
+      min-width: 100%;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+    }
+
+    .legend {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .legend h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0.75rem;
+    }
+
+    .legend-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .legend-shape {
+      width: 40px;
+      height: 24px;
+      border: 2px solid #4a90e2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: #1f2937;
+    }
+
+    .legend-shape.process {
+      border-radius: 12px;
+      background: #e0f2fe;
+    }
+
+    .legend-shape.entity {
+      border-radius: 2px;
+      background: #f3f4f6;
+    }
+
+    .legend-shape.datastore {
+      border-left: none;
+      background: white;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Symphony IDE - Level-2 DFD: Process 3.0 (Extension Manager) Decomposition</h1>
+      <div class="buttons">
+        <button onclick="saveToPNG()">💾 Save as PNG</button>
+        <button onclick="saveToPDF()">📄 Save as PDF</button>
+      </div>
+    </div>
+    
+    <div class="diagram-wrapper">
+      <svg id="diagram" viewBox="0 0 1600 1200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Arrow marker for data flows -->
+          <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#1f2937" />
+          </marker>
+
+          <!-- Shadow filter -->
+          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+            <feOffset dx="2" dy="2" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.15"/>
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Title -->
+        <text x="800" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#1f2937">
+          Level-2 DFD: Process 3.0 - Extension Manager (Orchestra Kit)
+        </text>
+        <text x="800" y="55" text-anchor="middle" font-size="13" fill="#6b7280">
+          Decomposition showing extension lifecycle and management
+        </text>
+
+        <!-- ============================================ -->
+        <!-- EXTERNAL ENTITIES & ADJACENT PROCESSES -->
+        <!-- ============================================ -->
+        
+        <!-- Process 2.0: Core Engine (from Level-1) -->
+        <rect x="50" y="150" width="180" height="90" rx="15" fill="#e0f2fe" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="140" y="180" text-anchor="middle" font-size="11" font-weight="bold" fill="#0284c7">2.0</text>
+        <line x1="70" y1="192" x2="210" y2="192" stroke="#4a90e2" stroke-width="1.5"/>
+        <text x="140" y="215" text-anchor="middle" font-size="13" font-weight="500" fill="#1f2937">Core Engine</text>
+
+        <!-- Extension Marketplace (External Entity) -->
+        <rect x="1370" y="150" width="180" height="90" rx="6" fill="#f3f4f6" stroke="#6b7280" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="1460" y="185" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Extension</text>
+        <text x="1460" y="205" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Marketplace</text>
+        <text x="1460" y="225" text-anchor="middle" font-size="11" fill="#6b7280">(Discovery)</text>
+
+        <!-- Process 4.0: AI Orchestration (from Level-1) -->
+        <rect x="1370" y="550" width="180" height="90" rx="15" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+        <text x="1460" y="580" text-anchor="middle" font-size="11" font-weight="bold" fill="#d97706">4.0</text>
+        <line x1="1390" y1="592" x2="1530" y2="592" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="1460" y="615" text-anchor="middle" font-size="13" font-weight="500" fill="#1f2937">AI Orchestration</text>
+
+        <!-- ============================================ -->
+        <!-- SUBPROCESSES OF PROCESS 3.0 (Level-2) -->
+        <!-- ============================================ -->
+
+        <!-- Process 3.1: Extension Loader -->
+        <rect x="350" y="350" width="220" height="120" rx="20" fill="#e0f2fe" stroke="#4a90e2" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="460" y="385" text-anchor="middle" font-size="13" font-weight="bold" fill="#0284c7">3.1</text>
+        <line x1="375" y1="400" x2="545" y2="400" stroke="#4a90e2" stroke-width="2"/>
+        <text x="460" y="430" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Extension Loader</text>
+        <text x="460" y="450" text-anchor="middle" font-size="12" fill="#6b7280">(Chambering)</text>
+
+        <!-- Process 3.2: Dependency Resolver -->
+        <rect x="650" y="350" width="220" height="120" rx="20" fill="#e0f2fe" stroke="#4a90e2" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="760" y="385" text-anchor="middle" font-size="13" font-weight="bold" fill="#0284c7">3.2</text>
+        <line x1="675" y1="400" x2="845" y2="400" stroke="#4a90e2" stroke-width="2"/>
+        <text x="760" y="430" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Dependency</text>
+        <text x="760" y="450" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Resolver</text>
+
+        <!-- Process 3.3: Extension Registry Manager -->
+        <rect x="950" y="350" width="220" height="120" rx="20" fill="#e0f2fe" stroke="#4a90e2" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="1060" y="385" text-anchor="middle" font-size="13" font-weight="bold" fill="#0284c7">3.3</text>
+        <line x1="975" y1="400" x2="1145" y2="400" stroke="#4a90e2" stroke-width="2"/>
+        <text x="1060" y="425" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Extension Registry</text>
+        <text x="1060" y="445" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Manager</text>
+
+        <!-- Process 3.4: Lifecycle Controller -->
+        <rect x="350" y="550" width="220" height="120" rx="20" fill="#e0f2fe" stroke="#4a90e2" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="460" y="585" text-anchor="middle" font-size="13" font-weight="bold" fill="#0284c7">3.4</text>
+        <line x1="375" y1="600" x2="545" y2="600" stroke="#4a90e2" stroke-width="2"/>
+        <text x="460" y="630" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Lifecycle Controller</text>
+        <text x="460" y="650" text-anchor="middle" font-size="12" fill="#6b7280">(State Machine)</text>
+
+        <!-- Process 3.5: Security Sandbox Manager -->
+        <rect x="650" y="550" width="220" height="120" rx="20" fill="#dcfce7" stroke="#10b981" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="760" y="585" text-anchor="middle" font-size="13" font-weight="bold" fill="#059669">3.5</text>
+        <line x1="675" y1="600" x2="845" y2="600" stroke="#10b981" stroke-width="2"/>
+        <text x="760" y="625" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Security Sandbox</text>
+        <text x="760" y="645" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Manager</text>
+
+        <!-- Process 3.6: Marketplace Sync -->
+        <rect x="950" y="550" width="220" height="120" rx="20" fill="#e0f2fe" stroke="#4a90e2" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="1060" y="585" text-anchor="middle" font-size="13" font-weight="bold" fill="#0284c7">3.6</text>
+        <line x1="975" y1="600" x2="1145" y2="600" stroke="#4a90e2" stroke-width="2"/>
+        <text x="1060" y="630" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Marketplace Sync</text>
+        <text x="1060" y="650" text-anchor="middle" font-size="12" fill="#6b7280">(Discovery)</text>
+
+        <!-- ============================================ -->
+        <!-- DATA STORES (Only D3 relevant for Process 3.0) -->
+        <!-- ============================================ -->
+
+        <!-- D3: Extension Registry -->
+        <rect x="950" y="800" width="220" height="70" fill="#ffffff" stroke="#4a90e2" stroke-width="2.5" filter="url(#shadow)"/>
+        <line x1="950" y1="800" x2="950" y2="870" stroke="#ffffff" stroke-width="4"/>
+        <line x1="995" y1="800" x2="995" y2="870" stroke="#4a90e2" stroke-width="2"/>
+        <text x="975" y="840" text-anchor="middle" font-size="13" font-weight="bold" fill="#0284c7">D3</text>
+        <text x="1060" y="840" text-anchor="middle" font-size="14" font-weight="500" fill="#1f2937">Extension Registry</text>
+
+        <!-- ============================================ -->
+        <!-- DATA FLOWS (Level-2 Internal Flows) -->
+        <!-- ============================================ -->
+
+        <!-- Process 2.0 to Process 3.1 (Extension Loader) -->
+        <path d="M 230 195 L 300 195 L 300 410 L 350 410" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="250" y="187" width="70" height="16" fill="white" opacity="0.95"/>
+        <text x="285" y="198" text-anchor="middle" font-size="12" fill="#1f2937">RPC calls</text>
+
+        <!-- Process 3.1 to Process 3.2 -->
+        <path d="M 570 410 L 610 410 L 610 410 L 650 410" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="580" y="402" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="620" y="413" text-anchor="middle" font-size="12" fill="#1f2937">Ext manifest</text>
+
+        <!-- Process 3.2 to Process 3.3 -->
+        <path d="M 870 410 L 910 410 L 910 410 L 950 410" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="880" y="402" width="60" height="16" fill="white" opacity="0.95"/>
+        <text x="910" y="413" text-anchor="middle" font-size="12" fill="#1f2937">Deps OK</text>
+
+        <!-- Process 3.3 to D3 (Extension Registry) -->
+        <path d="M 1060 470 L 1060 730 L 1060 730 L 1060 800" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1020" y="722" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="1060" y="733" text-anchor="middle" font-size="12" fill="#1f2937">Register ext</text>
+
+        <!-- D3 to Process 3.3 -->
+        <path d="M 1070 800 L 1070 750 L 1070 750 L 1070 470" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1030" y="712" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="1070" y="723" text-anchor="middle" font-size="12" fill="#1f2937">Lookup ext</text>
+
+        <!-- Process 3.1 to Process 3.4 -->
+        <path d="M 460 470 L 460 520 L 460 520 L 460 550" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="420" y="502" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="460" y="513" text-anchor="middle" font-size="12" fill="#1f2937">Load request</text>
+
+        <!-- Process 3.4 to Process 3.5 -->
+        <path d="M 570 610 L 610 610 L 610 610 L 650 610" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="580" y="602" width="60" height="16" fill="white" opacity="0.95"/>
+        <text x="610" y="613" text-anchor="middle" font-size="12" fill="#1f2937">Sandbox</text>
+
+        <!-- Process 3.5 to Process 4.0 -->
+        <path d="M 870 610 L 1300 610 L 1300 595 L 1370 595" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1020" y="602" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="1060" y="613" text-anchor="middle" font-size="12" fill="#1f2937">Ext requests</text>
+
+        <!-- Process 3.6 to Extension Marketplace -->
+        <path d="M 1170 610 L 1300 610 L 1300 195 L 1370 195" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1210" y="602" width="70" height="16" fill="white" opacity="0.95"/>
+        <text x="1245" y="613" text-anchor="middle" font-size="12" fill="#1f2937">Sync req</text>
+
+        <!-- Extension Marketplace to Process 3.6 -->
+        <path d="M 1370 205 L 1310 205 L 1310 620 L 1170 620" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1220" y="612" width="70" height="16" fill="white" opacity="0.95"/>
+        <text x="1255" y="623" text-anchor="middle" font-size="12" fill="#1f2937">Ext catalog</text>
+
+        <!-- Process 3.6 to Process 3.1 -->
+        <path d="M 1060 550 L 1060 320 L 460 320 L 460 350" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="720" y="312" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="760" y="323" text-anchor="middle" font-size="12" fill="#1f2937">New ext data</text>
+
+        <!-- Process 3.3 to Process 3.4 -->
+        <path d="M 1060 470 L 1060 500 L 460 500 L 460 550" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="720" y="492" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="760" y="503" text-anchor="middle" font-size="12" fill="#1f2937">Ext metadata</text>
+
+
+
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    function saveToPNG() {
+      const diagramWrapper = document.querySelector('.diagram-wrapper');
+      html2canvas(diagramWrapper, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'symphony-dfd-level1.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(err => {
+        console.error('Error generating PNG:', err);
+        alert('Failed to generate PNG. Please try again.');
+      });
+    }
+
+    function saveToPDF() {
+      window.print();
+    }
+  </script>
+</body>
+</html>

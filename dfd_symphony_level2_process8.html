@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Symphony IDE - Data Flow Diagram (Level-2: Process 8.0 Decomposition)</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+      overflow: auto;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 100%;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    h1 {
+      font-size: 1.75rem;
+      font-weight: bold;
+      color: #111827;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+    
+    button {
+      padding: 0.625rem 1.25rem;
+      background: linear-gradient(135deg, #333333 0%, #1a1a1a 100%);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+    
+    .diagram-wrapper {
+      background: white;
+      border-radius: 8px;
+      border: 2px solid #d1d5db;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+    
+    svg {
+      width: 100%;
+      height: auto;
+      min-width: 100%;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+    }
+
+    .legend {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .legend h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0.75rem;
+    }
+
+    .legend-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .legend-shape {
+      width: 40px;
+      height: 24px;
+      border: 2px solid #4a90e2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: #1f2937;
+    }
+
+    .legend-shape.process {
+      border-radius: 12px;
+      background: #e0f2fe;
+    }
+
+    .legend-shape.entity {
+      border-radius: 2px;
+      background: #f3f4f6;
+    }
+
+    .legend-shape.datastore {
+      border-left: none;
+      background: white;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Symphony IDE - Level-2 DFD: Process 8.0 (Extension Execution) Decomposition</h1>
+      <div class="buttons">
+        <button onclick="saveToPNG()">💾 Save as PNG</button>
+        <button onclick="saveToPDF()">📄 Save as PDF</button>
+      </div>
+    </div>
+    
+    <div class="diagram-wrapper">
+      <svg id="diagram" viewBox="0 0 1600 1200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Arrow marker for data flows -->
+          <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#1f2937" />
+          </marker>
+
+          <!-- Shadow filter -->
+          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+            <feOffset dx="2" dy="2" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.15"/>
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Title -->
+        <text x="800" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#1f2937">
+          Level-2 DFD: Process 8.0 - Extension Execution (The Pit)
+        </text>
+        <text x="800" y="55" text-anchor="middle" font-size="13" fill="#6b7280">
+          Decomposition showing in-process and out-of-process extension execution
+        </text>
+
+        <!-- ============================================ -->
+        <!-- EXTERNAL ENTITIES & ADJACENT PROCESSES -->
+        <!-- ============================================ -->
+        
+        <!-- Process 3.0: Extension Manager (from Level-1) -->
+        <rect x="50" y="150" width="180" height="90" rx="15" fill="#e0f2fe" stroke="#4a90e2" stroke-width="2" filter="url(#shadow)"/>
+        <text x="140" y="180" text-anchor="middle" font-size="11" font-weight="bold" fill="#0284c7">3.0</text>
+        <line x1="70" y1="192" x2="210" y2="192" stroke="#4a90e2" stroke-width="1.5"/>
+        <text x="140" y="215" text-anchor="middle" font-size="13" font-weight="500" fill="#1f2937">Extension Manager</text>
+
+        <!-- Process 7.0: IPC Communication (from Level-1) -->
+        <rect x="1370" y="150" width="180" height="90" rx="15" fill="#dcfce7" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+        <text x="1460" y="180" text-anchor="middle" font-size="11" font-weight="bold" fill="#059669">7.0</text>
+        <line x1="1390" y1="192" x2="1530" y2="192" stroke="#10b981" stroke-width="1.5"/>
+        <text x="1460" y="215" text-anchor="middle" font-size="13" font-weight="500" fill="#1f2937">IPC Communication</text>
+
+        <!-- ============================================ -->
+        <!-- SUBPROCESSES OF PROCESS 8.0 (Level-2) -->
+        <!-- ============================================ -->
+
+        <!-- Process 8.1: In-Process Executor -->
+        <rect x="350" y="350" width="220" height="120" rx="20" fill="#dcfce7" stroke="#10b981" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="460" y="385" text-anchor="middle" font-size="13" font-weight="bold" fill="#059669">8.1</text>
+        <line x1="375" y1="400" x2="545" y2="400" stroke="#10b981" stroke-width="2"/>
+        <text x="460" y="430" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">In-Process Executor</text>
+        <text x="460" y="450" text-anchor="middle" font-size="12" fill="#6b7280">(The Pit - 50-100ns)</text>
+
+        <!-- Process 8.2: Out-of-Process Executor -->
+        <rect x="650" y="350" width="220" height="120" rx="20" fill="#dcfce7" stroke="#10b981" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="760" y="385" text-anchor="middle" font-size="13" font-weight="bold" fill="#059669">8.2</text>
+        <line x1="675" y1="400" x2="845" y2="400" stroke="#10b981" stroke-width="2"/>
+        <text x="760" y="425" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Out-of-Process</text>
+        <text x="760" y="445" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Executor (UFE)</text>
+
+        <!-- Process 8.3: Arbitration Engine -->
+        <rect x="950" y="350" width="220" height="120" rx="20" fill="#dcfce7" stroke="#10b981" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="1060" y="385" text-anchor="middle" font-size="13" font-weight="bold" fill="#059669">8.3</text>
+        <line x1="975" y1="400" x2="1145" y2="400" stroke="#10b981" stroke-width="2"/>
+        <text x="1060" y="425" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Arbitration Engine</text>
+        <text x="1060" y="445" text-anchor="middle" font-size="12" fill="#6b7280">(Resource Conflict)</text>
+
+        <!-- Process 8.4: Resource Monitor -->
+        <rect x="500" y="550" width="220" height="120" rx="20" fill="#dcfce7" stroke="#10b981" stroke-width="2.5" filter="url(#shadow)"/>
+        <text x="610" y="585" text-anchor="middle" font-size="13" font-weight="bold" fill="#059669">8.4</text>
+        <line x1="525" y1="600" x2="695" y2="600" stroke="#10b981" stroke-width="2"/>
+        <text x="610" y="630" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2937">Resource Monitor</text>
+        <text x="610" y="650" text-anchor="middle" font-size="12" fill="#6b7280">(CPU/Memory/Limits)</text>
+
+        <!-- ============================================ -->
+        <!-- DATA STORES (None for Process 8.0) -->
+        <!-- ============================================ -->
+
+        <!-- No data stores for Process 8.0 - execution is stateless -->
+
+        <!-- ============================================ -->
+        <!-- DATA FLOWS (Level-2 Internal Flows) -->
+        <!-- ============================================ -->
+
+        <!-- Process 3.0 to Process 8.3 (Arbitration Engine) -->
+        <path d="M 230 195 L 300 195 L 300 410 L 950 410" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="550" y="402" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="590" y="413" text-anchor="middle" font-size="12" fill="#1f2937">Ext execution</text>
+
+        <!-- Process 8.3 to Process 8.1 -->
+        <path d="M 950 410 L 900 410 L 900 320 L 460 320 L 460 350" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="650" y="312" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="690" y="323" text-anchor="middle" font-size="12" fill="#1f2937">In-process</text>
+
+        <!-- Process 8.3 to Process 8.2 -->
+        <path d="M 1060 350 L 1060 320 L 760 320 L 760 350" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="880" y="312" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="920" y="323" text-anchor="middle" font-size="12" fill="#1f2937">Out-process</text>
+
+        <!-- Process 8.1 to Process 8.4 -->
+        <path d="M 460 470 L 460 520 L 610 520 L 610 550" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="500" y="512" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="540" y="523" text-anchor="middle" font-size="12" fill="#1f2937">Monitor req</text>
+
+        <!-- Process 8.2 to Process 7.0 -->
+        <path d="M 870 410 L 1300 410 L 1300 195 L 1370 195" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1020" y="402" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="1060" y="413" text-anchor="middle" font-size="12" fill="#1f2937">IPC message</text>
+
+        <!-- Process 7.0 to Process 8.2 -->
+        <path d="M 1370 205 L 1310 205 L 1310 420 L 870 420" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1020" y="412" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="1060" y="423" text-anchor="middle" font-size="12" fill="#1f2937">IPC response</text>
+
+        <!-- Process 8.4 to Process 8.3 -->
+        <path d="M 720 610 L 1060 610 L 1060 470" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="850" y="602" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="890" y="613" text-anchor="middle" font-size="12" fill="#1f2937">Resource data</text>
+
+        <!-- Process 8.1 to Process 8.3 -->
+        <path d="M 570 410 L 900 410 L 900 420 L 950 420" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="720" y="402" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="760" y="413" text-anchor="middle" font-size="12" fill="#1f2937">Pit result</text>
+
+        <!-- Process 8.2 to Process 8.3 -->
+        <path d="M 760 470 L 760 500 L 1060 500 L 1060 470" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="880" y="492" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="920" y="503" text-anchor="middle" font-size="12" fill="#1f2937">UFE result</text>
+
+        <!-- Process 8.3 to Process 3.0 -->
+        <path d="M 950 420 L 300 420 L 300 205 L 230 205" stroke="#1f2937" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="550" y="412" width="80" height="16" fill="white" opacity="0.95"/>
+        <text x="590" y="423" text-anchor="middle" font-size="12" fill="#1f2937">Final result</text>
+
+
+
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    function saveToPNG() {
+      const diagramWrapper = document.querySelector('.diagram-wrapper');
+      html2canvas(diagramWrapper, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'symphony-dfd-level1.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(err => {
+        console.error('Error generating PNG:', err);
+        alert('Failed to generate PNG. Please try again.');
+      });
+    }
+
+    function saveToPDF() {
+      window.print();
+    }
+  </script>
+</body>
+</html>
