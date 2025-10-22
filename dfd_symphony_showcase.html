@@ -184,15 +184,34 @@
         <rect x="50" y="120" width="160" height="80" rx="4" fill="#f3f4f6" stroke="#6b7280" stroke-width="2" filter="url(#shadow)"/>
         <text x="130" y="165" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2937">Developer</text>
 
-        <!-- AI Model Provider (External Entity) -->
+        <!-- External Instruments (External Entity) -->
         <rect x="1590" y="120" width="160" height="80" rx="4" fill="#f3f4f6" stroke="#6b7280" stroke-width="2" filter="url(#shadow)"/>
-        <text x="1670" y="155" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2937">AI Model</text>
-        <text x="1670" y="175" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2937">Provider</text>
+        <text x="1670" y="145" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2937">External</text>
+        <text x="1670" y="165" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2937">Instruments</text>
+        <text x="1670" y="185" text-anchor="middle" font-size="11" fill="#6b7280">(AI/ML Models)</text>
 
         <!-- Extension Marketplace (External Entity) -->
         <rect x="1590" y="600" width="160" height="80" rx="4" fill="#f3f4f6" stroke="#6b7280" stroke-width="2" filter="url(#shadow)"/>
         <text x="1670" y="630" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2937">Extension</text>
         <text x="1670" y="650" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2937">Marketplace</text>
+        <text x="1670" y="670" text-anchor="middle" font-size="11" fill="#6b7280">(Discovery)</text>
+
+        <!-- Melody Store / Polyphone (External Entity) -->
+        <rect x="1590" y="1100" width="160" height="80" rx="4" fill="#f3f4f6" stroke="#6b7280" stroke-width="2" filter="url(#shadow)"/>
+        <text x="1670" y="1125" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2937">Melody Store</text>
+        <text x="1670" y="1145" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2937">(Polyphone)</text>
+        <text x="1670" y="1165" text-anchor="middle" font-size="11" fill="#6b7280">(Workflow Templates)</text>
+
+        <!-- File System (External Entity) -->
+        <rect x="50" y="1100" width="160" height="80" rx="4" fill="#f3f4f6" stroke="#6b7280" stroke-width="2" filter="url(#shadow)"/>
+        <text x="130" y="1135" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2937">File System</text>
+        <text x="130" y="1155" text-anchor="middle" font-size="11" fill="#6b7280">(Local/Remote)</text>
+
+        <!-- Operating System (External Entity) -->
+        <rect x="50" y="600" width="160" height="80" rx="4" fill="#f3f4f6" stroke="#6b7280" stroke-width="2" filter="url(#shadow)"/>
+        <text x="130" y="630" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2937">Operating</text>
+        <text x="130" y="650" text-anchor="middle" font-size="14" font-weight="600" fill="#1f2937">System</text>
+        <text x="130" y="670" text-anchor="middle" font-size="11" fill="#6b7280">(Windows/Linux/macOS)</text>
 
         <!-- ============================================ -->
         <!-- PROCESSES (Rounded Rectangles with Numbers) -->
@@ -359,15 +378,15 @@
         <rect x="1095" y="147" width="70" height="16" fill="white" opacity="0.9"/>
         <text x="1130" y="158" text-anchor="middle" font-size="11" fill="#6b7280">Ext requests</text>
 
-        <!-- Process 4.0 to AI Provider -->
+        <!-- Process 4.0 to External Instruments -->
         <path d="M 1380 155 L 1485 155 L 1485 160 L 1590 160" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
-        <rect x="1450" y="147" width="70" height="16" fill="white" opacity="0.9"/>
-        <text x="1485" y="158" text-anchor="middle" font-size="11" fill="#6b7280">Model query</text>
+        <rect x="1450" y="147" width="90" height="16" fill="white" opacity="0.9"/>
+        <text x="1495" y="158" text-anchor="middle" font-size="11" fill="#6b7280">Instrument calls</text>
 
-        <!-- AI Provider to Process 4.0 -->
+        <!-- External Instruments to Process 4.0 -->
         <path d="M 1590 170 L 1485 170 L 1485 165 L 1380 165" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
-        <rect x="1450" y="162" width="70" height="16" fill="white" opacity="0.9"/>
-        <text x="1485" y="173" text-anchor="middle" font-size="11" fill="#6b7280">AI response</text>
+        <rect x="1450" y="162" width="80" height="16" fill="white" opacity="0.9"/>
+        <text x="1490" y="173" text-anchor="middle" font-size="11" fill="#6b7280">Model outputs</text>
 
         <!-- Process 2.0 to Process 5.0 -->
         <path d="M 680 210 L 680 350 L 380 350 L 380 500" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
@@ -469,10 +488,45 @@
         <rect x="1450" y="957" width="70" height="16" fill="white" opacity="0.9"/>
         <text x="1485" y="968" text-anchor="middle" font-size="11" fill="#6b7280">Ext catalog</text>
 
-        <!-- Process 1.0 to Developer (Output) -->
-        <path d="M 280 165 L 240 165 L 240 170 L 210 170" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
-        <rect x="215" y="162" width="60" height="16" fill="white" opacity="0.9"/>
-        <text x="245" y="173" text-anchor="middle" font-size="11" fill="#6b7280">UI output</text>
+        <!-- Developer to Process 1.0 -->
+        <path d="M 210 155 L 240 155 L 240 150 L 280 150" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="215" y="142" width="70" height="16" fill="white" opacity="0.9"/>
+        <text x="250" y="153" text-anchor="middle" font-size="11" fill="#6b7280">User commands</text>
+
+        <!-- Process 1.0 to Developer -->
+        <path d="M 280 170 L 240 170 L 240 175 L 210 175" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="215" y="167" width="60" height="16" fill="white" opacity="0.9"/>
+        <text x="245" y="178" text-anchor="middle" font-size="11" fill="#6b7280">UI feedback</text>
+
+        <!-- File System to Process 6.0 -->
+        <path d="M 210 1140 L 350 1140 L 350 610 L 580 610" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="260" y="1132" width="80" height="16" fill="white" opacity="0.9"/>
+        <text x="300" y="1143" text-anchor="middle" font-size="11" fill="#6b7280">File contents</text>
+
+        <!-- Process 6.0 to File System -->
+        <path d="M 580 600 L 340 600 L 340 1160 L 210 1160" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="260" y="1152" width="80" height="16" fill="white" opacity="0.9"/>
+        <text x="300" y="1163" text-anchor="middle" font-size="11" fill="#6b7280">File operations</text>
+
+        <!-- Operating System to Process 6.0 -->
+        <path d="M 210 640 L 330 640 L 330 550 L 580 550" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="250" y="632" width="60" height="16" fill="white" opacity="0.9"/>
+        <text x="280" y="643" text-anchor="middle" font-size="11" fill="#6b7280">OS events</text>
+
+        <!-- Process 6.0 to Operating System -->
+        <path d="M 580 560 L 320 560 L 320 660 L 210 660" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="250" y="652" width="70" height="16" fill="white" opacity="0.9"/>
+        <text x="285" y="663" text-anchor="middle" font-size="11" fill="#6b7280">System calls</text>
+
+        <!-- Melody Store to Process 5.0 -->
+        <path d="M 1590 1140 L 1450 1140 L 1450 555 L 480 555" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1360" y="1132" width="90" height="16" fill="white" opacity="0.9"/>
+        <text x="1405" y="1143" text-anchor="middle" font-size="11" fill="#6b7280">Melody templates</text>
+
+        <!-- Process 5.0 to Melody Store -->
+        <path d="M 480 565 L 1460 565 L 1460 1160 L 1590 1160" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+        <rect x="1360" y="1152" width="80" height="16" fill="white" opacity="0.9"/>
+        <text x="1400" y="1163" text-anchor="middle" font-size="11" fill="#6b7280">Publish/Sync</text>
 
 
       </svg>
