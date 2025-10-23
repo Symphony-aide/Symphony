@@ -113,7 +113,7 @@ impl State {
         &self,
         filesystem: &str,
     ) -> Option<Arc<Mutex<Box<dyn Filesystem + Send>>>> {
-        return self.filesystems.get(filesystem).cloned();
+        self.filesystems.get(filesystem).cloned()
     }
 
     // Check if the state can be used with the specified token

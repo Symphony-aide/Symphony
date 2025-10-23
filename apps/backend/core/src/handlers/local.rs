@@ -3,11 +3,11 @@ use crate::server::gen_client::Client;
 use crate::server::{RpcManager, RpcMethods};
 use crate::StatesList;
 use async_trait::async_trait;
-use sveditor_core_api::messaging::{ClientMessages, ServerMessages};
-use sveditor_core_api::Mutex;
 use jsonrpc_core::IoHandler;
 use jsonrpc_core_client::transports::local;
 use std::sync::Arc;
+use sveditor_core_api::messaging::{ClientMessages, ServerMessages};
+use sveditor_core_api::Mutex;
 use tokio::sync::mpsc::{channel, Receiver, Sender};
 
 /// Local handler

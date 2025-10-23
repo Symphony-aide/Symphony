@@ -29,8 +29,8 @@
 //!     
 //!     // Create a basic state
 //!     let sample_state = State::new(
-//!         1, 
-//!         ExtensionsManager::new(server_tx.clone(), None), 
+//!         1,
+//!         ExtensionsManager::new(server_tx.clone(), None),
 //!         Box::new(MemoryPersistor::new())
 //!     );
 //!     
@@ -53,6 +53,6 @@ pub mod handlers;
 mod server;
 
 pub use configuration::Configuration;
-use sveditor_core_api::states::StatesList;
 pub use server::{gen_client, RPCResult, Server};
+use sveditor_core_api::states::StatesList;
 pub use {jsonrpc_core_client, tokio};

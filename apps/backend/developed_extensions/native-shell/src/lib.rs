@@ -1,12 +1,12 @@
 use std::sync::Arc;
 
+use native::NativeShellBuilder;
 use sveditor_core_api::extensions::base::{Extension, ExtensionInfo};
 use sveditor_core_api::extensions::client::ExtensionClient;
 use sveditor_core_api::extensions::manager::ExtensionsManager;
 use sveditor_core_api::messaging::ClientMessages;
 use sveditor_core_api::terminal_shells::TerminalShellBuilderInfo;
 use sveditor_core_api::{tokio, ManifestExtension, ManifestInfo, Mutex, State};
-use native::NativeShellBuilder;
 
 mod native;
 

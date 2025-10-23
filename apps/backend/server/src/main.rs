@@ -1,6 +1,7 @@
 use std::sync::Arc;
 use std::thread;
 
+use git_for_symphony;
 use sveditor_core::handlers::HTTPHandler;
 use sveditor_core::{Configuration, Server};
 use sveditor_core_api::extensions::manager::ExtensionsManager;
@@ -11,7 +12,6 @@ use sveditor_core_api::tokio::sync::mpsc::channel;
 use sveditor_core_api::{Mutex, State};
 use tracing_subscriber::prelude::__tracing_subscriber_SubscriberExt;
 use tracing_subscriber::{fmt, EnvFilter, Registry};
-use git_for_symphony;
 
 fn setup_logger() {
     let filter = EnvFilter::default()

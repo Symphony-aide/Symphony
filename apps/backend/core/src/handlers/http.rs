@@ -1,7 +1,6 @@
 use crate::server::{RpcManager, RpcMethods};
 use crate::StatesList;
 use async_trait::async_trait;
-use sveditor_core_api::messaging::{ClientMessages, ServerMessages};
 use hyper_tungstenite::hyper::upgrade::Upgraded;
 use hyper_tungstenite::tungstenite::{self, Message};
 use hyper_tungstenite::{hyper, HyperWebsocket, WebSocketStream};
@@ -16,6 +15,7 @@ use jsonrpc_http_server::{
 };
 use std::collections::{BTreeMap, HashMap};
 use std::sync::Arc;
+use sveditor_core_api::messaging::{ClientMessages, ServerMessages};
 use tokio::sync::mpsc::Sender;
 use tokio::sync::Mutex;
 use tracing::error;
@@ -300,13 +300,13 @@ impl TransportHandler for HTTPHandler {
 #[cfg(test)]
 mod tests {
 
-    use sveditor_core_api::messaging::ClientMessages;
-    use sveditor_core_api::states::TokenFlags;
-    use sveditor_core_api::{Mutex, State};
     use hyper_tungstenite::tungstenite::Message;
     use jsonrpc_core::futures_util::{SinkExt, StreamExt};
     use jsonrpc_core::serde_json;
     use std::sync::Arc;
+    use sveditor_core_api::messaging::ClientMessages;
+    use sveditor_core_api::states::TokenFlags;
+    use sveditor_core_api::{Mutex, State};
     use tokio::sync::mpsc::channel;
     use url::Url;
 
