@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign In - Symphony</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<style>
+    /* Ensure Material Icons load properly */
+    .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+    }
+</style>
+<script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    symphony: {
+                        primary: "#5B8FF9",
+                        blue: "#5B8FF9",
+                        light: "#7BA5FA",
+                        dark: "#4A7AD8",
+                        accent: "#3B6DD8",
+                    },
+                },
+                fontFamily: {
+                    sans: ["Inter", "system-ui", "sans-serif"],
+                    mono: ["JetBrains Mono", "monospace"],
+                },
+                animation: {
+                    'float': 'float 6s ease-in-out infinite',
+                    'glow': 'glow 2s ease-in-out infinite alternate',
+                    'shimmer': 'shimmer 2s ease-in-out infinite',
+                },
+                keyframes: {
+                    float: {
+                        '0%, 100%': { transform: 'translateY(0px)' },
+                        '50%': { transform: 'translateY(-20px)' },
+                    },
+                    glow: {
+                        '0%': { opacity: '0.5' },
+                        '100%': { opacity: '1' },
+                    },
+                    shimmer: {
+                        '0%': { transform: 'translateX(-100%)' },
+                        '100%': { transform: 'translateX(100%)' },
+                    },
+                },
+            },
+        },
+    };
+</script>
+<style>
+    /* Theme Colors */
+    :root {
+        --bg-primary: 232, 229, 217;
+        --bg-secondary: 242, 241, 230;
+        --bg-tertiary: 224, 220, 210;
+        --border-subtle: 217, 212, 200;
+        --border-default: 207, 202, 192;
+        --text-primary: 23, 27, 38;
+        --text-secondary: 78, 84, 95;
+        --text-tertiary: 130, 135, 145;
+    }
+    
+    .dark {
+        --bg-primary: 30, 30, 30;
+        --bg-secondary: 37, 37, 38;
+        --bg-tertiary: 45, 45, 48;
+        --border-subtle: 37, 37, 48;
+        --border-default: 45, 45, 58;
+        --text-primary: 232, 232, 240;
+        --text-secondary: 156, 163, 175;
+        --text-tertiary: 107, 114, 128;
+    }
+    
+    body {
+        background-color: rgb(var(--bg-primary));
+        color: rgb(var(--text-primary));
+    }
+    
+    .gradient-symphony {
+        background: linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%);
+    }
+    
+    .gradient-mesh {
+        background: 
+            radial-gradient(at 27% 37%, rgba(91, 143, 249, 0.12) 0px, transparent 50%),
+            radial-gradient(at 97% 21%, rgba(74, 122, 216, 0.12) 0px, transparent 50%),
+            radial-gradient(at 52% 99%, rgba(59, 109, 216, 0.10) 0px, transparent 50%),
+            radial-gradient(at 10% 29%, rgba(123, 165, 250, 0.08) 0px, transparent 50%);
+    }
+    
+    .glass {
+        background: rgba(var(--bg-secondary), 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(var(--border-default), 0.3);
+    }
+    
+    .auth-card {
+        background: rgba(var(--bg-secondary), 0.9);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 1px solid rgba(var(--border-default), 0.5);
+    }
+    
+    /* Grid pattern background */
+    .grid-pattern {
+        background-image: 
+            linear-gradient(rgba(91, 143, 249, 0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(91, 143, 249, 0.06) 1px, transparent 1px);
+        background-size: 50px 50px;
+    }
+    
+    /* Shimmer effect for player badge style */
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    
+    .shimmer-effect {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .shimmer-effect::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+        animation: shimmer 2s ease-in-out infinite;
+    }
+    
+    /* Input focus styles */
+    input:focus {
+        outline: none;
+        border-color: #5B8FF9;
+        box-shadow: 0 0 0 3px rgba(91, 143, 249, 0.1);
+    }
+    
+    /* Musical symbol styling */
+    .musical-symbol {
+        font-family: 'Arial Unicode MS', 'Segoe UI Symbol', sans-serif;
+        background: linear-gradient(135deg, #5B8FF9 0%, #7BA5FA 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>
+</head>
+<body class="font-sans antialiased">
+
+<!-- Main Container -->
+<div class="min-h-screen flex items-center justify-center gradient-mesh grid-pattern p-6" x-data="{ 
+    mode: 'signin',
+    showPassword: false,
+    email: '',
+    password: '',
+    name: '',
+    rememberMe: false,
+    loading: false
+}">
+    
+    <!-- Floating decorative elements -->
+    <div class="fixed top-20 left-20 w-64 h-64 bg-symphony-primary/5 rounded-full blur-3xl animate-float"></div>
+    <div class="fixed bottom-20 right-20 w-96 h-96 bg-symphony-light/5 rounded-full blur-3xl animate-float" style="animation-delay: 1s;"></div>
+    
+    <!-- Auth Card -->
+    <div class="relative w-full max-w-md">
+        <!-- Back to Home -->
+        <a href="web.html" class="inline-flex items-center space-x-2 mb-6 text-sm transition-colors" style="color: rgb(var(--text-secondary));" onmouseover="this.style.color='#5B8FF9'" onmouseout="this.style.color='rgb(var(--text-secondary))'">
+            <span class="material-icons text-base">arrow_back</span>
+            <span>Back to Home</span>
+        </a>
+        
+        <div class="auth-card rounded-2xl shadow-2xl p-8 relative overflow-hidden">
+            <!-- Logo & Title -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center space-x-3 mb-4">
+                    <img src="../../assets/rounded.png" alt="Symphony" class="h-12 w-12" />
+                    <div class="text-left">
+                        <h1 class="text-2xl font-bold" style="color: rgb(var(--text-primary));">Symphony</h1>
+                        <p class="text-[10px] font-medium tracking-wider" style="color: rgb(var(--text-tertiary));">AI-FIRST DEVELOPMENT</p>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold mb-2" style="color: rgb(var(--text-primary));" x-text="mode === 'signin' ? 'Welcome Back' : 'Create Account'"></h2>
+                <p class="text-sm" style="color: rgb(var(--text-secondary));" x-text="mode === 'signin' ? 'Sign in to continue your symphony' : 'Start orchestrating with AI'"></p>
+            </div>
+            
+            <!-- Social Login Buttons -->
+            <div class="space-y-3 mb-6">
+                <button class="w-full flex items-center justify-center space-x-3 px-4 py-3 rounded-lg border transition-all hover:scale-[1.02]" style="border-color: rgb(var(--border-default)); color: rgb(var(--text-primary));" onmouseover="this.style.backgroundColor='rgb(var(--bg-tertiary))'" onmouseout="this.style.backgroundColor='transparent'">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span class="font-medium">Continue with Google</span>
+                </button>
+                
+                <button class="w-full flex items-center justify-center space-x-3 px-4 py-3 rounded-lg border transition-all hover:scale-[1.02]" style="border-color: rgb(var(--border-default)); color: rgb(var(--text-primary));" onmouseover="this.style.backgroundColor='rgb(var(--bg-tertiary))'" onmouseout="this.style.backgroundColor='transparent'">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span class="font-medium">Continue with GitHub</span>
+                </button>
+            </div>
+            
+            <!-- Divider -->
+            <div class="relative mb-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t" style="border-color: rgb(var(--border-subtle));"></div>
+                </div>
+                <div class="relative flex justify-center text-xs">
+                    <span class="px-2 text-xs" style="background-color: rgba(var(--bg-secondary), 0.9); color: rgb(var(--text-tertiary));">Or continue with email</span>
+                </div>
+            </div>
+            
+            <!-- Form -->
+            <form @submit.prevent="loading = true" class="space-y-4">
+                <!-- Name (Sign Up only) -->
+                <div x-show="mode === 'signup'" x-transition class="space-y-2">
+                    <label class="text-sm font-medium" style="color: rgb(var(--text-primary));">Full Name</label>
+                    <input 
+                        type="text" 
+                        x-model="name"
+                        placeholder="John Doe"
+                        class="w-full px-4 py-3 rounded-lg border transition-all"
+                        style="background-color: rgb(var(--bg-primary)); border-color: rgb(var(--border-default)); color: rgb(var(--text-primary));"
+                        required
+                    />
+                </div>
+                
+                <!-- Email -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium" style="color: rgb(var(--text-primary));">Email</label>
+                    <input 
+                        type="email" 
+                        x-model="email"
+                        placeholder="you@example.com"
+                        class="w-full px-4 py-3 rounded-lg border transition-all"
+                        style="background-color: rgb(var(--bg-primary)); border-color: rgb(var(--border-default)); color: rgb(var(--text-primary));"
+                        required
+                    />
+                </div>
+                
+                <!-- Password -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium" style="color: rgb(var(--text-primary));">Password</label>
+                    <div class="relative">
+                        <input 
+                            :type="showPassword ? 'text' : 'password'"
+                            x-model="password"
+                            placeholder="••••••••"
+                            class="w-full px-4 py-3 rounded-lg border transition-all pr-12"
+                            style="background-color: rgb(var(--bg-primary)); border-color: rgb(var(--border-default)); color: rgb(var(--text-primary));"
+                            required
+                        />
+                        <button 
+                            type="button"
+                            @click="showPassword = !showPassword"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded transition-colors"
+                            style="color: rgb(var(--text-tertiary));"
+                            onmouseover="this.style.color='rgb(var(--text-primary))'"
+                            onmouseout="this.style.color='rgb(var(--text-tertiary))'"
+                        >
+                            <span class="material-icons text-xl" x-text="showPassword ? 'visibility_off' : 'visibility'"></span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Remember Me & Forgot Password (Sign In only) -->
+                <div x-show="mode === 'signin'" x-transition class="flex items-center justify-between">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            x-model="rememberMe"
+                            class="w-4 h-4 rounded border-2 transition-all"
+                            style="border-color: rgb(var(--border-default)); color: #5B8FF9;"
+                        />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sm text-symphony-primary hover:text-symphony-light transition-colors">
+                        Forgot password?
+                    </a>
+                </div>
+                
+                <!-- Submit Button -->
+                <button 
+                    type="submit"
+                    class="w-full px-6 py-3 rounded-lg font-semibold text-white transition-all hover:scale-[1.02] shimmer-effect relative overflow-hidden"
+                    style="background: linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%); box-shadow: 0 4px 20px rgba(91, 143, 249, 0.3);"
+                    :disabled="loading"
+                >
+                    <span class="relative z-10 flex items-center justify-center space-x-2">
+                        <span x-show="!loading" x-text="mode === 'signin' ? 'Sign In' : 'Create Account'"></span>
+                        <span x-show="loading" class="flex items-center space-x-2">
+                            <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Processing...</span>
+                        </span>
+                        <span x-show="!loading" class="material-icons text-base">arrow_forward</span>
+                    </span>
+                </button>
+            </form>
+            
+            <!-- Toggle Mode -->
+            <div class="mt-6 text-center">
+                <p class="text-sm" style="color: rgb(var(--text-secondary));">
+                    <span x-text="mode === 'signin' ? 'Don\\'t have an account?' : 'Already have an account?'"></span>
+                    <button 
+                        @click="mode = mode === 'signin' ? 'signup' : 'signin'"
+                        class="font-semibold text-symphony-primary hover:text-symphony-light transition-colors ml-1"
+                        x-text="mode === 'signin' ? 'Sign up' : 'Sign in'"
+                    ></button>
+                </p>
+            </div>
+            
+            <!-- Terms (Sign Up only) -->
+            <div x-show="mode === 'signup'" x-transition class="mt-6 text-center">
+                <p class="text-xs" style="color: rgb(var(--text-tertiary));">
+                    By creating an account, you agree to our 
+                    <a href="#" class="text-symphony-primary hover:underline">Terms of Service</a> and 
+                    <a href="#" class="text-symphony-primary hover:underline">Privacy Policy</a>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Footer Note -->
+        <div class="mt-8 text-center">
+            <p class="text-xs flex items-center justify-center space-x-2" style="color: rgb(var(--text-tertiary));">
+                <span class="material-icons text-sm">lock</span>
+                <span>Your data is encrypted and secure</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+// Theme detection
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+if (prefersDark) {
+    document.documentElement.classList.add('dark');
+}
+</script>
+
+</body>
+</html>
