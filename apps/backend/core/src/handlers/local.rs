@@ -32,7 +32,7 @@ impl LocalHandler {
 
         // Create the local JSON RPC instance
         let (client, server) = local::connect::<Client, _, _>(local_io);
-        tokio::task::spawn(async { server.await });
+        tokio::task::spawn(server);
 
         let local = Self {
             receiver_to_local: Some(receiver_to_local),

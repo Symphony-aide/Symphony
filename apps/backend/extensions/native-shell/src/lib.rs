@@ -29,7 +29,7 @@ impl Extension for NativeShellExtension {
         let state_id = self.state_id;
         let client = self.client.clone();
         tokio::spawn(async move {
-            #[cfg(any(target_os = "windows"))]
+            #[cfg(target_os = "windows")]
             state.lock().await.terminal_shell_builders.insert(
                 "Powershell".to_string(),
                 Arc::new(Mutex::new(Box::new(NativeShellBuilder {
@@ -43,7 +43,7 @@ impl Extension for NativeShellExtension {
                 }))),
             );
 
-            #[cfg(any(target_os = "windows"))]
+            #[cfg(target_os = "windows")]
             state.lock().await.terminal_shell_builders.insert(
                 "cmd".to_string(),
                 Arc::new(Mutex::new(Box::new(NativeShellBuilder {

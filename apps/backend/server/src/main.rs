@@ -11,7 +11,7 @@ use sveditor_core_api::tokio::sync::mpsc::channel;
 use sveditor_core_api::{Mutex, State};
 use tracing_subscriber::prelude::__tracing_subscriber_SubscriberExt;
 use tracing_subscriber::{fmt, EnvFilter, Registry};
-use git_for_symphony;
+// use git_for_symphony;
 
 fn setup_logger() {
     let filter = EnvFilter::default()

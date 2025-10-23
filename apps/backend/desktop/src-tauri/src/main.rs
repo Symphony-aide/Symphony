@@ -26,7 +26,7 @@ use tracing::{error, info, warn};
 use tracing_subscriber::prelude::__tracing_subscriber_SubscriberExt;
 use tracing_subscriber::{fmt, EnvFilter, Registry};
 
-#[cfg(any(target_os = "windows"))]
+#[cfg(target_os = "windows")]
 use window_shadows::set_shadow;
 
 /// The app backend state
@@ -45,7 +45,7 @@ fn open_window(
 
             let window = app.get_window("main").unwrap();
 
-            #[cfg(any(target_os = "windows"))]
+            #[cfg(target_os = "windows")]
             set_shadow(&window, true).unwrap();
 
             // Forward messages from the webview to the core

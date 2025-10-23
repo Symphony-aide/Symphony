@@ -11,6 +11,13 @@ members = [
    "crosspty"
 ]
 
+[workspace.lints.clippy]
+needless_return = "allow"
+
+[workspace.lints.rust]
+# Suppress warnings about deprecated net2 dependency until dependencies are updated
+unexpected_cfgs = "warn"
+
 [profile.release]
 lto = true
 opt-level = "z"
