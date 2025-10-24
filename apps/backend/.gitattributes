@@ -1,0 +1,47 @@
+# Git attributes for Symphony Backend
+# Ensures consistent line endings and diff behavior
+
+# Auto detect text files and normalize line endings to LF
+* text=auto eol=lf
+
+# Rust source files
+*.rs text eol=lf diff=rust
+*.toml text eol=lf
+
+# Documentation
+*.md text eol=lf
+*.txt text eol=lf
+
+# Scripts
+*.sh text eol=lf
+*.py text eol=lf
+
+# Configuration files
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.so binary
+*.dylib binary
+*.dll binary
+*.exe binary
+
+# Cargo lock file
+Cargo.lock binary merge=binary
+
+# Archives
+*.zip binary
+*.tar binary
+*.gz binary
+*.7z binary
+*.rar binary
