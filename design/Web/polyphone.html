@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Polyphony - Browse Melodies | Symphony</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<style>
+    .material-icons { font-family: 'Material Icons'; }
+    :root {
+        --bg-primary: 232, 229, 217;
+        --bg-secondary: 242, 241, 230;
+        --border-subtle: 217, 212, 200;
+        --text-primary: 23, 27, 38;
+        --text-secondary: 78, 84, 95;
+        --text-tertiary: 130, 135, 145;
+    }
+    .dark {
+        --bg-primary: 18, 18, 18;
+        --bg-secondary: 25, 25, 25;
+        --bg-tertiary: 32, 32, 32;
+        --border-subtle: 45, 45, 45;
+        --text-primary: 242, 242, 242;
+        --text-secondary: 163, 163, 163;
+        --text-tertiary: 115, 115, 115;
+    }
+    body { background-color: rgb(var(--bg-primary)); color: rgb(var(--text-primary)); font-family: 'Inter', sans-serif; }
+    .nav-glass { background: rgba(var(--bg-secondary), 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(var(--border-subtle), 1); }
+    .search-bar { background: rgba(var(--bg-tertiary), 1); border: 1px solid rgba(var(--border-subtle), 1); transition: all 0.2s; }
+    .search-bar:focus-within { border-color: #5B8FF9; box-shadow: 0 0 0 3px rgba(91, 143, 249, 0.1); }
+    .card { background: rgba(var(--bg-secondary), 1); border: 1px solid rgba(var(--border-subtle), 1); transition: all 0.2s; cursor: pointer; }
+    .card:hover { transform: translateY(-2px); border-color: rgba(91, 143, 249, 0.5); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); }
+    .badge { font-size: 0.7rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.25rem; text-transform: uppercase; }
+    .badge-free { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .badge-paid { background: rgba(251, 191, 36, 0.1); color: #fbbf24; }
+    .stat { display: flex; align-items: center; gap: 0.25rem; color: rgb(var(--text-tertiary)); font-size: 0.8rem; }
+    .hover-word { display: inline-block; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .hover-word:hover { color: #5B8FF9; transform: translateY(-2px); }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 100; display: none; align-items: center; justify-content: center; }
+    .modal-overlay.active { display: flex; }
+    .modal-content { background: rgba(var(--bg-secondary), 1); border: 1px solid rgba(var(--border-default), 1); border-radius: 12px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
+    .filter-section { border-bottom: 1px solid rgba(var(--border-subtle), 1); padding: 1.5rem; }
+    .filter-section:last-child { border-bottom: none; }
+    .filter-option { display: flex; align-items: center; padding: 0.5rem 0; }
+    .filter-option input[type="checkbox"] { margin-right: 0.75rem; width: 16px; height: 16px; accent-color: #5B8FF9; }
+    .filter-option input[type="range"] { width: 100%; accent-color: #5B8FF9; }
+    input[type="range"] { 
+        -webkit-appearance: none; 
+        appearance: none;
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(var(--border-default), 0.3);
+        outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #5B8FF9;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #5B8FF9;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+        background: #7BA5FA;
+        transform: scale(1.1);
+    }
+    input[type="range"]::-moz-range-thumb:hover {
+        background: #7BA5FA;
+        transform: scale(1.1);
+    }
+    input[type="radio"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(var(--border-default), 1);
+        border-radius: 50%;
+        margin-right: 0.75rem;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+    input[type="radio"]:checked {
+        border-color: #5B8FF9;
+        background: #5B8FF9;
+    }
+    input[type="radio"]:checked::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: white;
+    }
+    input[type="radio"]:hover {
+        border-color: #5B8FF9;
+    }
+    .tab-button { padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; }
+    .tab-button.active { background: rgba(91, 143, 249, 0.1); color: #5B8FF9; }
+    .tab-button:not(.active) { color: rgb(var(--text-secondary)); }
+    .tab-button:not(.active):hover { background: rgba(var(--bg-tertiary), 1); }
+    
+    /* Custom Scrollbar */
+    .modal-content::-webkit-scrollbar {
+        width: 8px;
+    }
+    .modal-content::-webkit-scrollbar-track {
+        background: rgba(var(--bg-tertiary), 1);
+        border-radius: 4px;
+    }
+    .modal-content::-webkit-scrollbar-thumb {
+        background: rgba(91, 143, 249, 0.3);
+        border-radius: 4px;
+    }
+    .modal-content::-webkit-scrollbar-thumb:hover {
+        background: rgba(91, 143, 249, 0.5);
+    }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="fixed top-0 left-0 right-0 z-50 nav-glass">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <img src="../../assets/rounded.png" alt="Symphony" class="h-8 w-8" />
+                <div>
+                    <h1 class="text-lg font-bold" style="color: rgb(var(--text-primary));">Symphony</h1>
+                    <p class="text-[9px] font-medium tracking-wider" style="color: rgb(var(--text-tertiary));">POLYPHONY MARKETPLACE</p>
+                </div>
+            </div>
+            
+            <!-- Nav Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#" class="text-sm hover:text-symphony-primary transition-colors" style="color: rgb(var(--text-secondary));">Browse</a>
+                <a href="#" class="text-sm hover:text-symphony-primary transition-colors" style="color: rgb(var(--text-secondary));">Trending</a>
+                <a href="#" class="text-sm hover:text-symphony-primary transition-colors" style="color: rgb(var(--text-secondary));">New</a>
+            </div>
+            
+            <!-- CTA Buttons -->
+            <div class="flex items-center space-x-4">
+                <button class="px-4 py-2 text-sm transition-colors" style="color: rgb(var(--text-secondary));">
+                    Sign In
+                </button>
+                <button class="px-5 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:opacity-90 transition-opacity">
+                    Publish
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Main -->
+<main class="pt-20">
+    <!-- Search -->
+    <section class="py-12 border-b" style="border-color: rgba(var(--border-subtle), 1);">
+        <div class="max-w-[1400px] mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-6" style="color: rgb(var(--text-primary));">
+                <span class="hover-word">Discover</span> 
+                <span class="hover-word">melodies</span>
+            </h2>
+            <div class="max-w-xl mx-auto search-bar rounded-lg p-2 flex items-center justify-center space-x-2">
+                <span class="material-icons text-base" style="color: rgb(var(--text-tertiary));">search</span>
+                <input type="text" placeholder="Search for melodies..." class="flex-1 bg-transparent border-none outline-none text-sm" style="color: rgb(var(--text-primary));" />
+                <button onclick="toggleFilterModal()" class="px-2.5 py-1 rounded-md hover:bg-symphony-primary/10 transition-colors flex items-center space-x-1" style="color: rgb(var(--text-secondary));">
+                    <span class="material-icons text-sm">tune</span>
+                    <span class="text-xs font-medium">Filter</span>
+                </button>
+                <button class="px-2.5 py-1 bg-blue-500 text-white text-xs font-medium rounded-md hover:bg-blue-600 transition-colors">Search</button>
+            </div>
+            <div class="flex items-center space-x-3 mt-6">
+                <span class="text-sm font-medium" style="color: rgb(var(--text-tertiary));">Popular:</span>
+                <button class="px-4 py-2 rounded-lg text-xs font-medium transition-all hover:bg-symphony-primary/10" style="background: rgba(var(--bg-tertiary), 1); color: rgb(var(--text-secondary));">Code Review</button>
+                <button class="px-4 py-2 rounded-lg text-xs font-medium transition-all hover:bg-symphony-primary/10" style="background: rgba(var(--bg-tertiary), 1); color: rgb(var(--text-secondary));">Testing</button>
+                <button class="px-4 py-2 rounded-lg text-xs font-medium transition-all hover:bg-symphony-primary/10" style="background: rgba(var(--bg-tertiary), 1); color: rgb(var(--text-secondary));">Documentation</button>
+                <button class="px-4 py-2 rounded-lg text-xs font-medium transition-all hover:bg-symphony-primary/10" style="background: rgba(var(--bg-tertiary), 1); color: rgb(var(--text-secondary));">Deployment</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Banner -->
+    <section class="py-8">
+        <div class="max-w-[1400px] mx-auto px-6">
+            <div class="relative rounded-xl overflow-hidden" style="background: rgba(var(--bg-secondary), 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(var(--border-subtle), 0.5);">
+                <div class="flex items-center justify-between p-10">
+                    <div class="flex-1 max-w-lg">
+                        <div class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3" style="background: rgba(91, 143, 249, 0.1); color: #5B8FF9;">
+                            NEW DROP
+                        </div>
+                        <h3 class="text-3xl font-bold mb-4" style="color: rgb(var(--text-primary));">Curated workflow collections</h3>
+                        <p class="text-base leading-relaxed" style="color: rgb(var(--text-secondary));">
+                            Explore professionally crafted melodies from verified creators. Enhance your development workflow with battle-tested solutions.
+                        </p>
+                    </div>
+                    <div class="hidden lg:flex items-center space-x-3">
+                        <div class="w-28 h-28 rounded-lg overflow-hidden" style="background: rgba(var(--bg-tertiary), 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(var(--border-default), 0.3);">
+                            <div class="w-full h-full flex items-center justify-center">
+                                <span class="text-4xl">🎻</span>
+                            </div>
+                        </div>
+                        <div class="w-28 h-28 rounded-lg overflow-hidden" style="background: rgba(var(--bg-tertiary), 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(var(--border-default), 0.3);">
+                            <div class="w-full h-full flex items-center justify-center">
+                                <span class="text-4xl">🧪</span>
+                            </div>
+                        </div>
+                        <div class="w-28 h-28 rounded-lg overflow-hidden" style="background: rgba(var(--bg-tertiary), 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(var(--border-default), 0.3);">
+                            <div class="w-full h-full flex items-center justify-center">
+                                <span class="text-4xl">📚</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured -->
+    <section class="py-12">
+        <div class="max-w-[1400px] mx-auto px-6">
+            <div class="mb-6">
+                <h3 class="text-2xl font-bold" style="color: rgb(var(--text-primary));">Featured melodies</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card rounded-xl overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                        <span class="text-6xl">🎻</span>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between mb-3">
+                            <div>
+                                <h4 class="font-semibold" style="color: rgb(var(--text-primary));">Full Stack Review</h4>
+                                <p class="text-sm" style="color: rgb(var(--text-secondary));">by Symphony Team</p>
+                            </div>
+                            <span class="material-icons text-blue-500 text-base">verified</span>
+                        </div>
+                        <p class="text-sm mb-4" style="color: rgb(var(--text-secondary));">Complete code review with linting and testing</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex space-x-4">
+                                <div class="stat"><span class="material-icons text-sm">star</span><span>4.9</span></div>
+                                <div class="stat"><span class="material-icons text-sm">download</span><span>12.5K</span></div>
+                            </div>
+                            <span class="badge badge-free">Free</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card rounded-xl overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                        <span class="text-6xl">🧪</span>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between mb-3">
+                            <div>
+                                <h4 class="font-semibold" style="color: rgb(var(--text-primary));">Test Suite Creator</h4>
+                                <p class="text-sm" style="color: rgb(var(--text-secondary));">by QA Masters</p>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-4" style="color: rgb(var(--text-secondary));">Generate comprehensive test suites automatically</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex space-x-4">
+                                <div class="stat"><span class="material-icons text-sm">star</span><span>4.8</span></div>
+                                <div class="stat"><span class="material-icons text-sm">download</span><span>11.3K</span></div>
+                            </div>
+                            <span class="badge badge-paid">$14.99</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card rounded-xl overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center">
+                        <span class="text-6xl">📚</span>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between mb-3">
+                            <div>
+                                <h4 class="font-semibold" style="color: rgb(var(--text-primary));">API Doc Generator</h4>
+                                <p class="text-sm" style="color: rgb(var(--text-secondary));">by DevTools Inc</p>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-4" style="color: rgb(var(--text-secondary));">Beautiful API docs from code comments</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex space-x-4">
+                                <div class="stat"><span class="material-icons text-sm">star</span><span>4.7</span></div>
+                                <div class="stat"><span class="material-icons text-sm">download</span><span>8.2K</span></div>
+                            </div>
+                            <span class="badge badge-paid">$9.99</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- All Melodies -->
+    <section class="py-12">
+        <div class="max-w-[1400px] mx-auto px-6">
+            <div class="mb-6">
+                <h3 class="text-2xl font-bold" style="color: rgb(var(--text-primary));">All melodies</h3>
+                <p class="text-sm mt-1" style="color: rgb(var(--text-secondary));">Browse our complete collection</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card rounded-xl overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center">
+                        <span class="text-6xl">🔥</span>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between mb-3">
+                            <div>
+                                <h4 class="font-semibold" style="color: rgb(var(--text-primary));">Hot Reload Pro</h4>
+                                <p class="text-sm" style="color: rgb(var(--text-secondary));">by FastDev</p>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-4" style="color: rgb(var(--text-secondary));">Instant code updates without full rebuild</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex space-x-4">
+                                <div class="stat"><span class="material-icons text-sm">star</span><span>4.6</span></div>
+                                <div class="stat"><span class="material-icons text-sm">download</span><span>5.2K</span></div>
+                            </div>
+                            <span class="badge badge-free">Free</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card rounded-xl overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-blue-500/20 to-indigo-500/20 flex items-center justify-center">
+                        <span class="text-6xl">⚡</span>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between mb-3">
+                            <div>
+                                <h4 class="font-semibold" style="color: rgb(var(--text-primary));">Quick Refactor</h4>
+                                <p class="text-sm" style="color: rgb(var(--text-secondary));">by CodeClean</p>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-4" style="color: rgb(var(--text-secondary));">Automated code refactoring and cleanup</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex space-x-4">
+                                <div class="stat"><span class="material-icons text-sm">star</span><span>4.8</span></div>
+                                <div class="stat"><span class="material-icons text-sm">download</span><span>7.1K</span></div>
+                            </div>
+                            <span class="badge badge-paid">$4.99</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card rounded-xl overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-green-500/20 to-teal-500/20 flex items-center justify-center">
+                        <span class="text-6xl">🌳</span>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between mb-3">
+                            <div>
+                                <h4 class="font-semibold" style="color: rgb(var(--text-primary));">Component Tree</h4>
+                                <p class="text-sm" style="color: rgb(var(--text-secondary));">by UIBuilder</p>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-4" style="color: rgb(var(--text-secondary));">Visual component hierarchy navigator</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex space-x-4">
+                                <div class="stat"><span class="material-icons text-sm">star</span><span>4.5</span></div>
+                                <div class="stat"><span class="material-icons text-sm">download</span><span>3.8K</span></div>
+                            </div>
+                            <span class="badge badge-free">Free</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card rounded-xl overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                        <span class="text-6xl">🎨</span>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between mb-3">
+                            <div>
+                                <h4 class="font-semibold" style="color: rgb(var(--text-primary));">Style Sync</h4>
+                                <p class="text-sm" style="color: rgb(var(--text-secondary));">by CSSWizard</p>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-4" style="color: rgb(var(--text-secondary));">Real-time CSS synchronization across files</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex space-x-4">
+                                <div class="stat"><span class="material-icons text-sm">star</span><span>4.9</span></div>
+                                <div class="stat"><span class="material-icons text-sm">download</span><span>9.4K</span></div>
+                            </div>
+                            <span class="badge badge-paid">$7.99</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card rounded-xl overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-yellow-500/20 to-orange-500/20 flex items-center justify-center">
+                        <span class="text-6xl">📦</span>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between mb-3">
+                            <div>
+                                <h4 class="font-semibold" style="color: rgb(var(--text-primary));">Bundle Optimizer</h4>
+                                <p class="text-sm" style="color: rgb(var(--text-secondary));">by OptimizeCo</p>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-4" style="color: rgb(var(--text-secondary));">Reduce bundle size and improve performance</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex space-x-4">
+                                <div class="stat"><span class="material-icons text-sm">star</span><span>4.7</span></div>
+                                <div class="stat"><span class="material-icons text-sm">download</span><span>6.3K</span></div>
+                            </div>
+                            <span class="badge badge-free">Free</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card rounded-xl overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-red-500/20 to-rose-500/20 flex items-center justify-center">
+                        <span class="text-6xl">🐛</span>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between mb-3">
+                            <div>
+                                <h4 class="font-semibold" style="color: rgb(var(--text-primary));">Bug Hunter</h4>
+                                <p class="text-sm" style="color: rgb(var(--text-secondary));">by DebugTeam</p>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-4" style="color: rgb(var(--text-secondary));">AI-powered bug detection and fixing</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex space-x-4">
+                                <div class="stat"><span class="material-icons text-sm">star</span><span>4.8</span></div>
+                                <div class="stat"><span class="material-icons text-sm">download</span><span>8.7K</span></div>
+                            </div>
+                            <span class="badge badge-paid">$12.99</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="py-16 border-t" style="background: rgba(var(--bg-secondary), 1); border-color: rgba(var(--border-subtle), 1);">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <!-- Brand -->
+                <div class="col-span-2">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <img src="../../assets/rounded.png" alt="Symphony" class="h-8 w-8" />
+                        <div>
+                            <h3 class="text-lg font-bold" style="color: rgb(var(--text-primary));">Symphony</h3>
+                            <p class="text-[9px] font-medium tracking-wider" style="color: rgb(var(--text-tertiary));">POLYPHONY MARKETPLACE</p>
+                        </div>
+                    </div>
+                    <p class="text-sm mb-6 max-w-sm" style="color: rgb(var(--text-secondary));">
+                        Discover and install workflow melodies to enhance your development experience.
+                    </p>
+                </div>
+                
+                <!-- Browse -->
+                <div>
+                    <h4 class="text-sm font-bold mb-4" style="color: rgb(var(--text-primary));">Browse</h4>
+                    <ul class="space-y-2 text-sm" style="color: rgb(var(--text-secondary));">
+                        <li><a href="#" class="hover:text-symphony-primary transition-colors">Featured</a></li>
+                        <li><a href="#" class="hover:text-symphony-primary transition-colors">Trending</a></li>
+                        <li><a href="#" class="hover:text-symphony-primary transition-colors">New</a></li>
+                        <li><a href="#" class="hover:text-symphony-primary transition-colors">Categories</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Company -->
+                <div>
+                    <h4 class="text-sm font-bold mb-4" style="color: rgb(var(--text-primary));">Company</h4>
+                    <ul class="space-y-2 text-sm" style="color: rgb(var(--text-secondary));">
+                        <li><a href="web.html" class="hover:text-symphony-primary transition-colors">Home</a></li>
+                        <li><a href="#" class="hover:text-symphony-primary transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-symphony-primary transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-symphony-primary transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t pt-8 flex flex-col md:flex-row justify-between items-center" style="border-color: rgba(var(--border-subtle), 1);">
+                <p class="text-sm" style="color: rgb(var(--text-tertiary));">
+                    © 2025 Symphony. All melodies by their creators.
+                </p>
+                <div class="flex items-center space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-sm hover:text-symphony-primary transition-colors" style="color: rgb(var(--text-tertiary));">Privacy</a>
+                    <a href="#" class="text-sm hover:text-symphony-primary transition-colors" style="color: rgb(var(--text-tertiary));">Terms</a>
+                    <a href="#" class="text-sm hover:text-symphony-primary transition-colors" style="color: rgb(var(--text-tertiary));">Security</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<!-- Filter Modal -->
+<div id="filterModal" class="modal-overlay" onclick="if(event.target === this) toggleFilterModal()">
+    <div class="modal-content">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-6 border-b" style="border-color: rgba(var(--border-subtle), 1);">
+            <h3 class="text-xl font-bold" style="color: rgb(var(--text-primary));">Filter Melodies</h3>
+            <button onclick="toggleFilterModal()" class="p-1 rounded-lg hover:bg-symphony-primary/10 transition-colors">
+                <span class="material-icons" style="color: rgb(var(--text-secondary));">close</span>
+            </button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex items-center space-x-2 px-6 pt-4">
+            <button onclick="switchTab('common')" id="commonTab" class="tab-button active">Common Filters</button>
+            <button onclick="switchTab('advanced')" id="advancedTab" class="tab-button">Advanced</button>
+        </div>
+
+        <!-- Common Filters -->
+        <div id="commonFilters" class="tab-content">
+            <!-- Price -->
+            <div class="filter-section">
+                <h4 class="text-sm font-semibold mb-3" style="color: rgb(var(--text-primary));">Price</h4>
+                <div class="space-y-2">
+                    <label class="filter-option">
+                        <input type="checkbox" checked />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Free</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" checked />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Paid</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Category -->
+            <div class="filter-section">
+                <h4 class="text-sm font-semibold mb-3" style="color: rgb(var(--text-primary));">Category</h4>
+                <div class="space-y-2">
+                    <label class="filter-option">
+                        <input type="checkbox" checked />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Development</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" checked />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Testing & QA</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" checked />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Documentation</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" checked />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Deployment</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" checked />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Code Review</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Rating -->
+            <div class="filter-section">
+                <h4 class="text-sm font-semibold mb-3" style="color: rgb(var(--text-primary));">Minimum Rating</h4>
+                <div class="space-y-3">
+                    <input type="range" min="0" max="5" step="0.5" value="0" id="ratingSlider" oninput="updateRatingLabel()" />
+                    <div class="flex items-center justify-between text-xs" style="color: rgb(var(--text-tertiary));">
+                        <span>Any</span>
+                        <span id="ratingLabel" class="font-semibold" style="color: rgb(var(--text-primary));">0.0+</span>
+                        <span>5.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verification -->
+            <div class="filter-section">
+                <h4 class="text-sm font-semibold mb-3" style="color: rgb(var(--text-primary));">Creator Status</h4>
+                <div class="space-y-2">
+                    <label class="filter-option">
+                        <input type="checkbox" />
+                        <span class="text-sm flex items-center" style="color: rgb(var(--text-secondary));">
+                            Verified creators only
+                            <span class="material-icons text-sm ml-1" style="color: #5B8FF9;">verified</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Filters -->
+        <div id="advancedFilters" class="tab-content" style="display: none;">
+            <!-- Downloads -->
+            <div class="filter-section">
+                <h4 class="text-sm font-semibold mb-3" style="color: rgb(var(--text-primary));">Minimum Downloads</h4>
+                <div class="space-y-3">
+                    <select class="w-full p-2 rounded-lg text-sm" style="background: rgba(var(--bg-tertiary), 1); color: rgb(var(--text-primary)); border: 1px solid rgba(var(--border-subtle), 1);">
+                        <option value="0">Any</option>
+                        <option value="100">100+</option>
+                        <option value="500">500+</option>
+                        <option value="1000">1,000+</option>
+                        <option value="5000">5,000+</option>
+                        <option value="10000">10,000+</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Last Updated -->
+            <div class="filter-section">
+                <h4 class="text-sm font-semibold mb-3" style="color: rgb(var(--text-primary));">Last Updated</h4>
+                <div class="space-y-2">
+                    <label class="filter-option">
+                        <input type="radio" name="lastUpdated" value="any" checked />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Any time</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="lastUpdated" value="week" />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Past week</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="lastUpdated" value="month" />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Past month</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="lastUpdated" value="year" />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Past year</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Compatibility -->
+            <div class="filter-section">
+                <h4 class="text-sm font-semibold mb-3" style="color: rgb(var(--text-primary));">Symphony Version</h4>
+                <div class="space-y-2">
+                    <label class="filter-option">
+                        <input type="checkbox" checked />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">v1.0+</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" checked />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">v2.0+</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" checked />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Latest (v3.0+)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Language -->
+            <div class="filter-section">
+                <h4 class="text-sm font-semibold mb-3" style="color: rgb(var(--text-primary));">Programming Language</h4>
+                <div class="space-y-2">
+                    <label class="filter-option">
+                        <input type="checkbox" />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">JavaScript/TypeScript</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Python</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Rust</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Go</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Java</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" />
+                        <span class="text-sm" style="color: rgb(var(--text-secondary));">Language Agnostic</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Tags -->
+            <div class="filter-section">
+                <h4 class="text-sm font-semibold mb-3" style="color: rgb(var(--text-primary));">Tags</h4>
+                <input type="text" placeholder="Search tags..." class="w-full p-2 rounded-lg text-sm mb-2" style="background: rgba(var(--bg-tertiary), 1); color: rgb(var(--text-primary)); border: 1px solid rgba(var(--border-subtle), 1);" />
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <button class="px-3 py-1 rounded-full text-xs" style="background: rgba(91, 143, 249, 0.1); color: #5B8FF9;">AI-Powered</button>
+                    <button class="px-3 py-1 rounded-full text-xs" style="background: rgba(var(--bg-tertiary), 1); color: rgb(var(--text-secondary));">Automation</button>
+                    <button class="px-3 py-1 rounded-full text-xs" style="background: rgba(var(--bg-tertiary), 1); color: rgb(var(--text-secondary));">Performance</button>
+                    <button class="px-3 py-1 rounded-full text-xs" style="background: rgba(var(--bg-tertiary), 1); color: rgb(var(--text-secondary));">Security</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="flex items-center justify-between p-6 border-t" style="border-color: rgba(var(--border-subtle), 1);">
+            <button onclick="resetFilters()" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="color: rgb(var(--text-secondary)); background: rgba(var(--bg-tertiary), 1);">
+                Reset All
+            </button>
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleFilterModal()" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="color: rgb(var(--text-secondary));">
+                    Cancel
+                </button>
+                <button onclick="applyFilters()" class="px-5 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:opacity-90 transition-opacity">
+                    Apply Filters
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleFilterModal() {
+    const modal = document.getElementById('filterModal');
+    modal.classList.toggle('active');
+}
+
+function switchTab(tab) {
+    // Update tab buttons
+    document.getElementById('commonTab').classList.toggle('active', tab === 'common');
+    document.getElementById('advancedTab').classList.toggle('active', tab === 'advanced');
+    
+    // Update tab content
+    document.getElementById('commonFilters').style.display = tab === 'common' ? 'block' : 'none';
+    document.getElementById('advancedFilters').style.display = tab === 'advanced' ? 'block' : 'none';
+}
+
+function updateRatingLabel() {
+    const slider = document.getElementById('ratingSlider');
+    const label = document.getElementById('ratingLabel');
+    label.textContent = slider.value === '0' ? 'Any' : slider.value + '+';
+}
+
+function resetFilters() {
+    // Reset all checkboxes to checked
+    document.querySelectorAll('#commonFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
+    document.querySelectorAll('#advancedFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
+    
+    // Reset rating slider
+    document.getElementById('ratingSlider').value = 0;
+    updateRatingLabel();
+    
+    // Reset radio buttons
+    document.querySelector('input[name="lastUpdated"][value="any"]').checked = true;
+    
+    // Reset select
+    document.querySelector('select').selectedIndex = 0;
+}
+
+function applyFilters() {
+    // Here you would collect all filter values and apply them
+    console.log('Filters applied');
+    toggleFilterModal();
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('filterModal');
+        if (modal.classList.contains('active')) {
+            toggleFilterModal();
+        }
+    }
+});
+</script>
+
+</body>
+</html>
