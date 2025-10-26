@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Symphony - Where You Conduct, AI Performs</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    symphony: {
+                        primary: "#00F593",
+                        secondary: "#5B8FF9",
+                        accent: "#7BA5FA",
+                        dark: "#0A0B0D",
+                        light: "#F5F5F7",
+                    },
+                },
+                animation: {
+                    'fade-up': 'fadeUp 1s ease-out',
+                    'wave': 'wave 3s ease-in-out infinite',
+                    'particle': 'particle 20s linear infinite',
+                    'compose': 'compose 2s ease-in-out infinite',
+                    'glow': 'glow 2s ease-in-out infinite',
+                },
+                keyframes: {
+                    fadeUp: {
+                        '0%': { opacity: '0', transform: 'translateY(20px)' },
+                        '100%': { opacity: '1', transform: 'translateY(0)' },
+                    },
+                    wave: {
+                        '0%, 100%': { transform: 'scaleY(1)' },
+                        '50%': { transform: 'scaleY(1.5)' },
+                    },
+                    particle: {
+                        '0%': { transform: 'translateY(100vh) rotate(0deg)', opacity: '0' },
+                        '10%': { opacity: '0.3' },
+                        '90%': { opacity: '0.3' },
+                        '100%': { transform: 'translateY(-10vh) rotate(360deg)', opacity: '0' },
+                    },
+                    compose: {
+                        '0%, 100%': { opacity: '0.3' },
+                        '50%': { opacity: '1' },
+                    },
+                    glow: {
+                        '0%, 100%': { boxShadow: '0 0 20px rgba(0, 245, 147, 0.5)' },
+                        '50%': { boxShadow: '0 0 40px rgba(0, 245, 147, 0.8)' },
+                    },
+                },
+            },
+        },
+    };
+</script>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --bg-primary: 10, 11, 13;
+        --bg-secondary: 18, 20, 23;
+        --text-primary: 255, 255, 255;
+        --text-secondary: 156, 163, 175;
+        --text-tertiary: 107, 114, 128;
+        --accent-green: 0, 245, 147;
+        --accent-blue: 91, 143, 249;
+    }
+    
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    body {
+        background: rgb(var(--bg-primary));
+        color: rgb(var(--text-primary));
+        font-family: 'Inter', system-ui, sans-serif;
+        overflow-x: hidden;
+    }
+    
+    /* Particle Background */
+    .particle-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .particle {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: rgba(var(--accent-green), 0.4);
+        border-radius: 50%;
+        animation: particle var(--duration, 20s) linear infinite;
+        opacity: 0.6;
+    }
+
+    /* Interactive Workflow Composer */
+    .composer-grid {
+        display: grid;
+        grid-template-columns: repeat(16, 1fr);
+        gap: 6px;
+        padding: 24px;
+        background: rgba(var(--bg-secondary), 0.6);
+        border-radius: 20px;
+        border: 1px solid rgba(var(--accent-green), 0.2);
+        backdrop-filter: blur(15px);
+        position: relative;
+        z-index: 10;
+    }
+
+    .composer-cell {
+        aspect-ratio: 1;
+        min-height: 45px;
+        background: linear-gradient(135deg, rgba(var(--text-tertiary), 0.05), rgba(var(--text-tertiary), 0.1));
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: rgba(var(--text-tertiary), 0.3);
+        font-family: 'JetBrains Mono', monospace;
+        border: 1px solid rgba(var(--text-tertiary), 0.1);
+    }
+
+    .composer-cell::before {
+        content: attr(data-note);
+        position: absolute;
+        font-size: 9px;
+        top: 3px;
+        right: 5px;
+        color: rgba(var(--accent-green), 0.4);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .composer-cell:hover {
+        background: rgba(var(--accent-green), 0.15);
+        transform: scale(1.1);
+        border-color: rgba(var(--accent-green), 0.3);
+        box-shadow: 0 0 20px rgba(var(--accent-green), 0.3);
+    }
+
+    .composer-cell.active {
+        background: linear-gradient(135deg, 
+            rgba(var(--accent-green), 0.4),
+            rgba(var(--accent-blue), 0.4));
+        animation: compose 2s ease-in-out infinite;
+        border-color: rgba(var(--accent-green), 0.6);
+        color: rgba(var(--text-primary), 0.9);
+        box-shadow: 0 0 30px rgba(var(--accent-green), 0.5);
+    }
+
+    .composer-cell.playing {
+        animation: pulse 0.5s ease-out;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); box-shadow: 0 0 20px rgba(var(--accent-green), 0.8); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes wave {
+        0%, 100% { transform: scaleY(1); }
+        50% { transform: scaleY(1.5); }
+    }
+
+    /* Sound Wave Visualizer */
+    .sound-wave {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 60px;
+        margin: 40px 0;
+    }
+
+    .wave-bar {
+        width: 4px;
+        height: var(--height, 40px);
+        background: linear-gradient(to top, 
+            rgba(var(--accent-green), 0.8),
+            rgba(var(--accent-blue), 0.8));
+        border-radius: 3px;
+        animation: wave 1s ease-in-out infinite;
+        transform-origin: center;
+    }
+
+    /* Elegant Glass Cards */
+    .glass-card {
+        background: rgba(var(--bg-secondary), 0.4);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(var(--text-tertiary), 0.1);
+        border-radius: 20px;
+        padding: 32px;
+        transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(var(--accent-green), 0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Clean Typography */
+    .hero-title {
+        font-size: clamp(3rem, 8vw, 6rem);
+        font-weight: 700;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, 
+            rgb(var(--accent-green)),
+            rgb(var(--accent-blue)));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Smooth Navigation */
+    .nav-minimal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: rgba(var(--bg-primary), 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(var(--text-tertiary), 0.1);
+        padding: 20px 0;
+    }
+
+    /* Button Styles */
+    .btn-primary {
+        background: rgb(var(--accent-green));
+        color: rgb(var(--bg-primary));
+        padding: 14px 32px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(var(--accent-green), 0.3);
+    }
+
+    .btn-secondary {
+        background: transparent;
+        color: rgb(var(--text-primary));
+        padding: 14px 32px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 16px;
+        border: 1px solid rgba(var(--text-tertiary), 0.3);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .btn-secondary:hover {
+        border-color: rgba(var(--accent-green), 0.5);
+        background: rgba(var(--accent-green), 0.05);
+    }
+    
+    /* Musical font styling */
+    .musical-text {
+        font-family: 'Georgia', 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+        font-style: italic;
+        letter-spacing: 0.02em;
+    }
+    
+    /* Fade in animation */
+    .fade-in {
+        animation: fadeUp 1s ease-out backwards;
+    }
+
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    
+    /* Interactive Grid Canvas */
+    #interactive-grid {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+    }
+    
+    /* Hero gradient background */
+    .hero-gradient {
+        background: linear-gradient(135deg, 
+            rgba(var(--bg-primary), 1) 0%,
+            rgba(var(--bg-secondary), 0.8) 100%);
+    }
+    
+    /* Grid pattern overlay */
+    .grid-pattern {
+        background-image: 
+            linear-gradient(rgba(var(--text-tertiary), 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(var(--text-tertiary), 0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+    }
+    
+    /* Nav glass effect */
+    .nav-glass {
+        background: rgba(var(--bg-primary), 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(var(--text-tertiary), 0.1);
+    }
+    
+    /* Glass card effect */
+    .glass {
+        background: rgba(var(--bg-secondary), 0.4);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(var(--text-tertiary), 0.1);
+    }
+    
+    /* Gradient mesh background */
+    .gradient-mesh {
+        background: 
+            radial-gradient(at 20% 30%, rgba(var(--accent-green), 0.05) 0px, transparent 50%),
+            radial-gradient(at 80% 70%, rgba(var(--accent-blue), 0.05) 0px, transparent 50%),
+            rgb(var(--bg-primary));
+    }
+    
+    /* Video frame styles */
+    .video-frame-outer {
+        border-radius: 20px;
+        padding: 4px;
+        background: linear-gradient(135deg, 
+            rgba(var(--accent-green), 0.2),
+            rgba(var(--accent-blue), 0.2));
+    }
+    
+    .video-frame-inner {
+        border-radius: 16px;
+        overflow: hidden;
+        background: rgba(var(--bg-secondary), 0.8);
+        backdrop-filter: blur(20px);
+    }
+    
+    .video-frame-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        background: rgba(var(--bg-primary), 0.5);
+        border-bottom: 1px solid rgba(var(--text-tertiary), 0.1);
+    }
+    
+    .video-frame-dots {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .video-frame-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+    
+    .video-frame-content {
+        aspect-ratio: 16 / 9;
+        background: rgba(var(--bg-primary), 0.8);
+    }
+    
+    /* Musical symbols */
+    .musical-symbol {
+        display: inline-block;
+        font-family: 'Georgia', serif;
+        font-size: 1.2em;
+        vertical-align: middle;
+    }
+    
+    /* Gradient for buttons */
+    .bg-gradient-symphony {
+        background: linear-gradient(135deg, 
+            rgb(var(--accent-green)),
+            rgb(var(--accent-blue)));
+    }
+</style>
+</head>
+<body class="font-sans antialiased">
+
+<!-- Particle Background -->
+<div class="particle-bg" id="particles"></div>
+
+<!-- Minimal Navigation -->
+<nav class="nav-minimal">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <span class="text-2xl gradient-text font-bold">Symphony</span>
+        </div>
+        
+        <div class="hidden md:flex items-center space-x-8">
+            <a href="#features" class="text-sm hover:text-green-400 transition-colors opacity-80">Features</a>
+            <a href="#workflow" class="text-sm hover:text-green-400 transition-colors opacity-80">How It Works</a>
+            <a href="#modes" class="text-sm hover:text-green-400 transition-colors opacity-80">Modes</a>
+            <a href="#pricing" class="text-sm hover:text-green-400 transition-colors opacity-80">Pricing</a>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+            <button class="btn-secondary text-sm">Sign In</button>
+            <button class="btn-primary text-sm">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z"/>
+                </svg>
+                Get Started
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section with Interactive Composer -->
+<section class="relative min-h-screen flex items-center justify-center pt-20 hero-gradient grid-pattern" style="z-index: 1; position: relative;">
+    <!-- Interactive Grid Canvas -->
+    <canvas id="interactive-grid"></canvas>
+    
+    <div class="max-w-7xl mx-auto px-6 py-32">
+        <div class="text-center mb-12">
+            <p class="text-sm text-green-400 mb-4 fade-in">🎵 Symphony v2.0 is here. Orchestrate your code.</p>
+            <h1 class="hero-title mb-6 fade-in delay-100">
+                Where You <span class="gradient-text">Conduct</span>,<br/>
+                AI <span class="gradient-text">Performs</span>
+            </h1>
+            <p class="text-xl opacity-80 max-w-2xl mx-auto fade-in delay-200">
+                The first AI-First Development Environment
+            </p>
+        </div>
+
+        <!-- Interactive Workflow Composer -->
+        <div class="max-w-4xl mx-auto mb-12 fade-in delay-300">
+            <h3 class="text-center mb-4 opacity-60">Compose Your Workflow</h3>
+            <div class="composer-grid" id="composer">
+                <!-- Grid will be populated by JavaScript -->
+            </div>
+            <div class="flex justify-center gap-4 mt-6">
+                <button onclick="playSequence()" class="btn-secondary">
+                    <span>▶</span> Play
+                </button>
+                <button onclick="clearGrid()" class="btn-secondary">
+                    <span>✕</span> Clear
+                </button>
+                <button onclick="randomize()" class="btn-secondary">
+                    <span>🎲</span> Random
+                </button>
+            </div>
+        </div>
+
+        <!-- CTAs -->
+        <div class="flex justify-center gap-4 fade-in delay-400">
+            <button class="btn-primary">
+                Download Symphony
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+            </button>
+            <button class="btn-secondary">All Downloads</button>
+        </div>
+    </div>
+</section>
+
+<!-- Sound Wave Divider -->
+<div class="sound-wave">
+    <div class="wave-bar" style="--height: 40px; animation-delay: 0.1s;"></div>
+    <div class="wave-bar" style="--height: 60px; animation-delay: 0.2s;"></div>
+    <div class="wave-bar" style="--height: 80px; animation-delay: 0.3s;"></div>
+    <div class="wave-bar" style="--height: 100px; animation-delay: 0.4s;"></div>
+    <div class="wave-bar" style="--height: 80px; animation-delay: 0.5s;"></div>
+    <div class="wave-bar" style="--height: 60px; animation-delay: 0.6s;"></div>
+    <div class="wave-bar" style="--height: 40px; animation-delay: 0.7s;"></div>
+</div>
+
+<!-- Features Section -->
+<section id="features" class="py-32">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-bold mb-6">
+                Revolutionary <span class="gradient-text">AI-First</span> Architecture
+            </h2>
+            <p class="text-xl opacity-60 max-w-3xl mx-auto">
+                Built from the ground up for AI orchestration, not bolted on as an afterthought
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- The Conductor -->
+            <div class="glass-card group">
+                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">🎩</div>
+                <h3 class="text-2xl font-bold mb-4">The Conductor</h3>
+                <p class="opacity-60 mb-4">
+                    Intelligent orchestrator that manages AI agents, coordinates workflows, and ensures harmony across your development process.
+                </p>
+                <ul class="space-y-2 text-sm opacity-50">
+                    <li>• Dynamic model activation</li>
+                    <li>• Adaptive failure handling</li>
+                    <li>• Artifact flow management</li>
+                </ul>
+            </div>
+            
+            <!-- Melodies -->
+            <div class="glass-card group">
+                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">🎵</div>
+                <h3 class="text-2xl font-bold mb-4">Melodies</h3>
+                <p class="opacity-60 mb-4">
+                    Composable workflows that you can drag, drop, and customize. Share templates across teams or use ready-made solutions.
+                </p>
+                <ul class="space-y-2 text-sm opacity-50">
+                    <li>• Visual workflow composition</li>
+                    <li>• Reusable templates</li>
+                    <li>• Marketplace integration</li>
+                </ul>
+            </div>
+            
+            <!-- Harmony Board -->
+            <div class="glass-card group">
+                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">🎛️</div>
+                <h3 class="text-2xl font-bold mb-4">Harmony Board</h3>
+                <p class="opacity-60 mb-4">
+                    Real-time visualization of your AI agents at work. Monitor workflows, track progress, and debug with complete transparency.
+                </p>
+                <ul class="space-y-2 text-sm opacity-50">
+                    <li>• Real-time monitoring</li>
+                    <li>• Data flow tracking</li>
+                    <li>• Issue detection</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sound Wave Divider -->
+<div class="sound-wave">
+    <div class="wave-bar" style="--height: 40px; animation-delay: 0.1s;"></div>
+    <div class="wave-bar" style="--height: 60px; animation-delay: 0.2s;"></div>
+    <div class="wave-bar" style="--height: 80px; animation-delay: 0.3s;"></div>
+    <div class="wave-bar" style="--height: 100px; animation-delay: 0.4s;"></div>
+    <div class="wave-bar" style="--height: 80px; animation-delay: 0.5s;"></div>
+    <div class="wave-bar" style="--height: 60px; animation-delay: 0.6s;"></div>
+    <div class="wave-bar" style="--height: 40px; animation-delay: 0.7s;"></div>
+</div>
+
+<!-- How It Works -->
+<section id="workflow" class="py-32">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-bold mb-6">
+                From Vision to Reality in <span class="gradient-text">Minutes</span>
+            </h2>
+            <p class="text-xl opacity-60 max-w-3xl mx-auto">
+                Symphony transforms how you build software. You provide the vision, AI handles the implementation.
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+            <div class="space-y-8">
+                <div class="flex items-start space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-xl">
+                        1
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">Describe Your Vision</h3>
+                        <p class="opacity-60">
+                            Tell Symphony what you want to build. Natural language, sketches, or requirements - the Conductor understands it all.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-xl">
+                        2
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">AI Orchestrates</h3>
+                        <p class="opacity-60">
+                            The Conductor activates specialized AI agents, coordinates their work, and ensures everything fits together perfectly.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-xl">
+                        3
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">Review & Refine</h3>
+                        <p class="opacity-60">
+                            Watch your software take shape in real-time. Provide feedback, make adjustments, and guide the creative process.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass-card flex items-center justify-center">
+                <div class="aspect-video w-full rounded-xl flex items-center justify-center" style="background: rgba(var(--bg-primary), 0.5);">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-green-500/10 flex items-center justify-center">
+                            <span class="text-4xl">▶</span>
+                        </div>
+                        <p class="opacity-60">Interactive Demo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modes Section -->
+<section id="modes" class="py-32">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-bold mb-6">
+                Two Modes, Infinite Possibilities
+            </h2>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Normal Mode -->
+            <div class="glass-card">
+                <div class="text-5xl mb-6">🎼</div>
+                <h3 class="text-3xl font-bold mb-4">Normal Mode</h3>
+                <p class="opacity-60 mb-6">
+                    You're in control. AI assists with specific tasks while you maintain full oversight of the development process.
+                </p>
+                <ul class="space-y-3 opacity-50">
+                    <li>✓ Manual workflow control</li>
+                    <li>✓ Step-by-step guidance</li>
+                    <li>✓ Full transparency</li>
+                </ul>
+            </div>
+            
+            <!-- Maestro Mode -->
+            <div class="glass-card border-green-500/30">
+                <div class="flex items-center space-x-2 mb-6">
+                    <div class="text-5xl">🎩</div>
+                    <span class="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full">RECOMMENDED</span>
+                </div>
+                <h3 class="text-3xl font-bold mb-4">Maestro Mode</h3>
+                <p class="opacity-60 mb-6">
+                    Full AI orchestration. Describe your goal and let the Conductor handle everything - from planning to implementation to testing.
+                </p>
+                <ul class="space-y-3 opacity-50">
+                    <li>✓ Complete automation</li>
+                    <li>✓ Intelligent decision-making</li>
+                    <li>✓ End-to-end solutions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-32 text-center">
+    <h2 class="text-5xl md:text-6xl font-bold mb-6">
+        Ready to <span class="gradient-text">Compose the Future?</span>
+    </h2>
+    <p class="text-xl opacity-60 mb-12">
+        Join thousands of developers who are building software 10x faster with AI orchestration
+    </p>
+    
+    <div class="flex justify-center gap-4 mb-8">
+        <button class="btn-primary">
+            Start Free Trial
+        </button>
+        <button class="btn-secondary">
+            Schedule Demo
+        </button>
+    </div>
+    
+    <p class="text-sm opacity-40">
+        No credit card required • 14-day free trial • Cancel anytime
+    </p>
+</section>
+
+<!-- Footer -->
+<footer class="py-16 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+        <p class="opacity-40">© 2025 Symphony. All rights reserved.</p>
+    </div>
+</footer>
+
+
+
+<script>
+// Initialize animated particles
+const particlesContainer = document.getElementById('particles');
+if (particlesContainer) {
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.setProperty('--duration', (15 + Math.random() * 20) + 's');
+        particle.style.animationDelay = Math.random() * 20 + 's';
+        
+        // Vary particle sizes
+        const size = 1 + Math.random() * 3;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        
+        particlesContainer.appendChild(particle);
+    }
+}
+
+// Initialize composer grid with musical notes
+const composer = document.getElementById('composer');
+if (composer) {
+    const composerGridSize = 16 * 4; // 16x4 grid
+    const sequence = [];
+    const noteNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C+'];
+    const octaves = ['3', '4', '5', '6'];
+
+    for (let i = 0; i < composerGridSize; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'composer-cell';
+    cell.dataset.index = i;
+    
+    // Add musical note label
+    const row = Math.floor(i / 16);
+    const col = i % 16;
+    const noteName = noteNames[col % 8];
+    const octave = octaves[row];
+    cell.dataset.note = noteName + octave;
+    
+    // Add musical symbol based on position
+    const symbols = ['♪', '♫', '♬', '♩'];
+    cell.innerHTML = symbols[col % 4];
+    
+        cell.addEventListener('click', () => toggleCell(i));
+        composer.appendChild(cell);
+        sequence[i] = false;
+    }
+
+    function toggleCell(index) {
+        const cell = composer.children[index];
+        sequence[index] = !sequence[index];
+        cell.classList.toggle('active');
+        
+        // Play sound effect (using Web Audio API)
+        if (typeof playTone === 'function') {
+            playTone(200 + (index % 16) * 50, 0.1);
+        }
+    }
+
+    window.playSequence = function() {
+        sequence.forEach((active, index) => {
+            if (active) {
+                setTimeout(() => {
+                    const cell = composer.children[index];
+                    cell.classList.add('playing');
+                    if (typeof playTone === 'function') {
+                        playTone(200 + (index % 16) * 50, 0.2);
+                    }
+                    setTimeout(() => cell.classList.remove('playing'), 500);
+                }, index * 100);
+            }
+        });
+    };
+
+    window.clearGrid = function() {
+        sequence.fill(false);
+        Array.from(composer.children).forEach(cell => {
+            cell.classList.remove('active');
+        });
+    };
+
+    window.randomize = function() {
+        window.clearGrid();
+        for (let i = 0; i < 20; i++) {
+            const randomIndex = Math.floor(Math.random() * composerGridSize);
+            toggleCell(randomIndex);
+        }
+    };
+}
+
+// Web Audio API for sound
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioCtx = new AudioContext();
+
+function playTone(frequency, duration) {
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    oscillator.frequency.value = frequency;
+    oscillator.type = 'sine';
+    
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+    
+    oscillator.start(audioCtx.currentTime);
+    oscillator.stop(audioCtx.currentTime + duration);
+}
+</script>
+
+<script>
+// Theme Toggle Functionality
+const themeToggle = document.getElementById('theme-toggle');
+const html = document.documentElement;
+
+if (themeToggle) {
+    const darkIcon = themeToggle.querySelector('.dark-icon');
+    const lightIcon = themeToggle.querySelector('.light-icon');
+
+    // Check for saved theme preference or default to dark
+    const currentTheme = localStorage.getItem('theme') || 'dark';
+    if (currentTheme === 'light') {
+        html.classList.remove('dark');
+        if (darkIcon) darkIcon.classList.add('hidden');
+        if (lightIcon) lightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        
+        if (html.classList.contains('dark')) {
+            localStorage.setItem('theme', 'dark');
+            if (darkIcon) darkIcon.classList.remove('hidden');
+            if (lightIcon) lightIcon.classList.add('hidden');
+        } else {
+            localStorage.setItem('theme', 'light');
+            if (darkIcon) darkIcon.classList.add('hidden');
+            if (lightIcon) lightIcon.classList.remove('hidden');
+        }
+    });
+}
+
+// ===== Interactive Grid System =====
+const canvas = document.getElementById('interactive-grid');
+if (canvas) {
+    const ctx = canvas.getContext('2d');
+    const section = canvas.parentElement;
+
+    let width, height;
+    let mouseX = 0, mouseY = 0;
+    let targetMouseX = 0, targetMouseY = 0;
+    const gridSize = 50;
+    const nodes = [];
+    const maxDistance = 200;
+    let animationTime = 0;
+
+    // Resize canvas
+    function resizeCanvas() {
+        width = section.offsetWidth;
+        height = section.offsetHeight;
+        canvas.width = width;
+        canvas.height = height;
+        initNodes();
+    }
+
+    // Initialize grid nodes
+    function initNodes() {
+        nodes.length = 0;
+        const cols = Math.ceil(width / gridSize) + 1;
+        const rows = Math.ceil(height / gridSize) + 1;
+        
+        for (let i = 0; i < cols; i++) {
+            for (let j = 0; j < rows; j++) {
+                nodes.push({
+                    x: i * gridSize,
+                    y: j * gridSize,
+                    originalX: i * gridSize,
+                    originalY: j * gridSize,
+                    vx: 0,
+                    vy: 0
+                });
+            }
+        }
+    }
+
+    // Smooth mouse tracking
+    function updateMouse() {
+        mouseX += (targetMouseX - mouseX) * 0.1;
+        mouseY += (targetMouseY - mouseY) * 0.1;
+    }
+
+    // Get theme-aware colors
+    function getGridColors() {
+        const isDark = html.classList.contains('dark');
+        return {
+            line: isDark ? 'rgba(91, 143, 249, 0.08)' : 'rgba(91, 143, 249, 0.16)',
+            highlight: isDark ? 'rgba(91, 143, 249, 0.3)' : 'rgba(91, 143, 249, 0.4)',
+            glow: isDark ? 'rgba(91, 143, 249, 0.15)' : 'rgba(91, 143, 249, 0.25)',
+            node: isDark ? 'rgba(91, 143, 249, 0.4)' : 'rgba(91, 143, 249, 0.5)'
+        };
+    }
+
+    // Draw animated grid
+    function draw() {
+        ctx.clearRect(0, 0, width, height);
+        const colors = getGridColors();
+        animationTime += 0.01;
+        
+        // Update and draw nodes
+        nodes.forEach((node, index) => {
+            // Calculate distance from mouse
+            const dx = mouseX - node.x;
+            const dy = mouseY - node.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            // Mouse interaction - repel nodes
+            if (distance < maxDistance) {
+                const force = (maxDistance - distance) / maxDistance;
+                const angle = Math.atan2(dy, dx);
+                node.vx -= Math.cos(angle) * force * 2;
+                node.vy -= Math.sin(angle) * force * 2;
+            }
+            
+            // Wave animation
+            const wave = Math.sin(animationTime + node.originalX * 0.01 + node.originalY * 0.01) * 2;
+            
+            // Apply velocity and damping
+            node.vx *= 0.85;
+            node.vy *= 0.85;
+            node.x += node.vx + Math.cos(animationTime * 0.5 + index * 0.1) * 0.3;
+            node.y += node.vy + wave;
+            
+            // Spring back to original position
+            node.x += (node.originalX - node.x) * 0.05;
+            node.y += (node.originalY - node.y) * 0.05;
+            
+            // Draw node glow if near mouse
+            if (distance < maxDistance) {
+                const alpha = 1 - distance / maxDistance;
+                const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, 30);
+                gradient.addColorStop(0, colors.glow.replace(/[\d.]+\)$/, `${alpha * 0.3})`));
+                gradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(node.x - 30, node.y - 30, 60, 60);
+            }
+        });
+        
+        // Draw connecting lines
+        ctx.strokeStyle = colors.line;
+        ctx.lineWidth = 1;
+        
+        for (let i = 0; i < nodes.length; i++) {
+            const node = nodes[i];
+            
+            // Draw horizontal lines
+            const rightNode = nodes.find(n => 
+                Math.abs(n.originalY - node.originalY) < 1 && 
+                n.originalX === node.originalX + gridSize
+            );
+            if (rightNode) {
+                const dx = mouseX - (node.x + rightNode.x) / 2;
+                const dy = mouseY - (node.y + rightNode.y) / 2;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < maxDistance) {
+                    const alpha = 1 - distance / maxDistance;
+                    ctx.strokeStyle = colors.highlight.replace(/[\d.]+\)$/, `${alpha})`);
+                    ctx.lineWidth = 2;
+                } else {
+                    ctx.strokeStyle = colors.line;
+                    ctx.lineWidth = 1;
+                }
+                
+                ctx.beginPath();
+                ctx.moveTo(node.x, node.y);
+                ctx.lineTo(rightNode.x, rightNode.y);
+                ctx.stroke();
+            }
+            
+            // Draw vertical lines
+            const bottomNode = nodes.find(n => 
+                Math.abs(n.originalX - node.originalX) < 1 && 
+                n.originalY === node.originalY + gridSize
+            );
+            if (bottomNode) {
+                const dx = mouseX - (node.x + bottomNode.x) / 2;
+                const dy = mouseY - (node.y + bottomNode.y) / 2;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < maxDistance) {
+                    const alpha = 1 - distance / maxDistance;
+                    ctx.strokeStyle = colors.highlight.replace(/[\d.]+\)$/, `${alpha})`);
+                    ctx.lineWidth = 2;
+                } else {
+                    ctx.strokeStyle = colors.line;
+                    ctx.lineWidth = 1;
+                }
+                
+                ctx.beginPath();
+                ctx.moveTo(node.x, node.y);
+                ctx.lineTo(bottomNode.x, bottomNode.y);
+                ctx.stroke();
+            }
+        }
+        
+        // Draw cursor glow
+        if (mouseX > 0 && mouseY > 0) {
+            const gradient = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 150);
+            gradient.addColorStop(0, colors.glow);
+            gradient.addColorStop(0.5, colors.glow.replace(/[\d.]+\)$/, '0.05)'));
+            gradient.addColorStop(1, 'transparent');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(mouseX - 150, mouseY - 150, 300, 300);
+        }
+    }
+
+    // Animation loop
+    function animate() {
+        updateMouse();
+        draw();
+        requestAnimationFrame(animate);
+    }
+
+    // Mouse move handler
+    section.addEventListener('mousemove', (e) => {
+        const rect = section.getBoundingClientRect();
+        targetMouseX = e.clientX - rect.left;
+        targetMouseY = e.clientY - rect.top;
+    });
+
+    // Mouse leave handler
+    section.addEventListener('mouseleave', () => {
+        targetMouseX = -1000;
+        targetMouseY = -1000;
+    });
+
+    // Initialize
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    animate();
+}
+</script>
+
+</body>
+</html>
