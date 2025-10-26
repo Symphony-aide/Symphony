@@ -13,18 +13,18 @@ incremental = true
 # Use pipelined compilation
 pipelining = true
 
-# Target-specific settings
-[target.x86_64-pc-windows-msvc]
-# Link-time optimization
-linker = "lld-link"
-rustflags = ["-C", "link-arg=-fuse-ld=lld"]
-
-[target.x86_64-unknown-linux-gnu]
-linker = "clang"
-rustflags = ["-C", "link-arg=-fuse-ld=lld"]
-
-[target.x86_64-apple-darwin]
-rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+## Target-specific settings
+#[target.x86_64-pc-windows-msvc]
+## Link-time optimization
+#linker = "lld-link"
+#rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+#
+#[target.x86_64-unknown-linux-gnu]
+#linker = "clang"
+#rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+#
+#[target.x86_64-apple-darwin]
+#rustflags = ["-C", "link-arg=-fuse-ld=lld"]
 
 # Alias for common commands
 [alias]
