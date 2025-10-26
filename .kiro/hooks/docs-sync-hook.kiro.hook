@@ -1,0 +1,29 @@
+{
+  "enabled": true,
+  "name": "Documentation Sync",
+  "description": "Monitors all source files in the repository and triggers documentation updates in README.md and /docs folder when changes are detected",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.rs",
+      "**/*.py",
+      "package.json",
+      "Cargo.toml",
+      "turbo.json",
+      "pnpm-workspace.yaml",
+      "jakefile.js",
+      "jest.config.js",
+      "vitest.workspaces.ts",
+      "eslint.config.js"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Source files have been modified in this Symphony IDE project. Please review the changes and update the documentation accordingly. Focus on:\n\n1. Update README.md with any new features, API changes, or architectural modifications\n2. Update relevant documentation in the /docs folder, particularly:\n   - Architecture documentation if core systems changed\n   - API documentation if interfaces changed\n   - Setup/installation guides if dependencies or build process changed\n3. Ensure documentation reflects the current state of the codebase\n4. Update any code examples in documentation to match current implementation\n5. Check for any new components, extensions, or features that need documentation\n\nThe project uses a sophisticated microkernel architecture with Rust backend (40+ crates) and React frontend. Pay special attention to changes in:\n- Backend extensions and orchestration system\n- Frontend components and state management\n- Build system and configuration files\n- Extension development patterns"
+  }
+}
