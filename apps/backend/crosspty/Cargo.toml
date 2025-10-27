@@ -12,12 +12,19 @@ keywords = ["pty", "terminal", "cross-platform", "async"]
 categories = ["os", "development-tools"]
 
 [dependencies]
-tokio = { version = "1.45.1", features = ["sync", "rt", "process", "macros"]}
+tokio = { version = "1.45.1", features = ["sync", "rt", "process", "macros", "net", "signal"]}
 async-trait = "0.1.88"
 futures = "0.3.31"
+thiserror = "1.0.61"
+libc = "0.2"
+nix = { version = "0.27", features = ["term", "signal"] }
+tokio-util = { version = "0.7", features = ["io"] }
 
 [target.'cfg(windows)'.dependencies]
 winpty-rs = "0.3.16"
+
+[target.'cfg(unix)'.dependencies]
+polling = "3.0.0"
 
 [dev-dependencies]
 tokio = { version = "1.45.1", features = ["rt-multi-thread", "time", "io-util", "io-std"] }

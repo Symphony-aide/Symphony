@@ -1,104 +1,61 @@
-//! # CrossPty
-//!
-//! A cross-platform abstraction for creating and managing pseudo-terminals (PTYs).
-//! This crate provides a unified interface for PTY operations across Windows and Unix-like systems.
-//!
-//! ## Features
-//!
-//! - **Cross-Platform Support**: Works on Windows (using WinPTY) and Unix-like systems
-//! - **Async Interface**: All operations are asynchronous using tokio
-//! - **Simple API**: Easy-to-use trait-based interface for PTY management
-//!
-//! ## Platform Support
-//!
-//! - **Windows**: Uses WinPTY for pseudo-terminal emulation
-//! - **Unix/Linux/macOS**: Uses native PTY support
-//!
-//! ## Quick Start
-//!
-//! ```rust,no_run
-//! use crosspty::Pty;
-//!
-//! #[tokio::main]
-//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     let mut pty = crosspty::platforms::launch_platform_pty(Default::default())?;
-//!     
-//!     // Write a command to the PTY
-//!     pty.write("echo Hello, World!\n").await?;
-//!     
-//!     // Resize the PTY
-//!     pty.resize((80, 24)).await?;
-//!     
-//!     Ok(())
-//! }
-//! ```
+//! واجهة بسيطة للتعامل مع الطرفيات الوهمية
 
-use async_trait::async_trait;
+use std::io;
 
 pub mod platforms;
 
-/// Trait defining the interface for pseudo-terminal operations.
-///
-/// This trait provides an async interface for interacting with PTYs across different platforms.
-/// Implementations handle platform-specific details while providing a consistent API.
-///
-/// # Examples
-///
-/// ```rust,no_run
-/// use crosspty::Pty;
-///
-/// async fn interact_with_pty<P: Pty>(pty: &P) -> Result<(), String> {
-///     // Send a command
-///     pty.write("ls -la\n").await?;
-///     
-///     // Resize terminal
-///     pty.resize((120, 30)).await?;
-///     
-///     Ok(())
-/// }
-/// ```
-#[async_trait]
-pub trait Pty {
-    /// Write data to the pseudo-terminal.
-    ///
-    /// # Arguments
-    ///
-    /// * `data` - The string data to write to the PTY
-    ///
-    /// # Returns
-    ///
-    /// Returns `Ok(())` on success, or an error message on failure.
-    ///
-    /// # Examples
-    ///
-    /// ```rust,no_run
-    /// # use crosspty::Pty;
-    /// # async fn example<P: Pty>(pty: &P) -> Result<(), String> {
-    /// pty.write("echo 'Hello, World!'\n").await?;
-    /// # Ok(())
-    /// # }
-    /// ```
-    async fn write(&self, data: &str) -> Result<(), String>;
+/// حجم الطرفية (عرض، ارتفاع)
+pub type PtySize = (u16, u16);
 
-    /// Resize the pseudo-terminal.
-    ///
-    /// # Arguments
-    ///
-    /// * `size` - A tuple containing (columns, rows) for the new terminal size
-    ///
-    /// # Returns
-    ///
-    /// Returns `Ok(())` on success, or an error message on failure.
-    ///
-    /// # Examples
-    ///
-    /// ```rust,no_run
-    /// # use crosspty::Pty;
-    /// # async fn example<P: Pty>(pty: &P) -> Result<(), String> {
-    /// // Resize to 80 columns by 24 rows
-    /// pty.resize((80, 24)).await?;
-    /// # Ok(())
-    /// # }
-    /// ```
-    async fn resize(&self, size: (i32, i32)) -> Result<(), String>;
+/// خطأ بسيط للطرفية
+#[derive(Debug)]
+pub enum PtyError {
+    Io(io::Error),
+    Other(String),
+}
+
+impl From<io::Error> for PtyError {
+    fn from(err: io::Error) -> Self {
+        PtyError::Io(err)
+    }
+}
+
+/// تكوين بسيط للطرفية
+pub struct PtyConfig {
+    pub size: PtySize,
+    pub shell: Option<String>,
+}
+
+impl Default for PtyConfig {
+    fn default() -> Self {
+        Self {
+            size: (80, 24),
+            shell: None,
+        }
+    }
+}
+
+/// إنشاء طرفية جديدة
+pub fn create_pty(config: PtyConfig) -> Result<Box<dyn Pty>, PtyError> {
+    #[cfg(windows)]
+    return platforms::win::PtyWindows::new(config).map(|pty| Box::new(pty) as Box<dyn Pty>);
+    
+    #[cfg(unix)]
+    return platforms::unix::PtyUnix::new(config).map(|pty| Box::new(pty) as Box<dyn Pty>);
+}
+
+/// واجهة الطرفية
+#[async_trait::async_trait]
+pub trait Pty: Send + Sync {
+    /// إرسال بيانات للطرفية
+    async fn write(&self, data: &str) -> Result<(), PtyError>;
+    
+    /// قراءة بيانات من الطرفية
+    async fn read(&self, buf: &mut [u8]) -> Result<usize, PtyError>;
+    
+    /// تغيير حجم الطرفية
+    async fn resize(&self, size: PtySize) -> Result<(), PtyError>;
+    
+    /// إغلاق الطرفية
+    async fn close(&self) -> Result<(), PtyError>;
 }
