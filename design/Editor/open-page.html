@@ -62,9 +62,9 @@
             font-size: 20px;
         }
         
-        /* Elegant gradient backgrounds */
+        /* Elegant gradient backgrounds - will be overridden by theme */
         .gradient-symphony {
-            background: linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%);
+            background: linear-gradient(135deg, var(--primary-color, #5B8FF9) 0%, var(--primary-dark, #4A7AD8) 100%);
         }
         
         .gradient-mesh {
@@ -158,7 +158,7 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, #5B8FF9, #7BA5FA);
+            background: linear-gradient(90deg, var(--primary-color, #5B8FF9), var(--primary-light, #7BA5FA));
             border-radius: 2px 2px 0 0;
         }
         
@@ -664,93 +664,250 @@ function switchMode(clickedButton) {
     console.log('Switched to mode:', clickedButton.dataset.mode);
 }
 
-// Color Theme Switcher
+// Color Theme Switcher - Complete Palette System
 const colorThemes = [
-    { name: 'Amber', color: '#F59E0B', light: '#FBBF24', dark: '#D97706' },
-    { name: 'Purple', color: '#8B5CF6', light: '#A78BFA', dark: '#7C3AED' },
-    { name: 'Teal', color: '#06B6D4', light: '#22D3EE', dark: '#0891B2' },
-    { name: 'Emerald', color: '#10B981', light: '#34D399', dark: '#059669' },
-    { name: 'Slate', color: '#64748B', light: '#94A3B8', dark: '#475569' }
+    {
+        name: 'Ocean Blue',
+        primary: '#5B8FF9',
+        primaryLight: '#7BA5FA',
+        primaryDark: '#4A7AD8',
+        secondary: '#06B6D4',
+        secondaryLight: '#22D3EE',
+        secondaryDark: '#0891B2',
+        accent: '#3B6DD8'
+    },
+    {
+        name: 'Purple Haze',
+        primary: '#8B5CF6',
+        primaryLight: '#A78BFA',
+        primaryDark: '#7C3AED',
+        secondary: '#EC4899',
+        secondaryLight: '#F472B6',
+        secondaryDark: '#DB2777',
+        accent: '#6D28D9'
+    },
+    {
+        name: 'Forest Green',
+        primary: '#10B981',
+        primaryLight: '#34D399',
+        primaryDark: '#059669',
+        secondary: '#14B8A6',
+        secondaryLight: '#2DD4BF',
+        secondaryDark: '#0D9488',
+        accent: '#047857'
+    },
+    {
+        name: 'Sunset Orange',
+        primary: '#F59E0B',
+        primaryLight: '#FBBF24',
+        primaryDark: '#D97706',
+        secondary: '#EF4444',
+        secondaryLight: '#F87171',
+        secondaryDark: '#DC2626',
+        accent: '#EA580C'
+    },
+    {
+        name: 'Monochrome',
+        primary: '#64748B',
+        primaryLight: '#94A3B8',
+        primaryDark: '#475569',
+        secondary: '#6B7280',
+        secondaryLight: '#9CA3AF',
+        secondaryDark: '#4B5563',
+        accent: '#334155'
+    }
 ];
 
 let currentThemeIndex = 0;
 
 function applyColorTheme(theme) {
-    // Create CSS custom properties for dynamic theming
+    // Create CSS custom properties for complete palette theming
     const root = document.documentElement;
-    root.style.setProperty('--secondary-color', theme.color);
-    root.style.setProperty('--secondary-light', theme.light);
-    root.style.setProperty('--secondary-dark', theme.dark);
+    root.style.setProperty('--primary-color', theme.primary);
+    root.style.setProperty('--primary-light', theme.primaryLight);
+    root.style.setProperty('--primary-dark', theme.primaryDark);
+    root.style.setProperty('--secondary-color', theme.secondary);
+    root.style.setProperty('--secondary-light', theme.secondaryLight);
+    root.style.setProperty('--secondary-dark', theme.secondaryDark);
+    root.style.setProperty('--accent-color', theme.accent);
     
-    // Update text colors
+    // Update PRIMARY colors (text)
+    document.querySelectorAll('[class*="text-symphony-primary"]').forEach(el => {
+        el.style.setProperty('color', theme.primary, 'important');
+    });
+    
+    document.querySelectorAll('[class*="text-symphony-blue"]').forEach(el => {
+        el.style.setProperty('color', theme.primary, 'important');
+    });
+    
+    // Update PRIMARY backgrounds
+    document.querySelectorAll('[class*="bg-symphony-primary"]').forEach(el => {
+        el.style.setProperty('background-color', theme.primary, 'important');
+    });
+    
+    document.querySelectorAll('[class*="bg-symphony-blue"]').forEach(el => {
+        el.style.setProperty('background-color', theme.primary, 'important');
+    });
+    
+    document.querySelectorAll('[class*="bg-symphony-primary/10"]').forEach(el => {
+        el.style.setProperty('background-color', theme.primary + '1A', 'important');
+    });
+    
+    document.querySelectorAll('[class*="bg-symphony-primary/20"]').forEach(el => {
+        el.style.setProperty('background-color', theme.primary + '33', 'important');
+    });
+    
+    // Update SECONDARY colors (text)
     document.querySelectorAll('[class*="text-symphony-secondary"]').forEach(el => {
-        el.style.setProperty('color', theme.color, 'important');
+        el.style.setProperty('color', theme.secondary, 'important');
     });
     
     document.querySelectorAll('[class*="text-symphony-amber"]').forEach(el => {
-        el.style.setProperty('color', theme.color, 'important');
+        el.style.setProperty('color', theme.secondary, 'important');
     });
     
-    // Update background colors
+    // Update SECONDARY backgrounds
     document.querySelectorAll('[class*="bg-symphony-secondary"]').forEach(el => {
-        el.style.setProperty('background-color', theme.color, 'important');
+        el.style.setProperty('background-color', theme.secondary, 'important');
     });
     
     document.querySelectorAll('[class*="bg-symphony-amber"]').forEach(el => {
-        el.style.setProperty('background-color', theme.color, 'important');
+        el.style.setProperty('background-color', theme.secondary, 'important');
     });
     
-    // Update background shades (10%, 20% opacity)
+    // Update SECONDARY background shades
     document.querySelectorAll('[class*="bg-symphony-secondary/10"]').forEach(el => {
-        el.style.setProperty('background-color', theme.color + '1A', 'important');
+        el.style.setProperty('background-color', theme.secondary + '1A', 'important');
     });
     
     document.querySelectorAll('[class*="bg-symphony-secondary/20"]').forEach(el => {
-        el.style.setProperty('background-color', theme.color + '33', 'important');
+        el.style.setProperty('background-color', theme.secondary + '33', 'important');
     });
     
-    // Update icon/material-icons colors
-    document.querySelectorAll('.material-icons.text-symphony-secondary').forEach(el => {
-        el.style.setProperty('color', theme.color, 'important');
+    // Update ACCENT colors
+    document.querySelectorAll('[class*="text-symphony-accent"]').forEach(el => {
+        el.style.setProperty('color', theme.accent, 'important');
     });
     
+    document.querySelectorAll('[class*="bg-symphony-accent"]').forEach(el => {
+        el.style.setProperty('background-color', theme.accent, 'important');
+    });
+    
+    document.querySelectorAll('[class*="bg-symphony-accent/10"]').forEach(el => {
+        el.style.setProperty('background-color', theme.accent + '1A', 'important');
+    });
+    
+    // Update LIGHT variants
+    document.querySelectorAll('[class*="text-symphony-light"]').forEach(el => {
+        el.style.setProperty('color', theme.primaryLight, 'important');
+    });
+    
+    // Update DARK variants
+    document.querySelectorAll('[class*="text-symphony-dark"]').forEach(el => {
+        el.style.setProperty('color', theme.primaryDark, 'important');
+    });
+    
+    // Update icon colors
     document.querySelectorAll('.material-icons').forEach(icon => {
-        if (icon.classList.toString().includes('symphony-secondary') || 
-            icon.classList.toString().includes('symphony-amber')) {
-            icon.style.setProperty('color', theme.color, 'important');
+        const classes = icon.classList.toString();
+        if (classes.includes('text-symphony-primary')) {
+            icon.style.setProperty('color', theme.primary, 'important');
+        }
+        if (classes.includes('text-symphony-secondary') || classes.includes('symphony-amber')) {
+            icon.style.setProperty('color', theme.secondary, 'important');
+        }
+        if (classes.includes('text-symphony-accent')) {
+            icon.style.setProperty('color', theme.accent, 'important');
         }
     });
     
-    // Update hover shadows with proper opacity
+    // Update shadows
+    document.querySelectorAll('[class*="shadow-symphony-primary"]').forEach(el => {
+        const shadowIntensity = el.classList.toString().includes('/10') ? '1A' : '33';
+        el.style.setProperty('box-shadow', `0 10px 40px ${theme.primary}${shadowIntensity}`, 'important');
+    });
+    
     document.querySelectorAll('[class*="shadow-symphony-secondary"]').forEach(el => {
         const shadowIntensity = el.classList.toString().includes('/10') ? '1A' : '33';
-        el.style.setProperty('box-shadow', `0 10px 40px ${theme.color}${shadowIntensity}`, 'important');
+        el.style.setProperty('box-shadow', `0 10px 40px ${theme.secondary}${shadowIntensity}`, 'important');
     });
     
-    // Update border colors if any
+    // Update border colors
     document.querySelectorAll('[class*="border-symphony-secondary"]').forEach(el => {
-        el.style.setProperty('border-color', theme.color, 'important');
+        el.style.setProperty('border-color', theme.secondary, 'important');
     });
     
-    // Update the switcher button
-    document.getElementById('colorPreview').style.backgroundColor = theme.color;
+    // Update SVG gradients (musical lines)
+    const svgGrad1Stops = document.querySelectorAll('#waveGrad1 stop');
+    if (svgGrad1Stops.length === 2) {
+        svgGrad1Stops[0].setAttribute('style', `stop-color:${theme.primary};stop-opacity:0.6`);
+        svgGrad1Stops[1].setAttribute('style', `stop-color:${theme.primary};stop-opacity:0.2`);
+    }
+    
+    const svgGrad2Stops = document.querySelectorAll('#waveGrad2 stop');
+    if (svgGrad2Stops.length === 2) {
+        svgGrad2Stops[0].setAttribute('style', `stop-color:${theme.primaryLight};stop-opacity:0.5`);
+        svgGrad2Stops[1].setAttribute('style', `stop-color:${theme.primaryLight};stop-opacity:0.15`);
+    }
+    
+    const svgGrad3Stops = document.querySelectorAll('#waveGrad3 stop');
+    if (svgGrad3Stops.length === 2) {
+        svgGrad3Stops[0].setAttribute('style', `stop-color:${theme.primaryDark};stop-opacity:0.4`);
+        svgGrad3Stops[1].setAttribute('style', `stop-color:${theme.primaryDark};stop-opacity:0.1`);
+    }
+    
+    // Update blob-tab border gradient
+    document.querySelectorAll('.blob-tab::before').forEach(el => {
+        el.style.background = `linear-gradient(90deg, ${theme.primary}, ${theme.primaryLight})`;
+    });
+    
+    // Update background glow effects
+    document.querySelectorAll('.bg-symphony-primary\\/20').forEach(el => {
+        el.style.setProperty('background-color', theme.primary + '33', 'important');
+    });
+    
+    // Update the switcher button with gradient
+    const colorPreview = document.getElementById('colorPreview');
+    colorPreview.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
     document.getElementById('colorName').textContent = theme.name;
     
-    // Add hover effects dynamically
+    // Add comprehensive hover effects dynamically
     const style = document.createElement('style');
     style.id = 'dynamic-theme-styles';
     style.textContent = `
+        .hover\\:text-symphony-primary:hover {
+            color: ${theme.primary} !important;
+        }
+        .hover\\:bg-symphony-primary:hover {
+            background-color: ${theme.primary} !important;
+        }
         .hover\\:text-symphony-secondary:hover {
-            color: ${theme.color} !important;
+            color: ${theme.secondary} !important;
         }
         .hover\\:bg-symphony-secondary:hover {
-            background-color: ${theme.color} !important;
+            background-color: ${theme.secondary} !important;
         }
         .hover\\:text-symphony-amber-light:hover {
-            color: ${theme.light} !important;
+            color: ${theme.secondaryLight} !important;
         }
         .hover\\:shadow-symphony-secondary\\/10:hover {
-            box-shadow: 0 10px 40px ${theme.color}1A !important;
+            box-shadow: 0 10px 40px ${theme.secondary}1A !important;
+        }
+        .hover\\:shadow-symphony-primary\\/10:hover {
+            box-shadow: 0 10px 40px ${theme.primary}1A !important;
+        }
+        .gradient-symphony {
+            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%) !important;
+        }
+        .blob-tab::before {
+            background: linear-gradient(90deg, ${theme.primary}, ${theme.primaryLight}) !important;
+        }
+        .blob-tab {
+            background: rgba(${parseInt(theme.primary.slice(1,3), 16)}, ${parseInt(theme.primary.slice(3,5), 16)}, ${parseInt(theme.primary.slice(5,7), 16)}, 0.15) !important;
+            border-color: rgba(${parseInt(theme.primary.slice(1,3), 16)}, ${parseInt(theme.primary.slice(3,5), 16)}, ${parseInt(theme.primary.slice(5,7), 16)}, 0.3) !important;
+        }
+        .blob-tab:hover {
+            background: rgba(${parseInt(theme.primary.slice(1,3), 16)}, ${parseInt(theme.primary.slice(3,5), 16)}, ${parseInt(theme.primary.slice(5,7), 16)}, 0.2) !important;
         }
     `;
     
