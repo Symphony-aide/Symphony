@@ -16,10 +16,14 @@
                 colors: {
                     symphony: {
                         primary: "#5B8FF9",
+                        secondary: "#F59E0B",
                         blue: "#5B8FF9",
                         light: "#7BA5FA",
                         dark: "#4A7AD8",
                         accent: "#3B6DD8",
+                        amber: "#F59E0B",
+                        "amber-light": "#FBBF24",
+                        "amber-dark": "#D97706",
                         yellow: "#F59E0B",
                         'yellow-light': "#FCD34D",
                     },
@@ -311,6 +315,18 @@
     ::-webkit-scrollbar-thumb:hover {
         background: rgb(var(--text-tertiary));
     }
+    
+    /* Color Theme Switcher - Fixed position, high z-index */
+    .theme-switcher {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 9999;
+    }
+    
+    .theme-option {
+        transition: all 0.3s ease;
+    }
 </style>
 </head>
 <body class="font-sans antialiased">
@@ -457,8 +473,8 @@
             </div>
             
             <!-- Feature 2: Melodies -->
-            <div class="glass rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-xl hover:shadow-symphony-light/10">
-                <div class="w-16 h-16 rounded-xl bg-symphony-light/10 flex items-center justify-center mb-6">
+            <div class="glass rounded-2xl p-8 hover:scale-105 transition-all hover:shadow-xl hover:shadow-symphony-secondary/10">
+                <div class="w-16 h-16 rounded-xl bg-symphony-secondary/10 flex items-center justify-center mb-6">
                     <span class="text-4xl">🎵</span>
                 </div>
                 <h3 class="text-2xl font-bold text-text-primary mb-4">Melodies</h3>
@@ -467,15 +483,15 @@
                 </p>
                 <ul class="space-y-2 text-sm text-text-tertiary">
                     <li class="flex items-center space-x-2">
-                        <span class="material-icons text-symphony-light text-base">check_circle</span>
+                        <span class="material-icons text-symphony-secondary text-base">check_circle</span>
                         <span>Visual workflow composition</span>
                     </li>
                     <li class="flex items-center space-x-2">
-                        <span class="material-icons text-symphony-light text-base">check_circle</span>
+                        <span class="material-icons text-symphony-secondary text-base">check_circle</span>
                         <span>Reusable templates</span>
                     </li>
                     <li class="flex items-center space-x-2">
-                        <span class="material-icons text-symphony-light text-base">check_circle</span>
+                        <span class="material-icons text-symphony-secondary text-base">check_circle</span>
                         <span>Marketplace integration</span>
                     </li>
                 </ul>
@@ -538,7 +554,7 @@
                 
                 <!-- Step 2 -->
                 <div class="flex items-start space-x-4">
-                    <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-symphony-light/10 flex items-center justify-center text-symphony-light font-bold text-xl">
+                    <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-symphony-secondary/10 flex items-center justify-center text-symphony-secondary font-bold text-xl">
                         2
                     </div>
                     <div>
@@ -653,7 +669,7 @@
             <button class="px-10 py-5 bg-gradient-symphony text-white rounded-xl font-bold text-lg hover:scale-105 transition-all shadow-2xl shadow-symphony-primary/40">
                 Start Free Trial
             </button>
-            <button class="px-10 py-5 glass text-text-primary rounded-xl font-bold text-lg hover:bg-bg-tertiary/80">
+            <button class="px-10 py-5 bg-symphony-secondary hover:bg-symphony-amber-dark text-white rounded-xl font-bold text-lg hover:scale-105 transition-all shadow-xl shadow-symphony-secondary/30">
                 Schedule Demo
             </button>
         </div>
@@ -717,6 +733,15 @@
         </div>
     </div>
 </footer>
+
+<!-- Color Theme Switcher -->
+<div class="theme-switcher">
+    <button id="colorThemeSwitcher" class="glass px-5 py-4 rounded-2xl shadow-2xl hover:scale-105 transition-all flex items-center space-x-3">
+        <div id="colorPreview" class="w-5 h-5 rounded-full" style="background-color: #F59E0B;"></div>
+        <span id="colorName" class="text-sm font-semibold" style="color: rgb(var(--text-primary));">Amber</span>
+        <span class="material-icons text-base" style="color: rgb(var(--text-tertiary));">palette</span>
+    </button>
+</div>
 
 <script>
 // Theme Toggle Functionality
@@ -944,6 +969,112 @@ section.addEventListener('mouseleave', () => {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 animate();
+
+// Color Theme Switcher
+const colorThemes = [
+    { name: 'Amber', color: '#F59E0B', light: '#FBBF24', dark: '#D97706' },
+    { name: 'Purple', color: '#8B5CF6', light: '#A78BFA', dark: '#7C3AED' },
+    { name: 'Teal', color: '#06B6D4', light: '#22D3EE', dark: '#0891B2' },
+    { name: 'Emerald', color: '#10B981', light: '#34D399', dark: '#059669' },
+    { name: 'Slate', color: '#64748B', light: '#94A3B8', dark: '#475569' }
+];
+
+let currentThemeIndex = 0;
+
+function applyColorTheme(theme) {
+    // Create CSS custom properties for dynamic theming
+    const root = document.documentElement;
+    root.style.setProperty('--secondary-color', theme.color);
+    root.style.setProperty('--secondary-light', theme.light);
+    root.style.setProperty('--secondary-dark', theme.dark);
+    
+    // Update text colors
+    document.querySelectorAll('[class*="text-symphony-secondary"]').forEach(el => {
+        el.style.setProperty('color', theme.color, 'important');
+    });
+    
+    document.querySelectorAll('[class*="text-symphony-amber"]').forEach(el => {
+        el.style.setProperty('color', theme.color, 'important');
+    });
+    
+    // Update background colors
+    document.querySelectorAll('[class*="bg-symphony-secondary"]').forEach(el => {
+        el.style.setProperty('background-color', theme.color, 'important');
+    });
+    
+    document.querySelectorAll('[class*="bg-symphony-amber"]').forEach(el => {
+        el.style.setProperty('background-color', theme.color, 'important');
+    });
+    
+    // Update background shades (10%, 20% opacity)
+    document.querySelectorAll('[class*="bg-symphony-secondary/10"]').forEach(el => {
+        el.style.setProperty('background-color', theme.color + '1A', 'important');
+    });
+    
+    document.querySelectorAll('[class*="bg-symphony-secondary/20"]').forEach(el => {
+        el.style.setProperty('background-color', theme.color + '33', 'important');
+    });
+    
+    // Update icon/material-icons colors
+    document.querySelectorAll('.material-icons.text-symphony-secondary').forEach(el => {
+        el.style.setProperty('color', theme.color, 'important');
+    });
+    
+    // Update hover shadows
+    document.querySelectorAll('[class*="shadow-symphony-secondary"]').forEach(el => {
+        const shadowIntensity = el.classList.toString().includes('/10') ? '1A' : '33';
+        el.style.setProperty('box-shadow', `0 10px 40px ${theme.color}${shadowIntensity}`, 'important');
+    });
+    
+    // Update hover:bg-symphony-amber-dark buttons
+    document.querySelectorAll('button').forEach(btn => {
+        if (btn.classList.toString().includes('hover:bg-symphony-amber-dark')) {
+            btn.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = theme.dark;
+            });
+            btn.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = theme.color;
+            });
+        }
+    });
+    
+    // Update border colors if any
+    document.querySelectorAll('[class*="border-symphony-secondary"]').forEach(el => {
+        el.style.setProperty('border-color', theme.color, 'important');
+    });
+    
+    // Update the switcher button
+    document.getElementById('colorPreview').style.backgroundColor = theme.color;
+    document.getElementById('colorName').textContent = theme.name;
+    
+    // Add hover effects dynamically
+    const style = document.createElement('style');
+    style.id = 'dynamic-theme-styles';
+    style.textContent = `
+        .hover\\:text-symphony-secondary:hover {
+            color: ${theme.color} !important;
+        }
+        .hover\\:bg-symphony-secondary:hover {
+            background-color: ${theme.color} !important;
+        }
+        .hover\\:shadow-symphony-secondary\\/10:hover {
+            box-shadow: 0 10px 40px ${theme.color}1A !important;
+        }
+    `;
+    
+    // Remove old dynamic styles
+    const oldStyle = document.getElementById('dynamic-theme-styles');
+    if (oldStyle) oldStyle.remove();
+    document.head.appendChild(style);
+}
+
+document.getElementById('colorThemeSwitcher').addEventListener('click', () => {
+    currentThemeIndex = (currentThemeIndex + 1) % colorThemes.length;
+    applyColorTheme(colorThemes[currentThemeIndex]);
+});
+
+// Initialize with first theme
+applyColorTheme(colorThemes[currentThemeIndex]);
 </script>
 
 </body>
