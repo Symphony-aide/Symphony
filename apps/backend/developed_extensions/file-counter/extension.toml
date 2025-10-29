@@ -1,0 +1,17 @@
+[package]
+name = "file-counter"
+version = "0.1.0"
+description = "Counts files in a directory"
+authors = ["Symphony Team"]
+license = "MIT"
+
+[extension]
+type = "operator"
+main = "index.js"
+
+[capabilities]
+required = ["filesystem"]
+
+[lifecycle]
+on_activate = "onActivate"
+on_deactivate = "onDeactivate"

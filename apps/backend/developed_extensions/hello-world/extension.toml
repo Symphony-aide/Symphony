@@ -1,0 +1,22 @@
+[package]
+name = "hello-world"
+version = "0.1.0"
+description = "A simple Hello World extension"
+authors = ["Symphony Team"]
+license = "MIT"
+
+[extension]
+type = "operator"
+main = "index.js"
+
+[capabilities]
+required = []
+
+[lifecycle]
+on_activate = "onActivate"
+on_deactivate = "onDeactivate"
+
+[ui]
+commands = [
+    { command = "hello-world.sayHello", title = "Say Hello" }
+]

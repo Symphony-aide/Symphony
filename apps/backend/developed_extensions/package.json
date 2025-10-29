@@ -1,0 +1,19 @@
+{
+  "name": "symphony-sample-extensions",
+  "version": "1.0.0",
+  "description": "Symphony sample extensions",
+  "scripts": {
+    "test": "jest",
+    "test:hello": "jest hello-world/__tests__",
+    "test:counter": "jest file-counter/__tests__",
+    "test:palette": "jest command-palette/__tests__"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": ["**/__tests__/**/*.test.js"],
+    "collectCoverage": true
+  }
+}

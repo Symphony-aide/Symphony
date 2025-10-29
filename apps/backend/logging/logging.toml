@@ -1,0 +1,32 @@
+# Symphony Logging Configuration (TOML)
+# Professional-grade logging configuration
+
+# Log level: trace, debug, info, warn, error, fatal
+level = "info"
+
+# Output format: console or json
+format = "json"
+
+# Console output configuration
+[console]
+enabled = true
+colored = true
+timestamps = true
+targets = false
+
+# File output configuration
+[file]
+enabled = true
+path = "logs/symphony.log"
+json = true
+buffer_size = 8192
+
+# Log rotation configuration
+[rotation]
+policy = "daily"  # Options: never, daily, hourly, size:10MB
+max_files = 7     # Keep last 7 days
+
+# Performance settings
+[performance]
+async_buffer_size = 8192
+flush_interval_ms = 100

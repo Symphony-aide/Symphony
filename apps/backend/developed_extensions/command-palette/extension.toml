@@ -1,0 +1,24 @@
+[package]
+name = "command-palette"
+version = "0.1.0"
+description = "Demonstrates command palette integration"
+authors = ["Symphony Team"]
+license = "MIT"
+
+[extension]
+type = "motif"
+main = "index.js"
+
+[capabilities]
+required = ["ui"]
+
+[lifecycle]
+on_activate = "onActivate"
+on_deactivate = "onDeactivate"
+
+[ui]
+commands = [
+    { command = "command-palette.showPalette", title = "Show Command Palette" },
+    { command = "command-palette.searchFiles", title = "Search Files" },
+    { command = "command-palette.openSettings", title = "Open Settings" }
+]
