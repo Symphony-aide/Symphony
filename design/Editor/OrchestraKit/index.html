@@ -9,26 +9,81 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <script>
+        // Comprehensive Color Token System
+        const colorTokens = {
+            // Primary Brand Colors
+            'color-brand-primary': '#5B8FF9',
+            'color-brand-primary-light': '#7BA5FA',
+            'color-brand-primary-dark': '#4A7AD8',
+            'color-brand-accent': '#3B6DD8',
+            
+            // Background Colors
+            'color-bg-primary': '#1E1E1E',
+            'color-bg-secondary': '#252526',
+            'color-bg-tertiary': '#2D2D30',
+            'color-bg-scrollbar-track': '#13131A',
+            'color-bg-canvas': '#1a1a1a',
+            'color-bg-deep': '#0f0f0f',
+            
+            // Border Colors
+            'color-border-subtle': '#252530',
+            'color-border-default': '#2D2D3A',
+            'color-border-hover': '#3D3D4A',
+            
+            // Text Colors
+            'color-text-primary': '#E8E8F0',
+            'color-text-secondary': '#9CA3AF',
+            'color-text-tertiary': '#6B7280',
+            
+            // Semantic Colors
+            'color-success': '#61DDAA',
+            'color-warning': '#F6BD16',
+            'color-danger': '#FF6B6B',
+            'color-info': '#5D7092',
+            
+            // Additional Accents
+            'color-purple': '#9370DB',
+            'color-green': '#61DDAA',
+            'color-yellow': '#F6BD16',
+            'color-red': '#FF6B6B',
+            'color-blue-gray': '#5D7092',
+            
+            // Syntax Highlighting
+            'color-syntax-string': '#98C379',
+            'color-syntax-number': '#D19A66',
+            'color-syntax-type': '#E5C07B',
+            'color-syntax-macro': '#C678DD',
+            'color-syntax-operator': '#ABB2BF',
+            'color-syntax-variable': '#E06C75',
+            
+            // Glass Effects
+            'color-glass-bg': 'rgba(26, 26, 36, 0.7)',
+            'color-glass-border': 'rgba(255, 255, 255, 0.05)',
+            
+            // Gradients
+            'gradient-symphony': 'linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%)',
+        };
+
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
                         symphony: {
-                            primary: "#5B8FF9",
-                            blue: "#5B8FF9",
-                            light: "#7BA5FA",
-                            dark: "#4A7AD8",
-                            accent: "#3B6DD8",
+                            primary: colorTokens['color-brand-primary'],
+                            blue: colorTokens['color-brand-primary'],
+                            light: colorTokens['color-brand-primary-light'],
+                            dark: colorTokens['color-brand-primary-dark'],
+                            accent: colorTokens['color-brand-accent'],
                         },
-                        "bg-primary": "#1E1E1E",
-                        "bg-secondary": "#252526",
-                        "bg-tertiary": "#2D2D30",
-                        "border-subtle": "#252530",
-                        "border-default": "#2D2D3A",
-                        "text-primary": "#E8E8F0",
-                        "text-secondary": "#9CA3AF",
-                        "text-tertiary": "#6B7280",
+                        "bg-primary": colorTokens['color-bg-primary'],
+                        "bg-secondary": colorTokens['color-bg-secondary'],
+                        "bg-tertiary": colorTokens['color-bg-tertiary'],
+                        "border-subtle": colorTokens['color-border-subtle'],
+                        "border-default": colorTokens['color-border-default'],
+                        "text-primary": colorTokens['color-text-primary'],
+                        "text-secondary": colorTokens['color-text-secondary'],
+                        "text-tertiary": colorTokens['color-text-tertiary'],
                     },
                     fontFamily: {
                         sans: ["Inter", "system-ui", "sans-serif"],
@@ -39,11 +94,39 @@
         };
     </script>
     <style>
+        :root {
+            /* Define CSS Variables from tokens */
+            --color-brand-primary: #5B8FF9;
+            --color-brand-primary-light: #7BA5FA;
+            --color-brand-primary-dark: #4A7AD8;
+            --color-brand-accent: #3B6DD8;
+            --color-bg-primary: #1E1E1E;
+            --color-bg-secondary: #252526;
+            --color-bg-tertiary: #2D2D30;
+            --color-bg-scrollbar-track: #13131A;
+            --color-bg-canvas: #1a1a1a;
+            --color-bg-deep: #0f0f0f;
+            --color-border-subtle: #252530;
+            --color-border-default: #2D2D3A;
+            --color-border-hover: #3D3D4A;
+            --color-text-primary: #E8E8F0;
+            --color-text-secondary: #9CA3AF;
+            --color-text-tertiary: #6B7280;
+            --color-success: #61DDAA;
+            --color-warning: #F6BD16;
+            --color-danger: #FF6B6B;
+            --color-info: #5D7092;
+            --color-purple: #9370DB;
+            --color-glass-bg: rgba(26, 26, 36, 0.7);
+            --color-glass-border: rgba(255, 255, 255, 0.05);
+            --gradient-symphony: linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%);
+        }
+        
         .material-icons { font-size: 20px; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #13131A; }
-        ::-webkit-scrollbar-thumb { background: #2D2D3A; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3D3D4A; }
+        ::-webkit-scrollbar-track { background: var(--color-bg-scrollbar-track); }
+        ::-webkit-scrollbar-thumb { background: var(--color-border-default); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-border-hover); }
         
         /* Player tag animation */
         @keyframes shimmer {

@@ -10,26 +10,81 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
+        // Comprehensive Color Token System
+        const colorTokens = {
+            // Primary Brand Colors
+            'color-brand-primary': '#5B8FF9',
+            'color-brand-primary-light': '#7BA5FA',
+            'color-brand-primary-dark': '#4A7AD8',
+            'color-brand-accent': '#3B6DD8',
+            
+            // Background Colors
+            'color-bg-primary': '#1E1E1E',
+            'color-bg-secondary': '#252526',
+            'color-bg-tertiary': '#2D2D30',
+            'color-bg-scrollbar-track': '#13131A',
+            'color-bg-canvas': '#1a1a1a',
+            'color-bg-deep': '#0f0f0f',
+            
+            // Border Colors
+            'color-border-subtle': '#252530',
+            'color-border-default': '#2D2D3A',
+            'color-border-hover': '#3D3D4A',
+            
+            // Text Colors
+            'color-text-primary': '#E8E8F0',
+            'color-text-secondary': '#9CA3AF',
+            'color-text-tertiary': '#6B7280',
+            
+            // Semantic Colors
+            'color-success': '#61DDAA',
+            'color-warning': '#F6BD16',
+            'color-danger': '#FF6B6B',
+            'color-info': '#5D7092',
+            
+            // Additional Accents
+            'color-purple': '#9370DB',
+            'color-green': '#61DDAA',
+            'color-yellow': '#F6BD16',
+            'color-red': '#FF6B6B',
+            'color-blue-gray': '#5D7092',
+            
+            // Syntax Highlighting
+            'color-syntax-string': '#98C379',
+            'color-syntax-number': '#D19A66',
+            'color-syntax-type': '#E5C07B',
+            'color-syntax-macro': '#C678DD',
+            'color-syntax-operator': '#ABB2BF',
+            'color-syntax-variable': '#E06C75',
+            
+            // Glass Effects
+            'color-glass-bg': 'rgba(26, 26, 36, 0.7)',
+            'color-glass-border': 'rgba(255, 255, 255, 0.05)',
+            
+            // Gradients
+            'gradient-symphony': 'linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%)',
+        };
+
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
                         symphony: {
-                            primary: "#5B8FF9",
-                            blue: "#5B8FF9",
-                            light: "#7BA5FA",
-                            dark: "#4A7AD8",
-                            accent: "#3B6DD8",
+                            primary: colorTokens['color-brand-primary'],
+                            blue: colorTokens['color-brand-primary'],
+                            light: colorTokens['color-brand-primary-light'],
+                            dark: colorTokens['color-brand-primary-dark'],
+                            accent: colorTokens['color-brand-accent'],
                         },
-                        "bg-primary": "#1E1E1E",
-                        "bg-secondary": "#252526",
-                        "bg-tertiary": "#2D2D30",
-                        "border-subtle": "#252530",
-                        "border-default": "#2D2D3A",
-                        "text-primary": "#E8E8F0",
-                        "text-secondary": "#9CA3AF",
-                        "text-tertiary": "#6B7280",
+                        "bg-primary": colorTokens['color-bg-primary'],
+                        "bg-secondary": colorTokens['color-bg-secondary'],
+                        "bg-tertiary": colorTokens['color-bg-tertiary'],
+                        "border-subtle": colorTokens['color-border-subtle'],
+                        "border-default": colorTokens['color-border-default'],
+                        "text-primary": colorTokens['color-text-primary'],
+                        "text-secondary": colorTokens['color-text-secondary'],
+                        "text-tertiary": colorTokens['color-text-tertiary'],
                     },
                     fontFamily: {
                         sans: ["Inter", "system-ui", "sans-serif"],
@@ -55,8 +110,36 @@
         };
     </script>
     <style>
+        :root {
+            /* Define CSS Variables from tokens */
+            --color-brand-primary: #5B8FF9;
+            --color-brand-primary-light: #7BA5FA;
+            --color-brand-primary-dark: #4A7AD8;
+            --color-brand-accent: #3B6DD8;
+            --color-bg-primary: #1E1E1E;
+            --color-bg-secondary: #252526;
+            --color-bg-tertiary: #2D2D30;
+            --color-bg-scrollbar-track: #13131A;
+            --color-bg-canvas: #1a1a1a;
+            --color-bg-deep: #0f0f0f;
+            --color-border-subtle: #252530;
+            --color-border-default: #2D2D3A;
+            --color-border-hover: #3D3D4A;
+            --color-text-primary: #E8E8F0;
+            --color-text-secondary: #9CA3AF;
+            --color-text-tertiary: #6B7280;
+            --color-success: #61DDAA;
+            --color-warning: #F6BD16;
+            --color-danger: #FF6B6B;
+            --color-info: #5D7092;
+            --color-purple: #9370DB;
+            --color-glass-bg: rgba(26, 26, 36, 0.7);
+            --color-glass-border: rgba(255, 255, 255, 0.05);
+            --gradient-symphony: linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%);
+        }
+        
         .material-icons { font-size: 20px; }
-        .gradient-symphony { background: linear-gradient(135deg, #5B8FF9 0%, #4A7AD8 100%); }
+        .gradient-symphony { background: var(--gradient-symphony); }
         .gradient-mesh {
             background: 
                 radial-gradient(at 27% 37%, rgba(91, 143, 249, 0.12) 0px, transparent 50%),
@@ -66,10 +149,10 @@
         }
         * { transition: all 0.2s ease; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #13131A; }
-        ::-webkit-scrollbar-thumb { background: #2D2D3A; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3D3D4A; }
-        .glass { background: rgba(26, 26, 36, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        ::-webkit-scrollbar-track { background: var(--color-bg-scrollbar-track); }
+        ::-webkit-scrollbar-thumb { background: var(--color-border-default); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-border-hover); }
+        .glass { background: var(--color-glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--color-glass-border); }
         .musical-lines { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; overflow: hidden; }
         .musical-lines svg { width: 100%; height: 100%; }
         @keyframes wave-flow { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.6; } }
@@ -78,17 +161,17 @@
         .musical-line:nth-child(2) { animation-delay: 0.8s; }
         .musical-line:nth-child(3) { animation-delay: 1.6s; }
         .blob-tab { position: relative; background: rgba(91, 143, 249, 0.15); backdrop-filter: blur(8px); border: 1px solid rgba(91, 143, 249, 0.3); border-bottom: none; border-radius: 8px 8px 0 0; padding: 6px 20px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .blob-tab::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #5B8FF9, #7BA5FA); border-radius: 2px 2px 0 0; }
-        .blob-tab::after { content: ''; position: absolute; bottom: -1px; left: -1px; right: -1px; height: 1px; background: #1E1E1E; z-index: 1; }
+        .blob-tab::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--gradient-symphony); border-radius: 2px 2px 0 0; }
+        .blob-tab::after { content: ''; position: absolute; bottom: -1px; left: -1px; right: -1px; height: 1px; background: var(--color-bg-primary); z-index: 1; }
         .blob-tab:hover { background: rgba(91, 143, 249, 0.2); transform: translateY(-1px); }
-        .prose { color: #E8E8F0; }
+        .prose { color: var(--color-text-primary); }
         .prose p { margin-top: 0.5em; margin-bottom: 0.5em; }
         .prose ul { margin-top: 0.5em; margin-bottom: 0.5em; }
         .prose li { margin-top: 0.25em; margin-bottom: 0.25em; }
-        .prose strong { color: #5B8FF9; font-weight: 600; }
-        .prose code { background: #2D2D30; padding: 0.2em 0.4em; border-radius: 4px; font-size: 0.9em; color: #7BA5FA; }
-        .prose pre { background: #2D2D30; padding: 1em; border-radius: 8px; overflow-x: auto; margin: 0.5em 0; }
-        .prose pre code { background: transparent; padding: 0; color: #E8E8F0; }
+        .prose strong { color: var(--color-brand-primary); font-weight: 600; }
+        .prose code { background: var(--color-bg-tertiary); padding: 0.2em 0.4em; border-radius: 4px; font-size: 0.9em; color: var(--color-brand-primary-light); }
+        .prose pre { background: var(--color-bg-tertiary); padding: 1em; border-radius: 8px; overflow-x: auto; margin: 0.5em 0; }
+        .prose pre code { background: transparent; padding: 0; color: var(--color-text-primary); }
         @keyframes border-beam {
             0% { offset-distance: 0%; }
             100% { offset-distance: 100%; }
@@ -102,8 +185,8 @@
             inset: 0;
             border-radius: inherit;
             border: 2px solid transparent;
-            background: linear-gradient(#1E1E1E, #1E1E1E) padding-box,
-                        linear-gradient(90deg, transparent, #5B8FF9, #7BA5FA, transparent) border-box;
+            background: linear-gradient(var(--color-bg-primary), var(--color-bg-primary)) padding-box,
+                        linear-gradient(90deg, transparent, var(--color-brand-primary), var(--color-brand-primary-light), transparent) border-box;
             mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
@@ -934,16 +1017,16 @@ This uses **Result** type for error handling and the **?** operator for propagat
                         <svg viewBox="0 0 1000 800" preserveAspectRatio="none" id="musical-svg">
                             <defs>
                                 <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#5B8FF9;stop-opacity:0.6" />
-                                    <stop offset="100%" style="stop-color:#5B8FF9;stop-opacity:0.2" />
+                                    <stop offset="0%" :style="`stop-color:${colorTokens['color-brand-primary']};stop-opacity:0.6`" />
+                                    <stop offset="100%" :style="`stop-color:${colorTokens['color-brand-primary']};stop-opacity:0.2`" />
                                 </linearGradient>
                                 <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#7BA5FA;stop-opacity:0.5" />
-                                    <stop offset="100%" style="stop-color:#7BA5FA;stop-opacity:0.15" />
+                                    <stop offset="0%" :style="`stop-color:${colorTokens['color-brand-primary-light']};stop-opacity:0.5`" />
+                                    <stop offset="100%" :style="`stop-color:${colorTokens['color-brand-primary-light']};stop-opacity:0.15`" />
                                 </linearGradient>
                                 <linearGradient id="waveGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#4A7AD8;stop-opacity:0.4" />
-                                    <stop offset="100%" style="stop-color:#4A7AD8;stop-opacity:0.1" />
+                                    <stop offset="0%" :style="`stop-color:${colorTokens['color-brand-primary-dark']};stop-opacity:0.4`" />
+                                    <stop offset="100%" :style="`stop-color:${colorTokens['color-brand-primary-dark']};stop-opacity:0.1`" />
                                 </linearGradient>
                             </defs>
                         </svg>
