@@ -115,13 +115,13 @@
     showAIChat: false 
 }">
     <!-- Top Bar -->
-    <div class="h-14 bg-bg-secondary/80 backdrop-blur-xl border-b border-border-subtle flex items-center justify-between px-6 flex-shrink-0 relative z-50">
-        <div class="flex items-center space-x-6">
-            <div class="flex items-center space-x-3">
-                <img src="../../assets/rounded.png" alt="Symphony" class="w-7 h-7 animate-pulse-slow" />
-                <div>
-                    <h1 class="text-sm font-semibold tracking-tight text-text-primary">Symphony</h1>
-                    <p class="text-[10px] text-text-tertiary font-medium tracking-wide">AI-First DEVELOPMENT</p>
+    <div class="h-12 md:h-14 bg-bg-secondary/80 backdrop-blur-xl border-b border-border-subtle flex items-center justify-between px-3 md:px-4 lg:px-6 flex-shrink-0 relative z-50">
+        <div class="flex items-center space-x-3 md:space-x-4 lg:space-x-6">
+            <div class="flex items-center space-x-2 md:space-x-3">
+                <img src="../../assets/rounded.png" alt="Symphony" class="w-6 h-6 md:w-7 md:h-7 animate-pulse-slow" />
+                <div class="hidden md:block">
+                    <h1 class="text-xs md:text-sm font-semibold tracking-tight text-text-primary">Symphony</h1>
+                    <p class="text-[9px] md:text-[10px] text-text-tertiary font-medium tracking-wide">AI-First DEVELOPMENT</p>
                 </div>
             </div>
             <div class="h-8 w-px bg-border-subtle"></div>
@@ -134,32 +134,32 @@
             <!-- Panel Toggle Buttons -->
             <button 
                 @click="showFileSystem = !showFileSystem"
-                :class="showFileSystem ? 'p-2 rounded-lg bg-symphony-primary/20 text-symphony-primary' : 'p-2 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary'"
+                :class="showFileSystem ? 'p-1.5 md:p-2 rounded-lg bg-symphony-primary/20 text-symphony-primary' : 'p-1.5 md:p-2 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary'"
                 class="transition-all hover:scale-105"
                 title="Toggle File System">
-                <span class="material-icons text-lg">folder_open</span>
+                <span class="material-icons text-base md:text-lg">folder_open</span>
             </button>
             <button 
                 @click="showTerminal = !showTerminal"
-                :class="showTerminal ? 'p-2 rounded-lg bg-symphony-primary/20 text-symphony-primary' : 'p-2 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary'"
+                :class="showTerminal ? 'p-1.5 md:p-2 rounded-lg bg-symphony-primary/20 text-symphony-primary' : 'p-1.5 md:p-2 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary'"
                 class="transition-all hover:scale-105"
                 title="Toggle Terminal">
-                <span class="material-icons text-lg">terminal</span>
+                <span class="material-icons text-base md:text-lg">terminal</span>
             </button>
             <button 
                 @click="showAIChat = !showAIChat"
-                :class="showAIChat ? 'p-2 rounded-lg bg-symphony-primary/20 text-symphony-primary' : 'p-2 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary'"
+                :class="showAIChat ? 'p-1.5 md:p-2 rounded-lg bg-symphony-primary/20 text-symphony-primary' : 'p-1.5 md:p-2 rounded-lg text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary'"
                 class="transition-all hover:scale-105 relative"
                 title="Toggle AI Chat">
-                <span class="material-icons text-lg">chat</span>
+                <span class="material-icons text-base md:text-lg">chat</span>
                 <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full border border-bg-secondary"></div>
             </button>
             <div class="h-6 w-px bg-border-subtle"></div>
-            <button class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-all hover:scale-105" title="Settings">
-                <span class="material-icons text-lg">settings</span>
+            <button class="p-1.5 md:p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary transition-all hover:scale-105" title="Settings">
+                <span class="material-icons text-base md:text-lg">settings</span>
             </button>
-            <button class="p-2 rounded-lg hover:bg-symphony-primary/20 text-text-secondary hover:text-symphony-primary transition-all hover:scale-105 relative" title="AI Assistant">
-                <span class="material-icons text-lg">psychology</span>
+            <button class="p-1.5 md:p-2 rounded-lg hover:bg-symphony-primary/20 text-text-secondary hover:text-symphony-primary transition-all hover:scale-105 relative" title="AI Assistant">
+                <span class="material-icons text-base md:text-lg">psychology</span>
                 <div class="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-bg-secondary"></div>
             </button>
         </div>
@@ -168,39 +168,39 @@
     <!-- Main Content Area -->
     <div class="flex flex-1 overflow-hidden">
         <!-- Sidebar -->
-        <aside class="w-14 bg-bg-secondary border-r border-border-subtle flex flex-col items-center py-4 gap-1 relative z-40" x-data="{ activeSidebar: 'explorer' }">
-            <div class="flex-1 flex flex-col gap-1">
-                <button :class="activeSidebar === 'explorer' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Explorer" @click="activeSidebar = 'explorer'">
-                    <span class="material-icons text-lg">folder_open</span>
+        <aside class="w-12 md:w-14 bg-bg-secondary border-r border-border-subtle flex flex-col items-center py-3 md:py-4 gap-1 relative z-40" x-data="{ activeSidebar: 'explorer' }">
+            <div class="flex-1 flex flex-col gap-0.5 md:gap-1">
+                <button :class="activeSidebar === 'explorer' ? 'p-2 md:p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2 md:p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Explorer" @click="activeSidebar = 'explorer'">
+                    <span class="material-icons text-base md:text-lg">folder_open</span>
                     <div x-show="activeSidebar === 'explorer'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
                 </button>
-                <button :class="activeSidebar === 'harmony' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Harmony Board" @click="activeSidebar = 'harmony'">
-                    <span class="material-icons text-lg">dashboard</span>
+                <button :class="activeSidebar === 'harmony' ? 'p-2 md:p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2 md:p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Harmony Board" @click="activeSidebar = 'harmony'">
+                    <span class="material-icons text-base md:text-lg">dashboard</span>
                     <div x-show="activeSidebar === 'harmony'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
                 </button>
-                <button :class="activeSidebar === 'source' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Source Control" @click="activeSidebar = 'source'">
-                    <span class="material-icons text-lg">source</span>
+                <button :class="activeSidebar === 'source' ? 'p-2 md:p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2 md:p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Source Control" @click="activeSidebar = 'source'">
+                    <span class="material-icons text-base md:text-lg">source</span>
                     <div x-show="activeSidebar === 'source'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
                 </button>
-                <button :class="activeSidebar === 'orchestra' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="AI Orchestra" @click="activeSidebar = 'orchestra'">
-                    <span class="material-icons text-lg">smart_toy</span>
+                <button :class="activeSidebar === 'orchestra' ? 'p-2 md:p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2 md:p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="AI Orchestra" @click="activeSidebar = 'orchestra'">
+                    <span class="material-icons text-base md:text-lg">smart_toy</span>
                     <div x-show="activeSidebar === 'orchestra'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
                 </button>
-                <button :class="activeSidebar === 'extensions' ? 'p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Extensions" @click="activeSidebar = 'extensions'">
-                    <span class="material-icons text-lg">extension</span>
+                <button :class="activeSidebar === 'extensions' ? 'p-2 md:p-2.5 rounded-lg bg-symphony-primary/10 text-symphony-primary' : 'p-2 md:p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary'" title="Extensions" @click="activeSidebar = 'extensions'">
+                    <span class="material-icons text-base md:text-lg">extension</span>
                     <div x-show="activeSidebar === 'extensions'" class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t"></div>
                 </button>
             </div>
-            <div class="flex flex-col gap-1">
-                <button class="p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="Settings">
-                    <span class="material-icons text-lg">tune</span>
+            <div class="flex flex-col gap-0.5 md:gap-1">
+                <button class="p-2 md:p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary" title="Settings">
+                    <span class="material-icons text-base md:text-lg">tune</span>
                 </button>
                 <div class="relative z-50" x-data="{ open: false }">
                     <div class="cursor-pointer relative" title="Account" @click="open = !open">
-                        <div class="w-8 h-8 rounded-full bg-gradient-symphony flex items-center justify-center text-white text-xs font-semibold shadow-lg ring-2 ring-bg-secondary hover:ring-symphony-primary/50 transition-all">
+                        <div class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-gradient-symphony flex items-center justify-center text-white text-[10px] md:text-xs font-semibold shadow-lg ring-2 ring-bg-secondary hover:ring-symphony-primary/50 transition-all">
                             <span class="font-bold">U</span>
                         </div>
-                        <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-bg-secondary"></div>
+                        <div class="absolute bottom-0 right-0 w-2 md:w-2.5 h-2 md:h-2.5 bg-green-500 rounded-full border-2 border-bg-secondary"></div>
                     </div>
                 </div>
             </div>

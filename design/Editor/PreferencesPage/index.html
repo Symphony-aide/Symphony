@@ -55,16 +55,16 @@
 }">
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar Navigation -->
-        <aside class="w-64 bg-bg-secondary border-r border-border-subtle flex flex-col">
+        <aside class="w-full md:w-64 bg-bg-secondary border-r border-border-subtle flex flex-col fixed md:relative left-0 top-0 h-full z-50 transform transition-transform duration-300" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'" x-data="{ sidebarOpen: false }">
             <!-- Header -->
-            <div class="px-4 py-4 border-b border-border-subtle">
-                <div class="flex items-center space-x-3 mb-4">
-                    <button @click="window.location.href = '../OpenPage/index.html'" class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary" title="Back">
-                        <span class="material-icons text-lg">arrow_back</span>
+            <div class="px-3 md:px-4 py-3 md:py-4 border-b border-border-subtle">
+                <div class="flex items-center space-x-2 md:space-x-3 mb-3 md:mb-4">
+                    <button @click="window.location.href = '../OpenPage/index.html'" class="p-1.5 md:p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary" title="Back">
+                        <span class="material-icons text-base md:text-lg">arrow_back</span>
                     </button>
                     <div>
-                        <h1 class="text-base font-semibold text-text-primary">Preferences</h1>
-                        <p class="text-xs text-text-tertiary">Customize Symphony</p>
+                        <h1 class="text-sm md:text-base font-semibold text-text-primary">Preferences</h1>
+                        <p class="text-[10px] md:text-xs text-text-tertiary">Customize Symphony</p>
                     </div>
                 </div>
                 <!-- Search -->
@@ -75,53 +75,53 @@
             </div>
 
             <!-- Categories -->
-            <nav class="flex-1 overflow-y-auto py-2 px-2">
-                <button @click="activeCategory = 'general'" :class="activeCategory === 'general' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                    <span class="material-icons text-lg">tune</span>
+            <nav class="flex-1 overflow-y-auto py-2 px-1.5 md:px-2">
+                <button @click="activeCategory = 'general'; sidebarOpen = false" :class="activeCategory === 'general' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                    <span class="material-icons text-base md:text-lg">tune</span>
                     <span>General</span>
                 </button>
                 
-                <button @click="activeCategory = 'appearance'" :class="activeCategory === 'appearance' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                    <span class="material-icons text-lg">palette</span>
+                <button @click="activeCategory = 'appearance'; sidebarOpen = false" :class="activeCategory === 'appearance' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                    <span class="material-icons text-base md:text-lg">palette</span>
                     <span>Appearance</span>
                 </button>
                 
-                <button @click="activeCategory = 'editor'" :class="activeCategory === 'editor' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                    <span class="material-icons text-lg">edit_note</span>
+                <button @click="activeCategory = 'editor'; sidebarOpen = false" :class="activeCategory === 'editor' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                    <span class="material-icons text-base md:text-lg">edit_note</span>
                     <span>Editor</span>
                 </button>
                 
-                <button @click="activeCategory = 'terminal'" :class="activeCategory === 'terminal' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                    <span class="material-icons text-lg">terminal</span>
+                <button @click="activeCategory = 'terminal'; sidebarOpen = false" :class="activeCategory === 'terminal' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                    <span class="material-icons text-base md:text-lg">terminal</span>
                     <span>Terminal</span>
                 </button>
                 
-                <button @click="activeCategory = 'ai'" :class="activeCategory === 'ai' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                    <span class="material-icons text-lg">psychology</span>
+                <button @click="activeCategory = 'ai'; sidebarOpen = false" :class="activeCategory === 'ai' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                    <span class="material-icons text-base md:text-lg">psychology</span>
                     <span>AI & Conductor</span>
                 </button>
                 
-                <button @click="activeCategory = 'extensions'" :class="activeCategory === 'extensions' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                    <span class="material-icons text-lg">extension</span>
+                <button @click="activeCategory = 'extensions'; sidebarOpen = false" :class="activeCategory === 'extensions' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                    <span class="material-icons text-base md:text-lg">extension</span>
                     <span>Extensions</span>
                 </button>
                 
-                <button @click="activeCategory = 'keyboard'" :class="activeCategory === 'keyboard' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                    <span class="material-icons text-lg">keyboard</span>
+                <button @click="activeCategory = 'keyboard'; sidebarOpen = false" :class="activeCategory === 'keyboard' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                    <span class="material-icons text-base md:text-lg">keyboard</span>
                     <span>Keyboard Shortcuts</span>
                 </button>
                 
                 <div class="border-t border-border-subtle my-2"></div>
                 
-                <button @click="activeCategory = 'advanced'" :class="activeCategory === 'advanced' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                    <span class="material-icons text-lg">settings_suggest</span>
+                <button @click="activeCategory = 'advanced'; sidebarOpen = false" :class="activeCategory === 'advanced' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                    <span class="material-icons text-base md:text-lg">settings_suggest</span>
                     <span>Advanced</span>
                 </button>
             </nav>
 
             <!-- Footer -->
-            <div class="px-4 py-3 border-t border-border-subtle">
-                <button class="w-full px-3 py-2 text-sm text-symphony-primary hover:bg-symphony-primary/10 rounded-lg transition-colors">
+            <div class="px-3 md:px-4 py-2 md:py-3 border-t border-border-subtle">
+                <button class="w-full px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm text-symphony-primary hover:bg-symphony-primary/10 rounded-lg transition-colors">
                     Reset to Defaults
                 </button>
             </div>
@@ -129,16 +129,21 @@
 
         <!-- Main Content -->
         <main class="flex-1 overflow-y-auto">
-            <div class="max-w-4xl mx-auto p-8">
+            <!-- Mobile Menu Button -->
+            <button @click="sidebarOpen = !sidebarOpen" class="md:hidden fixed top-4 left-4 z-40 p-2 bg-bg-secondary rounded-lg shadow-lg" x-data="{ sidebarOpen: false }">
+                <span class="material-icons text-text-primary">menu</span>
+            </button>
+            
+            <div class="max-w-4xl mx-auto p-4 md:p-6 lg:p-8 pt-16 md:pt-6">
                 <!-- General Settings -->
-                <div x-show="activeCategory === 'general'" class="space-y-6">
+                <div x-show="activeCategory === 'general'" class="space-y-4 md:space-y-6">
                     <div>
-                        <h2 class="text-2xl font-bold text-text-primary mb-2">General Settings</h2>
-                        <p class="text-sm text-text-secondary">Configure general application behavior</p>
+                        <h2 class="text-xl md:text-2xl font-bold text-text-primary mb-1 md:mb-2">General Settings</h2>
+                        <p class="text-xs md:text-sm text-text-secondary">Configure general application behavior</p>
                     </div>
 
                     <!-- Setting Item -->
-                    <div class="glass rounded-xl p-6 space-y-4">
+                    <div class="glass rounded-xl p-4 md:p-6 space-y-3 md:space-y-4">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <h3 class="text-sm font-semibold text-text-primary mb-1">Auto Save</h3>

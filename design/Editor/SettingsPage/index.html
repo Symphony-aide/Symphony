@@ -55,16 +55,16 @@
 }">
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar Navigation -->
-        <aside class="w-64 bg-bg-secondary border-r border-border-subtle flex flex-col">
+        <aside class="w-full md:w-64 bg-bg-secondary border-r border-border-subtle flex flex-col fixed md:relative left-0 top-0 h-full z-50 transform transition-transform duration-300" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'" x-data="{ sidebarOpen: false }">
             <!-- Header -->
-            <div class="px-4 py-4 border-b border-border-subtle">
-                <div class="flex items-center space-x-3 mb-4">
-                    <button @click="window.location.href = '../OpenPage/index.html'" class="p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary" title="Back">
-                        <span class="material-icons text-lg">arrow_back</span>
+            <div class="px-3 md:px-4 py-3 md:py-4 border-b border-border-subtle">
+                <div class="flex items-center space-x-2 md:space-x-3 mb-3 md:mb-4">
+                    <button @click="window.location.href = '../OpenPage/index.html'" class="p-1.5 md:p-2 rounded-lg hover:bg-bg-tertiary text-text-secondary hover:text-text-primary" title="Back">
+                        <span class="material-icons text-base md:text-lg">arrow_back</span>
                     </button>
                     <div>
-                        <h1 class="text-base font-semibold text-text-primary">Settings</h1>
-                        <p class="text-xs text-text-tertiary">Configure Symphony IDE</p>
+                        <h1 class="text-sm md:text-base font-semibold text-text-primary">Settings</h1>
+                        <p class="text-[10px] md:text-xs text-text-tertiary">Configure Symphony IDE</p>
                     </div>
                 </div>
                 <!-- Search -->
@@ -75,75 +75,75 @@
             </div>
 
             <!-- Categories -->
-            <nav class="flex-1 overflow-y-auto py-2 px-2">
-                <div class="mb-4">
-                    <p class="px-3 text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-2">User</p>
-                    <button @click="activeCategory = 'workspace'" :class="activeCategory === 'workspace' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                        <span class="material-icons text-lg">work</span>
+            <nav class="flex-1 overflow-y-auto py-2 px-1.5 md:px-2">
+                <div class="mb-3 md:mb-4">
+                    <p class="px-2 md:px-3 text-[10px] md:text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-1.5 md:mb-2">User</p>
+                    <button @click="activeCategory = 'workspace'; sidebarOpen = false" :class="activeCategory === 'workspace' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                        <span class="material-icons text-base md:text-lg">work</span>
                         <span>Workspace</span>
                     </button>
                     
-                    <button @click="activeCategory = 'files'" :class="activeCategory === 'files' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                        <span class="material-icons text-lg">folder</span>
+                    <button @click="activeCategory = 'files'; sidebarOpen = false" :class="activeCategory === 'files' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                        <span class="material-icons text-base md:text-lg">folder</span>
                         <span>Files</span>
                     </button>
                     
-                    <button @click="activeCategory = 'search'" :class="activeCategory === 'search' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                        <span class="material-icons text-lg">search</span>
+                    <button @click="activeCategory = 'search'; sidebarOpen = false" :class="activeCategory === 'search' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                        <span class="material-icons text-base md:text-lg">search</span>
                         <span>Search</span>
                     </button>
                 </div>
 
-                <div class="mb-4">
-                    <p class="px-3 text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-2">Features</p>
-                    <button @click="activeCategory = 'text-editor'" :class="activeCategory === 'text-editor' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                        <span class="material-icons text-lg">edit_note</span>
+                <div class="mb-3 md:mb-4">
+                    <p class="px-2 md:px-3 text-[10px] md:text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-1.5 md:mb-2">Features</p>
+                    <button @click="activeCategory = 'text-editor'; sidebarOpen = false" :class="activeCategory === 'text-editor' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                        <span class="material-icons text-base md:text-lg">edit_note</span>
                         <span>Text Editor</span>
                     </button>
                     
-                    <button @click="activeCategory = 'terminal'" :class="activeCategory === 'terminal' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                        <span class="material-icons text-lg">terminal</span>
+                    <button @click="activeCategory = 'terminal'; sidebarOpen = false" :class="activeCategory === 'terminal' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                        <span class="material-icons text-base md:text-lg">terminal</span>
                         <span>Terminal</span>
                     </button>
                     
-                    <button @click="activeCategory = 'scm'" :class="activeCategory === 'scm' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                        <span class="material-icons text-lg">source</span>
+                    <button @click="activeCategory = 'scm'; sidebarOpen = false" :class="activeCategory === 'scm' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                        <span class="material-icons text-base md:text-lg">source</span>
                         <span>Source Control</span>
                     </button>
                     
-                    <button @click="activeCategory = 'debug'" :class="activeCategory === 'debug' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                        <span class="material-icons text-lg">bug_report</span>
+                    <button @click="activeCategory = 'debug'; sidebarOpen = false" :class="activeCategory === 'debug' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                        <span class="material-icons text-base md:text-lg">bug_report</span>
                         <span>Debug</span>
                     </button>
                 </div>
 
-                <div class="mb-4">
-                    <p class="px-3 text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-2">Application</p>
-                    <button @click="activeCategory = 'window'" :class="activeCategory === 'window' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                        <span class="material-icons text-lg">web_asset</span>
+                <div class="mb-3 md:mb-4">
+                    <p class="px-2 md:px-3 text-[10px] md:text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-1.5 md:mb-2">Application</p>
+                    <button @click="activeCategory = 'window'; sidebarOpen = false" :class="activeCategory === 'window' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                        <span class="material-icons text-base md:text-lg">web_asset</span>
                         <span>Window</span>
                     </button>
                     
-                    <button @click="activeCategory = 'security'" :class="activeCategory === 'security' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                        <span class="material-icons text-lg">security</span>
+                    <button @click="activeCategory = 'security'; sidebarOpen = false" :class="activeCategory === 'security' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                        <span class="material-icons text-base md:text-lg">security</span>
                         <span>Security</span>
                     </button>
                     
-                    <button @click="activeCategory = 'extensions'" :class="activeCategory === 'extensions' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                        <span class="material-icons text-lg">extension</span>
+                    <button @click="activeCategory = 'extensions'; sidebarOpen = false" :class="activeCategory === 'extensions' ? 'bg-symphony-primary/10 text-symphony-primary' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'" class="w-full flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-colors">
+                        <span class="material-icons text-base md:text-lg">extension</span>
                         <span>Extensions</span>
                     </button>
                 </div>
             </nav>
 
             <!-- Footer Actions -->
-            <div class="px-4 py-3 border-t border-border-subtle space-y-2">
-                <button class="w-full px-3 py-2 text-sm text-symphony-primary hover:bg-symphony-primary/10 rounded-lg transition-colors flex items-center justify-center space-x-2">
-                    <span class="material-icons text-base">file_download</span>
+            <div class="px-3 md:px-4 py-2 md:py-3 border-t border-border-subtle space-y-1.5 md:space-y-2">
+                <button class="w-full px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm text-symphony-primary hover:bg-symphony-primary/10 rounded-lg transition-colors flex items-center justify-center space-x-1 md:space-x-2">
+                    <span class="material-icons text-sm md:text-base">file_download</span>
                     <span>Export Settings</span>
                 </button>
-                <button class="w-full px-3 py-2 text-sm text-text-secondary hover:bg-bg-tertiary rounded-lg transition-colors flex items-center justify-center space-x-2">
-                    <span class="material-icons text-base">restore</span>
+                <button class="w-full px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm text-text-secondary hover:bg-bg-tertiary rounded-lg transition-colors flex items-center justify-center space-x-1 md:space-x-2">
+                    <span class="material-icons text-sm md:text-base">restore</span>
                     <span>Reset All</span>
                 </button>
             </div>
@@ -151,18 +151,23 @@
 
         <!-- Main Content -->
         <main class="flex-1 overflow-y-auto">
-            <div class="max-w-4xl mx-auto p-8">
+            <!-- Mobile Menu Button -->
+            <button @click="sidebarOpen = !sidebarOpen" class="md:hidden fixed top-4 left-4 z-40 p-2 bg-bg-secondary rounded-lg shadow-lg" x-data="{ sidebarOpen: false }">
+                <span class="material-icons text-text-primary">menu</span>
+            </button>
+            
+            <div class="max-w-4xl mx-auto p-4 md:p-6 lg:p-8 pt-16 md:pt-6">
                 <!-- Workspace Settings -->
-                <div x-show="activeCategory === 'workspace'" class="space-y-6">
+                <div x-show="activeCategory === 'workspace'" class="space-y-4 md:space-y-6">
                     <div>
-                        <h2 class="text-2xl font-bold text-text-primary mb-2">Workspace</h2>
-                        <p class="text-sm text-text-secondary">Configure workspace behavior and file handling</p>
+                        <h2 class="text-xl md:text-2xl font-bold text-text-primary mb-1 md:mb-2">Workspace</h2>
+                        <p class="text-xs md:text-sm text-text-secondary">Configure workspace behavior and file handling</p>
                     </div>
 
                     <div class="glass rounded-xl p-6 space-y-6">
                         <div>
-                            <label class="block text-sm font-semibold text-text-primary mb-2">Startup Behavior</label>
-                            <select class="w-full bg-bg-tertiary border border-border-default rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50">
+                            <label class="block text-xs md:text-sm font-semibold text-text-primary mb-1.5 md:mb-2">Startup Behavior</label>
+                            <select class="w-full bg-bg-tertiary border border-border-default rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50">
                                 <option>Reopen last workspace</option>
                                 <option>Show welcome page</option>
                                 <option>Open new empty window</option>
@@ -171,9 +176,9 @@
                         </div>
 
                         <div class="flex items-start justify-between">
-                            <div class="flex-1">
-                                <h3 class="text-sm font-semibold text-text-primary mb-1">Trust Workspace Files</h3>
-                                <p class="text-xs text-text-tertiary">Automatically trust files in opened workspaces</p>
+                            <div class="flex-1 pr-2">
+                                <h3 class="text-xs md:text-sm font-semibold text-text-primary mb-0.5 md:mb-1">Trust Workspace Files</h3>
+                                <p class="text-[10px] md:text-xs text-text-tertiary">Automatically trust files in opened workspaces</p>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" class="sr-only peer">
@@ -182,9 +187,9 @@
                         </div>
 
                         <div class="flex items-start justify-between">
-                            <div class="flex-1">
-                                <h3 class="text-sm font-semibold text-text-primary mb-1">Enable Workspace Folders</h3>
-                                <p class="text-xs text-text-tertiary">Allow multiple root folders in workspace</p>
+                            <div class="flex-1 pr-2">
+                                <h3 class="text-xs md:text-sm font-semibold text-text-primary mb-0.5 md:mb-1">Enable Workspace Folders</h3>
+                                <p class="text-[10px] md:text-xs text-text-tertiary">Allow multiple root folders in workspace</p>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" class="sr-only peer" checked>
@@ -195,29 +200,29 @@
                 </div>
 
                 <!-- Text Editor Settings -->
-                <div x-show="activeCategory === 'text-editor'" class="space-y-6">
+                <div x-show="activeCategory === 'text-editor'" class="space-y-4 md:space-y-6">
                     <div>
-                        <h2 class="text-2xl font-bold text-text-primary mb-2">Text Editor</h2>
-                        <p class="text-sm text-text-secondary">Customize the code editor experience</p>
+                        <h2 class="text-xl md:text-2xl font-bold text-text-primary mb-1 md:mb-2">Text Editor</h2>
+                        <p class="text-xs md:text-sm text-text-secondary">Customize the code editor experience</p>
                     </div>
 
-                    <div class="glass rounded-xl p-6 space-y-6">
+                    <div class="glass rounded-xl p-4 md:p-6 space-y-4 md:space-y-6">
                         <div>
-                            <label class="block text-sm font-semibold text-text-primary mb-2">Font Family</label>
-                            <input type="text" value="JetBrains Mono, Consolas, monospace" class="w-full bg-bg-tertiary border border-border-default rounded-lg px-3 py-2 text-sm font-mono text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50"/>
+                            <label class="block text-xs md:text-sm font-semibold text-text-primary mb-1.5 md:mb-2">Font Family</label>
+                            <input type="text" value="JetBrains Mono, Consolas, monospace" class="w-full bg-bg-tertiary border border-border-default rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm font-mono text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50"/>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-text-primary mb-2">Font Size</label>
-                            <div class="flex items-center space-x-4">
-                                <input type="range" min="10" max="24" value="14" class="flex-1 h-2 bg-bg-tertiary rounded-lg appearance-none cursor-pointer accent-symphony-primary">
-                                <span class="text-sm text-text-primary font-mono w-12 text-right">14px</span>
+                            <label class="block text-xs md:text-sm font-semibold text-text-primary mb-1.5 md:mb-2">Font Size</label>
+                            <div class="flex items-center space-x-2 md:space-x-4">
+                                <input type="range" min="10" max="24" value="14" class="flex-1 h-1.5 md:h-2 bg-bg-tertiary rounded-lg appearance-none cursor-pointer accent-symphony-primary">
+                                <span class="text-xs md:text-sm text-text-primary font-mono w-10 md:w-12 text-right">14px</span>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-text-primary mb-2">Tab Size</label>
-                            <input type="number" value="4" min="1" max="8" class="w-32 bg-bg-tertiary border border-border-default rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50"/>
+                            <label class="block text-xs md:text-sm font-semibold text-text-primary mb-1.5 md:mb-2">Tab Size</label>
+                            <input type="number" value="4" min="1" max="8" class="w-24 md:w-32 bg-bg-tertiary border border-border-default rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50"/>
                         </div>
 
                         <div class="flex items-start justify-between">
@@ -256,17 +261,17 @@
                 </div>
 
                 <!-- Terminal Settings -->
-                <div x-show="activeCategory === 'terminal'" class="space-y-6">
+                <div x-show="activeCategory === 'terminal'" class="space-y-4 md:space-y-6">
                     <div>
-                        <h2 class="text-2xl font-bold text-text-primary mb-2">Terminal</h2>
-                        <p class="text-sm text-text-secondary">Configure integrated terminal behavior</p>
+                        <h2 class="text-xl md:text-2xl font-bold text-text-primary mb-1 md:mb-2">Terminal</h2>
+                        <p class="text-xs md:text-sm text-text-secondary">Configure integrated terminal behavior</p>
                     </div>
 
-                    <div class="glass rounded-xl p-6 space-y-6">
+                    <div class="glass rounded-xl p-4 md:p-6 space-y-4 md:space-y-6">
                         <div>
-                            <label class="block text-sm font-semibold text-text-primary mb-2">Shell Path</label>
-                            <input type="text" placeholder="Auto-detect" class="w-full bg-bg-tertiary border border-border-default rounded-lg px-3 py-2 text-sm font-mono text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50"/>
-                            <p class="text-xs text-text-tertiary mt-1">Leave empty to use system default shell</p>
+                            <label class="block text-xs md:text-sm font-semibold text-text-primary mb-1.5 md:mb-2">Shell Path</label>
+                            <input type="text" placeholder="Auto-detect" class="w-full bg-bg-tertiary border border-border-default rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm font-mono text-text-primary focus:outline-none focus:ring-2 focus:ring-symphony-primary/50"/>
+                            <p class="text-[10px] md:text-xs text-text-tertiary mt-0.5 md:mt-1">Leave empty to use system default shell</p>
                         </div>
 
                         <div>
