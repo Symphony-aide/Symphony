@@ -18,7 +18,7 @@ too-many-lines-threshold = 150
 enum-variant-name-threshold = 3
 
 # Struct field name threshold
-struct-excessive-bools = 3
+max-struct-bools = 3
 
 # Single char binding names allowed in closures
 single-char-binding-names-threshold = 4

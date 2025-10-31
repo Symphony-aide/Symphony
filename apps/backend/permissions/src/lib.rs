@@ -1,7 +1,7 @@
 fn main() {
-    println!("hello_sypermissions");
+	println!("hello_sypermissions");
 }
 
 pub fn hello_permissions() {
-    println!("Symphony Permissions Package");
+	println!("Symphony Permissions Package");
 }

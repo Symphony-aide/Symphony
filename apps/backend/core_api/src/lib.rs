@@ -70,12 +70,12 @@ pub use {serde, tokio};
 /// ```
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub enum Errors {
-    /// The requested editor state was not found
-    StateNotFound,
-    /// A filesystem operation failed
-    Fs(FilesystemErrors),
-    /// An extension operation failed
-    Ext(ExtensionErrors),
-    /// Authentication token is invalid or expired
-    BadToken,
+	/// The requested editor state was not found
+	StateNotFound,
+	/// A filesystem operation failed
+	Fs(FilesystemErrors),
+	/// An extension operation failed
+	Ext(ExtensionErrors),
+	/// Authentication token is invalid or expired
+	BadToken,
 }

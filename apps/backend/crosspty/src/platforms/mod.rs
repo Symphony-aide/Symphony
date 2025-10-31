@@ -1,23 +1,41 @@
-use tokio::sync::mpsc::Sender;
+//! Platform-specific PTY implementations.
+//!
+//! This module provides platform-specific implementations of the PTY trait:
+//! - **Windows**: ConPTY-based implementation
+//! - **Unix**: POSIX PTY-based implementation
 
-use crate::Pty;
+use crate::{Pty, PtyBuilder, PtyResult};
 
-#[cfg(any(target_os = "windows"))]
+#[cfg(windows)]
 pub mod win;
 
-#[cfg(not(windows))]
+#[cfg(unix)]
 pub mod unix;
 
-// TODO(marc2332): Add a size parameter
+/// Spawn a PTY with the given configuration.
+///
+/// This function selects the appropriate platform implementation and
+/// creates a new PTY instance.
+///
+/// # Arguments
+///
+/// * `builder` - Configuration for the PTY
+///
+/// # Returns
+///
+/// Returns a boxed `Pty` trait object on success.
+///
+/// # Errors
+///
+/// Returns `PtyError` if PTY creation or process spawning fails.
+pub async fn spawn(builder: PtyBuilder) -> PtyResult<Box<dyn Pty>> {
+	#[cfg(windows)]
+	{
+		win::WindowsPty::spawn(builder).await
+	}
 
-pub fn new_pty(
-    command: &str,
-    args: Vec<&str>,
-    sender: Sender<Vec<u8>>,
-) -> Box<dyn Pty + Send + Sync> {
-    #[cfg(any(target_os = "windows"))]
-    return Box::new(win::PtyWin::new(command, args, sender));
-
-    #[cfg(not(windows))]
-    return Box::new(unix::PtyUnix::new());
+	#[cfg(unix)]
+	{
+		unix::UnixPty::spawn(builder).await
+	}
 }

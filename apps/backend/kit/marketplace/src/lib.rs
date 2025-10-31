@@ -1,7 +1,7 @@
 fn main() {
-    println!("hello_sykitmarketplace");
+	println!("hello_sykitmarketplace");
 }
 
 pub fn hello_marketplace() {
-    println!("Symphony Orchestra Kit Marketplace Package");
+	println!("Symphony Orchestra Kit Marketplace Package");
 }

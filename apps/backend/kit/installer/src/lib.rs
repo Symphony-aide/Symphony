@@ -1,7 +1,7 @@
 fn main() {
-    println!("hello_sykitinstaller");
+	println!("hello_sykitinstaller");
 }
 
 pub fn hello_installer() {
-    println!("Symphony Orchestra Kit Installer Package");
+	println!("Symphony Orchestra Kit Installer Package");
 }

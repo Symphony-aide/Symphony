@@ -1,7 +1,7 @@
 fn main() {
-    println!("hello_syexlyaipicore");
+	println!("hello_syexlyaipicore");
 }
 
 pub fn hello_aide_pit_core() {
-    println!("Symphony AIDE Pit Core Package");
+	println!("Symphony AIDE Pit Core Package");
 }

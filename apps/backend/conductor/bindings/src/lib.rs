@@ -1,7 +1,7 @@
 fn main() {
-    println!("hello_syconbindings");
+	println!("hello_syconbindings");
 }
 
 pub fn hello_conductor_bindings() {
-    println!("Symphony Conductor Bindings Package");
+	println!("Symphony Conductor Bindings Package");
 }

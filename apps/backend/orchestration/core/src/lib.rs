@@ -1,7 +1,7 @@
 fn main() {
-    println!("hello_syorchcore");
+	println!("hello_syorchcore");
 }
 
 pub fn hello_orchestration_core() {
-    println!("Symphony Orchestration Core Package");
+	println!("Symphony Orchestration Core Package");
 }
