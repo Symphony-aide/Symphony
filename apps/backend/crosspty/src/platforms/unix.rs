@@ -1,8 +1,4 @@
-//! Unix PTY implementation.
-//!
-//! This module provides a Unix-specific PTY implementation using POSIX
-//! PTY APIs via the `nix` crate, supporting Linux, macOS, and other
-//! Unix-like systems.
+//! Unix PTY implementation using POSIX PTY APIs.
 
 use async_trait::async_trait;
 use bytes::{Bytes, BytesMut};
@@ -22,38 +18,15 @@ use tracing::{debug, error, warn};
 
 use crate::{ExitStatus, Pty, PtyBuilder, PtyError, PtyResult, PtySize};
 
-/// Unix PTY implementation using POSIX PTY.
-///
-/// Provides full process lifecycle management with signal handling,
-/// bidirectional I/O, and proper terminal control.
 pub struct UnixPty {
-	/// Master PTY file descriptor
 	master_fd: Arc<Mutex<RawFd>>,
-	/// Process ID of the shell
 	pid: Pid,
-	/// Current terminal size
 	size: Arc<Mutex<PtySize>>,
-	/// Exit status
 	exit_status: Arc<Mutex<ExitStatus>>,
-	/// Output buffer for reading
 	output_buffer: Arc<Mutex<BytesMut>>,
 }
 
 impl UnixPty {
-	/// Spawn a new Unix PTY with the given configuration.
-	///
-	/// # Arguments
-	///
-	/// * `builder` - PTY configuration
-	///
-	/// # Returns
-	///
-	/// Returns a boxed `Pty` trait object.
-	///
-	/// # Errors
-	///
-	/// Returns `PtyError::CreationFailed` if PTY creation fails,
-	/// or `PtyError::ProcessSpawnFailed` if process spawning fails.
 	pub async fn spawn(builder: PtyBuilder) -> PtyResult<Box<dyn Pty>> {
 		debug!(
 			"Spawning Unix PTY: command={}, args={:?}, size={:?}",
@@ -259,12 +232,12 @@ impl Pty for UnixPty {
 		Some(self.pid.as_raw() as u32)
 	}
 
-	fn is_alive(&self) -> bool {
-		matches!(*self.exit_status.blocking_lock(), ExitStatus::Running)
+	async fn is_alive(&self) -> bool {
+		matches!(*self.exit_status.lock().await, ExitStatus::Running)
 	}
 
-	fn exit_status(&self) -> ExitStatus {
-		*self.exit_status.blocking_lock()
+	async fn exit_status(&self) -> ExitStatus {
+		*self.exit_status.lock().await
 	}
 
 	async fn terminate(&mut self) -> PtyResult<()> {

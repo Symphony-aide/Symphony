@@ -15,7 +15,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 	println!("Type 'exit' to quit.\n");
 
 	// Create PTY with appropriate shell
-	let mut pty = PtyBuilder::new()
+	let pty = PtyBuilder::new()
         .size(PtySize::new(100, 30))
         .env("PS1", "crosspty> ") // Custom prompt on Unix
         .spawn()
@@ -42,7 +42,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 				},
 			}
 
-			if !pty_clone.is_alive() {
+			if !pty_clone.is_alive().await {
 				println!("\nShell process terminated.");
 				break;
 			}
@@ -83,7 +83,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 	println!("\nShutting down shell...");
 	let _ = pty.kill().await;
 
-	println!("Exit status: {:?}", pty.exit_status());
+	println!("Exit status: {:?}", pty.exit_status().await);
 
 	Ok(())
 }

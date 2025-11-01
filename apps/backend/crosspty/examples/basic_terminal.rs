@@ -4,8 +4,7 @@
 //! read output in real-time.
 
 use crosspty::{PtyBuilder, PtySize};
-use std::io::{self, Write};
-use tokio::time::{sleep, Duration};
+use tokio::time::{Duration, sleep};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -17,7 +16,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 	println!("✓ PTY created successfully");
 	println!("  PID: {:?}", pty.pid());
-	println!("  Alive: {}", pty.is_alive());
+	println!("  Alive: {}", pty.is_alive().await);
 	println!();
 
 	// Write a command to the terminal
@@ -66,7 +65,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 	sleep(Duration::from_secs(1)).await;
 
 	println!("✓ PTY terminated");
-	println!("  Exit status: {:?}", pty.exit_status());
+	println!("  Exit status: {:?}", pty.exit_status().await);
 
 	Ok(())
 }

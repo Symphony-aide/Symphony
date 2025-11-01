@@ -1,7 +1,46 @@
-//! Windows ConPTY implementation.
+//! Windows pseudo-terminal implementation using ConPTY.
 //!
-//! This module provides a Windows-specific PTY implementation using the
-//! native ConPTY API available in Windows 10 version 1809 and later.
+//! This module provides Windows-specific PTY functionality using the Console Pseudo-Terminal
+//! (ConPTY) API introduced in Windows 10 version 1809 (October 2018 Update).
+//!
+//! # Overview
+//!
+//! ConPTY is Microsoft's native solution for pseudo-console support, providing:
+//! - Full VT100/ANSI escape sequence support
+//! - Bidirectional I/O between host and client applications
+//! - Process lifecycle management
+//! - Dynamic resize support
+//!
+//! # Requirements
+//!
+//! - Windows 10 version 1809 or later
+//! - The ConPTY API is available on all modern Windows systems
+//!
+//! # Implementation Details
+//!
+//! This implementation uses:
+//! - Async I/O with tokio for non-blocking operations
+//! - Background threads for output reading to avoid blocking
+//! - Atomic flags for thread-safe shutdown signaling
+//!
+//! # Examples
+//!
+//! ```no_run
+//! use crosspty::PtyBuilder;
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     let mut pty = PtyBuilder::new()
+//!         .command("cmd.exe")
+//!         .spawn()
+//!         .await?;
+//!     
+//!     pty.write(b"echo Hello from ConPTY\r\n").await?;
+//!     let output = pty.read().await?;
+//!     
+//!     Ok(())
+//! }
+//! ```
 
 use async_trait::async_trait;
 use bytes::{Bytes, BytesMut};
@@ -9,42 +48,81 @@ use conpty::Process as ConptyProcess;
 use std::io::{Read, Write};
 use std::process::Command;
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use tokio::sync::Mutex;
 use tokio::task;
 use tracing::{debug, error};
 
 use crate::{ExitStatus, Pty, PtyBuilder, PtyError, PtyResult, PtySize};
 
-/// Windows ConPTY implementation.
+/// Windows ConPTY implementation of the [`Pty`] trait.
 ///
-/// Uses native Windows ConPTY for modern console support with full
-/// process lifecycle management and bidirectional I/O.
+/// Provides pseudo-terminal functionality on Windows using the native ConPTY API.
+/// This struct manages the lifecycle of a ConPTY process including I/O, resizing,
+/// and termination.
+///
+/// # Thread Safety
+///
+/// This struct uses internal synchronization (`Arc<Mutex>`) to allow safe concurrent
+/// access from multiple tasks. The output reading happens on a background thread
+/// to avoid blocking the async runtime.
+///
+/// # Examples
+///
+/// ```no_run
+/// use crosspty::platforms::win::WindowsPty;
+/// use crosspty::{PtyBuilder, Pty};
+///
+/// #[tokio::main]
+/// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+///     let pty = WindowsPty::spawn(PtyBuilder::new()).await?;
+///     Ok(())
+/// }
+/// ```
 pub struct WindowsPty {
-    /// The ConPTY process instance
     process: Arc<Mutex<ConptyProcess>>,
-    /// Process ID
     pid: u32,
-    /// Current terminal size
     size: Arc<Mutex<PtySize>>,
-    /// Output buffer for reading
+    /// Exit status of the process.
+    exit_status: Arc<Mutex<ExitStatus>>,
+    /// Buffer for storing output from the process.
     output_buffer: Arc<Mutex<BytesMut>>,
+    /// Flag indicating whether the process should exit.
+    should_exit: Arc<AtomicBool>,
 }
 
 impl WindowsPty {
-    /// Spawn a new Windows ConPTY with the given configuration.
+    /// Spawns a new ConPTY process with the given configuration.
+    ///
+    /// Creates a new Windows pseudo-console and starts the specified command within it.
+    /// The function sets up background tasks for output reading and process monitoring.
     ///
     /// # Arguments
     ///
-    /// * `builder` - PTY configuration
+    /// * `builder` - PTY configuration including command, args, environment, and size
     ///
     /// # Returns
     ///
-    /// Returns a boxed `Pty` trait object.
+    /// Returns a boxed [`Pty`] trait object on success.
     ///
     /// # Errors
     ///
-    /// Returns `PtyError::CreationFailed` if ConPTY creation fails,
-    /// or `PtyError::ProcessSpawnFailed` if process spawning fails.
+    /// Returns an error if:
+    /// - [`PtyError::CreationFailed`] - ConPTY creation fails
+    /// - [`PtyError::ProcessSpawnFailed`] - Process cannot be started
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use crosspty::platforms::win::WindowsPty;
+    /// use crosspty::PtyBuilder;
+    ///
+    /// #[tokio::main]
+    /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    ///     let pty = WindowsPty::spawn(PtyBuilder::new()).await?;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn spawn(builder: PtyBuilder) -> PtyResult<Box<dyn Pty>> {
         debug!(
             "Spawning Windows ConPTY: command={}, args={:?}, size={:?}",
@@ -78,28 +156,70 @@ impl WindowsPty {
 
         let process = Arc::new(Mutex::new(process));
         let output_buffer = Arc::new(Mutex::new(BytesMut::with_capacity(8192)));
+        let exit_status = Arc::new(Mutex::new(ExitStatus::Running));
+        let should_exit = Arc::new(AtomicBool::new(false));
 
         // Spawn output reading task
         {
             let process_clone = Arc::clone(&process);
             let output_buffer_clone = Arc::clone(&output_buffer);
+            let should_exit_clone = Arc::clone(&should_exit);
             
             task::spawn_blocking(move || {
-                let mut proc = process_clone.blocking_lock();
-                if let Ok(mut reader) = proc.output() {
-                    let mut buf = vec![0u8; 4096];
-                    loop {
-                        match reader.read(&mut buf) {
-                            Ok(0) => break, // EOF
-                            Ok(n) => {
-                                let mut buffer = output_buffer_clone.blocking_lock();
-                                buffer.extend_from_slice(&buf[..n]);
-                            }
-                            Err(e) => {
-                                error!("Error reading from ConPTY: {}", e);
-                                break;
-                            }
+                // Get reader once at the start
+                let mut reader = {
+                    let mut proc = process_clone.blocking_lock();
+                    match proc.output() {
+                        Ok(r) => r,
+                        Err(e) => {
+                            error!("Failed to get output reader: {}", e);
+                            return;
                         }
+                    }
+                };
+                
+                let mut temp_buf = vec![0u8; 4096];
+                
+                loop {
+                    // Check exit flag (no lock needed!)
+                    if should_exit_clone.load(Ordering::Relaxed) {
+                        break;
+                    }
+                    
+                    // Small sleep to avoid busy-waiting and allow flag check
+                    std::thread::sleep(std::time::Duration::from_millis(20));
+                    
+                    // Read WITHOUT holding the process lock
+                    match reader.read(&mut temp_buf) {
+                        Ok(n) if n > 0 => {
+                            let mut buffer = output_buffer_clone.blocking_lock();
+                            buffer.extend_from_slice(&temp_buf[..n]);
+                        }
+                        Ok(_) => {
+                            // No data, sleep briefly
+                            std::thread::sleep(std::time::Duration::from_millis(10));
+                        }
+                        Err(e) => {
+                            error!("Error reading from ConPTY: {}", e);
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+
+        // Spawn status monitoring task
+        {
+            let process_clone = Arc::clone(&process);
+            let exit_status_clone = Arc::clone(&exit_status);
+            
+            task::spawn_blocking(move || {
+                loop {
+                    std::thread::sleep(std::time::Duration::from_millis(100));
+                    let proc = process_clone.blocking_lock();
+                    if !proc.is_alive() {
+                        *exit_status_clone.blocking_lock() = ExitStatus::Exited(0);
+                        break;
                     }
                 }
             });
@@ -109,7 +229,9 @@ impl WindowsPty {
             process,
             pid,
             size: Arc::new(Mutex::new(builder.size)),
+            exit_status,
             output_buffer,
+            should_exit,
         };
 
         Ok(Box::new(pty))
@@ -169,21 +291,19 @@ impl Pty for WindowsPty {
         Some(self.pid)
     }
 
-    fn is_alive(&self) -> bool {
-        self.process.blocking_lock().is_alive()
+    async fn is_alive(&self) -> bool {
+        matches!(*self.exit_status.lock().await, ExitStatus::Running)
     }
 
-    fn exit_status(&self) -> ExitStatus {
-        if self.is_alive() {
-            ExitStatus::Running
-        } else {
-            // Process has exited, assume normal exit
-            ExitStatus::Exited(0)
-        }
+    async fn exit_status(&self) -> ExitStatus {
+        *self.exit_status.lock().await
     }
 
     async fn terminate(&mut self) -> PtyResult<()> {
         debug!("Terminating process with PID: {}", self.pid);
+        
+        // Signal reading loop to exit FIRST
+        self.should_exit.store(true, Ordering::Relaxed);
         
         let process = Arc::clone(&self.process);
         task::spawn_blocking(move || {
@@ -194,6 +314,8 @@ impl Pty for WindowsPty {
         .await
         .map_err(|e| PtyError::IoError(std::io::Error::other(e)))??;
 
+        // Update exit status
+        *self.exit_status.lock().await = ExitStatus::Exited(0);
         Ok(())
     }
 

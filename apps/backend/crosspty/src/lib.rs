@@ -1,65 +1,49 @@
-//! # CrossPty - Symphony's Native Terminal Core
+//! Cross-platform pseudo-terminal (PTY) abstraction for Symphony IDE.
 //!
-//! A cross-platform pseudo-terminal (PTY) abstraction for Symphony IDE.
-//! This is one of Symphony's 6 core built-in features, providing native shell access.
+//! This library provides a unified interface for creating and managing pseudo-terminals
+//! across different operating systems. On Windows, it uses ConPTY (Windows 10 1809+),
+//! and on Unix-like systems (Linux, macOS), it uses POSIX PTY.
 //!
-//! ## Architecture
+//! # Overview
 //!
-//! CrossPty provides a unified async interface for terminal operations across platforms:
-//! - **Windows**: Native ConPTY (Windows 10+) for modern console support
-//! - **Unix/Linux/macOS**: POSIX PTY with full process control
+//! A pseudo-terminal (PTY) is a pair of virtual devices that provide bidirectional
+//! communication, typically used to run terminal-based applications. This crate abstracts
+//! the platform-specific details, providing a consistent async API.
 //!
-//! ## Features
+//! # Features
 //!
-//! - ✅ **Cross-Platform**: ConPTY (Windows) and native PTY (Unix)
-//! - ✅ **Full Process Lifecycle**: Spawn, manage, and terminate shell processes
-//! - ✅ **Bidirectional I/O**: Async read/write with proper buffering
-//! - ✅ **Terminal Resize**: Dynamic terminal dimension updates
-//! - ✅ **Signal Handling**: Proper SIGTERM/SIGKILL support
-//! - ✅ **Environment Control**: Pass custom environment variables
+//! - **Cross-platform**: Works on Windows (ConPTY) and Unix (POSIX PTY)
+//! - **Async/await**: Built on tokio for non-blocking I/O
+//! - **Type-safe**: Strong typing with comprehensive error handling
+//! - **Process lifecycle**: Full control over spawned processes
 //!
-//! ## Quick Start
+//! # Examples
 //!
-//! ```rust,no_run
+//! Basic usage:
+//!
+//! ```no_run
 //! use crosspty::{PtyBuilder, PtySize};
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     // Create a PTY with a shell
+//!     // Create a new PTY with default shell
 //!     let mut pty = PtyBuilder::new()
-//!         .command("powershell.exe")
 //!         .size(PtySize::new(80, 24))
 //!         .spawn()
 //!         .await?;
-//!     
-//!     // Write to the terminal
-//!     pty.write(b"echo Hello, Symphony!\n").await?;
-//!     
+//!
+//!     // Write command
+//!     pty.write(b"echo Hello\n").await?;
+//!
 //!     // Read output
 //!     let output = pty.read().await?;
 //!     println!("Output: {}", String::from_utf8_lossy(&output));
-//!     
-//!     // Resize the terminal
-//!     pty.resize(PtySize::new(120, 30)).await?;
-//!     
-//!     // Clean shutdown
-//!     pty.kill().await?;
-//!     
+//!
+//!     // Clean up
+//!     pty.terminate().await?;
 //!     Ok(())
 //! }
 //! ```
-//!
-//! ## Platform-Specific Notes
-//!
-//! ### Windows (ConPTY)
-//! - Requires Windows 10 version 1809 or later
-//! - Uses native ConPTY API for better performance and compatibility
-//! - Supports PowerShell, CMD, and WSL shells
-//!
-//! ### Unix (PTY)
-//! - Uses standard POSIX PTY implementation
-//! - Supports bash, zsh, sh, and other Unix shells
-//! - Full signal handling (SIGTERM, SIGKILL, SIGWINCH)
 
 use async_trait::async_trait;
 use bytes::Bytes;
@@ -71,24 +55,49 @@ pub mod platforms;
 
 pub use error::{PtyError, PtyResult};
 
-/// Terminal dimensions (columns × rows).
+/// Terminal dimensions in character cells.
 ///
-/// Represents the size of a terminal in character cells.
+/// Represents the size of a pseudo-terminal window measured in columns (width)
+/// and rows (height) of text characters. This is used when creating a PTY or
+/// resizing an existing terminal.
+///
+/// # Examples
+///
+/// ```
+/// use crosspty::PtySize;
+///
+/// // Create standard 80x24 terminal
+/// let size = PtySize::new(80, 24);
+/// assert_eq!(size.cols, 80);
+/// assert_eq!(size.rows, 24);
+///
+/// // Create wide terminal
+/// let wide = PtySize::new(120, 30);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PtySize {
-	/// Number of columns (character width)
+	/// Terminal width in character columns
 	pub cols: u16,
-	/// Number of rows (character height)
+	/// Terminal height in character rows
 	pub rows: u16,
 }
 
 impl PtySize {
-	/// Create a new terminal size.
+	/// Creates a new terminal size with the specified dimensions.
 	///
 	/// # Arguments
 	///
-	/// * `cols` - Number of columns
-	/// * `rows` - Number of rows
+	/// * `cols` - Width in character columns (typically 80-120)
+	/// * `rows` - Height in character rows (typically 24-50)
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use crosspty::PtySize;
+	///
+	/// let size = PtySize::new(80, 24);
+	/// assert_eq!(size.cols, 80);
+	/// ```
 	#[must_use]
 	pub const fn new(cols: u16, rows: u16) -> Self {
 		Self { cols, rows }
@@ -101,76 +110,124 @@ impl Default for PtySize {
 	}
 }
 
-/// Process exit status.
+/// Exit status of a PTY process.
 ///
-/// Represents how a process terminated.
+/// Indicates how a process terminated or whether it's still running.
+/// This follows Unix conventions where 0 indicates success and non-zero
+/// values indicate errors.
+///
+/// # Examples
+///
+/// ```
+/// use crosspty::ExitStatus;
+///
+/// let status = ExitStatus::Exited(0);
+/// assert_eq!(status, ExitStatus::Exited(0));
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExitStatus {
-	/// Process exited normally with the given code
+	/// Process exited normally with the given exit code
+	///
+	/// Exit code 0 typically indicates success, while non-zero values
+	/// indicate various error conditions.
 	Exited(i32),
-	/// Process was terminated by a signal
+	
+	/// Process was terminated by a signal (Unix only)
+	///
+	/// The value is the signal number that caused termination.
 	Signaled(i32),
+	
 	/// Process is still running
 	Running,
 }
 
-/// Core PTY trait for terminal operations.
+/// Core trait for pseudo-terminal operations.
 ///
-/// This trait defines the interface for interacting with pseudo-terminals
-/// across different platforms. All operations are async and non-blocking.
+/// Provides a unified interface for interacting with pseudo-terminals across
+/// different platforms. All operations are asynchronous and built on tokio.
 ///
 /// # Examples
 ///
-/// ```rust,no_run
-/// use crosspty::{Pty, PtySize};
+/// ```no_run
+/// use crosspty::{Pty, PtyBuilder, PtySize};
 ///
-/// async fn terminal_interaction(pty: &mut dyn Pty) -> Result<(), Box<dyn std::error::Error>> {
-///     // Write command
-///     pty.write(b"ls -la\n").await?;
+/// #[tokio::main]
+/// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+///     let mut pty = PtyBuilder::new().spawn().await?;
 ///     
-///     // Read output
+///     // Check if process is running
+///     assert!(pty.is_alive().await);
+///     
+///     // Write and read
+///     pty.write(b"ls\n").await?;
 ///     let output = pty.read().await?;
 ///     
-///     // Resize terminal
-///     pty.resize(PtySize::new(120, 30)).await?;
-///     
+///     // Clean shutdown
+///     pty.terminate().await?;
 ///     Ok(())
 /// }
 /// ```
 #[async_trait]
 pub trait Pty: Send + Sync {
-	/// Write data to the pseudo-terminal's input.
+	/// Writes data to the PTY's input stream.
 	///
-	/// Sends data to the running process's stdin. This is non-blocking
-	/// and will return once the data is queued for writing.
+	/// This sends bytes to the pseudo-terminal, which the child process
+	/// can read from its standard input.
 	///
 	/// # Arguments
 	///
-	/// * `data` - Byte slice to write to the terminal
+	/// * `data` - Bytes to write to the terminal
 	///
 	/// # Errors
 	///
-	/// Returns `PtyError::IoError` if the write fails or PTY is closed.
+	/// Returns [`PtyError::IoError`] if the write operation fails or if the
+	/// process has already terminated.
+	///
+	/// # Examples
+	///
+	/// ```no_run
+	/// # use crosspty::PtyBuilder;
+	/// # #[tokio::main]
+	/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+	/// let mut pty = PtyBuilder::new().spawn().await?;
+	/// pty.write(b"echo hello\n").await?;
+	/// # Ok(())
+	/// # }
+	/// ```
 	async fn write(&mut self, data: &[u8]) -> PtyResult<()>;
 
-	/// Read output from the pseudo-terminal.
+	/// Reads available output from the PTY.
 	///
-	/// Reads available data from the process's stdout/stderr. This is non-blocking
-	/// and returns immediately with available data, or an empty buffer if none.
+	/// Returns all data currently available in the output buffer. This is
+	/// non-blocking and returns immediately with whatever data is available.
 	///
 	/// # Returns
 	///
-	/// Returns a `Bytes` buffer containing the output data.
+	/// A [`Bytes`] buffer containing the output. May be empty if no data
+	/// is currently available.
 	///
 	/// # Errors
 	///
-	/// Returns `PtyError::IoError` if reading fails or PTY is closed.
+	/// Returns [`PtyError::IoError`] if reading fails.
+	///
+	/// # Examples
+	///
+	/// ```no_run
+	/// # use crosspty::PtyBuilder;
+	/// # #[tokio::main]
+	/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+	/// let mut pty = PtyBuilder::new().spawn().await?;
+	/// let output = pty.read().await?;
+	/// println!("Output: {}", String::from_utf8_lossy(&output));
+	/// # Ok(())
+	/// # }
+	/// ```
 	async fn read(&mut self) -> PtyResult<Bytes>;
 
-	/// Resize the pseudo-terminal dimensions.
+	/// Resizes the terminal to new dimensions.
 	///
 	/// Updates the terminal size, which triggers a SIGWINCH signal on Unix
-	/// systems, allowing programs to adapt their layout.
+	/// systems, allowing terminal applications to adapt to the new size.
 	///
 	/// # Arguments
 	///
@@ -178,88 +235,118 @@ pub trait Pty: Send + Sync {
 	///
 	/// # Errors
 	///
-	/// Returns `PtyError::ResizeFailed` if the resize operation fails.
+	/// Returns [`PtyError::ResizeFailed`] if the resize operation fails.
+	///
+	/// # Examples
+	///
+	/// ```no_run
+	/// # use crosspty::{PtyBuilder, PtySize};
+	/// # #[tokio::main]
+	/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+	/// let mut pty = PtyBuilder::new().spawn().await?;
+	/// pty.resize(PtySize::new(120, 30)).await?;
+	/// # Ok(())
+	/// # }
+	/// ```
 	async fn resize(&mut self, size: PtySize) -> PtyResult<()>;
 
-	/// Get the process ID of the shell running in the PTY.
+	/// Returns the process ID of the child process.
 	///
 	/// # Returns
 	///
-	/// Returns the PID of the spawned process, or `None` if not available.
+	/// `Some(pid)` if the process was successfully spawned, `None` otherwise.
 	fn pid(&self) -> Option<u32>;
 
-	/// Check if the process is still running.
+	/// Checks if the process is still running.
 	///
 	/// # Returns
 	///
-	/// Returns `true` if the process is alive, `false` otherwise.
-	fn is_alive(&self) -> bool;
+	/// `true` if the process is running, `false` if it has terminated.
+	async fn is_alive(&self) -> bool;
 
-	/// Get the exit status of the process.
+	/// Returns the current exit status of the process.
 	///
 	/// # Returns
 	///
-	/// Returns the exit status if the process has terminated, or `Running`.
-	fn exit_status(&self) -> ExitStatus;
+	/// The current [`ExitStatus`] of the process.
+	async fn exit_status(&self) -> ExitStatus;
 
-	/// Gracefully terminate the process.
+	/// Gracefully terminates the process.
 	///
-	/// Sends SIGTERM on Unix or closes the console on Windows.
-	/// The process may take time to shut down.
+	/// Attempts to terminate the process cleanly, allowing it to perform
+	/// cleanup operations. On Unix, this typically sends SIGTERM.
 	///
 	/// # Errors
 	///
-	/// Returns `PtyError::PlatformError` if termination fails.
+	/// Returns [`PtyError::PlatformError`] if termination fails.
 	async fn terminate(&mut self) -> PtyResult<()>;
 
-	/// Forcefully kill the process.
+	/// Forcefully kills the process.
 	///
-	/// Sends SIGKILL on Unix or terminates the process on Windows.
-	/// This is an immediate, forceful shutdown.
+	/// Immediately terminates the process without cleanup. On Unix, this
+	/// sends SIGKILL. Use [`terminate`](Pty::terminate) for graceful shutdown.
 	///
 	/// # Errors
 	///
-	/// Returns `PtyError::PlatformError` if the kill operation fails.
+	/// Returns [`PtyError::PlatformError`] if the kill operation fails.
 	async fn kill(&mut self) -> PtyResult<()>;
 }
 
-/// Builder for creating PTY instances with custom configuration.
+/// Builder for configuring and spawning PTY instances.
 ///
-/// Provides a fluent interface for configuring and spawning PTY processes.
+/// Provides a fluent interface for creating pseudo-terminals with custom
+/// configurations. Call [`spawn`](PtyBuilder::spawn) to create the PTY.
 ///
 /// # Examples
 ///
-/// ```rust,no_run
+/// ```no_run
 /// use crosspty::{PtyBuilder, PtySize};
+/// use std::path::PathBuf;
 ///
-/// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-/// let pty = PtyBuilder::new()
-///     .command("bash")
-///     .args(vec!["-l".to_string()])
-///     .env("TERM", "xterm-256color")
-///     .size(PtySize::new(100, 30))
-///     .working_dir("/home/user")
-///     .spawn()
-///     .await?;
-/// # Ok(())
-/// # }
+/// #[tokio::main]
+/// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+///     let pty = PtyBuilder::new()
+///         .command("bash")
+///         .args(vec!["-l".to_string()])
+///         .env("TERM", "xterm-256color")
+///         .size(PtySize::new(120, 30))
+///         .working_dir(PathBuf::from("/home/user"))
+///         .spawn()
+///         .await?;
+///     Ok(())
+/// }
 /// ```
 #[derive(Debug, Clone)]
 pub struct PtyBuilder {
 	/// Command to execute in the PTY
 	pub command: String,
-	/// Command-line arguments
+	/// Arguments to pass to the command
 	pub args: Vec<String>,
-	/// Environment variables
+	/// Environment variables for the process
 	pub env: HashMap<String, String>,
-	/// Terminal size
+	/// Initial terminal size
 	pub size: PtySize,
-	/// Working directory
+	/// Working directory for the process
 	pub working_dir: Option<PathBuf>,
 }
 
 impl PtyBuilder {
-	/// Create a new `PtyBuilder` with default settings.
+	/// Creates a new PTY builder with default settings.
+	///
+	/// Defaults:
+	/// - Command: Platform default shell (cmd.exe on Windows, /bin/sh on Unix)
+	/// - Args: Empty
+	/// - Env: Inherits current environment
+	/// - Size: 80x24
+	/// - Working directory: None (uses current directory)
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use crosspty::PtyBuilder;
+	///
+	/// let builder = PtyBuilder::new();
+	/// ```
 	#[must_use]
 	pub fn new() -> Self {
 		Self {
@@ -271,60 +358,135 @@ impl PtyBuilder {
 		}
 	}
 
-	/// Set the command to execute.
+	/// Sets the command to execute in the PTY.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use crosspty::PtyBuilder;
+	///
+	/// let builder = PtyBuilder::new().command("bash");
+	/// ```
 	#[must_use]
 	pub fn command<S: Into<String>>(mut self, cmd: S) -> Self {
 		self.command = cmd.into();
 		self
 	}
 
-	/// Set command-line arguments.
+	/// Sets the arguments to pass to the command.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use crosspty::PtyBuilder;
+	///
+	/// let builder = PtyBuilder::new()
+	///     .command("bash")
+	///     .args(vec!["-l".to_string(), "-c".to_string()]);
+	/// ```
 	#[must_use]
 	pub fn args(mut self, args: Vec<String>) -> Self {
 		self.args = args;
 		self
 	}
 
-	/// Add a single argument.
+	/// Adds a single argument to the command.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use crosspty::PtyBuilder;
+	///
+	/// let builder = PtyBuilder::new()
+	///     .command("bash")
+	///     .arg("-l")
+	///     .arg("-c");
+	/// ```
 	#[must_use]
 	pub fn arg<S: Into<String>>(mut self, arg: S) -> Self {
 		self.args.push(arg.into());
 		self
 	}
 
-	/// Set an environment variable.
+	/// Sets an environment variable for the process.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use crosspty::PtyBuilder;
+	///
+	/// let builder = PtyBuilder::new()
+	///     .env("TERM", "xterm-256color")
+	///     .env("LANG", "en_US.UTF-8");
+	/// ```
 	#[must_use]
 	pub fn env<K: Into<String>, V: Into<String>>(mut self, key: K, value: V) -> Self {
 		self.env.insert(key.into(), value.into());
 		self
 	}
 
-	/// Set the terminal size.
+	/// Sets the initial terminal size.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use crosspty::{PtyBuilder, PtySize};
+	///
+	/// let builder = PtyBuilder::new().size(PtySize::new(120, 30));
+	/// ```
 	#[must_use]
 	pub fn size(mut self, size: PtySize) -> Self {
 		self.size = size;
 		self
 	}
 
-	/// Set the working directory.
+	/// Sets the working directory for the process.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use crosspty::PtyBuilder;
+	/// use std::path::PathBuf;
+	///
+	/// let builder = PtyBuilder::new()
+	///     .working_dir(PathBuf::from("/home/user"));
+	/// ```
 	#[must_use]
 	pub fn working_dir<P: Into<PathBuf>>(mut self, dir: P) -> Self {
 		self.working_dir = Some(dir.into());
 		self
 	}
 
-	/// Spawn the PTY with the configured settings.
+	/// Spawns the PTY with the configured settings.
 	///
-	/// Creates and starts a new PTY process with the specified configuration.
+	/// Creates a new pseudo-terminal and starts the process. The returned
+	/// [`Pty`] trait object provides methods for interacting with the terminal.
+	///
+	/// # Returns
+	///
+	/// A boxed [`Pty`] trait object on success.
 	///
 	/// # Errors
 	///
-	/// Returns `PtyError::CreationFailed` or `PtyError::ProcessSpawnFailed` on failure.
+	/// Returns an error if:
+	/// - [`PtyError::CreationFailed`] - PTY creation fails
+	/// - [`PtyError::ProcessSpawnFailed`] - Process cannot be started
+	///
+	/// # Examples
+	///
+	/// ```no_run
+	/// use crosspty::PtyBuilder;
+	///
+	/// #[tokio::main]
+	/// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+	///     let pty = PtyBuilder::new().spawn().await?;
+	///     Ok(())
+	/// }
+	/// ```
 	pub async fn spawn(self) -> PtyResult<Box<dyn Pty>> {
 		platforms::spawn(self).await
 	}
 
-	/// Get the default shell for the current platform.
 	fn default_shell() -> String {
 		#[cfg(windows)]
 		{
