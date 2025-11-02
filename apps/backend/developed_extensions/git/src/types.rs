@@ -4,8 +4,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub enum ToExtension {
-    LoadBranch { path: String },
-    LoadFilesStates { path: String },
+	LoadBranch { path: String },
+	LoadFilesStates { path: String },
 }
 
 // Messages sent from the extension to the client
@@ -13,21 +13,21 @@ pub enum ToExtension {
 #[derive(Serialize, Deserialize)]
 #[serde(tag = "msg_type")]
 pub enum FromExtension {
-    RepoNotFound {
-        path: String,
-    },
-    Branch {
-        name: String,
-        path: String,
-    },
-    FilesState {
-        path: String,
-        files_states: Vec<FileState>,
-    },
+	RepoNotFound {
+		path: String,
+	},
+	Branch {
+		name: String,
+		path: String,
+	},
+	FilesState {
+		path: String,
+		files_states: Vec<FileState>,
+	},
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct FileState {
-    pub path: String,
-    pub status: u32,
+	pub path: String,
+	pub status: u32,
 }

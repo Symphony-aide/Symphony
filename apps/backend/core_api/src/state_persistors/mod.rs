@@ -7,9 +7,9 @@ pub mod memory;
 
 /// Persistor trait
 pub trait Persistor {
-    /// Retrieve data
-    fn load(&mut self) -> StateData;
+	/// Retrieve data
+	fn load(&mut self) -> StateData;
 
-    /// Persist data
-    fn save(&mut self, data: &StateData);
+	/// Persist data
+	fn save(&mut self, data: &StateData);
 }

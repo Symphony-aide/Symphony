@@ -1,7 +1,7 @@
 fn main() {
-    println!("hello_syexlyaipm");
+	println!("hello_syexlyaipm");
 }
 
 pub fn hello_pool_manager() {
-    println!("Symphony AIDE Pit Pool Manager Package");
+	println!("Symphony AIDE Pit Pool Manager Package");
 }

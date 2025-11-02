@@ -1,7 +1,7 @@
 fn main() {
-    println!("hello_syexlyidvd");
+	println!("hello_syexlyidvd");
 }
 
 pub fn hello_virtual_dom() {
-    println!("Symphony IDE Virtual DOM Package");
+	println!("Symphony IDE Virtual DOM Package");
 }

@@ -8,23 +8,23 @@ use crate::{messaging::ClientMessages, State};
 /// Information about a extension instance
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct ExtensionInfo {
-    pub id: String,
-    pub name: String,
+	pub id: String,
+	pub name: String,
 }
 
 /// Extensions structure
 pub trait Extension {
-    /// Init method of the extension
-    /// This will be called when the extension is loaded
-    fn init(&mut self, state: Arc<Mutex<State>>);
+	/// Init method of the extension
+	/// This will be called when the extension is loaded
+	fn init(&mut self, state: Arc<Mutex<State>>);
 
-    /// Unload method of the extension
-    /// This will be called when the extension is unloaded
-    fn unload(&mut self);
+	/// Unload method of the extension
+	/// This will be called when the extension is unloaded
+	fn unload(&mut self);
 
-    /// Forward messages to the extension
-    fn notify(&mut self, message: ClientMessages);
+	/// Forward messages to the extension
+	fn notify(&mut self, message: ClientMessages);
 
-    /// Retrieve info from the exension
-    fn get_info(&self) -> ExtensionInfo;
+	/// Retrieve info from the exension
+	fn get_info(&self) -> ExtensionInfo;
 }

@@ -7,31 +7,31 @@ struct DummyShell(UnboundedSender<String>);
 
 #[async_trait]
 impl TerminalShell for DummyShell {
-    async fn write(&self, data: String) {
-        self.0.send(data).ok();
-    }
+	async fn write(&self, data: String) {
+		self.0.send(data).ok();
+	}
 
-    async fn resize(&self, _cols: i32, _rows: i32) {
-        todo!()
-    }
+	async fn resize(&self, _cols: i32, _rows: i32) {
+		todo!()
+	}
 }
 
 #[tokio::test]
 async fn terminal_shells() {
-    let (in_writer, mut in_reader) = unbounded_channel::<String>();
-    let (out_writer, mut out_reader) = unbounded_channel::<String>();
+	let (in_writer, mut in_reader) = unbounded_channel::<String>();
+	let (out_writer, mut out_reader) = unbounded_channel::<String>();
 
-    let shell = DummyShell(in_writer);
+	let shell = DummyShell(in_writer);
 
-    tokio::spawn(async move {
-        while let Some(_msg) = in_reader.recv().await {
-            out_writer.send("test".to_string()).unwrap();
-        }
-    });
+	tokio::spawn(async move {
+		while let Some(_msg) = in_reader.recv().await {
+			out_writer.send("test".to_string()).unwrap();
+		}
+	});
 
-    shell.write("Hello World".to_string()).await;
+	shell.write("Hello World".to_string()).await;
 
-    let msg = out_reader.recv().await.unwrap();
+	let msg = out_reader.recv().await.unwrap();
 
-    assert_eq!(msg, "test");
+	assert_eq!(msg, "test");
 }

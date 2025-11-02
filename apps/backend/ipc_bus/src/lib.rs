@@ -1,7 +1,7 @@
 fn main() {
-    println!("hello_syipcbus");
+	println!("hello_syipcbus");
 }
 
 pub fn hello_ipc_bus() {
-    println!("Symphony IPC Bus Package");
+	println!("Symphony IPC Bus Package");
 }

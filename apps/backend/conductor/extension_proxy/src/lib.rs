@@ -1,7 +1,7 @@
 fn main() {
-    println!("hello_syconexproxy");
+	println!("hello_syconexproxy");
 }
 
 pub fn hello_extension_proxy() {
-    println!("Symphony Conductor Extension Proxy Package");
+	println!("Symphony Conductor Extension Proxy Package");
 }
