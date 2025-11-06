@@ -8,8 +8,25 @@ homepage = "https://github.com/Symphony-Code-Editor/Symphony-App/tree/main"
 license = "MIT"
 
 [dependencies]
-sveditor-core-api  = { path = "../../core_api"}
 serde_json = "1.0.140"
 serde = { version = "1.0.219", features = ["derive"] }
 async-trait = "0.1.88"
+
+# Native dependencies (not for WASM)
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+sveditor-core-api  = { path = "../../core_api"}
 crosspty = { path = "../../crosspty"}
+
+# WebAssembly dependencies
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = ["console"] }
+wasm-bindgen-futures = "0.4"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[package.metadata.wasm]
+# This extension requires native system access and cannot run in WebAssembly
+# It can be compiled for WASM target but will have no-op implementations
+wasm-compatible = false
