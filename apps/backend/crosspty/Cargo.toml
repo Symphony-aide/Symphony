@@ -12,7 +12,7 @@ keywords = ["pty", "terminal", "cross-platform", "async"]
 categories = ["os", "development-tools"]
 
 [dependencies]
-tokio = { version = "1.45.1", features = ["sync", "rt", "process", "macros", "io-util", "io-std", "signal"]}
+tokio = { version = "1.45.1", features = ["sync", "rt", "process", "macros", "io-util", "io-std", "signal", "time"]}
 async-trait = "0.1.88"
 futures = "0.3.31"
 tracing = "0.1"

@@ -52,6 +52,7 @@ use std::path::PathBuf;
 
 pub mod error;
 pub mod platforms;
+pub mod async_pty;
 
 pub use error::{PtyError, PtyResult};
 
