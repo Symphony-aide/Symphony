@@ -1,6 +1,25 @@
 //! Integration tests for CrossPty terminal implementation.
 
 use crosspty::{PtyBuilder, PtySize};
+use tokio::time::{sleep, timeout, Duration};
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+#[cfg(windows)]
+fn get_shell() -> String {
+	"cmd.exe".to_string()
+}
+
+#[cfg(unix)]
+fn get_shell() -> String {
+	"/bin/sh".to_string()
+}
+
+// ============================================================================
+// Tests
+// ============================================================================
 
 /// Test basic PTY creation, I/O, and command execution.
 #[tokio::test]
@@ -16,14 +35,19 @@ async fn test_pty_creation_and_io() {
 	assert!(pty.is_alive().await);
 	assert!(pty.pid().is_some());
 
-	// Test write and read
+	// Test write and read with timeout
 	pty.write(b"echo test\n").await.expect("Failed to write");
-	std::thread::sleep(std::time::Duration::from_millis(300));
-	let output = pty.read().await.expect("Failed to read");
+	sleep(Duration::from_millis(300)).await;
+	
+	let output = timeout(Duration::from_secs(2), pty.read())
+		.await
+		.expect("Read timeout")
+		.expect("Failed to read");
+	
 	assert!(!output.is_empty());
 
 	pty.kill().await.expect("Failed to kill");
-	std::thread::sleep(std::time::Duration::from_millis(200));
+	sleep(Duration::from_millis(200)).await;
 }
 
 /// Test PTY resize functionality.
@@ -36,11 +60,14 @@ async fn test_pty_resize() {
 		.await
 		.expect("Failed to spawn PTY");
 
-	pty.resize(PtySize::new(120, 30)).await.expect("Failed to resize");
+	pty.resize(PtySize::new(120, 30))
+		.await
+		.expect("Failed to resize");
+	
 	assert!(pty.is_alive().await);
 
 	pty.kill().await.expect("Failed to kill");
-	std::thread::sleep(std::time::Duration::from_millis(200));
+	sleep(Duration::from_millis(200)).await;
 }
 
 /// Test graceful termination.
@@ -54,8 +81,9 @@ async fn test_terminate() {
 		.expect("Failed to spawn PTY");
 
 	assert!(pty.is_alive().await);
+	
 	pty.terminate().await.expect("Failed to terminate");
-	std::thread::sleep(std::time::Duration::from_millis(500));
+	sleep(Duration::from_millis(500)).await;
 }
 
 /// Test forceful kill.
@@ -69,7 +97,7 @@ async fn test_kill() {
 		.expect("Failed to spawn PTY");
 
 	pty.kill().await.expect("Failed to kill");
-	std::thread::sleep(std::time::Duration::from_millis(200));
+	sleep(Duration::from_millis(200)).await;
 }
 
 /// Test error handling for non-existent command.
@@ -81,15 +109,4 @@ async fn test_invalid_command() {
 		.await;
 
 	assert!(result.is_err());
-}
-
-// Helper function
-#[cfg(windows)]
-fn get_shell() -> String {
-	"cmd.exe".to_string()
-}
-
-#[cfg(unix)]
-fn get_shell() -> String {
-	"/bin/sh".to_string()
 }

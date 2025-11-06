@@ -12,7 +12,7 @@ impl TerminalShell for DummyShell {
 	}
 
 	async fn resize(&self, _cols: i32, _rows: i32) {
-		todo!()
+		// Dummy implementation for testing - no-op
 	}
 }
 
