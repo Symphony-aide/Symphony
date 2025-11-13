@@ -2,7 +2,6 @@
 import React, { useRef, useMemo, useState } from "react";
 import * as monaco from "@monaco-editor/react";
 import { defaultMonacoOptions } from "./monacoOptions";
-import { detectLanguage } from "./utils/outlineParser";
 import { useEditor } from "./hooks/useEditor";
 import { useEnhancedLanguageDetection } from "./hooks/useEnhancedLanguageDetection";
 import { useEnhancedThemeManager } from "./hooks/useEnhancedThemeManager";
@@ -27,25 +26,25 @@ export default function EditorPanel({
 	const containerRef = useRef(null);
 	const activeFile = files.find(f => f.name === activeFileName);
 	const [viewMode, setViewMode] = useState('editor'); // 'editor' or 'preview'
-	
+
 	// Enhanced language detection
 	const languageInfo = useEnhancedLanguageDetection(
 		activeFile?.name || "",
 		null,
 		activeFile?.content || ""
 	);
-	
+
 	// Enhanced theme management
 	const { themeData, createCustomTheme } = useEnhancedThemeManager(themeSettings.theme);
-	
+
 	// Enhanced Monaco configuration
-	const { 
-		registerCustomTheme, 
-		enhanceMonacoOptions, 
+	const {
+		registerCustomTheme,
+		enhanceMonacoOptions,
 		addCustomTokenProviders,
-		setupEnhancedFeatures 
+		setupEnhancedFeatures
 	} = useEnhancedMonacoConfig();
-	
+
 	const { handleEditorMount, handleEditorChange } = useEditor(
 		editorRef,
 		activeFile,
@@ -70,16 +69,16 @@ export default function EditorPanel({
 		// Register custom theme
 		const customThemeId = registerCustomTheme(monacoInstance, themeData, themeSettings.theme);
 		editor.updateOptions({ theme: customThemeId });
-		
+
 		// Add custom token providers
 		addCustomTokenProviders(monacoInstance, languageInfo.detectedLanguage);
-		
+
 		// Setup enhanced features
 		const cleanup = setupEnhancedFeatures(editor, monacoInstance, themeData, languageInfo);
-		
+
 		// Call original handler
 		handleEditorMount(editor, monacoInstance);
-		
+
 		// Store cleanup function
 		editor._enhancedCleanup = cleanup;
 	};
@@ -110,14 +109,14 @@ export default function EditorPanel({
 								<span className="ml-1 opacity-60">({languageInfo.confidence} confidence)</span>
 							)}
 						</span>
-						
+
 						{/* View Mode Toggle */}
 						<div className="flex items-center space-x-1 bg-gray-700 rounded p-1">
 							<button
 								onClick={() => setViewMode('editor')}
 								className={`px-2 py-1 rounded text-xs transition-colors ${
-									viewMode === 'editor' 
-										? 'bg-blue-600 text-white' 
+									viewMode === 'editor'
+										? 'bg-blue-600 text-white'
 										: 'text-gray-300 hover:text-white hover:bg-gray-600'
 								}`}
 							>
@@ -126,8 +125,8 @@ export default function EditorPanel({
 							<button
 								onClick={() => setViewMode('preview')}
 								className={`px-2 py-1 rounded text-xs transition-colors ${
-									viewMode === 'preview' 
-										? 'bg-blue-600 text-white' 
+									viewMode === 'preview'
+										? 'bg-blue-600 text-white'
 										: 'text-gray-300 hover:text-white hover:bg-gray-600'
 								}`}
 							>
@@ -135,12 +134,12 @@ export default function EditorPanel({
 							</button>
 						</div>
 					</div>
-					
+
 					<span className="text-xs opacity-60">
 						{activeFile?.content?.split('\n').length || 0} lines
 					</span>
 				</div>
-				
+
 				{/* Conditional rendering based on view mode */}
 				{viewMode === 'editor' ? (
 					<monaco.Editor

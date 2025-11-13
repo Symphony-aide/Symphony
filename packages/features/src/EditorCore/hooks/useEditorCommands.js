@@ -5,20 +5,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { useCommand } from "@symphony/commands";
 import { storageService } from "../utils/storageService.js";
-import { 
-  FileCreateCommand, 
-  FileDeleteCommand, 
-  FileRenameCommand, 
-  FileContentUpdateCommand 
+import {
+  FileCreateCommand,
+  FileDeleteCommand,
+  FileRenameCommand,
+  FileContentUpdateCommand
 } from "../commands/FileOperationCommands.js";
 
 /**
  * Hook that replaces use-undo with the global command system
  * Provides file management operations through commands
  */
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 export function useEditorCommands() {
   const { executeCommand } = useCommand();
-  
+
   // Initialize files from storage
   const [files, setFilesState] = useState(() => {
     const savedFiles = storageService.getSync("files");
@@ -27,6 +28,7 @@ export function useEditorCommands() {
 
   // File manager interface for commands
   const fileManager = {
+	  // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
     async createFile(fileName, content = '') {
       setFilesState(prevFiles => {
         const newFiles = [...prevFiles, { name: fileName, content }];
@@ -35,6 +37,7 @@ export function useEditorCommands() {
       });
     },
 
+	  // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
     async deleteFile(fileName) {
       setFilesState(prevFiles => {
         const newFiles = prevFiles.filter(f => f.name !== fileName);
@@ -43,9 +46,10 @@ export function useEditorCommands() {
       });
     },
 
+	  // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
     async renameFile(oldName, newName) {
       setFilesState(prevFiles => {
-        const newFiles = prevFiles.map(f => 
+        const newFiles = prevFiles.map(f =>
           f.name === oldName ? { ...f, name: newName } : f
         );
         storageService.setSync("files", newFiles);
@@ -53,9 +57,10 @@ export function useEditorCommands() {
       });
     },
 
+	  // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
     async updateFileContent(fileName, content) {
       setFilesState(prevFiles => {
-        const newFiles = prevFiles.map(f => 
+        const newFiles = prevFiles.map(f =>
           f.name === fileName ? { ...f, content } : f
         );
         storageService.setSync("files", newFiles);
@@ -73,7 +78,7 @@ export function useEditorCommands() {
   const deleteFile = useCallback(async (fileName) => {
     const file = files.find(f => f.name === fileName);
     if (!file) return;
-    
+
     const command = new FileDeleteCommand(fileManager, fileName, file.content);
     await executeCommand(command);
   }, [files, executeCommand]);
@@ -86,11 +91,11 @@ export function useEditorCommands() {
   const updateFileContent = useCallback(async (fileName, newContent) => {
     const file = files.find(f => f.name === fileName);
     if (!file || file.content === newContent) return;
-    
+
     const command = new FileContentUpdateCommand(
-      fileManager, 
-      fileName, 
-      newContent, 
+      fileManager,
+      fileName,
+      newContent,
       file.content
     );
     await executeCommand(command);
@@ -101,7 +106,7 @@ export function useEditorCommands() {
     // For compatibility with existing code, we'll create individual commands
     // In practice, you might want to create a compound command for this
     const currentFiles = files;
-    
+
     // Simple implementation: just update the state directly for now
     // In a full implementation, you'd analyze the differences and create appropriate commands
     setFilesState(newFiles);
@@ -116,13 +121,13 @@ export function useEditorCommands() {
   return {
     files,
     setFiles, // Keep for compatibility
-    
+
     // Command-based operations
     createFile,
     deleteFile,
     renameFile,
     updateFileContent,
-    
+
     // File manager for direct access if needed
     fileManager
   };
