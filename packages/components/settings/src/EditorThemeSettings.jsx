@@ -1,5 +1,6 @@
 //EditorThemeSettings.jsx
 import React from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Input, Label } from "ui";
 
 export default function EditorThemeSettings({ themeSettings, setThemeSettings }) {
 	const handleChangeTheme = e => {
@@ -16,51 +17,53 @@ export default function EditorThemeSettings({ themeSettings, setThemeSettings })
 
 	return (
 		<div className='space-y-3'>
-			{/* اختيار الثيم */}
+			{/* Editor Theme */}
 			<div>
-				<label className='block text-sm mb-1'>Editor Theme</label>
-				<select
-					value={themeSettings.theme}
-					onChange={handleChangeTheme}
-					className='bg-gray-800 border border-gray-600 rounded px-2 py-1 w-full'
-				>
-					<option value='vs-dark'>Dark</option>
-					<option value='light'>Light</option>
-					<option value='hc-black'>High Contrast</option>
-				</select>
+				<Label className='block text-sm mb-1'>Editor Theme</Label>
+				<Select value={themeSettings.theme} onValueChange={(value) => setThemeSettings(prev => ({ ...prev, theme: value }))}>
+					<SelectTrigger className='bg-slate-800 border-slate-600'>
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value='vs-dark'>Dark</SelectItem>
+						<SelectItem value='light'>Light</SelectItem>
+						<SelectItem value='hc-black'>High Contrast</SelectItem>
+					</SelectContent>
+				</Select>
 			</div>
 
-			{/* حجم الخط */}
+			{/* Font Size */}
 			<div>
-				<label className='block text-sm mb-1'>Font Size</label>
-				<input
+				<Label className='block text-sm mb-1'>Font Size</Label>
+				<Input
 					type='number'
 					min={12}
 					max={24}
 					value={themeSettings.fontSize}
 					onChange={handleChangeFontSize}
-					className='bg-gray-800 border border-gray-600 rounded px-2 py-1 w-20'
+					className='bg-slate-800 border-slate-600 text-black w-20'
 				/>
 			</div>
 
-			{/* نوع الخط */}
+			{/* Font Type */}
 			<div>
-				<label className='block text-sm mb-1'>Font Type</label>
-				<select
-					value={themeSettings.fontFamily}
-					onChange={handleChangeFontFamily}
-					className='bg-gray-800 border border-gray-600 rounded px-2 py-1 w-full'
-				>
-					<option value='"Fira Code", monospace'>Fira Code</option>
-					<option value='"JetBrains Mono", monospace'>JetBrains Mono</option>
-					<option value='"Cascadia Code", monospace'>Cascadia Code</option>
-					<option value='"Source Code Pro", monospace'>Source Code Pro</option>
-					<option value='"IBM Plex Mono", monospace'>IBM Plex Mono</option>
-					<option value='"Ubuntu Mono", monospace'>Ubuntu Mono</option>
-					<option value='"Inconsolata", monospace'>Inconsolata</option>
-					<option value='"Courier New", monospace'>Courier New</option>
-					<option value='monospace'>System Default</option>
-				</select>
+				<Label className='block text-sm mb-1'>Font Type</Label>
+				<Select value={themeSettings.fontFamily} onValueChange={(value) => setThemeSettings(prev => ({ ...prev, fontFamily: value }))}>
+					<SelectTrigger className='bg-slate-800 border-slate-600'>
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value='"Fira Code", monospace'>Fira Code</SelectItem>
+						<SelectItem value='"JetBrains Mono", monospace'>JetBrains Mono</SelectItem>
+						<SelectItem value='"Cascadia Code", monospace'>Cascadia Code</SelectItem>
+						<SelectItem value='"Source Code Pro", monospace'>Source Code Pro</SelectItem>
+						<SelectItem value='"IBM Plex Mono", monospace'>IBM Plex Mono</SelectItem>
+						<SelectItem value='"Ubuntu Mono", monospace'>Ubuntu Mono</SelectItem>
+						<SelectItem value='"Inconsolata", monospace'>Inconsolata</SelectItem>
+						<SelectItem value='"Courier New", monospace'>Courier New</SelectItem>
+						<SelectItem value='monospace'>System Default</SelectItem>
+					</SelectContent>
+				</Select>
 			</div>
 		</div>
 	);

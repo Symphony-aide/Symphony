@@ -1,30 +1,35 @@
 //GlobalSearchReplace.jsx
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { Input } from "ui";
+import { Button } from "ui";
 
 export default function GlobalSearchReplace({ onReplaceAll }) {
-	const [searchTerm, setSearchTerm] = useState("");
-	const [replaceTerm, setReplaceTerm] = useState("");
+	const [searchTerm, setSearchTerm] = useState('');
+	const [replaceTerm, setReplaceTerm] = useState('');
 
 	return (
-		<div className='p-2 bg-gray-800 border-b border-gray-700 flex items-center space-x-2'>
-			<input
+		<div className='flex items-center space-x-2 mb-4'>
+			<Input
+				type='text'
 				value={searchTerm}
 				onChange={e => setSearchTerm(e.target.value)}
 				placeholder='Search'
-				className='p-1 rounded bg-gray-700 text-white w-40'
+				className='bg-gray-700 text-white w-40'
 			/>
-			<input
+			<Input
+				type='text'
 				value={replaceTerm}
 				onChange={e => setReplaceTerm(e.target.value)}
 				placeholder='Replace'
-				className='p-1 rounded bg-gray-700 text-white w-40'
+				className='bg-gray-700 text-white w-40'
 			/>
-			<button
+			<Button
 				onClick={() => onReplaceAll(searchTerm, replaceTerm)}
-				className='bg-green-600 px-3 py-1 rounded hover:bg-green-500 text-white'
+				className='bg-green-600 hover:bg-green-500'
+				size="sm"
 			>
 				Replace All
-			</button>
+			</Button>
 		</div>
 	);
 }

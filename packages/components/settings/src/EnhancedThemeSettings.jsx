@@ -1,5 +1,6 @@
 // EnhancedThemeSettings.jsx
 import React from "react";
+import { Button, Card } from "ui";
 import EditorThemeSettings from "./EditorThemeSettings";
 
 export default function EnhancedThemeSettings({ 
@@ -25,27 +26,29 @@ export default function EnhancedThemeSettings({
 		<div className="space-y-3">
 			{/* Compact Inheritance Info */}
 			{isLocal && (
-				<div className="bg-gray-700 p-2 rounded border-l-4 border-blue-500">
+				<Card className="bg-slate-700 p-2 border-l-4 border-indigo-500">
 					<div className="flex items-center justify-between">
 						<div>
-							<h4 className="text-xs font-medium text-blue-300">
+							<h4 className="text-xs font-medium text-indigo-300">
 								{hasOverride ? "🔄 Overriding Global" : "📋 Using Global Settings"}
 							</h4>
 						</div>
 						{hasOverride && (
-							<button
+							<Button
 								onClick={handleReset}
-								className="text-xs bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded transition-colors"
+								size="sm"
+								variant="secondary"
+								className="text-xs bg-slate-600 hover:bg-slate-500 px-2 py-1"
 							>
 								Reset
-							</button>
+							</Button>
 						)}
 					</div>
-				</div>
+				</Card>
 			)}
 
 			{/* Settings Component */}
-			<div className={`${hasOverride ? 'border-l-4 border-green-500 pl-3' : ''}`}>
+			<div className={`${hasOverride ? 'border-l-4 border-emerald-500 pl-3' : ''}`}>
 				<EditorThemeSettings 
 					themeSettings={themeSettings} 
 					setThemeSettings={setThemeSettings} 

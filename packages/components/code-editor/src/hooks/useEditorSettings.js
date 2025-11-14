@@ -44,7 +44,7 @@ export function useEditorSettings() {
 		try {
 			const saved = storageService.getSync("shortcuts");
 			if (Array.isArray(saved)) return saved;
-		} catch {}
+		} catch { /* empty */ }
 		return [
 			{ operation: "save", shortcut: "ctrl+s" },
 			{ operation: "run", shortcut: "ctrl+r" },
@@ -92,7 +92,7 @@ export function useEditorSettings() {
 		setTerminalSettings,
 		shortcuts,
 		setShortcuts,
-		
+
 		// Modal state
 		showSettings,
 		setShowSettings,
