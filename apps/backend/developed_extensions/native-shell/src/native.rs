@@ -6,7 +6,6 @@ use sveditor_core_api::terminal_shells::{
 	TerminalShell, TerminalShellBuilder, TerminalShellBuilderInfo,
 };
 use sveditor_core_api::tokio;
-use sveditor_core_api::tokio::sync::mpsc::channel;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -27,47 +26,69 @@ impl TerminalShellBuilder for NativeShellBuilder {
 		let client = self.client.clone();
 		let terminal_shell_id = terminal_shell_id.to_owned();
 		let state_id = self.state_id;
+		let command = self.command.clone();
 
-		let (_tx, mut rx) = channel::<Vec<u8>>(1);
-	
-	// Create PTY using PtyBuilder API
-	let command = self.command.clone();
-	let pty = Arc::new(Mutex::new(None::<Box<dyn Pty>>));
-	let pty_clone = pty.clone();
-	
-	// Spawn PTY creation
-	tokio::spawn(async move {
-		match PtyBuilder::new()
-			.command(command)
-			.spawn()
-			.await 
-		{
-			Ok(p) => {
-				*pty_clone.lock().await = Some(p);
-			}
-			Err(e) => {
-				eprintln!("Failed to create PTY: {:?}", e);
-			}
-		}
-	});
-	
-	let shell = Box::new(NativeShell { pty: pty.clone() });
+		// Shared handle to the PTY so that NativeShell can write/resize
+		let pty = Arc::new(Mutex::new(None::<Box<dyn Pty>>));
+		let pty_clone = pty.clone();
 
+		// Spawn PTY process and a reader task that forwards output to the client
 		tokio::spawn(async move {
-			loop {
-				let data = rx.recv().await.unwrap();
-				client
-					.send(ClientMessages::ServerMessage(ServerMessages::TerminalShellUpdated {
-						data,
-						state_id,
-						terminal_shell_id: terminal_shell_id.clone(),
-					}))
-					.await
-					.unwrap();
+			match PtyBuilder::new().command(command).spawn().await {
+				Ok(mut p) => {
+					// Store PTY so NativeShell methods can access it
+					*pty_clone.lock().await = Some(p);
+
+					// Clone values for the reader loop
+					let client = client.clone();
+					let terminal_shell_id = terminal_shell_id.clone();
+					let pty_reader = pty_clone.clone();
+
+					// Spawn a task to continuously read from PTY and send data to client
+					tokio::spawn(async move {
+						loop {
+							let mut guard = pty_reader.lock().await;
+							if let Some(ref mut pty) = *guard {
+								match pty.read().await {
+									Ok(bytes) if !bytes.is_empty() => {
+										let data = bytes.to_vec();
+										if let Err(e) = client
+											.send(ClientMessages::ServerMessage(
+												ServerMessages::TerminalShellUpdated {
+													data,
+													state_id,
+													terminal_shell_id: terminal_shell_id.clone(),
+												},
+											))
+											.await
+										{
+											eprintln!("Failed to send PTY output: {:?}", e);
+											break;
+										}
+									}
+									Ok(_) => {
+										// No data read, yield to avoid busy loop
+										tokio::task::yield_now().await;
+									}
+									Err(e) => {
+										eprintln!("PTY read error: {:?}", e);
+										break;
+									}
+								}
+							} else {
+								// PTY not yet available or has been closed
+								break;
+							}
+						}
+					});
+				}
+				Err(e) => {
+					eprintln!("Failed to create PTY: {:?}", e);
+				}
 			}
 		});
 
-		shell
+		Box::new(NativeShell { pty })
 	}
 }
 
