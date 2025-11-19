@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { useCommandState, useCommand } from '../CommandContext.jsx';
+import { Button } from 'ui';
 
 /**
  * UndoRedoToolbar provides undo/redo buttons with tooltips and descriptions
@@ -13,7 +14,8 @@ export default function UndoRedoToolbar({
   className = '',
   showDescriptions = true,
   iconSize = 16,
-  variant = 'default'
+  variant = 'default',
+  showLabels = false
 }) {
   const { canUndo, canRedo, undoDescription, redoDescription } = useCommandState();
   const { undo, redo } = useCommand();
@@ -27,74 +29,51 @@ export default function UndoRedoToolbar({
     }
   };
 
-  const handleRedo = async () => {
-    try {
-      await redo();
-    } catch (error) {
-      console.error('Redo failed:', error);
-      // TODO: Show user-friendly error message
+  const handleRedo = () => {
+    if (canRedo) {
+      redo();
     }
   };
 
-  const baseButtonClass = `
-    inline-flex items-center justify-center
-    px-2 py-1 rounded
-    text-sm font-medium
-    transition-colors duration-200
-    focus:outline-none focus:ring-2 focus:ring-offset-2
-  `;
-
-  const enabledButtonClass = `
-    ${baseButtonClass}
-    text-gray-700 bg-white border border-gray-300
-    hover:bg-gray-50 hover:text-gray-900
-    focus:ring-blue-500
-    cursor-pointer
-  `;
-
-  const disabledButtonClass = `
-    ${baseButtonClass}
-    text-gray-400 bg-gray-100 border border-gray-200
-    cursor-not-allowed
-  `;
+  const getUndoDescription = () => undoDescription || '';
+  const getRedoDescription = () => redoDescription || '';
+  const buttonSize = iconSize > 16 ? 'default' : 'sm';
 
   return (
     <div className={`flex items-center space-x-1 ${className}`}>
       {/* Undo Button */}
-      <button
+      <Button
         onClick={handleUndo}
         disabled={!canUndo}
-        className={canUndo ? enabledButtonClass : disabledButtonClass}
-        title={undoDescription ? `Undo ${undoDescription}` : 'Undo'}
-        aria-label={undoDescription ? `Undo ${undoDescription}` : 'Undo'}
+        variant={canUndo ? "secondary" : "ghost"}
+        size={buttonSize}
+        className={canUndo ? "bg-secondary hover:bg-secondary/80" : "bg-muted text-muted-foreground cursor-not-allowed"}
+        title={canUndo ? `Undo: ${getUndoDescription()}` : 'Nothing to undo'}
+        aria-label={`Undo ${canUndo ? getUndoDescription() : ''}`}
       >
-        <UndoIcon size={iconSize} />
-        {showDescriptions && (
-          <span className="ml-1 hidden sm:inline">
-            Undo
-          </span>
-        )}
-      </button>
+        <span className="flex items-center space-x-1">
+          <UndoIcon size={iconSize} />
+          {showLabels && <span className="text-xs">Undo</span>}
+        </span>
+      </Button>
 
       {/* Redo Button */}
-      <button
+      <Button
         onClick={handleRedo}
         disabled={!canRedo}
-        className={canRedo ? enabledButtonClass : disabledButtonClass}
-        title={redoDescription ? `Redo ${redoDescription}` : 'Redo'}
-        aria-label={redoDescription ? `Redo ${redoDescription}` : 'Redo'}
+        variant={canRedo ? "secondary" : "ghost"}
+        size={buttonSize}
+        className={canRedo ? "bg-secondary hover:bg-secondary/80" : "bg-muted text-muted-foreground cursor-not-allowed"}
+        title={canRedo ? `Redo: ${getRedoDescription()}` : 'Nothing to redo'}
+        aria-label={`Redo ${canRedo ? getRedoDescription() : ''}`}
       >
-        <RedoIcon size={iconSize} />
-        {showDescriptions && (
-          <span className="ml-1 hidden sm:inline">
-            Redo
-          </span>
-        )}
-      </button>
-
-      {/* Optional: Show current operation descriptions */}
+        <span className="flex items-center space-x-1">
+          <RedoIcon size={iconSize} />
+          {showLabels && <span className="text-xs">Redo</span>}
+        </span>
+      </Button>
       {showDescriptions && (undoDescription || redoDescription) && (
-        <div className="hidden md:flex flex-col text-xs text-gray-500 ml-2">
+        <div className="hidden md:flex flex-col text-xs text-muted-foreground ml-2">
           {undoDescription && (
             <div className="truncate max-w-32">
               Next: {undoDescription}

@@ -1,0 +1,13 @@
+{
+  "name": "@symphony/welcome-screen",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.js",
+  "dependencies": {
+    "ui": "workspace:*",
+    "lucide-react": "^0.261.0",
+    "@symphony/shared": "workspace:*",
+    "@symphony/quick-action-card": "workspace:*"
+  }
+}

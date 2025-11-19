@@ -1,5 +1,7 @@
 // SearchTab.jsx
 import React from "react";
+import { Input } from "ui";
+import { Button } from "ui";
 
 const SearchTab = ({
 	searchTerm,
@@ -9,43 +11,49 @@ const SearchTab = ({
 	setActiveTab,
 }) => {
 	return (
-		<div className='flex flex-col space-y-2'>
+		<div className='space-y-3'>
 			<div className='flex items-center space-x-2'>
-				<input
+				<Input
 					type='text'
 					value={searchTerm}
 					onChange={e => setSearchTerm(e.target.value)}
 					placeholder='Search files...'
-					className='p-2 rounded text-black flex-grow'
+					className='flex-grow'
 				/>
 				{searchTerm && (
-					<button
+					<Button
 						onClick={() => setSearchTerm("")}
-						className='text-sm text-gray-400 hover:text-white px-2'
+						variant="ghost"
+						size="sm"
+						className='text-gray-400 hover:text-white px-2'
 						title='Clear search'
 					>
-						✖️
-					</button>
+						✖
+					</Button>
 				)}
 			</div>
 			<div className='flex flex-col space-y-1 mt-2'>
 				{visibleFilesFlat.length ? (
 					visibleFilesFlat.map((file, index) => (
-						<button
+						<Button
 							key={`search-${file.name}-${index}`}
 							onClick={() => {
 								onSelectFile(file.name);
 								setActiveTab("files");
-								setSearchTerm("");
 							}}
-							className='px-2 py-1 rounded hover:bg-gray-700 text-left overflow-hidden text-ellipsis'
-							title={file.name}
+							variant="ghost"
+							className='justify-start p-2 h-auto text-left hover:bg-gray-700'
 						>
-							{file.name}
-						</button>
+							<div>
+								<div className='font-medium text-sm'>{file.name}</div>
+								<div className='text-xs text-gray-400'>{file.path}</div>
+							</div>
+						</Button>
 					))
 				) : (
-					<p className='text-sm text-gray-400 p-2'>No matching files</p>
+					<p className='text-sm text-gray-400 p-2'>
+						{searchTerm ? "No files found" : "Enter search term"}
+					</p>
 				)}
 			</div>
 		</div>

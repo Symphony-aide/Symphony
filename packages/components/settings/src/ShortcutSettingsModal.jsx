@@ -1,43 +1,49 @@
 //ShortcutSettingsModal.jsx
 import React, { useState } from "react";
+import { Input } from "ui";
+import { Button } from "ui";
 
-export default function ShortcutSettingsModal({ shortcuts, setShortcuts, onClose, onSave }) {
-	const [localShortcuts, setLocalShortcuts] = useState(shortcuts);
-
-	const handleChangeShortcut = (index, value) => {
-		const updated = [...localShortcuts];
-		updated[index].shortcut = value;
-		setLocalShortcuts(updated);
-	};
+export default function ShortcutSettingsModal({ shortcuts, setShortcuts, onClose }) {
+	const [localShortcuts, setLocalShortcuts] = useState(shortcuts || []);
 
 	const handleSave = () => {
-		setShortcuts(localShortcuts); // حفظ التعديلات للأب
-		onSave?.(); // نرجع للي بعته SettingsModal
+		setShortcuts(localShortcuts);
+		onClose();
+	};
+
+	const handleShortcutChange = (index, newShortcut) => {
+		setLocalShortcuts(prev => 
+			prev.map((item, i) => 
+				i === index ? { ...item, shortcut: newShortcut } : item
+			)
+		);
 	};
 
 	return (
-		<div className='p-4 bg-gray-800 rounded space-y-3'>
-			<h2 className='text-lg font-bold mb-2'>Shortcut Settings</h2>
-
-			{localShortcuts.map((item, idx) => (
-				<div key={idx} className='flex items-center space-x-2'>
-					<span className='w-32'>{item.operation}</span>
-					<input
+		<div className='space-y-3'>
+			{localShortcuts.map((item, index) => (
+				<div key={item.operation || index} className='flex justify-between items-center'>
+					<span className='text-sm capitalize text-slate-300'>
+						{item.operation?.replace(/([A-Z])/g, ' $1') || `Shortcut ${index}`}
+					</span>
+					<Input
 						type='text'
-						value={item.shortcut}
-						onChange={e => handleChangeShortcut(idx, e.target.value)}
-						className='flex-1 p-1 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500'
+						value={item.shortcut || ''}
+						onChange={e => handleShortcutChange(index, e.target.value)}
+						className='bg-slate-700 border-slate-600 text-black w-32'
+						placeholder='e.g., Ctrl+S'
+						size="sm"
 					/>
 				</div>
 			))}
 
 			<div className='flex justify-end space-x-2 mt-4'>
-				<button onClick={onClose} className='bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded'>
+				<Button onClick={onClose} variant="secondary" size="sm" className='bg-slate-600 hover:bg-slate-500'>
 					Close
-				</button>
-				<button onClick={handleSave} className='bg-green-600 hover:bg-green-500 px-3 py-1 rounded'>
+				</Button>
+				<Button onClick={handleSave} className='bg-indigo-600 hover:bg-indigo-500' size="sm">
 					Save
-				</button>
+				</Button>
 			</div>
 		</div>
 	);

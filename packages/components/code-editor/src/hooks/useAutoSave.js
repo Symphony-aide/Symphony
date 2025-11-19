@@ -1,5 +1,6 @@
 // useAutoSave.js
 import { useEffect } from "react";
+
 import { storageService } from "../utils/storageService.js";
 
 export function useAutoSave({
@@ -21,7 +22,7 @@ export function useAutoSave({
 				storageService.setSync("files", files);
 				setIsSaved(true);
 				setModifiedTabs(prev => prev.filter(tab => tab !== activeFileName));
-				console.log("Auto-saved to storage:", activeFileName);
+
 			}
 		}, autoSaveSettings.interval * 1000);
 

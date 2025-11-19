@@ -1,0 +1,38 @@
+{
+	"name": "@symphony/features",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"main": "./src/index.js",
+	"module": "./src/index.js",
+	"types": "./src/index.d.ts",
+	"exports": {
+		".": "./src/index.js",
+		"./FileManagement": "./src/FileManagement/index.js",
+		"./Settings": "./src/Settings/index.js",
+		"./AutoSave": "./src/AutoSave/index.js",
+		"./FolderManagement": "./src/FolderManagement/index.js",
+		"./FileTree": "./src/FileTree/index.js",
+		"./FileSearch": "./src/FileSearch/index.js",
+		"./CommandHistory": "./src/CommandHistory/index.js",
+		"./OutlineTree": "./src/OutlineTree/index.js",
+		"./CodeNavigation": "./src/CodeNavigation/index.js",
+		"./SettingsValidation": "./src/SettingsValidation/index.js"
+	},
+	"dependencies": {
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"@monaco-editor/react": "^4.6.0",
+		"@symphony/commands": "workspace:*",
+		"@symphony/tsconfig": "workspace:*",
+		"ui": "workspace:*",
+		"lodash.debounce": "^4.0.8",
+		"acorn": "^8.15.0",
+		"acorn-walk": "^8.3.4"
+	},
+	"devDependencies": {
+		"@types/react": "^18.2.0",
+		"@types/react-dom": "^18.2.0",
+		"typescript": "^5.0.0"
+	}
+}

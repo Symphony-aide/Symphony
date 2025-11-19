@@ -1,5 +1,6 @@
 // ProjectSettingsStatus.jsx
 import React, { useState } from "react";
+import { Button, Card } from "ui";
 
 export default function ProjectSettingsStatus({ 
 	hasProjectSettings = false,
@@ -12,7 +13,7 @@ export default function ProjectSettingsStatus({
 
 	if (!hasProjectSettings) {
 		return (
-			<div className="bg-yellow-900 border border-yellow-700 p-4 rounded-lg mb-4">
+			<Card className="bg-yellow-900 border border-yellow-700 p-4 mb-4">
 				<div className="flex items-start space-x-3">
 					<div className="text-yellow-400 text-xl">📁</div>
 					<div className="flex-1">
@@ -21,18 +22,19 @@ export default function ProjectSettingsStatus({
 							Create project-specific settings to override global preferences for this workspace.
 						</p>
 						<div className="mt-3 flex space-x-2">
-							<button
+							<Button
 								onClick={onCreateProject}
-								className="bg-yellow-600 hover:bg-yellow-500 text-white px-3 py-1 rounded text-sm transition-colors"
+								className="bg-yellow-600 hover:bg-yellow-500 text-white px-3 py-1 text-sm"
 							>
 								Create Project Settings
-							</button>
-							<button
+							</Button>
+							<Button
 								onClick={() => setShowDetails(!showDetails)}
-								className="bg-gray-600 hover:bg-gray-500 text-white px-3 py-1 rounded text-sm transition-colors"
+								variant="secondary"
+								className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-1 text-sm"
 							>
 								Learn More
-							</button>
+							</Button>
 						</div>
 						
 						{showDetails && (
@@ -51,12 +53,12 @@ export default function ProjectSettingsStatus({
 						)}
 					</div>
 				</div>
-			</div>
+			</Card>
 		);
 	}
 
 	return (
-		<div className="bg-green-900 border border-green-700 p-4 rounded-lg mb-4">
+		<Card className="bg-green-900 border border-green-700 p-4 mb-4">
 			<div className="flex items-start space-x-3">
 				<div className="text-green-400 text-xl">✅</div>
 				<div className="flex-1">
@@ -65,24 +67,26 @@ export default function ProjectSettingsStatus({
 						Using project-specific settings from: <code className="bg-green-800 px-1 rounded">{projectPath}</code>
 					</p>
 					<div className="mt-3 flex space-x-2">
-						<button
+						<Button
 							onClick={onExportSettings}
-							className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded text-sm transition-colors"
+							className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 text-sm"
 						>
 							Export Settings
-						</button>
-						<button
+						</Button>
+						<Button
 							onClick={onImportSettings}
-							className="bg-gray-600 hover:bg-gray-500 text-white px-3 py-1 rounded text-sm transition-colors"
+							variant="secondary"
+							className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-1 text-sm"
 						>
 							Import Settings
-						</button>
-						<button
+						</Button>
+						<Button
 							onClick={() => setShowDetails(!showDetails)}
-							className="bg-gray-600 hover:bg-gray-500 text-white px-3 py-1 rounded text-sm transition-colors"
+							variant="secondary"
+							className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-1 text-sm"
 						>
 							Details
-						</button>
+						</Button>
 					</div>
 					
 					{showDetails && (
@@ -109,6 +113,6 @@ export default function ProjectSettingsStatus({
 					)}
 				</div>
 			</div>
-		</div>
+		</Card>
 	);
 }

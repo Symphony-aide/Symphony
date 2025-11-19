@@ -9,6 +9,9 @@ import TerminalSettings from "./TerminalSettings";
 import GlobalSearchReplace from "./GlobalSearchReplace";
 import ProjectSettingsStatus from "./ProjectSettingsStatus";
 import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, Badge, Card } from "ui";
+import { Button } from "ui";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "ui";
 
 export default function SettingsModal({
 	shortcuts,
@@ -55,19 +58,16 @@ export default function SettingsModal({
 	};
 
 	return (
-		<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
-			<div className='bg-gray-900 text-white w-[700px] rounded shadow-lg overflow-hidden'>
-				{/* Header */}
-				<div className='flex justify-between items-center px-4 py-2 bg-gray-800 border-b border-gray-700'>
-					<h2 className='text-lg font-bold'>Settings</h2>
-					<button onClick={onClose} className='hover:text-red-400 text-xl'>
-						✖
-					</button>
-				</div>
+		<Dialog open={true} onOpenChange={onClose}>
+			<DialogContent className='bg-gray-900 text-white w-[700px] max-w-[700px] border-gray-700'>
+				<DialogHeader>
+					<DialogTitle className='text-lg font-bold'>Settings</DialogTitle>
+				</DialogHeader>
 
 				{/* Scope Selector */}
-				<div className='flex bg-gray-800 border-b border-gray-700'>
-					<button
+				<div className='flex bg-slate-800 border-b border-slate-700'>
+					<Button
+						variant="ghost"
 						className={`flex-1 py-3 px-4 font-medium transition-colors ${
 							activeScope === 'global' 
 								? 'bg-blue-600 text-white border-b-2 border-blue-400' 
@@ -78,10 +78,13 @@ export default function SettingsModal({
 							setActiveTab('appearance');
 						}}
 					>
-						🌐 Global Settings
-						<div className="text-xs opacity-75 mt-1">User-wide preferences</div>
-					</button>
-					<button
+						<div className="flex flex-col">
+							🌐 Global Settings
+							<div className="text-xs opacity-75 mt-1">User-wide preferences</div>
+						</div>
+					</Button>
+					<Button
+						variant="ghost"
 						className={`flex-1 py-3 px-4 font-medium transition-colors ${
 							activeScope === 'local' 
 								? 'bg-blue-600 text-white border-b-2 border-blue-400' 
@@ -92,86 +95,76 @@ export default function SettingsModal({
 							setActiveTab('editor');
 						}}
 					>
-						📁 Project Settings
-						<div className="text-xs opacity-75 mt-1">Project-specific overrides</div>
-					</button>
+						<div className="flex flex-col">
+							📁 Project Settings
+							<div className="text-xs opacity-75 mt-1">Project-specific overrides</div>
+						</div>
+					</Button>
 				</div>
 
 				{/* Category Tabs */}
-				<div className='flex border-b border-gray-700 text-sm bg-gray-850'>
-					{getSettingsCategories().map(([key, label]) => (
-						<button
-							key={key}
-							className={`flex-1 py-2 px-3 transition-colors ${
-								activeTab === key 
-									? "bg-gray-700 text-white border-b-2 border-blue-500" 
-									: "text-gray-400 hover:text-white hover:bg-gray-800"
-							}`}
-							onClick={() => setActiveTab(key)}
-						>
-							{label}
-						</button>
-					))}
-				</div>
+				<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+					<TabsList className="flex flex-row w-full bg-slate-850 border-b border-slate-700 p-1 rounded-none">
+						{getSettingsCategories().map(([key, label]) => (
+							<TabsTrigger
+								key={key}
+								value={key}
+								className="flex-1 py-2 px-4 text-sm whitespace-nowrap data-[state=active]:bg-slate-700 data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-indigo-500 text-slate-400 hover:text-white hover:bg-slate-800"
+							>
+								{label}
+							</TabsTrigger>
+						))}
+					</TabsList>
 
-				{/* Content */}
-				<div className='p-4 max-h-[70vh] overflow-y-auto'>
-
-					{/* Global Settings Content */}
-					{activeScope === 'global' && (
-						<>
-							{activeTab === "appearance" && (
-								<div className="space-y-4">
-									<div className="bg-gray-800 p-4 rounded-lg">
+					{/* Content */}
+					<div className='p-4 max-h-[70vh] overflow-y-auto'>
+						{/* Global Settings Content */}
+						{activeScope === 'global' && (
+							<>
+								<TabsContent value="appearance" className="space-y-4">
+									<Card className="bg-slate-800 p-4">
 										<h3 className="text-lg font-semibold mb-3 flex items-center">
 											🎨 Appearance Settings
-											<span className="ml-2 text-xs bg-blue-600 px-2 py-1 rounded">Global</span>
+											<Badge className="ml-2 bg-indigo-600">Global</Badge>
 										</h3>
 										<EditorThemeSettings themeSettings={themeSettings} setThemeSettings={setThemeSettings} />
-									</div>
-								</div>
-							)}
-							
-							{activeTab === "shortcuts" && (
-								<div className="space-y-4">
-									<div className="bg-gray-800 p-4 rounded-lg">
+									</Card>
+								</TabsContent>
+								
+								<TabsContent value="shortcuts" className="space-y-4">
+									<Card className="bg-slate-800 p-4">
 										<h3 className="text-lg font-semibold mb-3 flex items-center">
 											⌨️ Keyboard Shortcuts
-											<span className="ml-2 text-xs bg-blue-600 px-2 py-1 rounded">Global</span>
+											<Badge className="ml-2 bg-indigo-600">Global</Badge>
 										</h3>
 										<ShortcutSettingsModal shortcuts={shortcuts} setShortcuts={setShortcuts} onClose={() => {}} />
-									</div>
-								</div>
-							)}
-							
-							{activeTab === "terminal" && (
-								<div className="space-y-4">
-									<div className="bg-gray-800 p-4 rounded-lg">
+									</Card>
+								</TabsContent>
+								
+								<TabsContent value="terminal" className="space-y-4">
+									<Card className="bg-slate-800 p-4">
 										<h3 className="text-lg font-semibold mb-3 flex items-center">
 											🖥️ Terminal Settings
-											<span className="ml-2 text-xs bg-blue-600 px-2 py-1 rounded">Global</span>
+											<Badge className="ml-2 bg-indigo-600">Global</Badge>
 										</h3>
 										<TerminalSettings
 											terminalSettings={terminalSettings}
 											setTerminalSettings={setTerminalSettings}
 										/>
-									</div>
-								</div>
-							)}
-							
-						</>
-					)}
+									</Card>
+								</TabsContent>
+							</>
+						)}
 
-					{/* Local/Project Settings Content */}
-					{activeScope === 'local' && (
-						<>
-							{activeTab === "editor" && (
-								<div className="space-y-4">
+						{/* Local/Project Settings Content */}
+						{activeScope === 'local' && (
+							<>
+								<TabsContent value="editor" className="space-y-4">
 									{/* Theme Override Section */}
-									<div className="bg-gray-800 p-4 rounded-lg">
+									<Card className="bg-slate-800 p-4">
 										<h3 className="text-lg font-semibold mb-3 flex items-center">
 											🎨 Theme Override
-											<span className="ml-2 text-xs bg-green-600 px-2 py-1 rounded">Project</span>
+											<Badge className="ml-2 bg-emerald-600">Project</Badge>
 										</h3>
 										<EnhancedThemeSettings
 											themeSettings={themeSettings}
@@ -179,13 +172,13 @@ export default function SettingsModal({
 											scope="local"
 											globalThemeSettings={globalThemeSettings}
 										/>
-									</div>
+									</Card>
 
 									{/* Editor Behavior Section */}
-									<div className="bg-gray-800 p-4 rounded-lg">
+									<Card className="bg-slate-800 p-4">
 										<h3 className="text-lg font-semibold mb-3 flex items-center">
 											📝 Editor Behavior
-											<span className="ml-2 text-xs bg-green-600 px-2 py-1 rounded">Project</span>
+											<Badge className="ml-2 bg-emerald-600">Project</Badge>
 										</h3>
 										<div className="space-y-4">
 											<AutoSaveSettings
@@ -202,26 +195,23 @@ export default function SettingsModal({
 												onChange={setGlyphMarginSettings} 
 											/>
 										</div>
-									</div>
-								</div>
-							)}
-							
-							
-							{activeTab === "searchreplace" && (
-								<div className="space-y-4">
-									<div className="bg-gray-800 p-4 rounded-lg">
+									</Card>
+								</TabsContent>
+								
+								<TabsContent value="searchreplace" className="space-y-4">
+									<Card className="bg-slate-800 p-4">
 										<h3 className="text-lg font-semibold mb-3 flex items-center">
 											🔍 Search & Replace
-											<span className="ml-2 text-xs bg-green-600 px-2 py-1 rounded">Project</span>
+											<Badge className="ml-2 bg-emerald-600">Project</Badge>
 										</h3>
 										<GlobalSearchReplace onReplaceAll={onReplaceAll} />
-									</div>
-								</div>
-							)}
-						</>
-					)}
-				</div>
-			</div>
-		</div>
+									</Card>
+								</TabsContent>
+							</>
+						)}
+					</div>
+				</Tabs>
+			</DialogContent>
+		</Dialog>
 	);
 }

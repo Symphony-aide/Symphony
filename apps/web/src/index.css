@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,6 +8,7 @@
 
 @layer base {
   :root {
+    /* Symphony Light Theme */
     --background: 0 0% 100%;
     --foreground: 20 14.3% 4.1%;
 
@@ -22,47 +24,48 @@
     --border: 20 5.9% 90%;
     --input: 20 5.9% 90%;
 
-    --primary: 24 9.8% 10%;
-    --primary-foreground: 60 9.1% 97.8%;
+    --primary: 247 84% 67%; /* Symphony Primary #6366f1 */
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 60 4.8% 95.9%;
     --secondary-foreground: 24 9.8% 10%;
 
-    --accent: 60 4.8% 95.9%;
-    --accent-foreground: 24 9.8% 10%;
+    --accent: 262 83% 70%; /* Symphony Accent #8b5cf6 */
+    --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 60 9.1% 97.8%;
 
-    --ring: 24 5.4% 63.9%;
+    --ring: 247 84% 67%;
 
     --radius: 0.5rem;
 
-    --brand: 265 63% 38%;
-    --brand-50: 265 63% 95%;
-    --brand-100: 265 63% 88%;
-    --brand-200: 265 63% 78%;
-    --brand-300: 265 63% 68%;
-    --brand-400: 265 63% 60%;
-    --brand-500: 265 63% 38%;
-    --brand-600: 265 63% 31%;
-    --brand-700: 265 63% 25%;
-    --brand-800: 265 63% 19%;
-    --brand-900: 265 63% 12%;
-    --brand-950: 265 63% 8%;
+    /* Symphony Brand Colors */
+    --brand: 247 84% 67%; /* #6366f1 */
+    --brand-50: 247 84% 95%;
+    --brand-100: 247 84% 88%;
+    --brand-200: 247 84% 78%;
+    --brand-300: 247 84% 68%;
+    --brand-400: 247 84% 60%;
+    --brand-500: 247 84% 67%;
+    --brand-600: 247 84% 57%;
+    --brand-700: 247 84% 47%;
+    --brand-800: 247 84% 37%;
+    --brand-900: 247 84% 27%;
+    --brand-950: 247 84% 17%;
 
-    --secondary: 240 41% 10%;
-    --secondary-50: 240 10% 93%;
-    --secondary-100: 240 10% 85%;
-    --secondary-200: 240 10% 70%;
-    --secondary-300: 240 10% 55%;
-    --secondary-400: 240 20% 40%;
-    --secondary-500: 240 41% 10%;
-    --secondary-600: 240 41% 8%;
-    --secondary-700: 240 41% 6%;
-    --secondary-800: 240 41% 4%;
-    --secondary-900: 240 41% 3%;
-    --secondary-950: 240 41% 1%;
+    --secondary: 215 28% 17%; /* #1e293b */
+    --secondary-50: 215 28% 93%;
+    --secondary-100: 215 28% 85%;
+    --secondary-200: 215 28% 70%;
+    --secondary-300: 215 28% 55%;
+    --secondary-400: 215 28% 40%;
+    --secondary-500: 215 28% 17%;
+    --secondary-600: 215 28% 14%;
+    --secondary-700: 215 28% 11%;
+    --secondary-800: 215 28% 8%;
+    --secondary-900: 215 28% 5%;
+    --secondary-950: 215 28% 2%;
   }
 
   html {
@@ -73,35 +76,40 @@
     font-family: 'Fira Code', monospace;
   }
 
+  .font-jetbrains {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
   .dark {
-    --background: 20 14.3% 4.1%;
-    --foreground: 60 9.1% 97.8%;
+    /* Symphony Dark Theme */
+    --background: 222 84% 5%; /* #0f172a */
+    --foreground: 210 40% 98%; /* #f8fafc */
 
-    --muted: 12 6.5% 15.1%;
-    --muted-foreground: 24 5.4% 63.9%;
+    --muted: 215 28% 17%; /* #1e293b */
+    --muted-foreground: 215 16% 47%; /* #64748b */
 
-    --popover: 20 14.3% 4.1%;
-    --popover-foreground: 60 9.1% 97.8%;
+    --popover: 222 84% 5%;
+    --popover-foreground: 210 40% 98%;
 
-    --card: 20 14.3% 4.1%;
-    --card-foreground: 60 9.1% 97.8%;
+    --card: 215 28% 17%;
+    --card-foreground: 210 40% 98%;
 
-    --border: 12 6.5% 15.1%;
-    --input: 12 6.5% 15.1%;
+    --border: 215 14% 34%; /* #475569 with opacity */
+    --input: 215 28% 17%;
 
-    --primary: 60 9.1% 97.8%;
-    --primary-foreground: 24 9.8% 10%;
+    --primary: 247 84% 67%; /* Symphony Primary #6366f1 */
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 12 6.5% 15.1%;
-    --secondary-foreground: 60 9.1% 97.8%;
+    --secondary: 215 28% 17%;
+    --secondary-foreground: 210 40% 98%;
 
-    --accent: 12 6.5% 15.1%;
-    --accent-foreground: 60 9.1% 97.8%;
+    --accent: 262 83% 70%; /* Symphony Accent #8b5cf6 */
+    --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 85.7% 97.3%;
 
-    --ring: 12 6.5% 15.1%;
+    --ring: 247 84% 67%;
   }
 }
 
