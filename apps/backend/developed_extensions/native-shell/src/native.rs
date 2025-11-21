@@ -8,6 +8,7 @@ use sveditor_core_api::terminal_shells::{
 use sveditor_core_api::tokio;
 use std::sync::Arc;
 use tokio::sync::Mutex;
+use tokio::time::{sleep, Duration, Instant};
 
 #[allow(dead_code)]
 pub struct NativeShellBuilder {
@@ -45,33 +46,97 @@ impl TerminalShellBuilder for NativeShellBuilder {
 					let pty_reader = pty_clone.clone();
 
 					// Spawn a task to continuously read from PTY and send data to client
+					// with buffering for better performance
 					tokio::spawn(async move {
+						// Performance optimizations:
+						// - Buffer output to reduce IPC overhead
+						// - Batch sends at ~60fps for smooth rendering
+						// - Avoid busy loops with proper async waiting
+						let mut output_buffer = Vec::with_capacity(4096);
+						let mut last_send = Instant::now();
+						const BUFFER_TIMEOUT: Duration = Duration::from_millis(16); // ~60fps
+						const MAX_BUFFER_SIZE: usize = 4096; // 4KB buffer
+						const READ_TIMEOUT: Duration = Duration::from_millis(10);
+
 						loop {
 							let mut guard = pty_reader.lock().await;
 							if let Some(ref mut pty) = *guard {
 								match pty.read().await {
 									Ok(bytes) if !bytes.is_empty() => {
-										let data = bytes.to_vec();
-										if let Err(e) = client
-											.send(ClientMessages::ServerMessage(
-												ServerMessages::TerminalShellUpdated {
-													data,
-													state_id,
-													terminal_shell_id: terminal_shell_id.clone(),
-												},
-											))
-											.await
-										{
-											eprintln!("Failed to send PTY output: {:?}", e);
-											break;
+										// Append to buffer
+										output_buffer.extend_from_slice(&bytes);
+										
+										// Send if buffer is full or timeout elapsed
+										let should_send = output_buffer.len() >= MAX_BUFFER_SIZE
+											|| last_send.elapsed() >= BUFFER_TIMEOUT;
+										
+										if should_send && !output_buffer.is_empty() {
+											let data = output_buffer.clone();
+											output_buffer.clear();
+											last_send = Instant::now();
+											
+											// Release lock before sending to avoid blocking PTY operations
+											drop(guard);
+											
+											if let Err(e) = client
+												.send(ClientMessages::ServerMessage(
+													ServerMessages::TerminalShellUpdated {
+														data,
+														state_id,
+														terminal_shell_id: terminal_shell_id.clone(),
+													},
+												))
+												.await
+											{
+												eprintln!("Failed to send PTY output: {:?}", e);
+												break;
+											}
 										}
 									}
 									Ok(_) => {
-										// No data read, yield to avoid busy loop
-										tokio::task::yield_now().await;
+										// No data available, flush any pending buffer
+										if !output_buffer.is_empty() && last_send.elapsed() >= BUFFER_TIMEOUT {
+											let data = output_buffer.clone();
+											output_buffer.clear();
+											last_send = Instant::now();
+											
+											drop(guard);
+											
+											if let Err(e) = client
+												.send(ClientMessages::ServerMessage(
+													ServerMessages::TerminalShellUpdated {
+														data,
+														state_id,
+														terminal_shell_id: terminal_shell_id.clone(),
+													},
+												))
+												.await
+											{
+												eprintln!("Failed to send PTY output: {:?}", e);
+												break;
+											}
+										} else {
+											// No data and no pending buffer, wait before next read
+											drop(guard);
+											sleep(READ_TIMEOUT).await;
+										}
 									}
 									Err(e) => {
 										eprintln!("PTY read error: {:?}", e);
+										// Flush any remaining data before exiting
+										if !output_buffer.is_empty() {
+											let data = output_buffer.clone();
+											drop(guard);
+											let _ = client
+												.send(ClientMessages::ServerMessage(
+													ServerMessages::TerminalShellUpdated {
+														data,
+														state_id,
+														terminal_shell_id: terminal_shell_id.clone(),
+													},
+												))
+												.await;
+										}
 										break;
 									}
 								}
