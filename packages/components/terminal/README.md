@@ -6,6 +6,8 @@ A terminal component built with xterm.js that provides a full-featured terminal 
 
 This package provides a terminal component for the Symphony application, featuring a complete terminal emulator with command execution, history management, and customizable settings.
 
+The terminal integrates with Symphony's native-shell backend extension, which provides optimized PTY output buffering for smooth rendering at ~60fps with minimal IPC overhead.
+
 ## Exported Components
 
 ### `Terminal`
