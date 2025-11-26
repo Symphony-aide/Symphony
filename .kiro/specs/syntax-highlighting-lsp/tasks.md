@@ -51,34 +51,42 @@ This is the simplest and fastest approach - extends what already works.
   - WorkspaceSymbolParams and DocumentSymbolParams
   - _Requirements: 6.1, 10.1_
 
-- [ ] 2.1 Add completion types
+- [x] 2.1 Add completion types
+
+
   - CompletionItem, CompletionList, CompletionParams
   - CompletionItemKind and CompletionTriggerKind enums
   - _Requirements: 2.1, 2.2_
 
-- [ ] 2.2 Add diagnostic types
+- [x] 2.2 Add diagnostic types
+
   - Diagnostic, DiagnosticSeverity, PublishDiagnosticsParams
   - _Requirements: 3.1, 3.2_
 
-- [ ] 2.3 Add navigation types
+- [x] 2.3 Add navigation types
+
   - DefinitionParams, ReferenceParams, LocationLink
   - _Requirements: 4.1, 4.5_
 
-- [ ] 2.4 Add hover types
+- [x] 2.4 Add hover types
+
   - HoverParams, Hover, MarkupContent
   - _Requirements: 5.1, 5.2_
 
-- [ ] 2.5 Add initialization types
+- [x] 2.5 Add initialization types
+
   - InitializeParams, ClientCapabilities, ServerCapabilities
   - TextDocumentSyncKind enum
   - _Requirements: 7.1_
 
-- [ ] 2.6 Add JSON-RPC types
+- [x] 2.6 Add JSON-RPC types
+
   - Message, Request, Response, Notification
   - RequestId, ResponseError, ErrorCodes
   - _Requirements: 7.1_
 
-- [ ] 2.7 Add document sync types
+- [x] 2.7 Add document sync types
+
   - DidOpenTextDocumentParams, DidChangeTextDocumentParams, DidCloseTextDocumentParams
   - TextDocumentItem, VersionedTextDocumentIdentifier
   - _Requirements: 7.1_
