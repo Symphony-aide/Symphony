@@ -1,0 +1,25 @@
+[package]
+name = "symphony-rope"
+version = "0.1.0"
+edition = "2021"
+authors = ["Symphony Team", "Raph Levien <raph@google.com>"]
+license = "Apache-2.0"
+description = "Rope data structure for Symphony IDE (adapted from xi-rope)"
+repository = "https://github.com/Symphony-aide/Symphony"
+keywords = ["rope", "text", "editor", "data-structure"]
+categories = ["data-structures", "text-editors"]
+
+[dependencies]
+bytecount = "0.6"
+memchr = "2.0"
+unicode-segmentation = "1.2.1"
+regex = "1.0"
+serde = { version = "1.0", optional = true, features = ["derive"] }
+
+[dev-dependencies]
+serde_test = "1.0"
+serde_json = "1.0"
+criterion = "0.5"
+
+[features]
+default = ["serde"]

@@ -76,7 +76,10 @@ members = [
     "developed_extensions/typescript-lsp",
     "developed_extensions/native-shell",
     "developed_extensions/lsp-manager",
-    "crosspty"
+    "crosspty",
+    
+    # Data Structures
+    "rope"
 ]
 
 [workspace.package]
