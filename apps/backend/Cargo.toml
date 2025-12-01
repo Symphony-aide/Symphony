@@ -75,6 +75,7 @@ members = [
     "developed_extensions/git",
     "developed_extensions/typescript-lsp",
     "developed_extensions/native-shell",
+    "developed_extensions/lsp-manager",
     "crosspty"
 ]
 

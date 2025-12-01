@@ -156,7 +156,6 @@ export const DEFAULT_EDITOR_OPTIONS: Monaco.editor.IStandaloneEditorConstruction
   // Rendering
   renderWhitespace: 'selection',
   renderControlCharacters: true,
-  renderIndentGuides: true,
   renderLineHighlight: 'all',
   renderValidationDecorations: 'on',
   
@@ -300,7 +299,6 @@ export const PERFORMANCE_CONFIG: PerformanceConfig = {
     },
     renderWhitespace: 'none',
     renderControlCharacters: false,
-    renderIndentGuides: false,
     occurrencesHighlight: 'off',
     selectionHighlight: false,
     

@@ -91,6 +91,25 @@ const customOptions = {
 };
 ```
 
+## LSP Integration
+
+The code-editor package includes comprehensive Language Server Protocol (LSP) type definitions for intelligent code features:
+
+### LSP Type Definitions (`src/lsp/types.ts`)
+
+Complete TypeScript type definitions for LSP protocol including:
+
+- **Core Types**: Position, Range, Location, SymbolKind, SymbolInformation
+- **Completion**: CompletionItem, CompletionList, CompletionParams, CompletionItemKind
+- **Diagnostics**: Diagnostic, DiagnosticSeverity, PublishDiagnosticsParams
+- **Navigation**: DefinitionParams, ReferenceParams, LocationLink
+- **Hover**: Hover, HoverParams, MarkupContent
+- **Initialization**: InitializeParams, ClientCapabilities, ServerCapabilities
+- **JSON-RPC**: RequestMessage, ResponseMessage, NotificationMessage, ErrorCodes
+- **Document Sync**: DidOpenTextDocumentParams, DidChangeTextDocumentParams, TextDocumentItem
+
+These types provide the foundation for implementing LSP client functionality in Symphony IDE.
+
 ## Dependencies
 
 - React

@@ -1,106 +1,85 @@
-# @symphony/outlineview
+# Outline View Component
 
-A code outline view component that displays symbols, functions, and variables from the active file for easy navigation.
+Hierarchical document outline component for Symphony IDE with LSP document symbol support.
 
-## Overview
+## Features
 
-This package provides an outline view component for the Symphony application that shows a hierarchical view of code symbols, making it easy to navigate through large files.
-
-## Exported Components
-
-### `OutlineView`
-The main outline view component that displays code symbols in a navigable tree structure.
-
-**Features:**
-- Displays functions, variables, classes, and other code symbols
-- Click-to-navigate functionality
-- Symbol type indicators with color coding
-- Line number references
-- Responsive design with dark theme
-
-**Usage:**
-```tsx
-import { OutlineView } from "@symphony/outlineview";
-
-<OutlineView
-  onSelectItem={handleSymbolSelect}
-/>
-```
-
-**Props:**
-- `onSelectItem`: Callback function called when a symbol is clicked, receives the symbol object with `type`, `name`, and `line` properties
-
-## Exported Atoms
-
-### `outlineAtom`
-Jotai atom for managing the outline data state across the application.
-
-**Features:**
-- Global state management for outline data
-- Reactive updates when file content changes
-- Integration with code analysis
-
-**Usage:**
-```tsx
-import { outlineAtom } from "@symphony/outlineview";
-import { useAtom } from "jotai";
-
-const [outline, setOutline] = useAtom(outlineAtom);
-
-// Update outline data
-setOutline([
-  { type: 'function', name: 'myFunction', line: 10 },
-  { type: 'variable', name: 'myVar', line: 5 }
-]);
-```
-
-## Data Structure
-
-The outline data follows this structure:
-
-```typescript
-interface OutlineItem {
-  type: string;    // Symbol type (function, variable, class, etc.)
-  name: string;    // Symbol name
-  line: number;    // Line number in the file
-}
-```
-
-## Installation
-
-```bash
-# Using pnpm
-pnpm install @symphony/outlineview
-```
+- **Hierarchical Display**: Shows document structure with nested symbols
+- **Symbol Type Icons**: Visual icons for different symbol types (classes, functions, methods, etc.)
+- **Color Coding**: Consistent color coding by symbol type
+- **Expand/Collapse**: Interactive tree navigation for nested symbols
+- **Click to Navigate**: Click any symbol to navigate to its location
+- **Automatic Updates**: Updates when document content changes
+- **Symbol Details**: Shows additional details like function signatures
 
 ## Usage
 
 ```tsx
-import { OutlineView, outlineAtom } from "@symphony/outlineview";
-import { useSetAtom } from "jotai";
+import { OutlineView, outlineAtom } from '@symphony/outlineview';
+import { useSetAtom } from 'jotai';
 
-const App = () => {
+function MyComponent() {
   const setOutline = useSetAtom(outlineAtom);
+  const editor = useMonacoEditor();
 
-  const handleSymbolSelect = (item) => {
-    // Navigate to the selected symbol's line
-    console.log(`Navigating to ${item.name} at line ${item.line}`);
-  };
-
-  // Update outline when file changes
-  const updateOutline = (fileContent) => {
-    const symbols = parseFileSymbols(fileContent);
-    setOutline(symbols);
-  };
+  // Update outline when document symbols are received
+  useEffect(() => {
+    const updateOutline = async () => {
+      const symbols = await lspClient.documentSymbol({
+        textDocument: { uri: currentFileUri }
+      });
+      setOutline(symbols);
+    };
+    
+    updateOutline();
+  }, [currentFileUri]);
 
   return (
-    <OutlineView onSelectItem={handleSymbolSelect} />
+    <OutlineView
+      onSelectItem={(symbol) => {
+        // Navigate to symbol location
+        editor.setPosition(symbol.selectionRange.start);
+        editor.revealPosition(symbol.selectionRange.start);
+      }}
+    />
   );
-};
+}
 ```
 
-## Dependencies
+## Props
 
-- React
-- Jotai (state management)
-- Tailwind CSS (styling)
+- `onSelectItem`: (symbol: DocumentSymbol) => void (optional) - Callback when a symbol is selected
+- `className`: string (optional) - Additional CSS classes
+
+## State Management
+
+The component uses Jotai for state management:
+
+```tsx
+import { outlineAtom } from '@symphony/outlineview';
+import { useSetAtom } from 'jotai';
+
+// Update the outline
+const setOutline = useSetAtom(outlineAtom);
+setOutline(documentSymbols);
+```
+
+## Symbol Types
+
+Supports all LSP symbol kinds with appropriate icons:
+
+- **Classes/Interfaces/Structs**: Blue icons
+- **Methods/Functions/Constructors**: Purple icons
+- **Properties/Fields/Variables**: Cyan icons
+- **Constants**: Orange icons
+- **Enums**: Yellow icons
+- **Modules/Namespaces**: Green icons
+
+## Requirements
+
+Validates requirements:
+- 10.1: Request document symbols on file open
+- 10.2: Display symbols hierarchically
+- 10.3: Navigate to symbol on click
+- 10.4: Update outline on content changes
+- 10.5: Show symbol type icons

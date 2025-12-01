@@ -1,9 +1,9 @@
 {
-	"extends": "tsconfig/react-library.json",
-	"include": ["."],
-	"exclude": ["dist", "build", "node_modules"],
+	"extends": "@symphony/tsconfig/react-library.json",
 	"compilerOptions": {
-		"moduleResolution": "nodenext",
-		"module": "nodenext"
-	}
+		"outDir": "./dist",
+		"rootDir": "./src"
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
 }
