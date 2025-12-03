@@ -52,6 +52,8 @@ pub use xi_trace;
 // Module declarations
 pub mod error;
 pub mod types;
+pub mod ipc_bridge;
+pub mod buffer_manager;
 
 // Re-export commonly used types
 pub use error::{XiError, XiResult};
@@ -59,6 +61,8 @@ pub use types::{
     ViewId, EditOperation, BufferMetadata, XiConfig, LineEnding,
     SymphonyIpcRequest, SymphonyIpcResponse, SymphonyIpcMessage, SymphonyUpdateOp,
 };
+pub use ipc_bridge::IpcBridge;
+pub use buffer_manager::BufferManager;
 
 use std::collections::HashMap;
 use std::path::Path;
