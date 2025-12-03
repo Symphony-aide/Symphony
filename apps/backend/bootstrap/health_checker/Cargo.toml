@@ -1,9 +1,0 @@
-[package]
-name = "syboothealth"
-version = "0.1.0"
-edition = "2021"
-authors = ["Symphony Team"]
-description = "Component health verification for Symphony"
-license = "MIT"
-
-[dependencies]

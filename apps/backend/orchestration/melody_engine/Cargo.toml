@@ -1,9 +1,0 @@
-[package]
-name = "syorchmelody"
-version = "0.1.0"
-edition = "2021"
-authors = ["Symphony Team"]
-description = "Melody composition and execution for Symphony"
-license = "MIT"
-
-[dependencies]

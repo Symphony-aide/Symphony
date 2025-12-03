@@ -1,9 +1,0 @@
-[package]
-name = "syexlyaias"
-version = "0.1.0"
-edition = "2021"
-authors = ["Symphony Team"]
-description = "Artifact Store for AIDE Pit layer in Symphony"
-license = "MIT"
-
-[dependencies]

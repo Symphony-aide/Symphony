@@ -1,9 +1,0 @@
-[package]
-name = "syconorbridge"
-version = "0.1.0"
-edition = "2021"
-authors = ["Symphony Team"]
-description = "RL model bridge for Symphony Conductor"
-license = "MIT"
-
-[dependencies]
