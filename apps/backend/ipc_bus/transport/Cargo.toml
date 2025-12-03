@@ -1,9 +1,0 @@
-[package]
-name = "syipctransport"
-version = "0.1.0"
-edition = "2021"
-authors = ["Symphony Team"]
-description = "Unix sockets and named pipes for Symphony IPC"
-license = "MIT"
-
-[dependencies]

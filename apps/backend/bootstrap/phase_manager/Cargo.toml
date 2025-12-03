@@ -1,9 +1,0 @@
-[package]
-name = "sybootphase"
-version = "0.1.0"
-edition = "2021"
-authors = ["Symphony Team"]
-description = "Staged initialization for Symphony"
-license = "MIT"
-
-[dependencies]

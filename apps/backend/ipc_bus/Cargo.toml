@@ -1,9 +1,0 @@
-[package]
-name = "syipcbus"
-version = "0.1.0"
-edition = "2021"
-authors = ["Symphony Team"]
-description = "Hardcoded Rust IPC layer for Symphony"
-license = "MIT"
-
-[dependencies]

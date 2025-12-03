@@ -1,9 +1,0 @@
-[package]
-name = "syexlyaiae"
-version = "0.1.0"
-edition = "2021"
-authors = ["Symphony Team"]
-description = "Arbitration Engine for AIDE Pit layer in Symphony"
-license = "MIT"
-
-[dependencies]
