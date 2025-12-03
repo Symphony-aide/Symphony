@@ -22,8 +22,35 @@ Symphony uses a **pnpm workspace** monorepo structure with **Turbo** for build o
 - Uses shared packages from `packages/`
 
 ### `apps/backend/`
-- Server-side application
-- API and business logic
+- Rust backend built on XI-editor foundation
+- Cargo workspace with multiple crates
+- Two-layer architecture:
+  - **XI-editor layer**: Text editing, RPC, LSP, plugins
+  - **Symphony AIDE layer**: AI orchestration (to be built)
+
+#### Backend Structure
+```
+apps/backend/
+├── crates/                    # XI-editor packages (migrated)
+│   ├── core/                  # Core editing and RPC
+│   │   ├── xi-core-lib/      # Text editing engine with rope
+│   │   ├── xi-rpc/           # JSON-RPC communication
+│   │   └── xi-lsp-lib/       # Language Server Protocol
+│   ├── plugins/               # Plugin infrastructure
+│   │   ├── xi-plugin-lib/    # Plugin system
+│   │   └── xi-syntect-plugin/ # Syntax highlighting
+│   └── utils/                 # Utilities
+│       ├── xi-rope/          # Rope data structure
+│       ├── xi-unicode/       # Unicode handling
+│       └── xi-trace/         # Logging/tracing
+├── xi-core/                   # Preserved XI-editor code
+│   ├── python/               # Python bindings (reference)
+│   └── rust/experimental/    # Experimental features
+├── src/
+│   └── main.rs               # Symphony entry point
+├── Cargo.toml                # Workspace configuration
+└── README.md                 # Backend documentation
+```
 
 ### `apps/docs/`
 - Documentation site

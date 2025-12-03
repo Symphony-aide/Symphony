@@ -7,20 +7,39 @@ Symphony is an AI-First Development Environment (AIDE) that places intelligent o
 ### Core Philosophy
 
 **Minimal Core, Maximum Potential** - Symphony ships with only essential components:
-- Text Editor
+- **Text Editor** (built on XI-editor foundation)
 - File Explorer  
-- Syntax Highlighting
+- Syntax Highlighting (via XI-editor's Syntect)
 - Terminal Integration
 - Extension System
 
 Everything else comes from the community through extensions.
 
+### Architecture Foundation
+
+Symphony is built on a **two-layer architecture**:
+
+1. **XI-editor Foundation** - Battle-tested text editing core
+   - Rope data structure for efficient text manipulation
+   - JSON-RPC communication protocol
+   - LSP (Language Server Protocol) support
+   - Plugin infrastructure
+   - Syntax highlighting via TextMate grammars
+   
+2. **Symphony AIDE Layer** - Built from scratch
+   - AI orchestration and intelligent workflows
+   - The Conductor (microkernel orchestrator)
+   - Agent coordination and management
+   - Artifact-based communication
+   - Extension ecosystem (Instruments, Operators, Motifs)
+
 ### Key Innovations
 
 - **The Conductor**: Microkernel orchestrator that manages AI agents and workflows
 - **Agent-Driven Development (ADD)**: Specialized AI agents coordinate like a team to build software
-- **Three-Layer Extension System**: Instruments (AI models), Operators (utilities), Addons (UI enhancements)
+- **Three-Layer Extension System**: Instruments (AI models), Operators (utilities), Motifs (UI enhancements)
 - **Artifact-Based Communication**: Models exchange structured outputs for transparency
+- **XI-editor Foundation**: Proven, high-performance text editing instead of building from scratch
 
 ### Target Users
 
@@ -30,4 +49,4 @@ Everything else comes from the community through extensions.
 
 ### Vision
 
-Transform software creation from linear coding to intelligent orchestration, where humans compose systems and AI handles implementation complexity.
+Transform software creation from linear coding to intelligent orchestration, where humans compose systems and AI handles implementation complexity - all built on a solid, proven text editing foundation.
