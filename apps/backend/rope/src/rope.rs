@@ -57,7 +57,7 @@ const MAX_LEAF: usize = 1024;
 /// Create a `Rope` from a `String`:
 ///
 /// ```rust
-/// # use xi_rope::Rope;
+/// # use symphony_rope::Rope;
 /// let a = Rope::from("hello ");
 /// let b = Rope::from("world");
 /// assert_eq!("hello world", String::from(a.clone() + b.clone()));
@@ -67,7 +67,7 @@ const MAX_LEAF: usize = 1024;
 /// Get a slice of a `Rope`:
 ///
 /// ```rust
-/// # use xi_rope::Rope;
+/// # use symphony_rope::Rope;
 /// let a = Rope::from("hello world");
 /// let b = a.slice(1..9);
 /// assert_eq!("ello wor", String::from(&b));
@@ -78,7 +78,7 @@ const MAX_LEAF: usize = 1024;
 /// Replace part of a `Rope`:
 ///
 /// ```rust
-/// # use xi_rope::Rope;
+/// # use symphony_rope::Rope;
 /// let mut a = Rope::from("hello world");
 /// a.edit(1..9, "era");
 /// assert_eq!("herald", String::from(a));
@@ -223,6 +223,7 @@ pub fn len_utf8_from_first_byte(b: u8) -> usize {
 }
 
 #[derive(Clone, Copy)]
+#[allow(dead_code)] // Field may be used for future optimizations
 pub struct LinesMetric(usize); // number of lines
 
 /// Measured unit is newline amount.
@@ -272,6 +273,7 @@ impl Metric<RopeInfo> for LinesMetric {
 }
 
 #[derive(Clone, Copy)]
+#[allow(dead_code)] // Field may be used for future optimizations
 pub struct Utf16CodeUnitsMetric(usize);
 
 impl Metric<RopeInfo> for Utf16CodeUnitsMetric {
@@ -498,7 +500,7 @@ impl Rope {
     ///
     /// Time complexity: technically O(n log n), but the constant factor is so
     /// tiny it is effectively O(n). This iterator does not allocate.
-    pub fn iter_chunks<T: IntervalBounds>(&self, range: T) -> ChunkIter {
+    pub fn iter_chunks<T: IntervalBounds>(&self, range: T) -> ChunkIter<'_> {
         let Interval { start, end } = range.into_interval(self.len());
 
         ChunkIter { cursor: Cursor::new(self, start), end }
@@ -509,7 +511,7 @@ impl Rope {
     ///
     /// The return type is a `Cow<str>`, and in most cases the lines are slices
     /// borrowed from the rope.
-    pub fn lines_raw<T: IntervalBounds>(&self, range: T) -> LinesRaw {
+    pub fn lines_raw<T: IntervalBounds>(&self, range: T) -> LinesRaw<'_> {
         LinesRaw { inner: self.iter_chunks(range), fragment: "" }
     }
 
@@ -523,7 +525,7 @@ impl Rope {
     /// from the rope.
     ///
     /// The semantics are intended to match `str::lines()`.
-    pub fn lines<T: IntervalBounds>(&self, range: T) -> Lines {
+    pub fn lines<T: IntervalBounds>(&self, range: T) -> Lines<'_> {
         Lines { inner: self.lines_raw(range) }
     }
 
@@ -534,7 +536,7 @@ impl Rope {
         leaf.as_bytes()[pos]
     }
 
-    pub fn slice_to_cow<T: IntervalBounds>(&self, range: T) -> Cow<str> {
+    pub fn slice_to_cow<T: IntervalBounds>(&self, range: T) -> Cow<'_, str> {
         let mut iter = self.iter_chunks(range);
         let first = iter.next();
         let second = iter.next();

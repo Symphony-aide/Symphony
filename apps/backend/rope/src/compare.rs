@@ -28,7 +28,7 @@ const SSE_STRIDE: usize = 16;
 /// # Examples
 ///
 /// ```
-/// # use xi_rope::compare::sse_compare_mask;
+/// # use symphony_rope::compare::sse_compare_mask;
 /// # if is_x86_feature_detected!("sse4.2") {
 /// let one = "aaaaaaaaaaaaaaaa";
 /// let two = "aa3aaaaa9aaaEaaa";
@@ -214,8 +214,8 @@ impl<'a> RopeScanner<'a> {
     /// # Examples
     ///
     /// ```
-    /// # use xi_rope::compare::RopeScanner;
-    /// # use xi_rope::Rope;
+    /// # use symphony_rope::compare::RopeScanner;
+    /// # use symphony_rope::Rope;
     ///
     /// let one = Rope::from("hiii");
     /// let two = Rope::from("siii");
@@ -281,8 +281,8 @@ impl<'a> RopeScanner<'a> {
     /// # Examples
     ///
     /// ```
-    /// # use xi_rope::compare::RopeScanner;
-    /// # use xi_rope::Rope;
+    /// # use symphony_rope::compare::RopeScanner;
+    /// # use symphony_rope::Rope;
     ///
     /// let one = Rope::from("uh-oh🙈");
     /// let two = Rope::from("uh-oh🙉");
@@ -342,8 +342,8 @@ impl<'a> RopeScanner<'a> {
     /// # Examples
     ///
     /// ```
-    /// # use xi_rope::compare::RopeScanner;
-    /// # use xi_rope::Rope;
+    /// # use symphony_rope::compare::RopeScanner;
+    /// # use symphony_rope::Rope;
     ///
     /// let one = Rope::from("123xxx12345");
     /// let two = Rope::from("123ZZZ12345");
@@ -728,3 +728,4 @@ mod tests {
         }
     }
 }
+

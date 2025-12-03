@@ -79,7 +79,10 @@ members = [
     "crosspty",
     
     # Data Structures
-    "rope"
+    "rope",
+    
+    # Xi-Editor Integration
+    "xi_integration"
 ]
 
 [workspace.package]

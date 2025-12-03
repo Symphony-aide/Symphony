@@ -149,8 +149,8 @@ impl<N: NodeInfo> Delta<N> {
     /// Applying the insert then the delete yields the same result as the original delta:
     ///
     /// ```no_run
-    /// # use xi_rope::rope::{Rope, RopeInfo};
-    /// # use xi_rope::delta::Delta;
+    /// # use symphony_rope::rope::{Rope, RopeInfo};
+    /// # use symphony_rope::delta::Delta;
     /// # use std::str::FromStr;
     /// fn test_factor(d : &Delta<RopeInfo>, r : &Rope) {
     ///     let (ins, del) = d.clone().factor();
@@ -200,8 +200,8 @@ impl<N: NodeInfo> Delta<N> {
     /// union string.
     ///
     /// ```no_run
-    /// # use xi_rope::rope::{Rope, RopeInfo};
-    /// # use xi_rope::delta::Delta;
+    /// # use symphony_rope::rope::{Rope, RopeInfo};
+    /// # use symphony_rope::delta::Delta;
     /// # use std::str::FromStr;
     /// fn test_synthesize(d : &Delta<RopeInfo>, r : &Rope) {
     ///     let (ins_d, del) = d.clone().factor();
@@ -331,12 +331,12 @@ impl<N: NodeInfo> Delta<N> {
     }
 
     /// Iterates over all the inserts of the delta.
-    pub fn iter_inserts(&self) -> InsertsIter<N> {
+    pub fn iter_inserts(&self) -> InsertsIter<'_, N> {
         InsertsIter { pos: 0, last_end: 0, els_iter: self.els.iter() }
     }
 
     /// Iterates over all the deletions of the delta.
-    pub fn iter_deletions(&self) -> DeletionsIter<N> {
+    pub fn iter_deletions(&self) -> DeletionsIter<'_, N> {
         DeletionsIter { pos: 0, last_end: 0, base_len: self.base_len, els_iter: self.els.iter() }
     }
 }
@@ -900,3 +900,4 @@ mod serde_tests {
         assert_eq!(d.apply_to_string(TEST_STR), de.apply_to_string(TEST_STR));
     }
 }
+

@@ -288,7 +288,7 @@ impl<T: Clone> Spans<T> {
 
     // possible future: an iterator that takes an interval, so results are the same as
     // taking a subseq on the spans object. Would require specialized Cursor.
-    pub fn iter(&self) -> SpanIter<T> {
+    pub fn iter(&self) -> SpanIter<'_, T> {
         SpanIter { cursor: Cursor::new(self, 0), ix: 0 }
     }
 

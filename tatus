@@ -1,0 +1,7 @@
+warning: in the working copy of 'apps/backend/rope/README.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'apps/backend/rope/src/compare.rs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'apps/backend/rope/src/delta.rs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'apps/backend/rope/src/diff.rs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'apps/backend/rope/src/engine.rs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'apps/backend/rope/src/multiset.rs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'apps/backend/rope/src/rope.rs', CRLF will be replaced by LF the next time Git touches it

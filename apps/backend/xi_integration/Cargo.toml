@@ -1,0 +1,39 @@
+[package]
+name = "xi-integration"
+version = "0.1.0"
+edition = "2021"
+authors = ["Symphony Team"]
+license = "MIT"
+description = "Xi-editor integration layer for Symphony IDE"
+repository = "https://github.com/Symphony-Code-Editor/Symphony-App/tree/main"
+
+[dependencies]
+# Xi-editor core dependencies - using path dependencies to xi-editor submodule
+xi-rope = { path = "../../xi-editor/rust/rope", features = ["serde"] }
+xi-core-lib = { path = "../../xi-editor/rust/core-lib", default-features = false }
+xi-rpc = { path = "../../xi-editor/rust/rpc" }
+xi-trace = { path = "../../xi-editor/rust/trace" }
+
+# Workspace shared dependencies
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+async-trait = { workspace = true }
+futures = { workspace = true }
+
+# Additional dependencies for integration
+thiserror = "1.0"
+crossbeam-channel = "0.5"
+
+[dev-dependencies]
+tokio-test = "0.4"
+tempfile = "3.8"
+
+[features]
+default = []
+
+[lib]
+name = "xi_integration"
+path = "src/lib.rs"

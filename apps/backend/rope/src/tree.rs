@@ -287,7 +287,7 @@ impl<N: NodeInfo> Node<N> {
     fn is_ok_child(&self) -> bool {
         match self.0.val {
             NodeVal::Leaf(ref l) => l.is_ok_child(),
-            NodeVal::Internal(ref nodes) => (nodes.len() >= MIN_CHILDREN),
+            NodeVal::Internal(ref nodes) => nodes.len() >= MIN_CHILDREN,
         }
     }
 
@@ -836,7 +836,7 @@ impl<'a, N: NodeInfo> Cursor<'a, N> {
     /// # Examples:
     ///
     /// ```
-    /// # use xi_rope::{Cursor, LinesMetric, Rope};
+    /// # use symphony_rope::{Cursor, LinesMetric, Rope};
     /// #
     /// let text: Rope = "one line\ntwo line\nred line\nblue".into();
     /// let mut cursor = Cursor::new(&text, 0);
@@ -1282,3 +1282,4 @@ mod test {
         println!("height {}", tree.height());
     }
 }
+
