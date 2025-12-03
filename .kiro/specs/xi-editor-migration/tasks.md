@@ -217,57 +217,143 @@ test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 
 ## Phase 2: IPC Translation Layer
 
+**Phase Goal:** Create a "translator" between Symphony's IPC messages and Xi-Core operations.
+Think of it like a translator between two languages - Symphony speaks one language, Xi-Core speaks another.
+
+### Task 5: IPC Bridge (The Translator)
+
+**What we're building:** A simple struct that receives Symphony messages and calls the right Xi-Core functions.
+
 - [ ] 5. Implement IPC Bridge for message translation
-  - [ ] 5.1 Create IpcBridge struct and initialization
-    - Set up IpcBridge with reference to XiIntegration
-    - Initialize message routing infrastructure
-    - Configure bidirectional translation
+  - [ ] 5.1 Create IpcBridge struct (Simple wrapper)
+    - **What to do:** Create a new file `apps/backend/xi_integration/src/ipc_bridge.rs`
+    - **Code to write:**
+      ```rust
+      pub struct IpcBridge {
+          xi: Arc<Mutex<XiIntegration>>,
+      }
+      
+      impl IpcBridge {
+          pub fn new(xi: Arc<Mutex<XiIntegration>>) -> Self {
+              Self { xi }
+          }
+      }
+      ```
+    - **Why:** This struct will hold our XiIntegration and translate messages
     - _Requirements: 2.5, 3.1_
   
-  - [ ] 5.2 Implement Symphony → Xi-RPC translation
-    - Implement translate_edit() for edit operations
-    - Implement translate_search() for search queries
-    - Implement translate_save() for save operations
-    - Handle all SymphonyIpcRequest message types
+  - [ ] 5.2 Handle incoming Symphony messages (Symphony → Xi)
+    - **What to do:** Add a method that receives Symphony messages and calls Xi-Core
+    - **Example:**
+      ```rust
+      // When Symphony says "Edit this file"
+      SymphonyIpcRequest::Edit { view_id, operation } 
+      // We call:
+      xi.edit(view_id, operation).await
+      ```
+    - **Functions to implement:**
+      - `handle_request()` - Main entry point for all Symphony messages
+      - Handle `OpenFile` → call `xi.open_file()`
+      - Handle `Edit` → call `xi.edit()`
+      - Handle `GetContent` → call `xi.get_content()`
+      - Handle `CloseView` → call `xi.close_view()`
+    - **Why:** Symphony Frontend needs to talk to Xi-Core, this is the bridge
     - _Requirements: 3.1, 3.2, 3.3_
   
-  - [ ] 5.3 Implement Xi-RPC → Symphony translation
-    - Implement translate_update() for buffer updates
-    - Implement translate_style_update() for syntax highlighting
-    - Implement translate_search_results() for search responses
-    - Handle all xi-core notification types
+  - [ ] 5.3 Send responses back to Symphony (Xi → Symphony)
+    - **What to do:** Convert Xi-Core results to Symphony responses
+    - **Example:**
+      ```rust
+      // When Xi-Core opens a file successfully
+      let view_id = xi.open_file(path).await?;
+      // We send back:
+      SymphonyIpcResponse::ViewOpened { view_id }
+      ```
+    - **Functions to implement:**
+      - `create_response()` - Convert Xi results to Symphony responses
+      - Success responses (ViewOpened, EditApplied, Content, etc.)
+      - Error responses (wrap XiError in SymphonyIpcResponse::Error)
+    - **Why:** Symphony needs to know if operations succeeded or failed
     - _Requirements: 3.3, 5.2, 6.2_
   
-  - [ ]* 5.4 Write property test for IPC translation
+  - [ ]* 5.4 Write property test for IPC translation (Optional)
     - **Property 2: Edit operation round-trip consistency**
     - **Validates: Requirements 3.1, 3.2, 3.4**
-    - Generate random edit operations
-    - Translate Symphony → Xi-RPC → apply → query
-    - Verify buffer reflects exact change
+    - **What to test:** Send edit → apply → read back → verify it matches
+    - **Why:** Make sure nothing gets lost in translation
+
+### Task 6: Buffer Manager (Prevent duplicate file opens)
+
+**What we're building:** A manager that tracks which files are open and prevents opening the same file twice.
 
 - [ ] 6. Implement Buffer Manager
-  - [ ] 6.1 Create BufferManager struct
-    - Set up path-to-view and view-to-metadata mappings
-    - Initialize with reference to XiIntegration
-    - Add buffer lifecycle tracking
+  - [ ] 6.1 Create BufferManager struct (File tracker)
+    - **What to do:** Create a new file `apps/backend/xi_integration/src/buffer_manager.rs`
+    - **Code to write:**
+      ```rust
+      pub struct BufferManager {
+          // Map: file path → ViewId
+          path_to_view: HashMap<PathBuf, ViewId>,
+          // Map: ViewId → file info
+          view_metadata: HashMap<ViewId, BufferMetadata>,
+          // Reference to Xi
+          xi: Arc<Mutex<XiIntegration>>,
+      }
+      ```
+    - **Why:** We need to track which files are open and reuse existing views
     - _Requirements: 2.6_
   
-  - [ ] 6.2 Implement buffer lifecycle management
-    - Implement open_buffer() with deduplication
-    - Implement close_buffer() with cleanup
-    - Track buffer metadata (path, dirty state, timestamps)
-    - Handle buffer reuse for already-open files
+  - [ ] 6.2 Implement smart file opening (Reuse existing views)
+    - **What to do:** Add methods to open/close files intelligently
+    - **Key logic:**
+      ```rust
+      pub async fn open_buffer(&mut self, path: PathBuf) -> Result<ViewId> {
+          // Check if file is already open
+          if let Some(view_id) = self.path_to_view.get(&path) {
+              return Ok(*view_id); // Reuse existing view!
+          }
+          
+          // File not open, open it now
+          let view_id = self.xi.lock().await.open_file(&path).await?;
+          self.path_to_view.insert(path, view_id);
+          Ok(view_id)
+      }
+      ```
+    - **Functions to implement:**
+      - `open_buffer()` - Open file or return existing ViewId
+      - `close_buffer()` - Close file and remove from tracking
+      - `get_metadata()` - Get info about a buffer
+      - `is_open()` - Check if a file is already open
+    - **Why:** Prevents bugs from opening same file multiple times
     - _Requirements: 2.3, 2.6_
   
-  - [ ]* 6.3 Write unit tests for buffer management
-    - Test buffer open/close lifecycle
-    - Test multiple buffers simultaneously
-    - Test buffer reuse logic
-    - Test cleanup and memory management
+  - [ ]* 6.3 Write unit tests for buffer management (Optional)
+    - **What to test:**
+      - Open same file twice → should return same ViewId
+      - Open multiple different files → should work
+      - Close file → should remove from tracking
+    - **Why:** Make sure file tracking works correctly
     - _Requirements: 2.6_
 
+### Task 7: Checkpoint - Test everything
+
 - [ ] 7. Checkpoint - IPC translation tests
-  - Ensure all tests pass, ask the user if questions arise.
+  - **What to do:** Run `cargo test --package xi-integration`
+  - **Expected:** All tests pass (including new IpcBridge and BufferManager tests)
+  - **If tests fail:** Ask user for guidance before proceeding
+  - **Why:** Make sure Phase 2 is solid before moving to Phase 3
+
+---
+
+**Phase 2 Summary:**
+- ✅ **IpcBridge**: Translates between Symphony and Xi-Core (like a translator)
+- ✅ **BufferManager**: Tracks open files and prevents duplicates (like a file registry)
+- ✅ **Tests**: Make sure everything works correctly
+
+**After Phase 2, you'll have:**
+- A working bridge between Symphony IPC and Xi-Core
+- Smart file management that prevents duplicate opens
+- All the infrastructure needed for Phase 3 (Frontend Integration)
 
 ## Phase 3: Frontend Integration
 
