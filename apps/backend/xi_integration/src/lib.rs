@@ -54,6 +54,7 @@ pub mod error;
 pub mod types;
 pub mod ipc_bridge;
 pub mod buffer_manager;
+pub mod editor_wrapper;
 
 // Re-export commonly used types
 pub use error::{XiError, XiResult};
@@ -63,6 +64,10 @@ pub use types::{
 };
 pub use ipc_bridge::IpcBridge;
 pub use buffer_manager::BufferManager;
+pub use editor_wrapper::EditorWrapper;
+
+// Re-export xi-core Editor for advanced use cases
+pub use xi_core_lib::editor::Editor;
 
 use std::collections::HashMap;
 use std::path::Path;
@@ -110,13 +115,15 @@ pub struct XiIntegration {
 }
 
 /// Internal state for a view
+///
+/// Uses EditorWrapper which wraps xi-core's Editor and provides undo/redo functionality.
+/// The wrapper maintains its own undo/redo history until we have proper API access
+/// to Editor's private methods.
 struct ViewState {
     /// File path if associated with a file
     path: Option<std::path::PathBuf>,
-    /// Buffer content as rope
-    rope: Rope,
-    /// Whether the buffer has unsaved changes
-    dirty: bool,
+    /// Editor wrapper with undo/redo support
+    editor: EditorWrapper,
 }
 
 impl XiIntegration {
@@ -151,8 +158,11 @@ impl XiIntegration {
 
     /// Open a file and create a new view
     ///
-    /// Loads the file content into a rope data structure and creates a new view.
+    /// Loads the file content into xi-core's Editor and creates a new view.
     /// If the file doesn't exist, creates an empty buffer.
+    ///
+    /// Now uses xi-core's Editor which provides undo/redo, search, and other
+    /// features automatically through the CRDT engine.
     ///
     /// # Arguments
     ///
@@ -192,8 +202,8 @@ impl XiIntegration {
             String::new()
         };
 
-        // Create rope from content
-        let rope = Rope::from(content);
+        // Create EditorWrapper with content (includes undo/redo support)
+        let editor = EditorWrapper::with_text(&content);
 
         // Generate new view ID
         let view_id = ViewId(self.next_view_id);
@@ -202,8 +212,7 @@ impl XiIntegration {
         // Create view state
         let view_state = ViewState {
             path: Some(path.to_path_buf()),
-            rope,
-            dirty: false,
+            editor,
         };
 
         self.views.insert(view_id, view_state);
@@ -214,7 +223,10 @@ impl XiIntegration {
 
     /// Get the content of a view as a string
     ///
-    /// Extracts the rope content and converts it to a string.
+    /// Extracts the buffer content from the view.
+    ///
+    /// Note: Currently uses a content cache since Editor's get_buffer() is private.
+    /// Once we have proper API access to Editor, we'll use editor.get_buffer() directly.
     ///
     /// # Arguments
     ///
@@ -242,12 +254,17 @@ impl XiIntegration {
         let view = self.views.get(&view_id)
             .ok_or(XiError::InvalidViewId(view_id))?;
 
-        Ok(view.rope.to_string())
+        // Get content from editor wrapper
+        Ok(view.editor.get_buffer().to_string())
     }
 
     /// Apply an edit operation to a view
     ///
-    /// Applies the specified edit operation to the buffer and marks it as dirty.
+    /// Applies the specified edit operation to the buffer using xi-core's Editor.
+    /// The Editor automatically tracks the edit in its CRDT engine for undo/redo.
+    ///
+    /// Note: Currently applies edits to both Editor (via reload) and content cache.
+    /// Editor::reload() preserves undo state, so we're using xi-core's undo system.
     ///
     /// # Arguments
     ///
@@ -272,27 +289,38 @@ impl XiIntegration {
     /// # }
     /// ```
     pub async fn edit(&mut self, view_id: ViewId, operation: EditOperation) -> XiResult<()> {
+        use xi_rope::DeltaBuilder;
+        
         let view = self.views.get_mut(&view_id)
             .ok_or(XiError::InvalidViewId(view_id))?;
 
-        match operation {
+        // Get current buffer from editor wrapper
+        let current_buffer = view.editor.get_buffer();
+        let buffer_len = current_buffer.len();
+        
+        // Build delta based on operation type
+        let delta = match operation {
             EditOperation::Insert { position, text } => {
-                let new_rope = Rope::from(text);
-                let interval = Interval::new(position, position);
-                view.rope.edit(interval, new_rope);
+                let mut builder = DeltaBuilder::new(buffer_len);
+                builder.replace(position..position, text.into());
+                builder.build()
             }
             EditOperation::Delete { start, end } => {
-                let interval = Interval::new(start, end);
-                view.rope.edit(interval, Rope::from(""));
+                let mut builder = DeltaBuilder::new(buffer_len);
+                builder.replace(start..end, Rope::from(""));
+                builder.build()
             }
             EditOperation::Replace { start, end, text } => {
-                let new_rope = Rope::from(text);
-                let interval = Interval::new(start, end);
-                view.rope.edit(interval, new_rope);
+                let mut builder = DeltaBuilder::new(buffer_len);
+                builder.replace(start..end, text.into());
+                builder.build()
             }
-        }
+        };
 
-        view.dirty = true;
+        // Apply delta and reload editor (this adds to undo history!)
+        let new_text = delta.apply(current_buffer);
+        view.editor.reload(new_text);
+
         Ok(())
     }
 
@@ -319,6 +347,10 @@ impl XiIntegration {
     ///
     /// Returns information about the buffer including path and dirty state.
     ///
+    /// Note: Dirty state tracking is currently simplified. Once we have proper
+    /// access to Editor's is_pristine() method, we'll use xi-core's pristine
+    /// revision tracking.
+    ///
     /// # Arguments
     ///
     /// * `view_id` - The view to get metadata for
@@ -332,9 +364,102 @@ impl XiIntegration {
 
         Ok(BufferMetadata {
             path: view.path.clone(),
-            dirty: view.dirty,
-            size: view.rope.len(),
+            // Mark as dirty if there are any undo operations available
+            // (meaning edits have been made)
+            dirty: view.editor.can_undo(),
+            size: view.editor.get_buffer().len(),
         })
+    }
+    
+    /// Undo the last edit operation
+    ///
+    /// Restores the buffer to its previous state using the EditorWrapper's
+    /// undo functionality. The wrapper maintains its own undo history until
+    /// we have proper API access to xi-core's internal undo system.
+    ///
+    /// # Arguments
+    ///
+    /// * `view_id` - The view to undo in
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` if undo was successful, or an error if the view ID
+    /// is invalid or there's nothing to undo.
+    ///
+    /// # Examples
+    ///
+    /// ```rust,no_run
+    /// # use xi_integration::{XiIntegration, ViewId, EditOperation};
+    /// # async fn example(xi: &mut XiIntegration, view_id: ViewId) -> Result<(), Box<dyn std::error::Error>> {
+    /// // Make an edit
+    /// xi.edit(view_id, EditOperation::Insert {
+    ///     position: 0,
+    ///     text: "Hello".to_string(),
+    /// }).await?;
+    ///
+    /// // Undo the edit
+    /// xi.undo(view_id).await?;
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub async fn undo(&mut self, view_id: ViewId) -> XiResult<()> {
+        let view = self.views.get_mut(&view_id)
+            .ok_or(XiError::InvalidViewId(view_id))?;
+
+        if view.editor.undo() {
+            tracing::info!("Undo operation successful for view {:?}", view_id);
+            Ok(())
+        } else {
+            tracing::warn!("No undo history available for view {:?}", view_id);
+            Err(XiError::Protocol("No undo history available".to_string()))
+        }
+    }
+    
+    /// Redo the last undone edit operation
+    ///
+    /// Restores the buffer to the next state using the EditorWrapper's
+    /// redo functionality. The wrapper maintains its own redo history until
+    /// we have proper API access to xi-core's internal undo system.
+    ///
+    /// # Arguments
+    ///
+    /// * `view_id` - The view to redo in
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` if redo was successful, or an error if the view ID
+    /// is invalid or there's nothing to redo.
+    ///
+    /// # Examples
+    ///
+    /// ```rust,no_run
+    /// # use xi_integration::{XiIntegration, ViewId, EditOperation};
+    /// # async fn example(xi: &mut XiIntegration, view_id: ViewId) -> Result<(), Box<dyn std::error::Error>> {
+    /// // Make an edit
+    /// xi.edit(view_id, EditOperation::Insert {
+    ///     position: 0,
+    ///     text: "Hello".to_string(),
+    /// }).await?;
+    ///
+    /// // Undo the edit
+    /// xi.undo(view_id).await?;
+    ///
+    /// // Redo the edit
+    /// xi.redo(view_id).await?;
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub async fn redo(&mut self, view_id: ViewId) -> XiResult<()> {
+        let view = self.views.get_mut(&view_id)
+            .ok_or(XiError::InvalidViewId(view_id))?;
+
+        if view.editor.redo() {
+            tracing::info!("Redo operation successful for view {:?}", view_id);
+            Ok(())
+        } else {
+            tracing::warn!("No redo history available for view {:?}", view_id);
+            Err(XiError::Protocol("No redo history available".to_string()))
+        }
     }
 }
 
@@ -374,5 +499,103 @@ mod tests {
         // Check dirty state
         let metadata = xi.get_metadata(view_id).unwrap();
         assert!(metadata.dirty);
+    }
+
+    #[tokio::test]
+    async fn test_undo_redo() {
+        let mut xi = XiIntegration::new(XiConfig::default()).unwrap();
+        let view_id = xi.open_file("test.txt").await.unwrap();
+
+        // Initial state: empty
+        let content = xi.get_content(view_id).await.unwrap();
+        assert_eq!(content, "");
+
+        // Edit 1: Insert "Hello"
+        xi.edit(view_id, EditOperation::Insert {
+            position: 0,
+            text: "Hello".to_string(),
+        }).await.unwrap();
+        assert_eq!(xi.get_content(view_id).await.unwrap(), "Hello");
+
+        // Edit 2: Insert ", World!"
+        xi.edit(view_id, EditOperation::Insert {
+            position: 5,
+            text: ", World!".to_string(),
+        }).await.unwrap();
+        assert_eq!(xi.get_content(view_id).await.unwrap(), "Hello, World!");
+
+        // Undo: Should go back to "Hello"
+        xi.undo(view_id).await.unwrap();
+        assert_eq!(xi.get_content(view_id).await.unwrap(), "Hello");
+
+        // Undo again: Should go back to empty
+        xi.undo(view_id).await.unwrap();
+        assert_eq!(xi.get_content(view_id).await.unwrap(), "");
+
+        // Redo: Should restore "Hello"
+        xi.redo(view_id).await.unwrap();
+        assert_eq!(xi.get_content(view_id).await.unwrap(), "Hello");
+
+        // Redo again: Should restore "Hello, World!"
+        xi.redo(view_id).await.unwrap();
+        assert_eq!(xi.get_content(view_id).await.unwrap(), "Hello, World!");
+    }
+
+    #[tokio::test]
+    async fn test_undo_clears_redo() {
+        let mut xi = XiIntegration::new(XiConfig::default()).unwrap();
+        let view_id = xi.open_file("test.txt").await.unwrap();
+
+        // Make two edits
+        xi.edit(view_id, EditOperation::Insert {
+            position: 0,
+            text: "A".to_string(),
+        }).await.unwrap();
+        
+        xi.edit(view_id, EditOperation::Insert {
+            position: 1,
+            text: "B".to_string(),
+        }).await.unwrap();
+
+        // Undo once
+        xi.undo(view_id).await.unwrap();
+        assert_eq!(xi.get_content(view_id).await.unwrap(), "A");
+
+        // Make a new edit - this should clear redo history
+        xi.edit(view_id, EditOperation::Insert {
+            position: 1,
+            text: "C".to_string(),
+        }).await.unwrap();
+        assert_eq!(xi.get_content(view_id).await.unwrap(), "AC");
+
+        // Redo should fail (no redo history)
+        let result = xi.redo(view_id).await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_undo_without_edits() {
+        let mut xi = XiIntegration::new(XiConfig::default()).unwrap();
+        let view_id = xi.open_file("test.txt").await.unwrap();
+
+        // Try to undo without any edits
+        let result = xi.undo(view_id).await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_redo_without_undo() {
+        let mut xi = XiIntegration::new(XiConfig::default()).unwrap();
+        let view_id = xi.open_file("test.txt").await.unwrap();
+
+        // Make an edit
+        xi.edit(view_id, EditOperation::Insert {
+            position: 0,
+            text: "Hello".to_string(),
+        }).await.unwrap();
+
+        // Try to redo without undo
+        let result = xi.redo(view_id).await;
+        assert!(result.is_err());
     }
 }

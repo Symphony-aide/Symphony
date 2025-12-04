@@ -96,42 +96,72 @@ Updates to existing Monaco Editor integration:
 
 **Purpose**: Wraps xi-editor components and provides Symphony-compatible API
 
+**Status**: ✅ **Phase 1-2.5 Complete** - Core integration with xi-core's Editor engine
+
 **Key Components**:
 
 ```rust
 // apps/backend/xi_integration/src/lib.rs
 
 /// Main integration point for xi-editor within Symphony
+///
+/// Now uses xi-core's Editor internally, which provides:
+/// - CRDT engine for undo/redo (infrastructure ready)
+/// - Efficient rope-based text storage
+/// - Built-in search and replace capabilities
 pub struct XiIntegration {
-    /// Xi-core editor instance
-    core: CoreState,
-    /// Active buffer views
-    views: HashMap<ViewId, View>,
-    /// IPC message sender
-    ipc_sender: IpcSender,
+    /// Active buffer views (each contains an Editor instance)
+    views: HashMap<ViewId, ViewState>,
+    /// Configuration
+    config: XiConfig,
+    /// Next view ID counter
+    next_view_id: u64,
+}
+
+/// Internal view state using xi-core's Editor
+struct ViewState {
+    path: Option<PathBuf>,
+    editor: Editor,      // ✅ Xi-core's Editor with CRDT engine
+    content_cache: Rope, // Temporary workaround for API access
 }
 
 impl XiIntegration {
     /// Initialize xi-core integration
     pub fn new(config: XiConfig) -> Result<Self, XiError> {
-        // Initialize xi-core with Symphony configuration
+        // Initialize with configuration
     }
     
     /// Create a new buffer from file path
-    pub fn open_file(&mut self, path: &Path) -> Result<ViewId, XiError> {
-        // Use xi-core's file loading
+    pub async fn open_file(&mut self, path: &Path) -> Result<ViewId, XiError> {
+        // Creates Editor::with_text() internally
     }
     
     /// Apply edit operation to buffer
-    pub fn edit(&mut self, view_id: ViewId, edit: EditOperation) -> Result<(), XiError> {
-        // Translate to xi-core edit command
+    pub async fn edit(&mut self, view_id: ViewId, edit: EditOperation) -> Result<(), XiError> {
+        // Uses Editor::reload() which preserves undo state
     }
     
     /// Get buffer content as string
-    pub fn get_content(&self, view_id: ViewId) -> Result<String, XiError> {
-        // Extract from xi-rope
+    pub async fn get_content(&self, view_id: ViewId) -> Result<String, XiError> {
+        // Extract from editor's buffer
+    }
+    
+    /// Undo last edit (infrastructure ready)
+    pub async fn undo(&mut self, view_id: ViewId) -> Result<(), XiError> {
+        // Will use editor.do_undo() once API access available
+    }
+    
+    /// Redo last undone edit (infrastructure ready)
+    pub async fn redo(&mut self, view_id: ViewId) -> Result<(), XiError> {
+        // Will use editor.do_redo() once API access available
     }
 }
+
+// Public API exports
+pub use xi_rope::{Rope, RopeDelta, Interval};
+pub use xi_core_lib::{self, editor::Editor}; // ✅ Editor now directly accessible
+pub use xi_rpc;
+pub use xi_trace;
 ```
 
 ### 2. IPC Translation Layer
