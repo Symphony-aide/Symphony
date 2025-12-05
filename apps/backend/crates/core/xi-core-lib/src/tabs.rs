@@ -42,7 +42,6 @@ use crate::event_context::EventContext;
 use crate::file::FileManager;
 use crate::line_ending::LineEnding;
 use crate::plugin_rpc::{PluginNotification, PluginRequest};
-use crate::plugins::rpc::ClientPluginInfo;
 use crate::plugins::{start_plugin_process, Plugin, PluginCatalog, PluginPid};
 use crate::recorder::Recorder;
 use crate::rpc::{
