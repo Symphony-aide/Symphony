@@ -4,102 +4,191 @@ trigger: always_on
 
 ## Symphony Backend Architecture Overview
 
-**Total Packages**: 46 Rust packages organized in 11 categories
-**Architecture**: Dual Ensemble Architecture (DEA) with Python Conductor + Rust infrastructure
+**Architecture**: Two-Layer Architecture - XI-editor foundation + Symphony AIDE layer
+**Foundation**: Built on [XI-editor](https://github.com/xi-editor/xi-editor) for text editing capabilities
 **Location**: `apps/backend/`
+**Status**: ✅ Foundation complete (Dec 2025), AIDE layer in planning
 
-### Core Architecture Layers
+### Architecture Philosophy
 
-**1. Foundation Layer (4 packages)**
-- `core`: JSON-RPC server, orchestration host (Graviton fork → Symphony transformation)
-- `types`: Central type repository, zero-cost abstractions, shared across all 46 packages
-- `config`: Configuration management (TOML/JSON/YAML), hot-reload, hierarchical merging
-- `core_api`: Public API traits (Extension, Persistor, messaging protocols)
+Symphony's backend uses a **two-layer architecture**:
 
-**2. AIDE Layer - The Pit (6 packages)** - In-process Rust extensions (50-100ns latency)
-- `extension/layers/aide/pit/core`: Base infrastructure for all Pit extensions, PyO3 FFI helpers
-- `extension/layers/aide/pit/pool_manager`: AI model lifecycle (Unloaded→Loading→Warming→Ready→Active), predictive pre-warming
-- `extension/layers/aide/pit/dag_tracker`: Workflow DAG execution, topological sort, parallel execution, checkpointing
-- `extension/layers/aide/pit/artifact_store`: Content-addressable storage, versioning, quality scoring, Tantivy search
-- `extension/layers/aide/pit/arbitration_engine`: Resource conflict resolution, fairness policies
-- `extension/layers/aide/pit/stale_manager`: Lifecycle management (1-7 days SSD → 8-30 days HDD → 30+ days cloud)
+1. **XI-editor Foundation Layer** (✅ Implemented)
+   - Battle-tested text editing core
+   - Rope data structure, JSON-RPC, LSP, plugins
+   - Proven, stable, high-performance foundation
+   
+2. **Symphony AIDE Layer** (🚧 To be built from scratch)
+   - AI orchestration, workflow management, intelligent agents
+   - Extension system, conductor, artifact management
+   - All AI-first features are Symphony-native
 
-**3. IDE Layer (3 packages)**
-- `extension/layers/ide/core`: Traditional IDE features (file ops, LSP, syntax highlighting)
-- `extension/layers/ide/ui_bridge`: Backend-frontend communication bridge
-- `extension/layers/ide/virtual_dom`: Rust→React UI generation, VirtualNode trees, Shadcn mapping
+### Current Backend Structure
 
-**4. Extension SDK (4 packages)**
-- `extension/sdk/core`: Base Extension trait, manifest builder
-- `extension/sdk/testing`: Mocks, fixtures, integration testing
-- `extension/sdk/carets`: CLI tools (`carets new`, `carets publish`), templates, hot-reload
-- `extension/sdk/metrics`: Performance monitoring, Prometheus/Grafana export
+```
+apps/backend/
+├── crates/                    # XI-editor packages (migrated & integrated)
+│   ├── core/                  # Core editing and RPC
+│   │   ├── xi-core-lib/      # ✅ Text editing engine with rope
+│   │   ├── xi-rpc/           # ✅ JSON-RPC communication
+│   │   └── xi-lsp-lib/       # ✅ Language Server Protocol
+│   ├── plugins/               # Plugin infrastructure
+│   │   ├── xi-plugin-lib/    # ✅ Plugin system
+│   │   └── xi-syntect-plugin/ # ✅ Syntax highlighting
+│   └── utils/                 # Utilities
+│       ├── xi-rope/          # ✅ Rope data structure
+│       ├── xi-unicode/       # ✅ Unicode handling
+│       └── xi-trace/         # ✅ Logging/tracing
+├── xi-core-reference/         # Preserved XI-editor code (reference only)
+│   ├── python/               # Python bindings (for reference)
+│   └── rust/experimental/    # Experimental features
+├── src/
+│   └── main.rs               # ✅ Symphony entry point
+├── Cargo.toml                # ✅ Workspace configuration
+└── ARCHITECTURE.md           # ✅ Detailed architecture docs
+```
 
-**5. Conductor Integration (3 packages)** - Python↔Rust bridge
-- `conductor/bindings`: PyO3 FFI bindings, type conversion, ~0.01ms overhead
-- `conductor/orchestration_bridge`: RL model↔workflow system, reward calculation, training data
-- `conductor/extension_proxy`: Unified interface hiding in-process vs out-of-process differences
+### What XI-editor Provides (✅ Implemented)
 
-**6. Bootstrap System (3 packages)**
-- `bootstrap/core`: Phased initialization (types→config→IPC→Pit→Conductor), rollback on failure
-- `bootstrap/phase_manager`: Stage-gate process, parallel init within phases
-- `bootstrap/health_checker`: Post-init validation, readiness probes
+**Text Editing Core**:
+- Rope data structure for efficient text manipulation
+- Multi-cursor support, selections, editing operations
+- Line wrapping, word boundaries, whitespace handling
+- Optimized for large files (>100MB)
 
-**7. IPC Communication Backbone (4 packages)** - Hardcoded Rust (not extension)
-- `ipc_bus`: Core message bus, process lifecycle, 0.1-0.3ms latency target
-- `ipc_bus/protocol`: Binary serialization (MessagePack/bincode), message framing
-- `ipc_bus/transport`: Unix sockets (Linux/macOS), Named pipes (Windows), shared memory
-- `ipc_bus/security`: Process authentication, message validation, rate limiting
+**Communication Layer**:
+- JSON-RPC protocol (perfect for Symphony's architecture!)
+- Async-first design, non-blocking operations (<16ms)
+- Frontend-backend communication bridge
+- Event system for reactive updates
 
-**8. Orchestration Engine (2 packages)**
-- `orchestration/core`: Workflow execution (Maestro Mode=RL, Manual Mode=user-driven)
-- `orchestration/melody_engine`: Visual workflow composer (n8n-style), reusable templates
+**Plugin System**:
+- Extension infrastructure with RPC-based communication
+- Plugin lifecycle management (load, activate, deactivate, unload)
+- Language-agnostic (plugins can be written in any language)
+- Process isolation for out-of-process plugins
 
-**9. Orchestra Kit - Extension Ecosystem (11 packages)**
-- `kit/core`: Extension types (Instruments=AI, Operators=workflows, Motifs=UI)
-- `kit/harmony_board`: Visual workflow designer, real-time execution visualization
-- `kit/instruments`: AI/ML model extensions (🎻)
-- `kit/operators`: Workflow utilities (⚙️ file ops, git, data transforms)
-- `kit/motifs`: UI/UX addons (🧩 themes, components, layouts)
-- `kit/marketplace`: Extension discovery, browsing, ratings
-- `kit/installer`: Dependency resolution, signature verification, rollback
-- `kit/lifecycle`: "Chambering" state machine (Installed→Loaded→Activated→Running)
-- `kit/registry`: Central extension registry, semantic versioning
-- `kit/security`: Sandboxing, capability-based permissions, resource limits
-- `kit/manifest`: Symphony.toml parser/validator
+**Language Support**:
+- LSP (Language Server Protocol) integration
+- Syntax highlighting via TextMate grammars (Syntect)
+- Foundation for code intelligence (autocomplete, diagnostics)
 
-**10. Infrastructure Services (3 packages)**
-- `permissions`: Global RBAC, centralized authorization, audit trail
-- `logging`: Structured logging (JSON), distributed tracing, spans/events
-- `hooks`: Desktop integration (notifications, file associations, symphony:// protocol)
+**Performance**:
+- Async operations (all edits complete in <16ms)
+- Efficient memory usage with rope structure
+- Optimized for responsiveness (60 FPS target)
+- Scalable architecture for thousands of files
 
-**11. Applications (3 packages)**
-- `desktop`: Tauri app (native window + webview), cross-platform
-- `server`: HTTP server mode, WebSocket, multi-client, remote development
-- `terminal`: Cross-platform PTY (ConPTY/PTY), xterm.js integration
+### What Symphony Will Build (🚧 AIDE Layer - To Be Implemented)
 
-### Key Architectural Decisions
+**1. AI Orchestration System**
+- **The Conductor**: Intelligent workflow orchestration
+  - Agent coordination and management
+  - Reinforcement learning for optimization
+  - Workflow execution engine
 
-**Execution Models**:
-- **In-Process (The Pit)**: 5 Rust extensions, 50-100ns latency, 1M+ ops/sec
-- **Out-of-Process (UFE)**: User extensions, 0.1-0.5ms latency, isolated processes
-- **Python Conductor**: RL orchestration, 0.5-2ms latency, embedded via PyO3
+**2. AIDE Features (The Pit)** - In-process Rust extensions
+- `symphony-pool-manager`: AI model lifecycle management
+  - Model state machine (Unloaded→Loading→Warming→Ready→Active)
+  - Predictive pre-warming
+  - Model caching (50-100ns allocation target)
+  
+- `symphony-dag-tracker`: Workflow DAG execution
+  - Topological sort and parallel execution
+  - State checkpointing
+  - 10,000-node workflow support
+  
+- `symphony-artifact-store`: Content-addressable storage
+  - Versioning and quality scoring
+  - Tantivy-based search
+  - 1-5ms store, 0.5-2ms retrieve targets
+  
+- `symphony-arbitration-engine`: Resource conflict resolution
+  - Fairness policies
+  - Priority management
+  
+- `symphony-stale-manager`: Intelligent lifecycle management
+  - 1-7 days SSD → 8-30 days HDD → 30+ days cloud
 
-**Performance Targets**:
+**3. Extension Ecosystem (Orchestra Kit)**
+- **Instruments** (🎻): AI/ML model extensions
+- **Operators** (⚙️): Workflow utilities (file ops, git, data transforms)
+- **Motifs** (🧩): UI enhancements (themes, components, layouts)
+- Marketplace, installer, registry, security sandboxing
+
+**4. Python Conductor Integration**
+- PyO3 bindings for Python↔Rust communication (~0.01ms overhead)
+- RL model integration (PyTorch/TensorFlow)
+- Training data collection and reward calculation
+
+**5. Symphony Infrastructure**
+- **IPC Bus**: Inter-process communication (0.1-0.3ms latency target)
+  - Binary serialization (MessagePack/bincode)
+  - Unix sockets (Linux/macOS), Named pipes (Windows)
+  - Process authentication and message validation
+  
+- **Bootstrap System**: Phased initialization
+  - types→config→IPC→Pit→Conductor
+  - Rollback on failure, health checking
+  
+- **Permissions**: Global RBAC, centralized authorization
+- **Desktop/Server Apps**: Tauri desktop, HTTP server mode
+
+### Technology Stack
+
+**From XI-editor** (✅ In use):
+- Rust (Edition 2021)
+- Serde (serialization)
+- Crossbeam (concurrency)
+- Syntect (syntax highlighting)
+- Regex, Notify (file watching)
+
+**Symphony Additions** (📋 Planned):
+- Tokio (async runtime) - already in workspace deps
+- PyO3 (Python integration)
+- Tantivy (full-text search for artifacts)
+- Petgraph (graph algorithms for DAGs)
+- Tauri (desktop app framework)
+- MessagePack/Bincode (binary serialization)
+
+### Build Status
+
+✅ **Completed** (December 2025):
+- [x] XI-editor packages migrated to `crates/`
+- [x] Rust edition updated to 2021
+- [x] Dependencies modernized (notify 6.1, syntect 5.2, etc.)
+- [x] Workspace configuration with 8 crates
+- [x] Symphony entry point (`src/main.rs`)
+- [x] Build system working (`cargo build` successful)
+- [x] Documentation created (ARCHITECTURE.md, README.md)
+
+🚧 **Next Steps**:
+1. Implement Symphony-specific crates on top of XI foundation
+2. Build Python Conductor integration (PyO3)
+3. Create AIDE layer packages (orchestration, artifacts, workflows)
+4. Integrate with frontend via XI's JSON-RPC
+
+### Performance Targets
+
+**XI-editor Layer** (✅ Achieved):
+- Text operations: <16ms (60 FPS)
+- Large file handling: Efficient for files >100MB
+- Memory usage: Optimized rope structure
+
+**Symphony AIDE Layer** (🎯 Targets):
 - Pool Manager: 50-100ns allocation (cache hit), >80% prediction accuracy
 - DAG Tracker: 10,000-node workflows, parallel execution
 - Artifact Store: 1-5ms store, 0.5-2ms retrieve, 20-40% dedup savings
 - IPC Bus: 0.1-0.3ms message latency
-- Virtual DOM: 1-5ms serialization
 
-**Technology Stack**:
-- Rust: All infrastructure (Tokio async, petgraph, Tantivy, PyO3)
-- Python: Conductor (PyTorch/TensorFlow for RL)
-- Tauri: Desktop app
-- React + Shadcn: Frontend UI
+### Design Principles
 
-### Current Implementation Status
-All 46 packages scaffolded as dummy packages. Only `core` and `core_api` have real implementation (Graviton fork). Ready for phased implementation starting with foundation layer (types, config, IPC).
+1. **Build on Proven Foundations**: Use XI-editor for text editing instead of reinventing the wheel
+2. **Layer Separation**: Clear boundary between XI foundation and Symphony AIDE layer
+3. **Performance First**: Maintain XI's sub-16ms operation targets
+4. **Extensibility**: Plugin system for community contributions
+5. **Type Safety**: Leverage Rust's type system for correctness
+6. **Async-First**: Non-blocking operations throughout
 
 -------
 
