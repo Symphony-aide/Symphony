@@ -156,6 +156,12 @@ graph LR
 # Python Conductor using Rust IPC Bus via FFI
 import symphony_ipc  # Python wrapper around Rust crate
 
+# symphony_ipc  
+class IPCBus():
+	def spawn_extension():
+	...
+	
+
 class Conductor:
     def __init__(self):
         # Initialize Rust IPC bus via FFI
