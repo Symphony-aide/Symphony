@@ -545,6 +545,80 @@ const SafeComponent = withErrorBoundary(MyComponent, {
 });
 ```
 
+## Performance Testing
+
+The primitives package includes comprehensive performance tests to ensure render performance meets defined budgets.
+
+### Performance Budgets
+
+| Complexity | Threshold | Description |
+|------------|-----------|-------------|
+| Simple | < 5ms | Single primitives (Button, Text, Icon, Input, Checkbox) |
+| Medium | < 16ms | Trees with 10-20 nodes (60fps frame budget) |
+| Complex | < 50ms | Trees with 50+ nodes |
+
+### Running Performance Tests
+
+```bash
+# Run all tests including performance tests
+pnpm test
+
+# Run only performance tests
+pnpm test -- --grep "Performance"
+```
+
+### Performance Test Properties
+
+The performance tests verify three key properties:
+
+- **Property 7: Simple Primitive Render Performance** - Any simple primitive renders under 5ms
+- **Property 8: Medium Tree Render Performance** - Any tree with 10-20 nodes renders under 16ms
+- **Property 9: Complex Tree Render Performance** - Any tree with 50+ nodes renders under 50ms
+
+### Using Performance Helpers
+
+```javascript
+import {
+  measureRenderTime,
+  benchmarkFunction,
+  generatePrimitiveTree,
+  validatePerformance,
+  PERFORMANCE_THRESHOLDS,
+} from '@symphony/primitives/__tests__/utils/performanceHelpers';
+
+// Measure single render
+const { result, duration } = measureRenderTime(() => renderPrimitive(button));
+
+// Benchmark with statistics
+const stats = benchmarkFunction(() => renderPrimitive(tree), 100, 5);
+console.log(`Average: ${stats.average}ms, P95: ${stats.p95}ms`);
+
+// Generate test trees
+const mediumTree = generatePrimitiveTree(15);
+const complexTree = generatePrimitiveTree(75);
+
+// Validate against thresholds
+const validation = validatePerformance(duration, 'medium');
+if (!validation.passed) {
+  console.warn(`Exceeded threshold by ${-validation.margin}ms`);
+}
+```
+
+### Memory Leak Detection
+
+```javascript
+import { checkPerformanceDegradation } from '@symphony/primitives/__tests__/utils/performanceHelpers';
+
+// Check for performance degradation over 100 renders
+const { degradation, hasDegradation } = checkPerformanceDegradation(() => {
+  const { unmount } = render(<PrimitiveRenderer primitive={primitive} />);
+  unmount();
+}, 100);
+
+// Performance should not degrade by more than 50%
+expect(hasDegradation).toBe(false);
+```
+
 ## Development
 
 ```bash
@@ -563,6 +637,173 @@ pnpm lint
 # Type check
 pnpm type-check
 ```
+
+## Testing Utilities
+
+The package includes comprehensive testing utilities for property-based testing, performance validation, and snapshot testing.
+
+### Snapshot Helpers
+
+Convert primitives to serializable snapshot structures for testing:
+
+```javascript
+import {
+  renderPrimitiveToSnapshot,
+  createTestPrimitive,
+  createLeafPrimitive,
+  createNestedPrimitiveTree,
+  createMockReactComponent,
+  registerAllMockComponents,
+  unregisterAllMockComponents,
+  compareSnapshots,
+  serializeSnapshot,
+  MOCK_COMPONENTS,
+} from '@symphony/primitives/__tests__/utils/snapshotHelpers';
+
+// Convert a primitive to a snapshot structure
+// Note: Dynamic IDs (like 'data-primitive-id') are automatically excluded
+// to ensure stable snapshots across test runs
+const button = Button({ variant: 'primary', onClick: 'handler_id' });
+const snapshot = renderPrimitiveToSnapshot(button);
+// {
+//   type: 'Button',
+//   props: { variant: 'primary', onClick: 'handler_id' },
+//   renderStrategy: 'react',
+//   isLeafNode: false,
+//   children: []
+// }
+
+// Works recursively for primitive trees
+const container = Container({ direction: 'column' });
+container.appendChild(button);
+const treeSnapshot = renderPrimitiveToSnapshot(container);
+
+// Create test primitives with common configurations
+const testContainer = createTestPrimitive('Container', { direction: 'row' }, [
+  createTestPrimitive('Button', { variant: 'primary' }),
+  createTestPrimitive('Text', { content: 'Hello' }),
+]);
+
+// Create leaf primitives (cannot have children rendered)
+const icon = createLeafPrimitive('Icon', { name: 'file', size: 16 });
+
+// Create nested primitive trees for hierarchical testing
+const tree = createNestedPrimitiveTree(3, 2); // depth=3, 2 children per node
+
+// Register mock components for testing
+import { registerComponent, unregisterComponent } from '@symphony/primitives';
+
+beforeEach(() => {
+  registerAllMockComponents(registerComponent);
+});
+
+afterEach(() => {
+  unregisterAllMockComponents(unregisterComponent);
+});
+
+// Compare snapshots with options
+const areEqual = compareSnapshots(snapshotA, snapshotB, { ignoreIds: true });
+
+// Serialize snapshot to stable JSON (removes volatile IDs)
+const stableJson = serializeSnapshot(snapshot);
+```
+
+### Performance Helpers
+
+Measure render times and validate performance budgets:
+
+```javascript
+import {
+  measureRenderTime,
+  benchmarkFunction,
+  generatePrimitiveTree,
+  generateSimplePrimitive,
+  validatePerformance,
+  PERFORMANCE_THRESHOLDS,
+} from '@symphony/primitives/__tests__/utils/performanceHelpers';
+
+// Measure single render
+const { result, duration } = measureRenderTime(() => renderPrimitive(button));
+console.log(`Render took ${duration}ms`);
+
+// Benchmark with statistics
+const stats = benchmarkFunction(() => renderPrimitive(tree), 100);
+console.log(`Average: ${stats.average}ms, P95: ${stats.p95}ms`);
+
+// Generate test trees of various sizes
+const simpleTree = generateSimplePrimitive('Button');
+const mediumTree = generatePrimitiveTree(15);  // 10-20 nodes
+const complexTree = generatePrimitiveTree(50); // 50+ nodes
+
+// Validate against performance thresholds
+const validation = validatePerformance(duration, 'simple');
+// { passed: true, threshold: 5, margin: 3.5 }
+```
+
+### Contract Validators
+
+Validate IPC contracts and component tree structures:
+
+```javascript
+import {
+  validateSchema,
+  validateType,
+  validateIPCRequest,
+  validateIPCSuccessResponse,
+  validateIPCErrorResponse,
+  validateComponentTree,
+  createValidComponentTree,
+  createValidIPCRequest,
+  createValidSuccessResponse,
+  createValidErrorResponse,
+  IPC_CONTRACTS,
+  COMPONENT_TREE_SCHEMA,
+  SUCCESS_RESPONSE_SCHEMA,
+  ERROR_RESPONSE_SCHEMA,
+} from '@symphony/primitives/__tests__/utils/contractValidators';
+
+// Validate IPC request parameters
+const requestResult = validateIPCRequest('get_component_tree', { name: 'MyComponent' });
+// { valid: true, errors: [] }
+
+// Validate IPC success response
+const successResult = validateIPCSuccessResponse('get_component_tree', {
+  success: true,
+  data: { id: '123', type: 'Button', props: {}, renderStrategy: 'react', children: [] }
+});
+
+// Validate IPC error response
+const errorResult = validateIPCErrorResponse('get_component_tree', {
+  success: false,
+  error: 'Component not found',
+  code: 'COMPONENT_NOT_FOUND'
+});
+
+// Validate component tree structure recursively
+const treeResult = validateComponentTree(tree);
+
+// Create valid test data for contract testing
+const testTree = createValidComponentTree({ type: 'CustomType' });
+const testRequest = createValidIPCRequest('modify_component', { name: 'MyComponent' });
+const testSuccess = createValidSuccessResponse('get_component_tree');
+const testError = createValidErrorResponse('Test error', 'TEST_ERROR');
+
+// Access IPC contract definitions
+const contract = IPC_CONTRACTS.get_component_tree;
+// { request: {...}, successResponse: {...}, successDataSchema: {...}, errorResponse: {...} }
+```
+
+#### IPC Contract Methods
+
+The following IPC methods have defined contracts:
+
+| Method | Description | Request Schema | Success Data Schema |
+|--------|-------------|----------------|---------------------|
+| `get_component_tree` | Get serialized component tree | `{ name: string }` | `ComponentTree` |
+| `modify_component` | Modify component props | `{ name, path, modifications }` | `{ modified: boolean }` |
+| `insert_component` | Insert new primitive | `{ name, parentPath, primitive, index? }` | `{ inserted, primitiveId }` |
+| `remove_component` | Remove primitive | `{ name, path }` | `{ removed: boolean }` |
+| `invoke_motif_handler` | Invoke event handler | `{ handlerId, args? }` | `{ result: any }` |
 
 ## API Reference
 
@@ -585,6 +826,65 @@ pnpm type-check
 | `List`, `Tabs`, `Dropdown`, `Modal`, `Tooltip` | Complex primitives |
 | `CodeEditor`, `Terminal`, `SyntaxHighlighter`, `FileTree` | Heavy WASM primitives |
 | `PrimitiveError`, `ComponentNotFoundError`, `PathResolutionError`, `WasmLoadError` | Error types |
+
+### Testing Utilities (from `__tests__/utils/`)
+
+#### Snapshot Helpers (`snapshotHelpers.js`)
+
+| Export | Description |
+|--------|-------------|
+| `renderPrimitiveToSnapshot` | Convert primitives to serializable snapshot structures |
+| `createTestPrimitive` | Factory for creating test primitives with children |
+| `createLeafPrimitive` | Factory for creating leaf node primitives |
+| `createNestedPrimitiveTree` | Generate nested primitive trees for testing |
+| `createMockReactComponent` | Create mock React components for primitive types |
+| `registerAllMockComponents` | Register all standard mock components |
+| `unregisterAllMockComponents` | Clean up registered mock components |
+| `compareSnapshots` | Compare two snapshot structures for equality |
+| `serializeSnapshot` | Serialize snapshot to stable JSON string |
+| `MOCK_COMPONENTS` | Map of all standard primitive types to mock components |
+
+#### Performance Helpers (`performanceHelpers.js`)
+
+| Export | Description |
+|--------|-------------|
+| `measureRenderTime` | Measures execution time of a synchronous function |
+| `measureRenderTimeAsync` | Measures execution time of an async function |
+| `benchmarkFunction` | Runs function multiple times and returns timing statistics (avg, min, max, p95, p99) |
+| `generatePrimitiveTree` | Generates a primitive tree with specified node count |
+| `generateSimplePrimitive` | Generates a simple primitive (Button, Text, Icon, Input, Checkbox) |
+| `generateMediumTree` | Generates a medium complexity tree (10-20 nodes) |
+| `generateComplexTree` | Generates a complex tree (50+ nodes) |
+| `countTreeNodes` | Counts total nodes in a primitive tree |
+| `getTreeDepth` | Calculates maximum depth of a primitive tree |
+| `collectTreeTypes` | Collects all unique primitive types in a tree |
+| `validatePerformance` | Validates duration against complexity threshold |
+| `createPerformanceAssertions` | Creates assertion helpers for performance tests |
+| `checkMemoryGrowth` | Checks for memory growth over iterations |
+| `checkPerformanceDegradation` | Checks for performance degradation over sequential renders |
+| `PERFORMANCE_THRESHOLDS` | Performance budgets: simple (<5ms), medium (<16ms), complex (<50ms) |
+| `SIMPLE_PRIMITIVE_TYPES` | Array of simple primitive types for testing |
+| `LAYOUT_PRIMITIVE_TYPES` | Array of layout primitive types for tree generation |
+| `LEAF_PRIMITIVE_TYPES` | Array of leaf primitive types for tree generation |
+
+#### Contract Validators (`contractValidators.js`)
+
+| Export | Description |
+|--------|-------------|
+| `validateType` | Validate value matches expected type |
+| `validateSchema` | Validate object against schema definition |
+| `validateIPCRequest` | Validate IPC request parameters against contract |
+| `validateIPCSuccessResponse` | Validate IPC success response against contract |
+| `validateIPCErrorResponse` | Validate IPC error response against contract |
+| `validateComponentTree` | Recursively validate ComponentTree structure |
+| `createValidComponentTree` | Create valid component tree for testing |
+| `createValidIPCRequest` | Create valid IPC request for testing |
+| `createValidSuccessResponse` | Create valid success response for testing |
+| `createValidErrorResponse` | Create valid error response for testing |
+| `IPC_CONTRACTS` | Complete IPC contract definitions for all methods |
+| `COMPONENT_TREE_SCHEMA` | Schema for ComponentTree structure |
+| `SUCCESS_RESPONSE_SCHEMA` | Schema for successful IPC response |
+| `ERROR_RESPONSE_SCHEMA` | Schema for error IPC response |
 
 ## License
 

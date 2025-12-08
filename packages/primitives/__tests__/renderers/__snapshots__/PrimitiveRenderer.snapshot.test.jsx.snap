@@ -1,0 +1,1833 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture Dropdown primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "items": [
+      {
+        "icon": "pencil",
+        "id": "edit",
+        "label": "Edit",
+        "onClick": "edit_handler",
+      },
+      {
+        "icon": "trash",
+        "id": "delete",
+        "label": "Delete",
+        "onClick": "delete_handler",
+      },
+    ],
+    "trigger": {
+      "children": [],
+      "isLeafNode": false,
+      "props": {
+        "disabled": false,
+        "size": "default",
+        "variant": "outline",
+      },
+      "renderStrategy": "react",
+      "type": "Button",
+    },
+  },
+  "renderStrategy": "react",
+  "type": "Dropdown",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture Dropdown with single item snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "items": [
+      {
+        "id": "action",
+        "label": "Action",
+      },
+    ],
+  },
+  "renderStrategy": "react",
+  "type": "Dropdown",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture List primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "items": [
+      {
+        "data": "Item 1",
+        "id": "1",
+      },
+      {
+        "data": "Item 2",
+        "id": "2",
+      },
+      {
+        "data": "Item 3",
+        "id": "3",
+      },
+    ],
+    "renderItem": "render_list_item_handler",
+    "virtualized": false,
+  },
+  "renderStrategy": "react",
+  "type": "List",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture Modal primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "onClose": "close_modal_handler",
+    "open": true,
+    "size": "lg",
+    "title": "Confirm Action",
+  },
+  "renderStrategy": "react",
+  "type": "Modal",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture Tabs primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "activeTab": "tab1",
+    "onTabChange": "tab_change_handler",
+    "tabs": [
+      {
+        "icon": "file",
+        "id": "tab1",
+        "label": "First Tab",
+      },
+      {
+        "id": "tab2",
+        "label": "Second Tab",
+      },
+      {
+        "icon": "settings",
+        "id": "tab3",
+        "label": "Third Tab",
+      },
+    ],
+  },
+  "renderStrategy": "react",
+  "type": "Tabs",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture Tabs with different active tab snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "activeTab": "t2",
+    "tabs": [
+      {
+        "id": "t1",
+        "label": "Tab 1",
+      },
+      {
+        "id": "t2",
+        "label": "Tab 2",
+      },
+    ],
+  },
+  "renderStrategy": "react",
+  "type": "Tabs",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture Tooltip primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "content": "Click to save",
+    "position": "bottom",
+  },
+  "renderStrategy": "react",
+  "type": "Tooltip",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture Tooltip with different positions snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "content": "Top tooltip",
+    "position": "top",
+  },
+  "renderStrategy": "react",
+  "type": "Tooltip",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture Tooltip with different positions snapshot 2`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "content": "Left tooltip",
+    "position": "left",
+  },
+  "renderStrategy": "react",
+  "type": "Tooltip",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture Tooltip with different positions snapshot 3`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "content": "Right tooltip",
+    "position": "right",
+  },
+  "renderStrategy": "react",
+  "type": "Tooltip",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture closed Modal snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "open": false,
+    "size": "md",
+    "title": "Closed Modal",
+  },
+  "renderStrategy": "react",
+  "type": "Modal",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture empty Dropdown snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "items": [],
+  },
+  "renderStrategy": "react",
+  "type": "Dropdown",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture empty List snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "items": [],
+    "virtualized": false,
+  },
+  "renderStrategy": "react",
+  "type": "List",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture empty Tabs snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "tabs": [],
+  },
+  "renderStrategy": "react",
+  "type": "Tabs",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture small Modal snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "open": true,
+    "size": "sm",
+    "title": "Small Modal",
+  },
+  "renderStrategy": "react",
+  "type": "Modal",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should capture virtualized List snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "items": [
+      {
+        "data": "A",
+        "id": "a",
+      },
+    ],
+    "virtualized": true,
+  },
+  "renderStrategy": "react",
+  "type": "List",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should render Dropdown primitive to DOM 1`] = `
+<div
+  data-testid="mock-dropdown"
+  data-type="Dropdown"
+  items="[object Object]"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should render List primitive to DOM 1`] = `
+<div
+  data-testid="mock-list"
+  data-type="List"
+  items="[object Object]"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should render Modal primitive to DOM 1`] = `
+<div
+  data-testid="mock-modal"
+  data-type="Modal"
+  open=""
+  title="Test Modal"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should render Tabs primitive to DOM 1`] = `
+<div
+  activetab="tab"
+  data-testid="mock-tabs"
+  data-type="Tabs"
+  tabs="[object Object]"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Complex Primitives (Requirement 1.3) > should render Tooltip primitive to DOM 1`] = `
+<div
+  content="Test tooltip"
+  data-testid="mock-tooltip"
+  data-type="Tooltip"
+  position="top"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Edge Cases > should handle deeply nested structure (4 levels) 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "isLeafNode": false,
+              "props": {
+                "className": "level-4",
+                "disabled": false,
+                "size": "default",
+                "variant": "default",
+              },
+              "renderStrategy": "react",
+              "type": "Button",
+            },
+          ],
+          "isLeafNode": false,
+          "props": {
+            "className": "level-3",
+            "collapsible": false,
+            "defaultCollapsed": false,
+          },
+          "renderStrategy": "react",
+          "type": "Panel",
+        },
+      ],
+      "isLeafNode": false,
+      "props": {
+        "align": "stretch",
+        "className": "level-2",
+        "justify": "start",
+        "wrap": false,
+      },
+      "renderStrategy": "react",
+      "type": "Flex",
+    },
+  ],
+  "isLeafNode": false,
+  "props": {
+    "className": "level-1",
+    "direction": "column",
+    "gap": 0,
+  },
+  "renderStrategy": "react",
+  "type": "Container",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Edge Cases > should handle primitive with empty props 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "direction": "column",
+    "gap": 0,
+  },
+  "renderStrategy": "react",
+  "type": "Container",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Edge Cases > should handle sibling primitives at same level 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "isLeafNode": false,
+      "props": {
+        "className": "btn-0",
+        "disabled": false,
+        "size": "default",
+        "variant": "default",
+      },
+      "renderStrategy": "react",
+      "type": "Button",
+    },
+    {
+      "children": [],
+      "isLeafNode": false,
+      "props": {
+        "className": "btn-1",
+        "disabled": false,
+        "size": "default",
+        "variant": "default",
+      },
+      "renderStrategy": "react",
+      "type": "Button",
+    },
+    {
+      "children": [],
+      "isLeafNode": false,
+      "props": {
+        "className": "btn-2",
+        "disabled": false,
+        "size": "default",
+        "variant": "default",
+      },
+      "renderStrategy": "react",
+      "type": "Button",
+    },
+    {
+      "children": [],
+      "isLeafNode": false,
+      "props": {
+        "className": "btn-3",
+        "disabled": false,
+        "size": "default",
+        "variant": "default",
+      },
+      "renderStrategy": "react",
+      "type": "Button",
+    },
+    {
+      "children": [],
+      "isLeafNode": false,
+      "props": {
+        "className": "btn-4",
+        "disabled": false,
+        "size": "default",
+        "variant": "default",
+      },
+      "renderStrategy": "react",
+      "type": "Button",
+    },
+  ],
+  "isLeafNode": false,
+  "props": {
+    "direction": "row",
+    "gap": 0,
+  },
+  "renderStrategy": "react",
+  "type": "Container",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > ErrorBoundary Fallback (Requirement 1.6) > should capture ErrorBoundary default fallback snapshot 1`] = `
+<div
+  style="padding: 16px; border: 1px solid #ef4444; border-radius: 8px; background-color: rgb(254, 242, 242); color: rgb(153, 27, 27); font-family: system-ui, sans-serif;"
+>
+  <h3
+    style="margin: 0px 0px 8px 0px; font-size: 16px; font-weight: 600;"
+  >
+    Something went wrong
+  </h3>
+  <p
+    style="margin: 0px 0px 12px 0px; font-size: 14px;"
+  >
+    Test error for snapshot
+  </p>
+  <details
+    style="margin-bottom: 12px;"
+  >
+    <summary
+      style="cursor: pointer; font-size: 12px;"
+    >
+      Error details
+    </summary>
+    <pre
+      style="font-size: 11px; overflow: auto; max-height: 200px; padding: 8px; background-color: rgb(254, 226, 226); border-radius: 4px; margin-top: 8px;"
+    >
+      Error: Test error for snapshot
+    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:739:13)
+    at Object.react_stack_bottom_frame (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:23863:20)
+    at renderWithHooks (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:5529:22)
+    at updateFunctionComponent (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:8897:19)
+    at beginWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:10522:18)
+    at runWithFiberInDEV (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:1522:13)
+    at performUnitOfWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:15140:22)
+    at workLoopSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14956:41)
+    at renderRootSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14936:11)
+    at performWorkOnRoot (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14462:44)
+      
+
+Component Stack:
+      
+    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:605:13)
+    at ErrorBoundary (C:/Users/mahmo/Downloads/Symphony/packages/primitives/src/renderers/ErrorBoundary.jsx:112:5)
+    </pre>
+  </details>
+  <button
+    style="padding: 8px 16px; background-color: rgb(220, 38, 38); color: white; border-radius: 4px; cursor: pointer; font-size: 14px;"
+  >
+    Try again
+  </button>
+</div>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > ErrorBoundary Fallback (Requirement 1.6) > should capture ErrorBoundary error details section snapshot 1`] = `
+<div
+  style="padding: 16px; border: 1px solid #ef4444; border-radius: 8px; background-color: rgb(254, 242, 242); color: rgb(153, 27, 27); font-family: system-ui, sans-serif;"
+>
+  <h3
+    style="margin: 0px 0px 8px 0px; font-size: 16px; font-weight: 600;"
+  >
+    Something went wrong
+  </h3>
+  <p
+    style="margin: 0px 0px 12px 0px; font-size: 14px;"
+  >
+    Test error for snapshot
+  </p>
+  <details
+    style="margin-bottom: 12px;"
+  >
+    <summary
+      style="cursor: pointer; font-size: 12px;"
+    >
+      Error details
+    </summary>
+    <pre
+      style="font-size: 11px; overflow: auto; max-height: 200px; padding: 8px; background-color: rgb(254, 226, 226); border-radius: 4px; margin-top: 8px;"
+    >
+      Error: Test error for snapshot
+    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:739:13)
+    at Object.react_stack_bottom_frame (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:23863:20)
+    at renderWithHooks (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:5529:22)
+    at updateFunctionComponent (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:8897:19)
+    at beginWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:10522:18)
+    at runWithFiberInDEV (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:1522:13)
+    at performUnitOfWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:15140:22)
+    at workLoopSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14956:41)
+    at renderRootSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14936:11)
+    at performWorkOnRoot (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14462:44)
+      
+
+Component Stack:
+      
+    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:605:13)
+    at ErrorBoundary (C:/Users/mahmo/Downloads/Symphony/packages/primitives/src/renderers/ErrorBoundary.jsx:112:5)
+    </pre>
+  </details>
+  <button
+    style="padding: 8px 16px; background-color: rgb(220, 38, 38); color: white; border-radius: 4px; cursor: pointer; font-size: 14px;"
+  >
+    Try again
+  </button>
+</div>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > ErrorBoundary Fallback (Requirement 1.6) > should capture ErrorBoundary fallback with error details 1`] = `
+<div
+  style="padding: 16px; border: 1px solid #ef4444; border-radius: 8px; background-color: rgb(254, 242, 242); color: rgb(153, 27, 27); font-family: system-ui, sans-serif;"
+>
+  <h3
+    style="margin: 0px 0px 8px 0px; font-size: 16px; font-weight: 600;"
+  >
+    Something went wrong
+  </h3>
+  <p
+    style="margin: 0px 0px 12px 0px; font-size: 14px;"
+  >
+    Test error for snapshot
+  </p>
+  <details
+    style="margin-bottom: 12px;"
+  >
+    <summary
+      style="cursor: pointer; font-size: 12px;"
+    >
+      Error details
+    </summary>
+    <pre
+      style="font-size: 11px; overflow: auto; max-height: 200px; padding: 8px; background-color: rgb(254, 226, 226); border-radius: 4px; margin-top: 8px;"
+    >
+      Error: Test error for snapshot
+    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:739:13)
+    at Object.react_stack_bottom_frame (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:23863:20)
+    at renderWithHooks (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:5529:22)
+    at updateFunctionComponent (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:8897:19)
+    at beginWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:10522:18)
+    at runWithFiberInDEV (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:1522:13)
+    at performUnitOfWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:15140:22)
+    at workLoopSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14956:41)
+    at renderRootSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14936:11)
+    at performWorkOnRoot (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14462:44)
+      
+
+Component Stack:
+      
+    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:605:13)
+    at ErrorBoundary (C:/Users/mahmo/Downloads/Symphony/packages/primitives/src/renderers/ErrorBoundary.jsx:112:5)
+    </pre>
+  </details>
+  <button
+    style="padding: 8px 16px; background-color: rgb(220, 38, 38); color: white; border-radius: 4px; cursor: pointer; font-size: 14px;"
+  >
+    Try again
+  </button>
+</div>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > ErrorBoundary Fallback (Requirement 1.6) > should capture ErrorBoundary retry button snapshot 1`] = `
+<div
+  style="padding: 16px; border: 1px solid #ef4444; border-radius: 8px; background-color: rgb(254, 242, 242); color: rgb(153, 27, 27); font-family: system-ui, sans-serif;"
+>
+  <h3
+    style="margin: 0px 0px 8px 0px; font-size: 16px; font-weight: 600;"
+  >
+    Something went wrong
+  </h3>
+  <p
+    style="margin: 0px 0px 12px 0px; font-size: 14px;"
+  >
+    Test error for snapshot
+  </p>
+  <details
+    style="margin-bottom: 12px;"
+  >
+    <summary
+      style="cursor: pointer; font-size: 12px;"
+    >
+      Error details
+    </summary>
+    <pre
+      style="font-size: 11px; overflow: auto; max-height: 200px; padding: 8px; background-color: rgb(254, 226, 226); border-radius: 4px; margin-top: 8px;"
+    >
+      Error: Test error for snapshot
+    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:739:13)
+    at Object.react_stack_bottom_frame (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:23863:20)
+    at renderWithHooks (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:5529:22)
+    at updateFunctionComponent (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:8897:19)
+    at beginWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:10522:18)
+    at runWithFiberInDEV (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:1522:13)
+    at performUnitOfWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:15140:22)
+    at workLoopSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14956:41)
+    at renderRootSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14936:11)
+    at performWorkOnRoot (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14462:44)
+      
+
+Component Stack:
+      
+    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:605:13)
+    at ErrorBoundary (C:/Users/mahmo/Downloads/Symphony/packages/primitives/src/renderers/ErrorBoundary.jsx:112:5)
+    </pre>
+  </details>
+  <button
+    style="padding: 8px 16px; background-color: rgb(220, 38, 38); color: white; border-radius: 4px; cursor: pointer; font-size: 14px;"
+  >
+    Try again
+  </button>
+</div>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > ErrorBoundary Fallback (Requirement 1.6) > should capture ErrorBoundary with componentName prop snapshot 1`] = `
+<div
+  style="padding: 16px; border: 1px solid #ef4444; border-radius: 8px; background-color: rgb(254, 242, 242); color: rgb(153, 27, 27); font-family: system-ui, sans-serif;"
+>
+  <h3
+    style="margin: 0px 0px 8px 0px; font-size: 16px; font-weight: 600;"
+  >
+    Something went wrong
+  </h3>
+  <p
+    style="margin: 0px 0px 12px 0px; font-size: 14px;"
+  >
+    Test error for snapshot
+  </p>
+  <details
+    style="margin-bottom: 12px;"
+  >
+    <summary
+      style="cursor: pointer; font-size: 12px;"
+    >
+      Error details
+    </summary>
+    <pre
+      style="font-size: 11px; overflow: auto; max-height: 200px; padding: 8px; background-color: rgb(254, 226, 226); border-radius: 4px; margin-top: 8px;"
+    >
+      Error: Test error for snapshot
+    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:739:13)
+    at Object.react_stack_bottom_frame (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:23863:20)
+    at renderWithHooks (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:5529:22)
+    at updateFunctionComponent (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:8897:19)
+    at beginWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:10522:18)
+    at runWithFiberInDEV (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:1522:13)
+    at performUnitOfWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:15140:22)
+    at workLoopSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14956:41)
+    at renderRootSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14936:11)
+    at performWorkOnRoot (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14462:44)
+      
+
+Component Stack:
+      
+    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:605:13)
+    at ErrorBoundary (C:/Users/mahmo/Downloads/Symphony/packages/primitives/src/renderers/ErrorBoundary.jsx:112:5)
+    </pre>
+  </details>
+  <button
+    style="padding: 8px 16px; background-color: rgb(220, 38, 38); color: white; border-radius: 4px; cursor: pointer; font-size: 14px;"
+  >
+    Try again
+  </button>
+</div>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > ErrorBoundary Fallback (Requirement 1.6) > should capture ErrorBoundary with custom fallback snapshot 1`] = `
+<div
+  class="custom-error-fallback"
+>
+  <h2>
+    Custom Error UI
+  </h2>
+  <p>
+    Error: 
+    Test error for snapshot
+  </p>
+  <button>
+    Retry
+  </button>
+</div>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > ErrorBoundary Fallback (Requirement 1.6) > should capture ErrorBoundary wrapping PrimitiveRenderer snapshot 1`] = `<div />`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture Button primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "disabled": false,
+    "onClick": "click_handler",
+    "size": "lg",
+    "variant": "primary",
+  },
+  "renderStrategy": "react",
+  "type": "Button",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture Button with default props snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "disabled": false,
+    "size": "default",
+    "variant": "default",
+  },
+  "renderStrategy": "react",
+  "type": "Button",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture Checkbox primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "checked": true,
+    "disabled": false,
+    "label": "Accept terms",
+    "onChange": "terms_handler",
+  },
+  "renderStrategy": "react",
+  "type": "Checkbox",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture Icon primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": true,
+  "props": {
+    "color": "#333",
+    "name": "file",
+    "size": 16,
+  },
+  "renderStrategy": "react",
+  "type": "Icon",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture Icon with default size snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": true,
+  "props": {
+    "name": "folder",
+    "size": 24,
+  },
+  "renderStrategy": "react",
+  "type": "Icon",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture Input primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": true,
+  "props": {
+    "disabled": false,
+    "onChange": "email_handler",
+    "placeholder": "Enter email",
+    "type": "email",
+    "value": "",
+  },
+  "renderStrategy": "react",
+  "type": "Input",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture Input with value snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": true,
+  "props": {
+    "disabled": false,
+    "type": "text",
+    "value": "test value",
+  },
+  "renderStrategy": "react",
+  "type": "Input",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture Select primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "disabled": false,
+    "onChange": "select_handler",
+    "options": [
+      {
+        "label": "Option A",
+        "value": "a",
+      },
+      {
+        "label": "Option B",
+        "value": "b",
+      },
+    ],
+    "value": "a",
+  },
+  "renderStrategy": "react",
+  "type": "Select",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture Select with placeholder snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "disabled": false,
+    "options": [
+      {
+        "label": "First",
+        "value": "1",
+      },
+    ],
+    "placeholder": "Select an option",
+  },
+  "renderStrategy": "react",
+  "type": "Select",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture Text primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": true,
+  "props": {
+    "content": "Hello World",
+    "size": "lg",
+    "variant": "heading",
+    "weight": "bold",
+  },
+  "renderStrategy": "react",
+  "type": "Text",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture Text with default props snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": true,
+  "props": {
+    "content": "Default text",
+    "size": "md",
+    "variant": "body",
+    "weight": "normal",
+  },
+  "renderStrategy": "react",
+  "type": "Text",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture disabled Button snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "disabled": true,
+    "size": "default",
+    "variant": "destructive",
+  },
+  "renderStrategy": "react",
+  "type": "Button",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture disabled Checkbox snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "checked": true,
+    "disabled": true,
+  },
+  "renderStrategy": "react",
+  "type": "Checkbox",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture disabled Input snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": true,
+  "props": {
+    "disabled": true,
+    "type": "password",
+    "value": "",
+  },
+  "renderStrategy": "react",
+  "type": "Input",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture disabled Select snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "disabled": true,
+    "options": [],
+  },
+  "renderStrategy": "react",
+  "type": "Select",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should capture unchecked Checkbox snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "checked": false,
+    "disabled": false,
+    "label": "Subscribe",
+  },
+  "renderStrategy": "react",
+  "type": "Checkbox",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should render Button primitive to DOM 1`] = `
+<div
+  data-testid="mock-button"
+  data-type="Button"
+  variant="outline"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should render Checkbox primitive to DOM 1`] = `
+<div
+  data-testid="mock-checkbox"
+  data-type="Checkbox"
+  label="Test checkbox"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should render Icon primitive to DOM 1`] = `
+<div
+  data-testid="mock-icon"
+  data-type="Icon"
+  name="star"
+  size="20"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should render Input primitive to DOM 1`] = `
+<div
+  data-testid="mock-input"
+  data-type="Input"
+  placeholder="Type here"
+  type="text"
+  value=""
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should render Select primitive to DOM 1`] = `
+<div
+  data-testid="mock-select"
+  data-type="Select"
+  options="[object Object]"
+  value="x"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Interactive Primitives (Requirement 1.2) > should render Text primitive to DOM 1`] = `
+<div
+  content="Rendered text"
+  data-testid="mock-text"
+  data-type="Text"
+  variant="body"
+  weight="normal"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should capture Container primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "className": "test-container",
+    "direction": "row",
+    "gap": 8,
+  },
+  "renderStrategy": "react",
+  "type": "Container",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should capture Container with default props snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "direction": "column",
+    "gap": 0,
+  },
+  "renderStrategy": "react",
+  "type": "Container",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should capture Divider primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": true,
+  "props": {
+    "className": "test-divider",
+    "orientation": "horizontal",
+  },
+  "renderStrategy": "react",
+  "type": "Divider",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should capture Flex primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "align": "center",
+    "className": "test-flex",
+    "justify": "center",
+    "wrap": true,
+  },
+  "renderStrategy": "react",
+  "type": "Flex",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should capture Flex with default props snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "align": "stretch",
+    "justify": "start",
+    "wrap": false,
+  },
+  "renderStrategy": "react",
+  "type": "Flex",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should capture Grid primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "className": "test-grid",
+    "columns": 3,
+    "gap": 16,
+  },
+  "renderStrategy": "react",
+  "type": "Grid",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should capture Grid with rows snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "columns": 2,
+    "gap": 8,
+    "rows": 4,
+  },
+  "renderStrategy": "react",
+  "type": "Grid",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should capture Panel collapsed snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "collapsible": true,
+    "defaultCollapsed": true,
+    "title": "Collapsed Panel",
+  },
+  "renderStrategy": "react",
+  "type": "Panel",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should capture Panel primitive snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": false,
+  "props": {
+    "collapsible": true,
+    "defaultCollapsed": false,
+    "title": "Settings",
+  },
+  "renderStrategy": "react",
+  "type": "Panel",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should capture vertical Divider snapshot 1`] = `
+{
+  "children": [],
+  "isLeafNode": true,
+  "props": {
+    "orientation": "vertical",
+  },
+  "renderStrategy": "react",
+  "type": "Divider",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should render Container primitive to DOM 1`] = `
+<div
+  data-testid="mock-container"
+  data-type="Container"
+  direction="row"
+  gap="8"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should render Divider primitive to DOM 1`] = `
+<div
+  data-testid="mock-divider"
+  data-type="Divider"
+  orientation="horizontal"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should render Flex primitive to DOM 1`] = `
+<div
+  align="center"
+  data-testid="mock-flex"
+  data-type="Flex"
+  justify="space-between"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should render Grid primitive to DOM 1`] = `
+<div
+  columns="4"
+  data-testid="mock-grid"
+  data-type="Grid"
+  gap="12"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Layout Primitives (Requirement 1.1) > should render Panel primitive to DOM 1`] = `
+<div
+  data-testid="mock-panel"
+  data-type="Panel"
+  title="Test Panel"
+/>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Nested Primitive Trees (Requirement 1.4) > should capture 2-level nested tree snapshot 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "isLeafNode": false,
+          "props": {
+            "disabled": false,
+            "size": "default",
+            "variant": "primary",
+          },
+          "renderStrategy": "react",
+          "type": "Button",
+        },
+        {
+          "children": [],
+          "isLeafNode": false,
+          "props": {
+            "disabled": false,
+            "size": "default",
+            "variant": "secondary",
+          },
+          "renderStrategy": "react",
+          "type": "Button",
+        },
+      ],
+      "isLeafNode": false,
+      "props": {
+        "align": "stretch",
+        "justify": "space-between",
+        "wrap": false,
+      },
+      "renderStrategy": "react",
+      "type": "Flex",
+    },
+  ],
+  "isLeafNode": false,
+  "props": {
+    "direction": "column",
+    "gap": 8,
+  },
+  "renderStrategy": "react",
+  "type": "Container",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Nested Primitive Trees (Requirement 1.4) > should capture 3-level nested tree snapshot 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "isLeafNode": true,
+              "props": {
+                "name": "file",
+                "size": 16,
+              },
+              "renderStrategy": "react",
+              "type": "Icon",
+            },
+            {
+              "children": [],
+              "isLeafNode": true,
+              "props": {
+                "content": "File name",
+                "size": "md",
+                "variant": "body",
+                "weight": "normal",
+              },
+              "renderStrategy": "react",
+              "type": "Text",
+            },
+          ],
+          "isLeafNode": false,
+          "props": {
+            "align": "center",
+            "justify": "start",
+            "wrap": false,
+          },
+          "renderStrategy": "react",
+          "type": "Flex",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "isLeafNode": false,
+              "props": {
+                "disabled": false,
+                "size": "sm",
+                "variant": "ghost",
+              },
+              "renderStrategy": "react",
+              "type": "Button",
+            },
+          ],
+          "isLeafNode": false,
+          "props": {
+            "align": "center",
+            "justify": "end",
+            "wrap": false,
+          },
+          "renderStrategy": "react",
+          "type": "Flex",
+        },
+      ],
+      "isLeafNode": false,
+      "props": {
+        "direction": "row",
+        "gap": 16,
+      },
+      "renderStrategy": "react",
+      "type": "Container",
+    },
+  ],
+  "isLeafNode": false,
+  "props": {
+    "collapsible": true,
+    "defaultCollapsed": false,
+    "title": "Main Panel",
+  },
+  "renderStrategy": "react",
+  "type": "Panel",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Nested Primitive Trees (Requirement 1.4) > should capture complex nested structure with mixed primitives 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "isLeafNode": true,
+              "props": {
+                "disabled": false,
+                "placeholder": "Username",
+                "type": "text",
+                "value": "",
+              },
+              "renderStrategy": "react",
+              "type": "Input",
+            },
+            {
+              "children": [],
+              "isLeafNode": true,
+              "props": {
+                "disabled": false,
+                "placeholder": "Email",
+                "type": "email",
+                "value": "",
+              },
+              "renderStrategy": "react",
+              "type": "Input",
+            },
+          ],
+          "isLeafNode": false,
+          "props": {
+            "align": "stretch",
+            "direction": "column",
+            "gap": 8,
+            "justify": "start",
+            "wrap": false,
+          },
+          "renderStrategy": "react",
+          "type": "Flex",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "isLeafNode": false,
+              "props": {
+                "checked": true,
+                "disabled": false,
+                "label": "Option 1",
+              },
+              "renderStrategy": "react",
+              "type": "Checkbox",
+            },
+            {
+              "children": [],
+              "isLeafNode": false,
+              "props": {
+                "checked": false,
+                "disabled": false,
+                "label": "Option 2",
+              },
+              "renderStrategy": "react",
+              "type": "Checkbox",
+            },
+          ],
+          "isLeafNode": false,
+          "props": {
+            "align": "stretch",
+            "direction": "column",
+            "gap": 4,
+            "justify": "start",
+            "wrap": false,
+          },
+          "renderStrategy": "react",
+          "type": "Flex",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "isLeafNode": false,
+              "props": {
+                "disabled": false,
+                "size": "default",
+                "variant": "outline",
+              },
+              "renderStrategy": "react",
+              "type": "Button",
+            },
+            {
+              "children": [],
+              "isLeafNode": false,
+              "props": {
+                "disabled": false,
+                "size": "default",
+                "variant": "primary",
+              },
+              "renderStrategy": "react",
+              "type": "Button",
+            },
+          ],
+          "isLeafNode": false,
+          "props": {
+            "align": "stretch",
+            "gap": 8,
+            "justify": "end",
+            "wrap": false,
+          },
+          "renderStrategy": "react",
+          "type": "Flex",
+        },
+      ],
+      "isLeafNode": false,
+      "props": {
+        "direction": "column",
+        "gap": 16,
+      },
+      "renderStrategy": "react",
+      "type": "Container",
+    },
+  ],
+  "isLeafNode": false,
+  "props": {
+    "open": true,
+    "size": "lg",
+    "title": "Settings",
+  },
+  "renderStrategy": "react",
+  "type": "Modal",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Nested Primitive Trees (Requirement 1.4) > should capture grid with nested items snapshot 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "isLeafNode": true,
+          "props": {
+            "content": "Content 1",
+            "size": "md",
+            "variant": "body",
+            "weight": "normal",
+          },
+          "renderStrategy": "react",
+          "type": "Text",
+        },
+      ],
+      "isLeafNode": false,
+      "props": {
+        "collapsible": false,
+        "defaultCollapsed": false,
+        "title": "Panel 1",
+      },
+      "renderStrategy": "react",
+      "type": "Panel",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "isLeafNode": true,
+          "props": {
+            "content": "Content 2",
+            "size": "md",
+            "variant": "body",
+            "weight": "normal",
+          },
+          "renderStrategy": "react",
+          "type": "Text",
+        },
+      ],
+      "isLeafNode": false,
+      "props": {
+        "collapsible": false,
+        "defaultCollapsed": false,
+        "title": "Panel 2",
+      },
+      "renderStrategy": "react",
+      "type": "Panel",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "isLeafNode": true,
+          "props": {
+            "content": "Content 3",
+            "size": "md",
+            "variant": "body",
+            "weight": "normal",
+          },
+          "renderStrategy": "react",
+          "type": "Text",
+        },
+      ],
+      "isLeafNode": false,
+      "props": {
+        "collapsible": false,
+        "defaultCollapsed": false,
+        "title": "Panel 3",
+      },
+      "renderStrategy": "react",
+      "type": "Panel",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "isLeafNode": true,
+          "props": {
+            "content": "Content 4",
+            "size": "md",
+            "variant": "body",
+            "weight": "normal",
+          },
+          "renderStrategy": "react",
+          "type": "Text",
+        },
+      ],
+      "isLeafNode": false,
+      "props": {
+        "collapsible": false,
+        "defaultCollapsed": false,
+        "title": "Panel 4",
+      },
+      "renderStrategy": "react",
+      "type": "Panel",
+    },
+  ],
+  "isLeafNode": false,
+  "props": {
+    "columns": 2,
+    "gap": 12,
+  },
+  "renderStrategy": "react",
+  "type": "Grid",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Nested Primitive Trees (Requirement 1.4) > should capture serialized snapshot for comparison 1`] = `
+"{
+  "type": "Container",
+  "props": {
+    "direction": "row",
+    "gap": 0
+  },
+  "renderStrategy": "react",
+  "isLeafNode": false,
+  "children": [
+    {
+      "type": "Button",
+      "props": {
+        "variant": "outline",
+        "size": "default",
+        "disabled": false
+      },
+      "renderStrategy": "react",
+      "isLeafNode": false,
+      "children": []
+    }
+  ]
+}"
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Nested Primitive Trees (Requirement 1.4) > should capture tabs with nested content snapshot 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "isLeafNode": true,
+          "props": {
+            "content": "General settings",
+            "size": "md",
+            "variant": "body",
+            "weight": "normal",
+          },
+          "renderStrategy": "react",
+          "type": "Text",
+        },
+        {
+          "children": [],
+          "isLeafNode": true,
+          "props": {
+            "disabled": false,
+            "placeholder": "Name",
+            "type": "text",
+            "value": "",
+          },
+          "renderStrategy": "react",
+          "type": "Input",
+        },
+      ],
+      "isLeafNode": false,
+      "props": {
+        "direction": "column",
+        "gap": 0,
+      },
+      "renderStrategy": "react",
+      "type": "Container",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "isLeafNode": true,
+          "props": {
+            "content": "Advanced settings",
+            "size": "md",
+            "variant": "body",
+            "weight": "normal",
+          },
+          "renderStrategy": "react",
+          "type": "Text",
+        },
+        {
+          "children": [],
+          "isLeafNode": false,
+          "props": {
+            "checked": false,
+            "disabled": false,
+            "label": "Enable feature",
+          },
+          "renderStrategy": "react",
+          "type": "Checkbox",
+        },
+      ],
+      "isLeafNode": false,
+      "props": {
+        "direction": "column",
+        "gap": 0,
+      },
+      "renderStrategy": "react",
+      "type": "Container",
+    },
+  ],
+  "isLeafNode": false,
+  "props": {
+    "activeTab": "general",
+    "tabs": [
+      {
+        "id": "general",
+        "label": "General",
+      },
+      {
+        "id": "advanced",
+        "label": "Advanced",
+      },
+    ],
+  },
+  "renderStrategy": "react",
+  "type": "Tabs",
+}
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Nested Primitive Trees (Requirement 1.4) > should render 2-level nested tree to DOM 1`] = `
+<div
+  data-testid="mock-container"
+  data-type="Container"
+  direction="row"
+  gap="0"
+>
+  <div
+    data-testid="mock-button"
+    data-type="Button"
+    variant="primary"
+  />
+  <div
+    content="Click me"
+    data-testid="mock-text"
+    data-type="Text"
+    variant="body"
+    weight="normal"
+  />
+</div>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Nested Primitive Trees (Requirement 1.4) > should render 3-level nested tree to DOM 1`] = `
+<div
+  data-testid="mock-panel"
+  data-type="Panel"
+  title="Nested Panel"
+>
+  <div
+    align="stretch"
+    data-testid="mock-flex"
+    data-type="Flex"
+    justify="center"
+  >
+    <div
+      data-testid="mock-icon"
+      data-type="Icon"
+      name="star"
+      size="24"
+    />
+  </div>
+</div>
+`;
+
+exports[`PrimitiveRenderer Snapshot Tests > Nested Primitive Trees (Requirement 1.4) > should verify complete tree structure is captured 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "isLeafNode": false,
+          "props": {
+            "className": "level2a",
+            "disabled": false,
+            "size": "default",
+            "variant": "primary",
+          },
+          "renderStrategy": "react",
+          "type": "Button",
+        },
+        {
+          "children": [],
+          "isLeafNode": true,
+          "props": {
+            "className": "level2b",
+            "content": "Text",
+            "size": "md",
+            "variant": "body",
+            "weight": "normal",
+          },
+          "renderStrategy": "react",
+          "type": "Text",
+        },
+      ],
+      "isLeafNode": false,
+      "props": {
+        "align": "stretch",
+        "className": "level1a",
+        "justify": "start",
+        "wrap": false,
+      },
+      "renderStrategy": "react",
+      "type": "Flex",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "isLeafNode": true,
+          "props": {
+            "className": "level2c",
+            "name": "check",
+            "size": 24,
+          },
+          "renderStrategy": "react",
+          "type": "Icon",
+        },
+      ],
+      "isLeafNode": false,
+      "props": {
+        "align": "stretch",
+        "className": "level1b",
+        "justify": "end",
+        "wrap": false,
+      },
+      "renderStrategy": "react",
+      "type": "Flex",
+    },
+  ],
+  "isLeafNode": false,
+  "props": {
+    "className": "root",
+    "direction": "column",
+    "gap": 0,
+  },
+  "renderStrategy": "react",
+  "type": "Container",
+}
+`;
