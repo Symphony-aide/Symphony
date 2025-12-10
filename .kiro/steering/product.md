@@ -9,30 +9,49 @@ Symphony is the world's first true **AI-First Development Environment (AIDE)** -
 
 Symphony represents a fundamental shift where developers become **composers of intelligent systems** rather than writers of individual lines of code. You provide vision, creativity, and direction while specialized AI agents handle implementation, testing, integration, and optimization.
 
-## Core Philosophy: Minimal Core, Infinite Intelligence
+## Core Philosophy: Build on Proven Foundations
 
-**"Less Bloat, More Brain"** - Symphony ships with only six essential components:
-- Text Editor, File Explorer, Syntax Highlighting, Settings System, Native Terminal, Extension System
+**"Stand on the Shoulders of Giants"** - Symphony's backend is built on a **two-layer architecture**:
 
-**Everything else is community-built intelligence** - debugging, Git integration, language servers, AI models, specialized tools - all delivered through Symphony's revolutionary extension ecosystem.
+### Layer 1: XI-editor Foundation (✅ Implemented)
+Battle-tested text editing core providing:
+- **Rope Data Structure**: Efficient text manipulation for large files
+- **JSON-RPC Protocol**: Async frontend-backend communication
+- **LSP Integration**: Language Server Protocol support
+- **Plugin System**: Extensibility infrastructure
+- **Syntax Highlighting**: TextMate grammars via Syntect
+- **Sub-16ms Operations**: 60 FPS performance targets
 
-## The Conductor: Microkernel Maestro
+### Layer 2: Symphony AIDE Features (🚧 In Development)
+AI orchestration and intelligent workflows:
+- **The Conductor**: Python-based orchestration engine
+- **The Pit**: Five infrastructure extensions (Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, Stale Manager)
+- **Orchestra Kit**: Extension ecosystem (Instruments, Operators, Motifs)
+- **IPC Bus**: Inter-process communication for extensions
 
-At Symphony's heart lies **The Conductor** - a Python-based microkernel trained through **Function Quest Game (FQG)** to orchestrate complex AI workflows. The Conductor operates on reinforcement learning principles, making intelligent decisions about:
+**Everything beyond the core is extensible** - debugging, Git integration, language servers, AI models, specialized tools - all delivered through Symphony's revolutionary extension ecosystem.
+
+## The Conductor: Orchestration Engine (In Development)
+
+At Symphony's heart will lie **The Conductor** - a Python-based orchestration engine trained through **Function Quest Game (FQG)** to manage complex AI workflows. The Conductor will operate on reinforcement learning principles, making intelligent decisions about:
 - When to activate which AI models
 - How to handle failures and recovery
 - Resource allocation and cost optimization
 - Workflow dependency management
 
-## Dual Ensemble Architecture
+The Conductor integrates with Symphony's Rust backend via PyO3 bindings, combining Python's AI/ML ecosystem with Rust's performance and safety.
+
+## Dual Ensemble Architecture (Planned)
 
 ### The Pit (Infrastructure as Extensions - IaE)
-Five Rust-powered extensions forming Symphony's unshakable foundation:
+Five Rust-powered extensions forming Symphony's AIDE foundation:
 - **Pool Manager**: AI model lifecycle and resource allocation
 - **DAG Tracker**: Workflow dependency mapping and execution
 - **Artifact Store**: Intelligent data persistence and versioning
 - **Arbitration Engine**: Conflict resolution and decision-making
 - **Stale Manager**: Training data curation and system optimization
+
+These run in-process for microsecond-level performance, built on top of XI-editor's proven foundation.
 
 ### The Grand Stage (User-Faced Extensions - UFE)
 Three types of community-driven extensions:
@@ -40,20 +59,26 @@ Three types of community-driven extensions:
 - **⚙️ Operators**: Workflow utilities and data transformation
 - **🧩 Addons (Motifs)**: UI enhancements and specialized editors
 
-## Agent-Driven Development (ADD)
+These run out-of-process for safety, crash isolation, and hot-swapping capabilities.
 
-Symphony pioneered **Agent-Driven Development** where:
+## Agent-Driven Development (ADD) - Vision
+
+Symphony is pioneering **Agent-Driven Development** where:
 - **Autonomous Agents** specialize in planning, generation, testing, deployment
 - **Orchestrated Workflows** coordinate agents like musicians in a symphony
 - **Transparent Processes** track every decision through structured artifacts
 - **Continuous Learning** improves with every project
 
-## Visual Orchestration
+This vision is being realized through Symphony's two-layer architecture: XI-editor provides the stable text editing foundation, while Symphony's AIDE layer adds intelligent orchestration.
+
+## Visual Orchestration (Planned)
 
 - **Melody Creation**: Visual workflow composer for complex AI pipelines
 - **Harmony Board**: Node-based interface for designing agent interactions
 - **Maestro Mode**: Fully automated AI orchestration
 - **Manual Mode**: Complete user control over configuration
+
+These features will be built on top of Symphony's two-layer architecture, leveraging XI-editor's proven foundation.
 
 ## Target Applications
 

@@ -9,15 +9,16 @@ Symphony is an AI-First Development Environment (AIDE) built on a sophisticated 
 ```
 Symphony/
 ├── apps/                           # Applications Layer
-│   ├── backend/                   # Rust Microkernel System (40+ crates)
-│   │   ├── core/                  # JSON-RPC Core Server
-│   │   ├── conductor/             # Python Integration & Orchestration
-│   │   ├── extension/             # Extension System Architecture
-│   │   ├── ipc_bus/              # Inter-Process Communication
-│   │   ├── kit/                  # Orchestra Kit (Extension Ecosystem)
-│   │   ├── orchestration/        # Workflow Engine
-│   │   ├── bootstrap/            # System Initialization
-│   │   └── ...                   # 20+ specialized subsystems
+│   ├── backend/                   # Two-Layer Rust Architecture
+│   │   ├── crates/               # XI-editor Foundation (✅ Implemented)
+│   │   │   ├── core/            # Text editing, RPC, LSP
+│   │   │   ├── plugins/         # Plugin system & syntax highlighting
+│   │   │   └── utils/           # Rope, Unicode, Tracing
+│   │   ├── src/                 # Symphony Entry Point
+│   │   │   └── main.rs          # Application bootstrap
+│   │   ├── xi-core-reference/   # Reference materials
+│   │   └── [Future]             # Symphony AIDE Layer (🚧 Planned)
+│   │       ├── ...
 │   ├── web/                      # React Frontend Application
 │   └── docs/                     # Documentation Site
 ├── packages/                      # Frontend Component Ecosystem
@@ -37,80 +38,76 @@ Symphony/
     └── ...                     # 15+ architectural concepts
 ```
 
-## Backend Architecture (Rust Workspace)
+## Backend Architecture (Two-Layer System)
 
-### Core Foundation
-- **core/**: JSON-RPC server with HTTP/WebSocket support
-- **types/**: Shared type definitions across all crates
-- **config/**: Configuration management system
-- **core_api/**: Public API traits and interfaces
+Symphony's backend is built on a **two-layer architecture** combining the battle-tested XI-editor foundation with Symphony's custom AIDE features.
 
-### The Conductor System
-- **conductor/bindings/**: PyO3 Python integration bindings
-- **conductor/orchestration_bridge/**: Bridge between Python and Rust
-- **conductor/extension_proxy/**: Extension communication proxy
+### Layer 1: XI-editor Foundation (✅ Implemented)
 
-### Extension Architecture
-- **extension/layers/aide/pit/**: In-Process AIDE extensions (5 crates)
-  - **core/**: AIDE pit core functionality
-  - **pool_manager/**: Resource pool management
-  - **dag_tracker/**: Dependency graph tracking
-  - **artifact_store/**: Artifact storage and retrieval
-  - **arbitration_engine/**: Conflict resolution
-  - **stale_manager/**: Cleanup and lifecycle management
-- **extension/layers/ide/**: IDE-specific extensions (3 crates)
-  - **core/**: IDE layer core
-  - **ui_bridge/**: UI integration bridge
-  - **virtual_dom/**: Virtual DOM implementation
-- **extension/sdk/**: Extension SDK (4 crates)
-  - **core/**: SDK core functionality
-  - **testing/**: Testing framework for extensions
-  - **carets/**: Cursor and selection management
-  - **metrics/**: Performance and usage metrics
+**Core Editing and RPC** (`crates/core/`)
+- **xi-core-lib/**: Text editing engine with rope data structure
+- **xi-rpc/**: JSON-RPC communication protocol
+- **xi-lsp-lib/**: Language Server Protocol integration
 
-### IPC Communication Backbone
-- **ipc_bus/**: Main IPC coordination
-- **ipc_bus/protocol/**: Communication protocol definitions
-- **ipc_bus/transport/**: Transport layer implementation
-- **ipc_bus/security/**: Security and sandboxing
+**Plugin Infrastructure** (`crates/plugins/`)
+- **xi-plugin-lib/**: Plugin system and lifecycle management
+- **xi-syntect-plugin/**: Syntax highlighting via TextMate grammars
 
-### Orchestra Kit (Extension Ecosystem)
-- **kit/core/**: Orchestra Kit core functionality
-- **kit/harmony_board/**: Visual workflow composer
-- **kit/instruments/**: AI/ML model extensions
-- **kit/operators/**: Workflow utility extensions
-- **kit/motifs/**: UI enhancement extensions (Addons)
-- **kit/marketplace/**: Extension marketplace
-- **kit/installer/**: Extension installation system
-- **kit/lifecycle/**: Extension lifecycle management
-- **kit/registry/**: Extension registry and discovery
-- **kit/security/**: Extension security and sandboxing
-- **kit/manifest/**: Extension manifest system
+**Utilities** (`crates/utils/`)
+- **xi-rope/**: Efficient rope data structure for text manipulation
+- **xi-unicode/**: Unicode handling and text processing
+- **xi-trace/**: Logging and tracing infrastructure
 
-### Orchestration Engine
-- **orchestration/core/**: Workflow orchestration core
-- **orchestration/melody_engine/**: Visual workflow engine
+**Reference Materials** (`xi-core-reference/`)
+- Preserved XI-editor source for reference and experimental features
 
-### System Infrastructure
-- **bootstrap/**: System initialization (3 crates)
-  - **core/**: Bootstrap core
-  - **phase_manager/**: Initialization phase management
-  - **health_checker/**: System health monitoring
-- **permissions/**: Permission and security management
-- **logging/**: Structured logging system
-- **hooks/**: Event hook system
-- **terminal/**: Terminal integration
-- **crosspty/**: Cross-platform PTY implementation
+### Layer 2: Symphony AIDE Features (🚧 Planned)
 
-### Applications
-- **server/**: Main web server application
-- **desktop/**: Tauri desktop application
-- **desktop/src-tauri/**: Tauri-specific configuration
+**The Conductor System** (To be implemented)
+- **symphony-conductor/**: AI workflow orchestration engine
+- **symphony-python-bridge/**: PyO3 bindings for Python integration
+- Reinforcement learning integration via Function Quest Game (FQG)
 
-### Developed Extensions (Examples)
-- **developed_extensions/git/**: Git integration extension
-- **developed_extensions/typescript-lsp/**: TypeScript language server
-- **developed_extensions/native-shell/**: Native shell integration
+**The Pit (Infrastructure Extensions)** (To be implemented)
+- **symphony-pool-manager/**: AI model lifecycle and resource management
+- **symphony-dag-tracker/**: Workflow DAG execution and dependency tracking
+- **symphony-artifact-store/**: Content-addressable storage with versioning
+- **symphony-arbitration-engine/**: Conflict resolution and decision-making
+- **symphony-stale-manager/**: Training data curation and cleanup
+
+**Orchestra Kit (Extension Ecosystem)** (To be implemented)
+- **symphony-extensions/instruments/**: AI/ML model extensions (🎻)
+- **symphony-extensions/operators/**: Workflow utility extensions (⚙️)
+- **symphony-extensions/motifs/**: UI enhancement extensions (🧩)
+- Extension marketplace, installer, and lifecycle management
+
+**IPC Communication** (To be implemented)
+- **symphony-ipc/**: Inter-process communication bus
+- Binary serialization protocols (MessagePack/Bincode)
+- Unix sockets / Named pipes transport layer
+- Security and sandboxing infrastructure
+
+### Current Implementation Status
+
+**✅ Completed (December 2025)**:
+- XI-editor packages migrated and integrated
+- Rust edition updated to 2021
+- Dependencies modernized
+- Workspace configuration established
+- Symphony entry point created
+- Build system operational
+
+**🚧 In Progress**:
+- Symphony-specific crates development
+- Python Conductor integration
+- AIDE layer implementation
+- Frontend-backend JSON-RPC integration
+
+**📋 Planned**:
+- Extension ecosystem infrastructure
+- Workflow orchestration engine
+- Artifact management system
+- AI model integration layer
 
 ## Frontend Architecture
 
@@ -155,10 +152,11 @@ User-facing extensions run in isolated processes:
 ## Build System Architecture
 
 ### Rust Workspace
-- **Cargo.toml**: 40+ member crates with shared dependencies
+- **Cargo.toml**: XI-editor crates (8 currently) + Symphony crates (planned)
 - **Profile Optimization**: Multiple build profiles (dev, release, release-small)
 - **Linting**: Strict Clippy rules and security auditing
 - **Testing**: Comprehensive test coverage with Tarpaulin
+- **Edition**: Rust 2021 with modern dependency versions
 
 ### Frontend Monorepo
 - **pnpm Workspaces**: Efficient package management
@@ -169,10 +167,10 @@ User-facing extensions run in isolated processes:
 ## Development Workflow
 
 ### Backend Development
-1. **Rust Development**: Work in `apps/backend/` with cargo commands
-2. **Extension Development**: Create new crates in appropriate subsystems
-3. **IPC Development**: Use `ipc_bus/` for communication protocols
-4. **Testing**: Comprehensive unit and integration tests
+1. **XI-editor Foundation**: Work with proven text editing core in `apps/backend/crates/`
+2. **Symphony AIDE Layer**: Develop new features on top of XI-editor foundation
+3. **Extension Development**: Create new crates for Symphony-specific functionality
+4. **Testing**: Comprehensive unit and integration tests with cargo test
 
 ### Frontend Development
 1. **Component Development**: Work in `packages/components/` with Storybook
@@ -188,6 +186,11 @@ User-facing extensions run in isolated processes:
 
 ## Key Architectural Principles
 
+### Two-Layer Architecture
+- **Build on Proven Foundations**: XI-editor provides battle-tested text editing
+- **Layer Separation**: Clear boundary between XI and Symphony AIDE layers
+- **Incremental Development**: Foundation complete, AIDE features being built on top
+
 ### Microkernel Design
 - Minimal core with maximum extensibility
 - Clear separation between infrastructure and user extensions
@@ -199,11 +202,12 @@ User-facing extensions run in isolated processes:
 - Orchestrated workflows rather than manual tool usage
 
 ### Security by Design
-- Sandboxed extension execution
-- Granular permission system
-- Secure IPC communication protocols
+- Sandboxed extension execution (planned)
+- Granular permission system (planned)
+- Secure IPC communication protocols (planned)
 
 ### Performance Optimization
-- Dual execution models for optimal performance/safety trade-offs
+- XI-editor's sub-16ms operation targets maintained
+- Dual execution models for optimal performance/safety trade-offs (planned)
 - Rust for system-level performance
 - React for responsive user interfaces

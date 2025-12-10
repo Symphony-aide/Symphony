@@ -2,11 +2,19 @@
 
 ## Core Architecture Technologies
 
-### Backend: Rust Microkernel System
-- **Rust 1.70+** - Systems programming language for performance and safety
-- **40+ Rust Crates** - Modular workspace architecture
-- **PyO3 Bindings** - Python-Rust integration for Conductor
-- **Tokio** - Async runtime for high-performance concurrency
+### Backend: Two-Layer Rust Architecture
+- **Rust 2021 Edition** - Modern systems programming with safety guarantees
+- **XI-editor Foundation** - Battle-tested text editing core (8 crates)
+  - Rope data structure for efficient text manipulation
+  - JSON-RPC protocol for frontend-backend communication
+  - LSP integration for language intelligence
+  - Plugin system for extensibility
+  - Syntect for syntax highlighting
+- **Symphony AIDE Layer** (Planned) - AI orchestration and workflows
+  - PyO3 bindings for Python Conductor integration
+  - Tokio async runtime for high-performance concurrency
+  - Tantivy for full-text search
+  - Petgraph for DAG workflow execution
 - **Serde** - Serialization framework for data exchange
 - **Tauri** - Cross-platform desktop application framework
 
@@ -39,10 +47,11 @@
 - **Jake** - Custom task automation for complex workflows
 
 ### Rust Build System
-- **Cargo Workspace** - 40+ crates with shared dependencies
+- **Cargo Workspace** - XI-editor crates (8) + Symphony crates (planned)
 - **Multiple Build Profiles** - dev, release, release-small, release-with-debug
 - **Cargo Make** - Advanced task automation for Rust
 - **Cross-compilation** - Windows, macOS, Linux support
+- **Rust 2021 Edition** - Modern language features and improved diagnostics
 
 ### Code Quality & Security
 - **ESLint 9.30.1** - Advanced linting with TypeScript support
@@ -77,12 +86,14 @@ pnpm build_desktop    # Build production desktop application
 ### Rust Backend Development
 ```bash
 # In apps/backend/ directory
-cargo build --workspace              # Build all Rust crates
+cargo build --workspace              # Build all Rust crates (XI-editor foundation)
+cargo build --release                # Optimized production build
 cargo test --workspace               # Run all tests
 cargo clippy --all-targets          # Lint with strict rules
-cargo audit                          # Security vulnerability scan
-cargo make pre-commit                # Full quality check pipeline
-cargo make ci                        # Complete CI pipeline locally
+cargo fmt                            # Format code with rustfmt
+cargo check                          # Fast compile check without codegen
+cargo run                            # Run Symphony backend
+RUST_LOG=debug cargo run            # Run with debug logging
 ```
 
 ### Frontend Development
@@ -151,16 +162,20 @@ pnpm check-deps                      # Verify dependency consistency
 
 ## Performance Characteristics
 
-### Startup Performance
+### XI-editor Foundation (Achieved)
+- **Text Operations**: <16ms (60 FPS target)
+- **Large File Handling**: Efficient for files >100MB via rope structure
+- **Memory Usage**: Optimized rope-based text storage
+- **Non-blocking Operations**: Async-first design throughout
+
+### Symphony AIDE Layer (Targets - Planned)
 - **Core Startup**: <1 second (minimal core only)
 - **Extension Loading**: Lazy loading on-demand
-- **Memory Usage**: <100MB base, scales with active extensions
-
-### Runtime Performance
-- **In-Process Operations**: 50-100 nanosecond latency (The Pit)
-- **Out-of-Process Communication**: <1ms latency (UFE)
+- **Pool Manager**: 50-100ns allocation (cache hit)
+- **DAG Tracker**: 10,000-node workflow execution
+- **Artifact Store**: 1-5ms store, 0.5-2ms retrieve
+- **IPC Bus**: 0.1-0.3ms message latency
 - **AI Model Orchestration**: Intelligent resource pooling and caching
-- **File Operations**: Async I/O with intelligent caching
 
 ## Deployment & Distribution
 

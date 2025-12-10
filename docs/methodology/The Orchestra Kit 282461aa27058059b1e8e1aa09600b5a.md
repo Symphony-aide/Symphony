@@ -170,6 +170,14 @@ The manifest system enables:
 - **Permission management** - Clear, explicit security model
 - **Resource allocation** - Knows memory, compute, and cost requirements upfront
 
+### 🎯 Manifest Extensions for Players
+
+Extensions pursuing **Player** registration add governance declarations to
+their manifest:
+
+*See [The Player](The%20Player%20294461aa27058067ac8ec0bdfda7a4ff.md) for the complete Player manifest
+specification and all required fields.*
+
 ---
 
 ## 🔄 Lifecycle Management
@@ -222,6 +230,15 @@ Extensions don't work in isolation - they collaborate. The Orchestra Kit provide
 - Rate limiting prevents abuse
 - Extensions can only talk to what they declare in manifests
 - Full audit trail of all interactions
+
+### 🎪 Player Communication Paths
+
+Extensions can communicate through Orchestra Kit's safe channels. Registered
+**Players** additionally have Conductor-mediated communication that enables
+intelligent routing, policy enforcement.
+
+*See [The Player](The%20Player%20294461aa27058067ac8ec0bdfda7a4ff.md)  to understand how Player registration
+affects communication and orchestration.*
 
 ---
 
