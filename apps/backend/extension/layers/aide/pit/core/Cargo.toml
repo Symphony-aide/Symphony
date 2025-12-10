@@ -1,9 +1,0 @@
-[package]
-name = "syexlyaipicore"
-version = "0.1.0"
-edition = "2021"
-authors = ["Symphony Team"]
-description = "Core AIDE Pit functionality for Symphony"
-license = "MIT"
-
-[dependencies]

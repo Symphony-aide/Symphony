@@ -1,9 +1,0 @@
-[package]
-name = "syterminal"
-version = "0.1.0"
-edition = "2021"
-authors = ["Symphony Team"]
-description = "Terminal (pty) functionality for Symphony"
-license = "MIT"
-
-[dependencies]

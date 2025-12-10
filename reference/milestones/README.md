@@ -1,0 +1,46 @@
+# Rust Backend Milestones & Guidelines
+
+## ⚠️ Disclaimer: Reference Only
+
+This directory contains milestone breakdowns and roadmaps for the Symphony Rust backend.
+
+**IMPORTANT**: These documents serve as a **high-level guideline** and **estimation** of the work required. They do **NOT** enforce any specific architectural dogma (e.g., strict adherence to "Harmonic Hexagonal Actor Architecture" or similar theoretical models).
+
+The goal is to provide a decomposition of the massive scope of work into manageable chunks. You should use these files as a reference to understand the *what* and *why*, but use your own engineering judgment and vision for the *how*.
+
+## 🗺️ High-Level Vision
+
+The roadmap is decomposed into several key phases, designed to build the "Symphony AIDE" (AI-First Development Environment) layer on top of the existing XI-editor foundation.
+
+### 1. The Foundation (XI-Editor)
+*Status: ✅ Complete*
+The text editing core, rope data structures, and JSON-RPC communication are already in place.
+
+### 2. The Pit (Core AIDE Infrastructure)
+*Focus: Performance & Management*
+Building the heavy-lifting Rust components that run in-process:
+- **Pool Manager**: Intelligent lifecycle management for AI models.
+- **DAG Tracker**: Handling complex workflow execution graphs.
+- **Artifact Store**: High-performance, content-addressable storage for all generated assets.
+
+### 3. The Conductor (Integration & Orchestration)
+*Focus: Intelligence & Control*
+Bridging the gap between the "Brain" (Python/AI) and the "Muscle" (Rust):
+- **IPC Bus**: Low-latency inter-process communication.
+- **Python Bridge (PyO3)**: Seamless integration for the orchestration engine.
+
+### 4. The Orchestra (Extension Ecosystem)
+*Focus: Extensibility*
+Defining how the world interacts with Symphony:
+- **Instruments**: AI Model extensions.
+- **Operators**: Workflow utilities.
+- **Motifs**: UI enhancements.
+
+## 📂 Directory Structure
+
+- **`MILESTONES.md`**: The master high-level roadmap.
+- **`level1/`**: Detailed breakdown of the major milestones (M1, M3, M4, M5).
+- **`level2/`**: Granular task lists and technical specifications.
+
+---
+*Use these milestones as a map, not a set of shackles. Build with vision.*

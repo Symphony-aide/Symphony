@@ -1,9 +1,0 @@
-[package]
-name = "syexsdcore"
-version = "0.1.0"
-edition = "2021"
-authors = ["Symphony Team"]
-description = "Core SDK for Symphony extensions"
-license = "MIT"
-
-[dependencies]

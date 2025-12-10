@@ -1,9 +1,0 @@
-[package]
-name = "sykitlifecycle"
-version = "0.1.0"
-edition = "2021"
-authors = ["Symphony Team"]
-description = "Chambering flow implementation for Symphony Orchestra Kit"
-license = "MIT"
-
-[dependencies]

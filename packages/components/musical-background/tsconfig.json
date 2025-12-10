@@ -1,0 +1,23 @@
+{
+	"extends": "tsconfig/react-library.json",
+	"include": [
+		".",
+		"../terminal/src/Terminal.jsx",
+		"../file-explorer/src/FileExplorer.jsx",
+		"../settings/src/SettingsModal.jsx",
+		"../settings/src/ShortcutSettingsModal.jsx",
+		"../settings/src/TabCompletionSettings.jsx",
+		"../settings/src/shortcutsAtom.js",
+		"../settings/src/EditorThemeSettings.jsx",
+		"../settings/src/GlyphMarginSettings.jsx",
+		"../settings/src/AutoSaveSettings.jsx",
+		"../outlineview/src/outlineAtom.js",
+		"../outlineview/src/OutlineView.jsx",
+		"../statusbar/src/StatusBar.jsx"
+	],
+	"exclude": ["dist", "build", "node_modules"],
+	"compilerOptions": {
+		"moduleResolution": "nodenext",
+		"module": "nodenext"
+	}
+}

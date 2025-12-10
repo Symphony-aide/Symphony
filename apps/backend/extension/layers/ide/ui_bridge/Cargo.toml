@@ -1,9 +1,0 @@
-[package]
-name = "syexlyidub"
-version = "0.1.0"
-edition = "2021"
-authors = ["Symphony Team"]
-description = "UI Bridge for IDE layer in Symphony"
-license = "MIT"
-
-[dependencies]
