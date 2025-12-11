@@ -103,5 +103,23 @@ export {
   resetDefaultMonitor,
 } from './monitoring/PerformanceMonitor.js';
 
+// UI Registration exports
+export {
+  registerAllUIComponents,
+  isFullyRegistered,
+  getRegisteredUITypes,
+  getExpectedUITypes,
+  // Wrappers for customization
+  ContainerWrapper,
+  FlexWrapper,
+  GridWrapper,
+  TextWrapper,
+  SelectWrapper,
+  TooltipWrapper,
+  DialogWrapper,
+  ListWrapper,
+  FormWrapper,
+} from './registration/index.js';
+
 // Package version
 export const VERSION = '1.0.0';

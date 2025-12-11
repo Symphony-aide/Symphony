@@ -571,9 +571,28 @@ pnpm test -- --grep "Performance"
 
 The performance tests verify three key properties:
 
-- **Property 7: Simple Primitive Render Performance** - Any simple primitive renders under 5ms
-- **Property 8: Medium Tree Render Performance** - Any tree with 10-20 nodes renders under 16ms
+- **Property 7: Simple Primitive Render Performance** - Any simple primitive renders under 5ms (average)
+- **Property 8: Medium Tree Render Performance** - Any tree with 10-20 nodes renders under 16ms (average)
 - **Property 9: Complex Tree Render Performance** - Any tree with 50+ nodes renders under 50ms
+
+### Testing Methodology
+
+Performance tests use `benchmarkFunction` to measure average render time over multiple iterations. This approach:
+
+- Accounts for JIT compilation warmup in the JavaScript engine
+- Reduces variance from garbage collection pauses
+- Provides consistent, reproducible measurements across test runs
+- Matches the specification intent of measuring typical render performance, not worst-case single-render times
+
+```javascript
+// Example: benchmarkFunction usage
+const stats = benchmarkFunction(() => {
+  const { unmount } = render(<PrimitiveRenderer primitive={primitive} />);
+  unmount();
+}, 5, 1); // 5 iterations, 1 warmup
+
+expect(stats.average).toBeLessThan(PERFORMANCE_THRESHOLDS.simple);
+```
 
 ### Using Performance Helpers
 
@@ -586,12 +605,17 @@ import {
   PERFORMANCE_THRESHOLDS,
 } from '@symphony/primitives/__tests__/utils/performanceHelpers';
 
-// Measure single render
+// Measure single render (useful for quick checks)
 const { result, duration } = measureRenderTime(() => renderPrimitive(button));
 
-// Benchmark with statistics
-const stats = benchmarkFunction(() => renderPrimitive(tree), 100, 5);
+// Benchmark with statistics (recommended for performance tests)
+// Parameters: function, iterations, warmup runs
+const stats = benchmarkFunction(() => renderPrimitive(tree), 10, 2);
 console.log(`Average: ${stats.average}ms, P95: ${stats.p95}ms`);
+
+// For property-based tests, use fewer iterations for speed
+const quickStats = benchmarkFunction(() => renderPrimitive(primitive), 5, 1);
+expect(quickStats.average).toBeLessThan(PERFORMANCE_THRESHOLDS.simple);
 
 // Generate test trees
 const mediumTree = generatePrimitiveTree(15);
@@ -848,9 +872,9 @@ The following IPC methods have defined contracts:
 
 | Export | Description |
 |--------|-------------|
-| `measureRenderTime` | Measures execution time of a synchronous function |
-| `measureRenderTimeAsync` | Measures execution time of an async function |
-| `benchmarkFunction` | Runs function multiple times and returns timing statistics (avg, min, max, p95, p99) |
+| `measureRenderTime` | Measures execution time of a synchronous function (single run) |
+| `measureRenderTimeAsync` | Measures execution time of an async function (single run) |
+| `benchmarkFunction` | Runs function multiple times and returns timing statistics (avg, min, max, p95, p99). Accepts iterations and warmup count parameters for consistent measurements. |
 | `generatePrimitiveTree` | Generates a primitive tree with specified node count |
 | `generateSimplePrimitive` | Generates a simple primitive (Button, Text, Icon, Input, Checkbox) |
 | `generateMediumTree` | Generates a medium complexity tree (10-20 nodes) |
@@ -885,6 +909,163 @@ The following IPC methods have defined contracts:
 | `COMPONENT_TREE_SCHEMA` | Schema for ComponentTree structure |
 | `SUCCESS_RESPONSE_SCHEMA` | Schema for successful IPC response |
 | `ERROR_RESPONSE_SCHEMA` | Schema for error IPC response |
+
+## UI Component Registration
+
+The primitives package includes a registration module that maps primitive types to actual React components from the `ui` package. This enables the primitive system to render real UI components.
+
+### Quick Start
+
+```javascript
+import { registerAllUIComponents, isFullyRegistered } from '@symphony/primitives';
+
+// Register all UI components at application startup
+const result = registerAllUIComponents();
+console.log(`Registered ${result.registered.length} components`);
+
+// Verify registration
+if (isFullyRegistered()) {
+  console.log('All UI components are registered');
+}
+```
+
+### Registration Functions
+
+```javascript
+import {
+  registerAllUIComponents,
+  isFullyRegistered,
+  getRegisteredUITypes,
+  getExpectedUITypes,
+} from '@symphony/primitives';
+
+// Register all UI components with options
+const result = registerAllUIComponents({
+  override: false,  // Don't replace existing registrations
+  silent: true,     // Suppress warning logs
+});
+
+// Result structure
+// {
+//   registered: ['Button', 'Input', ...],  // Successfully registered
+//   skipped: ['CustomButton'],              // Already registered (skipped)
+//   failed: []                              // Failed to register
+// }
+
+// Check if all expected components are registered
+const fullyRegistered = isFullyRegistered();
+
+// Get list of registered UI types
+const registeredTypes = getRegisteredUITypes();
+// ['Container', 'Flex', 'Grid', 'Button', 'Input', ...]
+
+// Get list of expected UI types
+const expectedTypes = getExpectedUITypes();
+// ['Container', 'Flex', 'Grid', 'Panel', 'Divider', ...]
+```
+
+### Registered Component Types
+
+The registration module maps the following primitive types to UI components:
+
+| Category | Primitive Types |
+|----------|-----------------|
+| Layout | Container, Flex, Grid, Panel, Divider, ResizablePanel |
+| Interactive | Button, Input, Checkbox, Select, Switch, Slider, Toggle, RadioGroup |
+| Complex | Dialog, Modal, Dropdown, Tabs, Tooltip, Popover, Sheet, Accordion |
+| Display | Text, Badge, Avatar, Progress, Skeleton, Alert, Card |
+| Navigation | NavigationMenu, Breadcrumb, Pagination, Menubar, ContextMenu |
+| Form | Label, Textarea, Form |
+| Data Display | Table, List, ScrollArea |
+
+### Component Wrappers
+
+Some primitive types use wrapper components to provide a simplified API:
+
+```javascript
+import {
+  ContainerWrapper,
+  FlexWrapper,
+  GridWrapper,
+  TextWrapper,
+  SelectWrapper,
+  TooltipWrapper,
+  DialogWrapper,
+} from '@symphony/primitives';
+
+// ContainerWrapper - Flex container with direction and gap
+<ContainerWrapper direction="column" gap={8}>
+  {children}
+</ContainerWrapper>
+
+// FlexWrapper - Full flexbox control
+<FlexWrapper justify="space-between" align="center" wrap="wrap">
+  {children}
+</FlexWrapper>
+
+// GridWrapper - CSS Grid layout
+<GridWrapper columns={3} rows={2} gap={16}>
+  {children}
+</GridWrapper>
+
+// TextWrapper - Typography with variants
+<TextWrapper variant="h1" size="2xl" weight="bold">
+  Heading Text
+</TextWrapper>
+
+// SelectWrapper - Simplified select with options array
+<SelectWrapper
+  options={[
+    { value: 'a', label: 'Option A' },
+    { value: 'b', label: 'Option B' },
+  ]}
+  value="a"
+  onValueChange={handleChange}
+/>
+
+// TooltipWrapper - Tooltip with content and position
+<TooltipWrapper content="Helpful tip" side="top">
+  <Button>Hover me</Button>
+</TooltipWrapper>
+
+// DialogWrapper - Dialog with title and description
+<DialogWrapper
+  title="Confirm Action"
+  description="Are you sure?"
+  open={isOpen}
+  onOpenChange={setIsOpen}
+>
+  <DialogContent />
+</DialogWrapper>
+```
+
+### Custom Component Registration
+
+You can register custom components alongside the UI components:
+
+```javascript
+import { registerComponent, registerAllUIComponents } from '@symphony/primitives';
+
+// First register all UI components
+registerAllUIComponents();
+
+// Then register custom components
+registerComponent('CustomWidget', MyCustomWidgetComponent);
+registerComponent('SpecialButton', MySpecialButtonComponent);
+```
+
+### Override Existing Registrations
+
+To replace existing component registrations:
+
+```javascript
+// Override all UI components (useful for theming)
+registerAllUIComponents({ override: true });
+
+// Or override specific components
+import { registerComponent } from '@symphony/primitives';
+registerComponent('Button', MyThemedButton);
+```
 
 ## License
 
