@@ -111,10 +111,37 @@ export function getRegisteredDirectTypes() {
  * Renders the Monaco Editor directly for maximum performance.
  * This component bypasses the primitive system entirely.
  * 
+ * ## UI Component Exception Documentation
+ * 
+ * **EXCEPTION: This component uses a plain `<div>` element instead of UI components.**
+ * 
+ * ### Justification:
+ * 
+ * 1. **Direct DOM Access Required**: Monaco Editor requires direct DOM access to mount
+ *    its internal rendering system. It manages its own virtual DOM and canvas-based
+ *    rendering for syntax highlighting, cursor positioning, and text selection.
+ * 
+ * 2. **Performance Requirements**: Monaco Editor performs sub-millisecond operations
+ *    for text editing. Any wrapper component overhead would degrade the editing
+ *    experience, especially for large files (>10,000 lines).
+ * 
+ * 3. **Third-Party Integration**: Monaco Editor is a third-party library that expects
+ *    a raw DOM container element. Wrapping it in UI components could interfere with
+ *    its internal event handling and layout calculations.
+ * 
+ * 4. **Layout Management**: Monaco Editor manages its own layout through the
+ *    `automaticLayout` option and resize observers. UI component wrappers could
+ *    conflict with this behavior.
+ * 
+ * ### Alternative Considered:
+ * - Using Box component as container: Rejected due to potential style conflicts
+ *   and the need for Monaco to have complete control over the container element.
+ * 
  * @param {MonacoEditorDirectProps} props - Component props
  * @returns {React.ReactElement} The Monaco Editor element
  * 
  * @see Requirements 9.2
+ * @see Requirements 7.1 (UI Component Exception Documentation)
  */
 export function MonacoEditorDirect({
   language = 'plaintext',
@@ -255,10 +282,42 @@ export function MonacoEditorDirect({
  * Renders the xterm.js terminal directly for maximum performance.
  * This component bypasses the primitive system entirely.
  * 
+ * ## UI Component Exception Documentation
+ * 
+ * **EXCEPTION: This component uses a plain `<div>` element instead of UI components.**
+ * 
+ * ### Justification:
+ * 
+ * 1. **Direct DOM Access Required**: xterm.js requires direct DOM access to mount
+ *    its canvas-based terminal rendering system. It manages character cells, cursor
+ *    blinking, and text selection through direct canvas manipulation.
+ * 
+ * 2. **Performance Requirements**: Terminal emulation requires real-time character
+ *    rendering at high speeds (potentially thousands of characters per second for
+ *    command output). Any wrapper overhead would cause visible lag.
+ * 
+ * 3. **Third-Party Integration**: xterm.js is a third-party library that expects
+ *    a raw DOM container element. It uses the container for:
+ *    - Canvas element creation and management
+ *    - Keyboard event capture
+ *    - Mouse event handling for selection
+ *    - Clipboard operations
+ * 
+ * 4. **Addon System**: xterm.js addons (like FitAddon) require direct access to
+ *    the terminal container for resize calculations and layout adjustments.
+ * 
+ * 5. **Focus Management**: Terminal focus handling requires direct DOM access
+ *    for proper keyboard input capture and cursor visibility.
+ * 
+ * ### Alternative Considered:
+ * - Using Card component as container: Rejected because xterm.js needs complete
+ *   control over the container's dimensions and styling for proper rendering.
+ * 
  * @param {XTermTerminalDirectProps} props - Component props
  * @returns {React.ReactElement} The xterm.js terminal element
  * 
  * @see Requirements 9.3
+ * @see Requirements 7.2 (UI Component Exception Documentation)
  */
 export function XTermTerminalDirect({
   shellId,

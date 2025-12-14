@@ -13,6 +13,45 @@ import { BasePrimitive } from '../core/BasePrimitive.js';
  */
 
 /**
+ * @typedef {'none' | 'sm' | 'md' | 'lg' | 'xl'} BoxSpacing
+ * @typedef {'block' | 'inline' | 'inline-block' | 'flex' | 'inline-flex' | 'grid'} BoxDisplay
+ */
+
+/**
+ * Box props
+ * @typedef {Object} BoxProps
+ * @property {BoxSpacing} [padding='none'] - Padding size
+ * @property {BoxSpacing} [margin='none'] - Margin size
+ * @property {BoxDisplay} [display='block'] - Display type
+ * @property {string} [as='div'] - HTML element to render as
+ * @property {string} [className] - CSS class name
+ */
+
+/**
+ * Creates a Box primitive for basic layout with padding, margin, and display control.
+ *
+ * @param {BoxProps} [props={}] - Box properties
+ * @returns {BasePrimitive} Box primitive instance
+ *
+ * @example
+ * const box = Box({ padding: 'md', margin: 'sm', display: 'flex' });
+ *
+ * @example
+ * const section = Box({ as: 'section', padding: 'lg', className: 'my-section' });
+ */
+export function Box(props = {}) {
+  const defaultProps = {
+    padding: 'none',
+    margin: 'none',
+    display: 'block',
+    ...props,
+  };
+  const primitive = new BasePrimitive('Box', defaultProps);
+  primitive.renderStrategy = 'react';
+  return primitive;
+}
+
+/**
  * Container props
  * @typedef {Object} ContainerProps
  * @property {Direction} [direction='column'] - Layout direction (row/column)

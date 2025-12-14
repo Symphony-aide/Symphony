@@ -31,7 +31,7 @@ export { ComponentRegistry } from './registry/ComponentRegistry.js';
 
 
 // Layout primitive exports
-export { Container, Flex, Grid, Panel, Divider } from './primitives/layout.js';
+export { Box, Container, Flex, Grid, Panel, Divider } from './primitives/layout.js';
 
 // Interactive primitive exports
 export { Button, Input, Icon, Text, Checkbox, Select } from './primitives/interactive.js';
@@ -102,6 +102,16 @@ export {
   setDefaultMonitor,
   resetDefaultMonitor,
 } from './monitoring/PerformanceMonitor.js';
+
+// Serialization utilities
+export {
+  serialize,
+  serializeComponent,
+  parse,
+  isValidSerializedComponent,
+  areEqual,
+  prettyPrint,
+} from './utils/serializer.js';
 
 // UI Registration exports
 export {

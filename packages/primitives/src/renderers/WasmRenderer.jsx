@@ -10,6 +10,20 @@
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { BasePrimitive } from '../core/BasePrimitive.js';
+import {
+  Alert,
+  AlertTitle,
+  AlertDescription,
+  Button,
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+  Text,
+  Code,
+  Card,
+  CardContent,
+  Spinner,
+} from '@symphony/ui';
 
 /**
  * @typedef {import('../core/types.js').PrimitiveProps} PrimitiveProps
@@ -192,109 +206,54 @@ export function getWasmModuleCacheSize() {
 
 /**
  * Default error fallback component for WASM load failures.
+ * Uses UI components for consistent styling and accessibility.
  *
  * @param {WasmErrorFallbackProps} props - Component props
  * @returns {React.ReactElement} The fallback UI
  */
 function DefaultWasmErrorFallback({ error, retry, modulePath }) {
   return (
-    <div
-      style={{
-        padding: '16px',
-        border: '1px solid #f59e0b',
-        borderRadius: '8px',
-        backgroundColor: '#fffbeb',
-        color: '#92400e',
-        fontFamily: 'system-ui, sans-serif',
-      }}
-    >
-      <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: 600 }}>
-        WASM Component Failed to Load
-      </h3>
-      <p style={{ margin: '0 0 8px 0', fontSize: '14px' }}>
-        Module: <code style={{ backgroundColor: '#fef3c7', padding: '2px 4px', borderRadius: '2px' }}>{modulePath}</code>
-      </p>
-      <p style={{ margin: '0 0 12px 0', fontSize: '14px' }}>
-        {error.message || 'An unexpected error occurred while loading the WASM module'}
-      </p>
-      <details style={{ marginBottom: '12px' }}>
-        <summary style={{ cursor: 'pointer', fontSize: '12px' }}>
-          Error details
-        </summary>
-        <pre
-          style={{
-            fontSize: '11px',
-            overflow: 'auto',
-            maxHeight: '150px',
-            padding: '8px',
-            backgroundColor: '#fef3c7',
-            borderRadius: '4px',
-            marginTop: '8px',
-          }}
-        >
-          {error.stack}
-        </pre>
-      </details>
-      <button
-        onClick={retry}
-        style={{
-          padding: '8px 16px',
-          backgroundColor: '#f59e0b',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontSize: '14px',
-        }}
-      >
-        Retry
-      </button>
-    </div>
+    <Alert variant="destructive">
+      <AlertTitle>WASM Component Failed to Load</AlertTitle>
+      <AlertDescription>
+        <Text size="sm" className="mb-2">
+          Module: <Code>{modulePath}</Code>
+        </Text>
+        <Text size="sm" className="mb-3">
+          {error.message || 'An unexpected error occurred while loading the WASM module'}
+        </Text>
+        <Collapsible className="mb-3">
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm">Error details</Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <Code variant="block" className="mt-2 max-h-[150px] overflow-auto">
+              {error.stack}
+            </Code>
+          </CollapsibleContent>
+        </Collapsible>
+        <Button variant="outline" onClick={retry}>Retry</Button>
+      </AlertDescription>
+    </Alert>
   );
 }
 
 /**
  * Loading indicator component for WASM modules.
+ * Uses UI components for consistent styling.
  *
  * @param {{ modulePath: string }} props - Component props
  * @returns {React.ReactElement} The loading UI
  */
 function WasmLoadingIndicator({ modulePath }) {
   return (
-    <div
-      style={{
-        padding: '16px',
-        border: '1px solid #e5e7eb',
-        borderRadius: '8px',
-        backgroundColor: '#f9fafb',
-        color: '#6b7280',
-        fontFamily: 'system-ui, sans-serif',
-        textAlign: 'center',
-      }}
-    >
-      <div
-        style={{
-          width: '24px',
-          height: '24px',
-          border: '3px solid #e5e7eb',
-          borderTopColor: '#3b82f6',
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite',
-          margin: '0 auto 8px',
-        }}
-      />
-      <p style={{ margin: 0, fontSize: '14px' }}>
-        Loading WASM module...
-      </p>
-      <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#9ca3af' }}>
-        {modulePath}
-      </p>
-      <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
-    </div>
+    <Card>
+      <CardContent className="flex flex-col items-center py-6">
+        <Spinner size="md" className="mb-2" />
+        <Text size="sm" color="muted">Loading WASM module...</Text>
+        <Text size="xs" color="muted">{modulePath}</Text>
+      </CardContent>
+    </Card>
   );
 }
 

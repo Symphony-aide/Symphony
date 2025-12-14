@@ -91,4 +91,25 @@
  * @property {React.ReactNode} [children] - Dialog content
  */
 
+/**
+ * Component wrapper props for List
+ * @typedef {Object} ListWrapperProps
+ * @property {Array<any>} [items=[]] - List items
+ * @property {(item: any, index: number) => React.ReactNode} [renderItem] - Item renderer
+ * @property {string} [className] - Additional CSS classes
+ * @property {boolean} [scrollable=false] - Whether to wrap in ScrollArea
+ * @property {string} [maxHeight] - Max height for scrollable area (e.g., '300px')
+ * @property {React.ReactNode} [children] - Child elements
+ */
+
+/**
+ * Component wrapper props for Form
+ * @typedef {Object} FormWrapperProps
+ * @property {(e: React.FormEvent) => void} [onSubmit] - Submit handler
+ * @property {string} [className] - Additional CSS classes
+ * @property {'default' | 'inline' | 'stacked'} [layout='default'] - Form layout variant
+ * @property {'sm' | 'md' | 'lg'} [spacing='md'] - Spacing between form elements
+ * @property {React.ReactNode} [children] - Child elements
+ */
+
 export {};

@@ -9,7 +9,7 @@ import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
 // Layout primitives
-import { Container, Flex, Grid, Panel, Divider } from '../../src/primitives/layout.js';
+import { Box, Container, Flex, Grid, Panel, Divider } from '../../src/primitives/layout.js';
 
 // Interactive primitives
 import { Button, Input, Icon, Text, Checkbox, Select } from '../../src/primitives/interactive.js';
@@ -31,7 +31,38 @@ describe('Property 11: Primitive Type Props Storage', () => {
   const classNameArb = fc.option(fc.stringMatching(/^[a-z][a-z0-9-]*$/), { nil: undefined });
   const handlerIdArb = fc.option(fc.stringMatching(/^[a-z_][a-z0-9_]*$/), { nil: undefined });
 
-  describe('Layout Primitives (Requirements 3.1-3.5)', () => {
+  describe('Layout Primitives (Requirements 3.0-3.5)', () => {
+    describe('Box (Requirement 3.0)', () => {
+      const paddingArb = fc.constantFrom('none', 'sm', 'md', 'lg', 'xl');
+      const marginArb = fc.constantFrom('none', 'sm', 'md', 'lg', 'xl');
+      const displayArb = fc.constantFrom('block', 'inline', 'inline-block', 'flex', 'inline-flex', 'grid');
+
+      it('should store all provided props', () => {
+        fc.assert(
+          fc.property(paddingArb, marginArb, displayArb, classNameArb, (padding, margin, display, className) => {
+            const props = { padding, margin, display, className };
+            const box = Box(props);
+
+            expect(box.props.padding).toBe(padding);
+            expect(box.props.margin).toBe(margin);
+            expect(box.props.display).toBe(display);
+            if (className !== undefined) {
+              expect(box.props.className).toBe(className);
+            }
+          }),
+          { numRuns: 100 }
+        );
+      });
+
+      it('should have correct default values', () => {
+        const box = Box();
+        expect(box.props.padding).toBe('none');
+        expect(box.props.margin).toBe('none');
+        expect(box.props.display).toBe('block');
+        expect(box.renderStrategy).toBe('react');
+      });
+    });
+
     describe('Container (Requirement 3.1)', () => {
       const directionArb = fc.constantFrom('row', 'column');
       const gapArb = fc.nat({ max: 100 });

@@ -7,6 +7,19 @@
  */
 
 import React from 'react';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+  Button,
+  Code,
+} from 'ui';
 
 /**
  * Props for the ErrorBoundary component.
@@ -27,6 +40,7 @@ import React from 'react';
 
 /**
  * Default fallback component displayed when an error occurs.
+ * Uses UI components from @symphony/ui for consistent styling.
  * 
  * @param {Object} props - Component props
  * @param {Error} props.error - The error that occurred
@@ -36,59 +50,37 @@ import React from 'react';
  */
 function DefaultFallback({ error, errorInfo, retry }) {
   return (
-    <div
-      style={{
-        padding: '16px',
-        border: '1px solid #ef4444',
-        borderRadius: '8px',
-        backgroundColor: '#fef2f2',
-        color: '#991b1b',
-        fontFamily: 'system-ui, sans-serif',
-      }}
-    >
-      <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: 600 }}>
-        Something went wrong
-      </h3>
-      <p style={{ margin: '0 0 12px 0', fontSize: '14px' }}>
-        {error.message || 'An unexpected error occurred'}
-      </p>
+    <Card className="border-destructive bg-destructive/10">
+      <CardHeader>
+        <CardTitle className="text-destructive">Something went wrong</CardTitle>
+        <CardDescription>
+          {error.message || 'An unexpected error occurred'}
+        </CardDescription>
+      </CardHeader>
       {errorInfo && (
-        <details style={{ marginBottom: '12px' }}>
-          <summary style={{ cursor: 'pointer', fontSize: '12px' }}>
-            Error details
-          </summary>
-          <pre
-            style={{
-              fontSize: '11px',
-              overflow: 'auto',
-              maxHeight: '200px',
-              padding: '8px',
-              backgroundColor: '#fee2e2',
-              borderRadius: '4px',
-              marginTop: '8px',
-            }}
-          >
-            {error.stack}
-            {'\n\nComponent Stack:'}
-            {errorInfo.componentStack}
-          </pre>
-        </details>
+        <CardContent>
+          <Collapsible>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm">
+                Error details
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <Code variant="block" className="mt-2 max-h-[200px] overflow-auto">
+                {error.stack}
+                {'\n\nComponent Stack:'}
+                {errorInfo.componentStack}
+              </Code>
+            </CollapsibleContent>
+          </Collapsible>
+        </CardContent>
       )}
-      <button
-        onClick={retry}
-        style={{
-          padding: '8px 16px',
-          backgroundColor: '#dc2626',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontSize: '14px',
-        }}
-      >
-        Try again
-      </button>
-    </div>
+      <CardFooter>
+        <Button variant="destructive" onClick={retry}>
+          Try again
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
 
@@ -179,7 +171,7 @@ export class ErrorBoundary extends React.Component {
    * @returns {React.ReactNode} The rendered content
    */
   render() {
-    if (this.state.hasError) {
+    if (this.state.hasError && this.state.error) {
       const FallbackComponent = this.props.fallback || DefaultFallback;
       
       return (
@@ -210,6 +202,7 @@ export class ErrorBoundary extends React.Component {
 export function withErrorBoundary(WrappedComponent, errorBoundaryProps = {}) {
   const displayName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
   
+  /** @param {Record<string, unknown>} props */
   function WithErrorBoundary(props) {
     return (
       <ErrorBoundary {...errorBoundaryProps} componentName={displayName}>

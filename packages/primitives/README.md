@@ -144,7 +144,16 @@ await registry.invokeEventHandler('myHandler', 'test');
 ### Layout Primitives
 
 ```javascript
-import { Container, Flex, Grid, Panel, Divider } from '@symphony/primitives';
+import { Box, Container, Flex, Grid, Panel, Divider } from '@symphony/primitives';
+
+// Box - basic layout box with padding, margin, and display control
+const box = Box({
+  padding: 'md',      // 'none' | 'sm' | 'md' | 'lg' | 'xl'
+  margin: 'sm',       // 'none' | 'sm' | 'md' | 'lg' | 'xl'
+  display: 'block',   // 'block' | 'inline' | 'inline-block' | 'flex' | 'inline-flex' | 'grid'
+  as: 'section',      // Render as different HTML element
+  className: 'my-box',
+});
 
 // Container - basic layout container
 const container = Container({
@@ -517,16 +526,33 @@ try {
 
 ## Error Boundaries
 
-Graceful error handling in React:
+Graceful error handling in React with Symphony UI integration:
+
+The ErrorBoundary component uses UI components from the `ui` package for consistent styling:
+- `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter` for layout
+- `Collapsible`, `CollapsibleTrigger`, `CollapsibleContent` for expandable error details
+- `Button` for retry actions
+- `Code` for displaying stack traces
 
 ```javascript
 import { ErrorBoundary, withErrorBoundary } from '@symphony/primitives';
 
-// Using component
+// Using component with default fallback (uses Symphony UI components)
 function App() {
   return (
     <ErrorBoundary
-      fallback={({ error, retry }) => (
+      onError={(error, info) => console.error(error)}
+    >
+      <MyComponent />
+    </ErrorBoundary>
+  );
+}
+
+// Using component with custom fallback
+function App() {
+  return (
+    <ErrorBoundary
+      fallback={({ error, errorInfo, retry }) => (
         <div>
           <p>Error: {error.message}</p>
           <button onClick={retry}>Retry</button>
@@ -542,6 +568,7 @@ function App() {
 // Using HOC
 const SafeComponent = withErrorBoundary(MyComponent, {
   fallback: ErrorFallback,
+  onError: (error) => console.error(error),
 });
 ```
 
@@ -660,6 +687,35 @@ pnpm lint
 
 # Type check
 pnpm type-check
+```
+
+## Test File Naming Conventions
+
+The primitives package uses a structured test file naming convention to organize different types of tests:
+
+| Pattern | Description | Example |
+|---------|-------------|---------|
+| `*.test.{js,jsx}` | Standard unit tests | `utils.test.js` |
+| `*.property.test.{js,jsx}` | Property-based tests using fast-check | `BasePrimitive.property.test.js` |
+| `*.perf.test.{js,jsx}` | Performance benchmark tests | `render.perf.test.jsx` |
+| `*.contract.test.{js,jsx}` | IPC contract validation tests | `IPCBridge.contract.test.js` |
+| `*.snapshot.test.{js,jsx}` | Snapshot tests for UI consistency | `PrimitiveRenderer.snapshot.test.jsx` |
+
+All test files should be placed in the `__tests__/` directory, organized by module:
+
+```
+__tests__/
+├── api/                    # MotifAPI tests
+├── core/                   # BasePrimitive, errors, utils tests
+├── hooks/                  # React hook tests
+├── ipc/                    # IPC bridge tests
+├── monitoring/             # Performance monitor tests
+├── performance/            # Render performance benchmarks
+├── primitives/             # Primitive factory tests
+├── registration/           # UI component registration tests
+├── registry/               # ComponentRegistry tests
+├── renderers/              # Renderer component tests
+└── utils/                  # Test utility helpers
 ```
 
 ## Testing Utilities
@@ -843,9 +899,10 @@ The following IPC methods have defined contracts:
 | `PrimitiveRenderer` | React renderer for primitives |
 | `DirectRenderer` | Direct rendering escape hatch |
 | `WasmRenderer` | WASM component renderer |
-| `ErrorBoundary` | React error boundary |
+| `ErrorBoundary` | React error boundary with Symphony UI integration |
+| `withErrorBoundary` | HOC to wrap components with ErrorBoundary |
 | `useRegisteredComponent` | React hook for registry |
-| `Container`, `Flex`, `Grid`, `Panel`, `Divider` | Layout primitives |
+| `Box`, `Container`, `Flex`, `Grid`, `Panel`, `Divider` | Layout primitives |
 | `Button`, `Input`, `Icon`, `Text`, `Checkbox`, `Select` | Interactive primitives |
 | `List`, `Tabs`, `Dropdown`, `Modal`, `Tooltip` | Complex primitives |
 | `CodeEditor`, `Terminal`, `SyntaxHighlighter`, `FileTree` | Heavy WASM primitives |
@@ -970,7 +1027,7 @@ The registration module maps the following primitive types to UI components:
 
 | Category | Primitive Types |
 |----------|-----------------|
-| Layout | Container, Flex, Grid, Panel, Divider, ResizablePanel |
+| Layout | Box, Container, Flex, Grid, Panel, Divider, ResizablePanel |
 | Interactive | Button, Input, Checkbox, Select, Switch, Slider, Toggle, RadioGroup |
 | Complex | Dialog, Modal, Dropdown, Tabs, Tooltip, Popover, Sheet, Accordion |
 | Display | Text, Badge, Avatar, Progress, Skeleton, Alert, Card |

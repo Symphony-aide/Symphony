@@ -15,6 +15,7 @@ import {
 // Import UI components
 import {
   // Layout
+  Box,
   Card,
   Separator,
   ResizablePanel,
@@ -76,6 +77,7 @@ import {
  */
 const UI_COMPONENT_MAP = [
   // Layout Components
+  ['Box', Box],
   ['Container', ContainerWrapper],
   ['Flex', FlexWrapper],
   ['Grid', GridWrapper],

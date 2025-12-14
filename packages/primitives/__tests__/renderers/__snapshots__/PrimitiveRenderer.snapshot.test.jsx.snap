@@ -465,261 +465,266 @@ exports[`PrimitiveRenderer Snapshot Tests > Edge Cases > should handle sibling p
 
 exports[`PrimitiveRenderer Snapshot Tests > ErrorBoundary Fallback (Requirement 1.6) > should capture ErrorBoundary default fallback snapshot 1`] = `
 <div
-  style="padding: 16px; border: 1px solid #ef4444; border-radius: 8px; background-color: rgb(254, 242, 242); color: rgb(153, 27, 27); font-family: system-ui, sans-serif;"
+  class="rounded-xl border text-card-foreground shadow border-destructive bg-destructive/10"
 >
-  <h3
-    style="margin: 0px 0px 8px 0px; font-size: 16px; font-weight: 600;"
+  <div
+    class="flex flex-col space-y-1.5 p-6"
   >
-    Something went wrong
-  </h3>
-  <p
-    style="margin: 0px 0px 12px 0px; font-size: 14px;"
-  >
-    Test error for snapshot
-  </p>
-  <details
-    style="margin-bottom: 12px;"
-  >
-    <summary
-      style="cursor: pointer; font-size: 12px;"
+    <h3
+      class="font-semibold leading-none tracking-tight text-destructive"
     >
-      Error details
-    </summary>
-    <pre
-      style="font-size: 11px; overflow: auto; max-height: 200px; padding: 8px; background-color: rgb(254, 226, 226); border-radius: 4px; margin-top: 8px;"
+      Something went wrong
+    </h3>
+    <p
+      class="text-sm text-muted-foreground"
     >
-      Error: Test error for snapshot
-    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:739:13)
-    at Object.react_stack_bottom_frame (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:23863:20)
-    at renderWithHooks (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:5529:22)
-    at updateFunctionComponent (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:8897:19)
-    at beginWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:10522:18)
-    at runWithFiberInDEV (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:1522:13)
-    at performUnitOfWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:15140:22)
-    at workLoopSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14956:41)
-    at renderRootSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14936:11)
-    at performWorkOnRoot (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14462:44)
-      
-
-Component Stack:
-      
-    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:605:13)
-    at ErrorBoundary (C:/Users/mahmo/Downloads/Symphony/packages/primitives/src/renderers/ErrorBoundary.jsx:112:5)
-    </pre>
-  </details>
-  <button
-    style="padding: 8px 16px; background-color: rgb(220, 38, 38); color: white; border-radius: 4px; cursor: pointer; font-size: 14px;"
+      Test error for snapshot
+    </p>
+  </div>
+  <div
+    class="p-6 pt-0"
   >
-    Try again
-  </button>
+    <div
+      data-state="closed"
+    >
+      <button
+        aria-controls="radix-«r0»"
+        aria-expanded="false"
+        class="inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3 text-xs"
+        data-state="closed"
+        type="button"
+      >
+        Error details
+      </button>
+      <div
+        data-state="closed"
+        hidden=""
+        id="radix-«r0»"
+        style=""
+      />
+    </div>
+  </div>
+  <div
+    class="flex items-center p-6 pt-0"
+  >
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 h-9 px-4 py-2"
+    >
+      Try again
+    </button>
+  </div>
 </div>
 `;
 
 exports[`PrimitiveRenderer Snapshot Tests > ErrorBoundary Fallback (Requirement 1.6) > should capture ErrorBoundary error details section snapshot 1`] = `
 <div
-  style="padding: 16px; border: 1px solid #ef4444; border-radius: 8px; background-color: rgb(254, 242, 242); color: rgb(153, 27, 27); font-family: system-ui, sans-serif;"
+  class="rounded-xl border text-card-foreground shadow border-destructive bg-destructive/10"
 >
-  <h3
-    style="margin: 0px 0px 8px 0px; font-size: 16px; font-weight: 600;"
+  <div
+    class="flex flex-col space-y-1.5 p-6"
   >
-    Something went wrong
-  </h3>
-  <p
-    style="margin: 0px 0px 12px 0px; font-size: 14px;"
-  >
-    Test error for snapshot
-  </p>
-  <details
-    style="margin-bottom: 12px;"
-  >
-    <summary
-      style="cursor: pointer; font-size: 12px;"
+    <h3
+      class="font-semibold leading-none tracking-tight text-destructive"
     >
-      Error details
-    </summary>
-    <pre
-      style="font-size: 11px; overflow: auto; max-height: 200px; padding: 8px; background-color: rgb(254, 226, 226); border-radius: 4px; margin-top: 8px;"
+      Something went wrong
+    </h3>
+    <p
+      class="text-sm text-muted-foreground"
     >
-      Error: Test error for snapshot
-    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:739:13)
-    at Object.react_stack_bottom_frame (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:23863:20)
-    at renderWithHooks (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:5529:22)
-    at updateFunctionComponent (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:8897:19)
-    at beginWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:10522:18)
-    at runWithFiberInDEV (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:1522:13)
-    at performUnitOfWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:15140:22)
-    at workLoopSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14956:41)
-    at renderRootSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14936:11)
-    at performWorkOnRoot (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14462:44)
-      
-
-Component Stack:
-      
-    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:605:13)
-    at ErrorBoundary (C:/Users/mahmo/Downloads/Symphony/packages/primitives/src/renderers/ErrorBoundary.jsx:112:5)
-    </pre>
-  </details>
-  <button
-    style="padding: 8px 16px; background-color: rgb(220, 38, 38); color: white; border-radius: 4px; cursor: pointer; font-size: 14px;"
+      Test error for snapshot
+    </p>
+  </div>
+  <div
+    class="p-6 pt-0"
   >
-    Try again
-  </button>
+    <div
+      data-state="closed"
+    >
+      <button
+        aria-controls="radix-«r4»"
+        aria-expanded="false"
+        class="inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3 text-xs"
+        data-state="closed"
+        type="button"
+      >
+        Error details
+      </button>
+      <div
+        data-state="closed"
+        hidden=""
+        id="radix-«r4»"
+        style=""
+      />
+    </div>
+  </div>
+  <div
+    class="flex items-center p-6 pt-0"
+  >
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 h-9 px-4 py-2"
+    >
+      Try again
+    </button>
+  </div>
 </div>
 `;
 
 exports[`PrimitiveRenderer Snapshot Tests > ErrorBoundary Fallback (Requirement 1.6) > should capture ErrorBoundary fallback with error details 1`] = `
 <div
-  style="padding: 16px; border: 1px solid #ef4444; border-radius: 8px; background-color: rgb(254, 242, 242); color: rgb(153, 27, 27); font-family: system-ui, sans-serif;"
+  class="rounded-xl border text-card-foreground shadow border-destructive bg-destructive/10"
 >
-  <h3
-    style="margin: 0px 0px 8px 0px; font-size: 16px; font-weight: 600;"
+  <div
+    class="flex flex-col space-y-1.5 p-6"
   >
-    Something went wrong
-  </h3>
-  <p
-    style="margin: 0px 0px 12px 0px; font-size: 14px;"
-  >
-    Test error for snapshot
-  </p>
-  <details
-    style="margin-bottom: 12px;"
-  >
-    <summary
-      style="cursor: pointer; font-size: 12px;"
+    <h3
+      class="font-semibold leading-none tracking-tight text-destructive"
     >
-      Error details
-    </summary>
-    <pre
-      style="font-size: 11px; overflow: auto; max-height: 200px; padding: 8px; background-color: rgb(254, 226, 226); border-radius: 4px; margin-top: 8px;"
+      Something went wrong
+    </h3>
+    <p
+      class="text-sm text-muted-foreground"
     >
-      Error: Test error for snapshot
-    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:739:13)
-    at Object.react_stack_bottom_frame (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:23863:20)
-    at renderWithHooks (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:5529:22)
-    at updateFunctionComponent (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:8897:19)
-    at beginWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:10522:18)
-    at runWithFiberInDEV (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:1522:13)
-    at performUnitOfWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:15140:22)
-    at workLoopSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14956:41)
-    at renderRootSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14936:11)
-    at performWorkOnRoot (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14462:44)
-      
-
-Component Stack:
-      
-    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:605:13)
-    at ErrorBoundary (C:/Users/mahmo/Downloads/Symphony/packages/primitives/src/renderers/ErrorBoundary.jsx:112:5)
-    </pre>
-  </details>
-  <button
-    style="padding: 8px 16px; background-color: rgb(220, 38, 38); color: white; border-radius: 4px; cursor: pointer; font-size: 14px;"
+      Test error for snapshot
+    </p>
+  </div>
+  <div
+    class="p-6 pt-0"
   >
-    Try again
-  </button>
+    <div
+      data-state="closed"
+    >
+      <button
+        aria-controls="radix-«r1»"
+        aria-expanded="false"
+        class="inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3 text-xs"
+        data-state="closed"
+        type="button"
+      >
+        Error details
+      </button>
+      <div
+        data-state="closed"
+        hidden=""
+        id="radix-«r1»"
+        style=""
+      />
+    </div>
+  </div>
+  <div
+    class="flex items-center p-6 pt-0"
+  >
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 h-9 px-4 py-2"
+    >
+      Try again
+    </button>
+  </div>
 </div>
 `;
 
 exports[`PrimitiveRenderer Snapshot Tests > ErrorBoundary Fallback (Requirement 1.6) > should capture ErrorBoundary retry button snapshot 1`] = `
 <div
-  style="padding: 16px; border: 1px solid #ef4444; border-radius: 8px; background-color: rgb(254, 242, 242); color: rgb(153, 27, 27); font-family: system-ui, sans-serif;"
+  class="rounded-xl border text-card-foreground shadow border-destructive bg-destructive/10"
 >
-  <h3
-    style="margin: 0px 0px 8px 0px; font-size: 16px; font-weight: 600;"
+  <div
+    class="flex flex-col space-y-1.5 p-6"
   >
-    Something went wrong
-  </h3>
-  <p
-    style="margin: 0px 0px 12px 0px; font-size: 14px;"
-  >
-    Test error for snapshot
-  </p>
-  <details
-    style="margin-bottom: 12px;"
-  >
-    <summary
-      style="cursor: pointer; font-size: 12px;"
+    <h3
+      class="font-semibold leading-none tracking-tight text-destructive"
     >
-      Error details
-    </summary>
-    <pre
-      style="font-size: 11px; overflow: auto; max-height: 200px; padding: 8px; background-color: rgb(254, 226, 226); border-radius: 4px; margin-top: 8px;"
+      Something went wrong
+    </h3>
+    <p
+      class="text-sm text-muted-foreground"
     >
-      Error: Test error for snapshot
-    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:739:13)
-    at Object.react_stack_bottom_frame (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:23863:20)
-    at renderWithHooks (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:5529:22)
-    at updateFunctionComponent (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:8897:19)
-    at beginWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:10522:18)
-    at runWithFiberInDEV (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:1522:13)
-    at performUnitOfWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:15140:22)
-    at workLoopSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14956:41)
-    at renderRootSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14936:11)
-    at performWorkOnRoot (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14462:44)
-      
-
-Component Stack:
-      
-    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:605:13)
-    at ErrorBoundary (C:/Users/mahmo/Downloads/Symphony/packages/primitives/src/renderers/ErrorBoundary.jsx:112:5)
-    </pre>
-  </details>
-  <button
-    style="padding: 8px 16px; background-color: rgb(220, 38, 38); color: white; border-radius: 4px; cursor: pointer; font-size: 14px;"
+      Test error for snapshot
+    </p>
+  </div>
+  <div
+    class="p-6 pt-0"
   >
-    Try again
-  </button>
+    <div
+      data-state="closed"
+    >
+      <button
+        aria-controls="radix-«r2»"
+        aria-expanded="false"
+        class="inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3 text-xs"
+        data-state="closed"
+        type="button"
+      >
+        Error details
+      </button>
+      <div
+        data-state="closed"
+        hidden=""
+        id="radix-«r2»"
+        style=""
+      />
+    </div>
+  </div>
+  <div
+    class="flex items-center p-6 pt-0"
+  >
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 h-9 px-4 py-2"
+    >
+      Try again
+    </button>
+  </div>
 </div>
 `;
 
 exports[`PrimitiveRenderer Snapshot Tests > ErrorBoundary Fallback (Requirement 1.6) > should capture ErrorBoundary with componentName prop snapshot 1`] = `
 <div
-  style="padding: 16px; border: 1px solid #ef4444; border-radius: 8px; background-color: rgb(254, 242, 242); color: rgb(153, 27, 27); font-family: system-ui, sans-serif;"
+  class="rounded-xl border text-card-foreground shadow border-destructive bg-destructive/10"
 >
-  <h3
-    style="margin: 0px 0px 8px 0px; font-size: 16px; font-weight: 600;"
+  <div
+    class="flex flex-col space-y-1.5 p-6"
   >
-    Something went wrong
-  </h3>
-  <p
-    style="margin: 0px 0px 12px 0px; font-size: 14px;"
-  >
-    Test error for snapshot
-  </p>
-  <details
-    style="margin-bottom: 12px;"
-  >
-    <summary
-      style="cursor: pointer; font-size: 12px;"
+    <h3
+      class="font-semibold leading-none tracking-tight text-destructive"
     >
-      Error details
-    </summary>
-    <pre
-      style="font-size: 11px; overflow: auto; max-height: 200px; padding: 8px; background-color: rgb(254, 226, 226); border-radius: 4px; margin-top: 8px;"
+      Something went wrong
+    </h3>
+    <p
+      class="text-sm text-muted-foreground"
     >
-      Error: Test error for snapshot
-    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:739:13)
-    at Object.react_stack_bottom_frame (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:23863:20)
-    at renderWithHooks (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:5529:22)
-    at updateFunctionComponent (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:8897:19)
-    at beginWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:10522:18)
-    at runWithFiberInDEV (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:1522:13)
-    at performUnitOfWork (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:15140:22)
-    at workLoopSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14956:41)
-    at renderRootSync (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14936:11)
-    at performWorkOnRoot (C:\\Users\\mahmo\\Downloads\\Symphony\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:14462:44)
-      
-
-Component Stack:
-      
-    at ThrowingComponent (C:/Users/mahmo/Downloads/Symphony/packages/primitives/__tests__/renderers/PrimitiveRenderer.snapshot.test.jsx:605:13)
-    at ErrorBoundary (C:/Users/mahmo/Downloads/Symphony/packages/primitives/src/renderers/ErrorBoundary.jsx:112:5)
-    </pre>
-  </details>
-  <button
-    style="padding: 8px 16px; background-color: rgb(220, 38, 38); color: white; border-radius: 4px; cursor: pointer; font-size: 14px;"
+      Test error for snapshot
+    </p>
+  </div>
+  <div
+    class="p-6 pt-0"
   >
-    Try again
-  </button>
+    <div
+      data-state="closed"
+    >
+      <button
+        aria-controls="radix-«r3»"
+        aria-expanded="false"
+        class="inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3 text-xs"
+        data-state="closed"
+        type="button"
+      >
+        Error details
+      </button>
+      <div
+        data-state="closed"
+        hidden=""
+        id="radix-«r3»"
+        style=""
+      />
+    </div>
+  </div>
+  <div
+    class="flex items-center p-6 pt-0"
+  >
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 h-9 px-4 py-2"
+    >
+      Try again
+    </button>
+  </div>
 </div>
 `;
 

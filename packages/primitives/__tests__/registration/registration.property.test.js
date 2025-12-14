@@ -9,6 +9,7 @@ import * as fc from 'fast-check';
 // Mock UI components before importing registration module
 vi.mock('ui', () => ({
   // Layout
+  Box: () => null,
   Card: () => null,
   Separator: () => null,
   ResizablePanel: () => null,

@@ -22,12 +22,39 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  ScrollArea,
+  Text,
+  Heading,
 } from 'ui';
 
 /**
- * Container wrapper component for flex layout
+ * Container wrapper component for flex layout.
+ * 
+ * ## UI Component Exception Documentation
+ * 
+ * **EXCEPTION: This component uses a plain `<div>` element instead of UI components.**
+ * 
+ * ### Justification:
+ * 
+ * 1. **Performance-Critical Layout**: ContainerWrapper is a low-level layout primitive
+ *    used extensively throughout the application. Using UI components would add
+ *    unnecessary overhead for simple flex container operations.
+ * 
+ * 2. **Inline Style Requirements**: This component uses inline styles for dynamic
+ *    flex properties (direction, gap) that change frequently based on props.
+ *    UI components typically use class-based styling which would require
+ *    additional className computation.
+ * 
+ * 3. **Minimal Abstraction**: As a primitive wrapper, this component should have
+ *    minimal abstraction to allow maximum flexibility for consumers.
+ * 
+ * ### When to Use UI Components Instead:
+ * - For application-level layouts, prefer the Flex component from packages/ui
+ * - For complex layouts with consistent styling, use UI layout components
+ * 
  * @param {import('./types.js').ContainerWrapperProps} props
  * @returns {React.ReactElement}
+ * @see Requirements 7.3 (UI Component Exception Documentation)
  */
 export function ContainerWrapper({
   direction = 'row',
@@ -52,9 +79,33 @@ export function ContainerWrapper({
 ContainerWrapper.displayName = 'Container';
 
 /**
- * Flex wrapper component for flexbox layout
+ * Flex wrapper component for flexbox layout.
+ * 
+ * ## UI Component Exception Documentation
+ * 
+ * **EXCEPTION: This component uses a plain `<div>` element instead of UI components.**
+ * 
+ * ### Justification:
+ * 
+ * 1. **Performance-Critical Layout**: FlexWrapper is a low-level layout primitive
+ *    used for performance-sensitive rendering scenarios where UI component
+ *    overhead would be noticeable.
+ * 
+ * 2. **Inline Style Requirements**: This component uses inline styles for all
+ *    flexbox properties (direction, justify, align, wrap, gap) to support
+ *    dynamic prop changes without className recalculation.
+ * 
+ * 3. **Primitive System Integration**: As part of the primitive rendering system,
+ *    this wrapper needs to be as lightweight as possible to maintain the
+ *    sub-16ms render budget for medium complexity trees.
+ * 
+ * ### When to Use UI Components Instead:
+ * - For application-level layouts, prefer the Flex component from packages/ui
+ * - For layouts that don't require dynamic style changes
+ * 
  * @param {import('./types.js').FlexWrapperProps} props
  * @returns {React.ReactElement}
+ * @see Requirements 7.3 (UI Component Exception Documentation)
  */
 export function FlexWrapper({
   justify = 'flex-start',
@@ -86,9 +137,33 @@ FlexWrapper.displayName = 'Flex';
 
 
 /**
- * Grid wrapper component for CSS grid layout
+ * Grid wrapper component for CSS grid layout.
+ * 
+ * ## UI Component Exception Documentation
+ * 
+ * **EXCEPTION: This component uses a plain `<div>` element instead of UI components.**
+ * 
+ * ### Justification:
+ * 
+ * 1. **Performance-Critical Layout**: GridWrapper is a low-level layout primitive
+ *    used for complex grid layouts where UI component overhead would impact
+ *    rendering performance.
+ * 
+ * 2. **Dynamic Grid Configuration**: This component supports dynamic grid
+ *    template configurations (columns, rows) that are computed at runtime.
+ *    Using inline styles avoids the overhead of className generation.
+ * 
+ * 3. **Primitive System Integration**: As part of the primitive rendering system,
+ *    this wrapper maintains compatibility with the performance budgets defined
+ *    for the rendering pipeline.
+ * 
+ * ### When to Use UI Components Instead:
+ * - For application-level layouts, prefer the Grid component from packages/ui
+ * - For static grid layouts with predefined column/row configurations
+ * 
  * @param {import('./types.js').GridWrapperProps} props
  * @returns {React.ReactElement}
+ * @see Requirements 7.3 (UI Component Exception Documentation)
  */
 export function GridWrapper({
   columns = 1,
@@ -122,6 +197,7 @@ GridWrapper.displayName = 'Grid';
 
 /**
  * Text wrapper component for typography
+ * Uses Text component for paragraph/span content and Heading component for h1-h6
  * @param {import('./types.js').TextWrapperProps} props
  * @returns {React.ReactElement}
  */
@@ -134,38 +210,36 @@ export function TextWrapper({
   children,
   ...props
 }) {
-  const sizeClasses = {
-    xs: 'text-xs',
-    sm: 'text-sm',
-    base: 'text-base',
-    lg: 'text-lg',
-    xl: 'text-xl',
-    '2xl': 'text-2xl',
-    '3xl': 'text-3xl',
-    '4xl': 'text-4xl',
-  };
+  // Check if variant is a heading element
+  const isHeading = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(variant);
 
-  const weightClasses = {
-    normal: 'font-normal',
-    medium: 'font-medium',
-    semibold: 'font-semibold',
-    bold: 'font-bold',
-  };
+  if (isHeading) {
+    return (
+      <Heading
+        as={variant}
+        size={size}
+        weight={weight}
+        className={className}
+        {...props}
+      >
+        {content || children}
+      </Heading>
+    );
+  }
 
-  const combinedClassName = [
-    sizeClasses[size] || 'text-base',
-    weightClasses[weight] || 'font-normal',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
-
-  const Element = variant;
+  // Map variant to Text's as prop (p, span, div, label)
+  const textAs = ['p', 'span', 'div', 'label'].includes(variant) ? variant : 'p';
 
   return (
-    <Element className={combinedClassName} {...props}>
+    <Text
+      as={textAs}
+      size={size}
+      weight={weight}
+      className={className}
+      {...props}
+    >
       {content || children}
-    </Element>
+    </Text>
   );
 }
 
@@ -268,10 +342,13 @@ DialogWrapper.displayName = 'Dialog';
 
 /**
  * List wrapper component for rendering lists
+ * Uses ScrollArea for scrollable content when scrollable prop is true
  * @param {Object} props
  * @param {Array<any>} [props.items=[]] - List items
  * @param {(item: any, index: number) => React.ReactNode} [props.renderItem] - Item renderer
  * @param {string} [props.className] - Additional CSS classes
+ * @param {boolean} [props.scrollable=false] - Whether to wrap in ScrollArea
+ * @param {string} [props.maxHeight] - Max height for scrollable area (e.g., '300px')
  * @param {React.ReactNode} [props.children] - Child elements
  * @returns {React.ReactElement}
  */
@@ -279,11 +356,13 @@ export function ListWrapper({
   items = [],
   renderItem,
   className = '',
+  scrollable = false,
+  maxHeight,
   children,
   ...props
 }) {
-  return (
-    <ul className={className} {...props}>
+  const listContent = (
+    <ul className={scrollable ? '' : className} {...(scrollable ? {} : props)}>
       {items.length > 0
         ? items.map((item, index) => (
             <li key={item.id || index}>
@@ -293,19 +372,43 @@ export function ListWrapper({
         : children}
     </ul>
   );
+
+  if (scrollable) {
+    return (
+      <ScrollArea
+        className={className}
+        style={maxHeight ? { maxHeight } : undefined}
+        {...props}
+      >
+        {listContent}
+      </ScrollArea>
+    );
+  }
+
+  return listContent;
 }
 
 ListWrapper.displayName = 'List';
 
 /**
- * Form wrapper component
+ * Form wrapper component with UI styling integration
+ * Applies consistent form styling classes from the design system
  * @param {Object} props
  * @param {(e: React.FormEvent) => void} [props.onSubmit] - Submit handler
  * @param {string} [props.className] - Additional CSS classes
+ * @param {'default' | 'inline' | 'stacked'} [props.layout='default'] - Form layout variant
+ * @param {'sm' | 'md' | 'lg'} [props.spacing='md'] - Spacing between form elements
  * @param {React.ReactNode} [props.children] - Child elements
  * @returns {React.ReactElement}
  */
-export function FormWrapper({ onSubmit, className = '', children, ...props }) {
+export function FormWrapper({
+  onSubmit,
+  className = '',
+  layout = 'default',
+  spacing = 'md',
+  children,
+  ...props
+}) {
   /**
    * @param {React.FormEvent} e
    */
@@ -314,8 +417,30 @@ export function FormWrapper({ onSubmit, className = '', children, ...props }) {
     onSubmit?.(e);
   };
 
+  // UI styling classes for form layouts
+  const layoutClasses = {
+    default: 'flex flex-col',
+    inline: 'flex flex-row flex-wrap items-end',
+    stacked: 'flex flex-col',
+  };
+
+  // Spacing classes for form elements
+  const spacingClasses = {
+    sm: 'gap-2',
+    md: 'gap-4',
+    lg: 'gap-6',
+  };
+
+  const combinedClassName = [
+    layoutClasses[layout] || layoutClasses.default,
+    spacingClasses[spacing] || spacingClasses.md,
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <form className={className} onSubmit={handleSubmit} {...props}>
+    <form className={combinedClassName} onSubmit={handleSubmit} {...props}>
       {children}
     </form>
   );
