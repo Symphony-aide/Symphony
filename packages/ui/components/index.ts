@@ -50,4 +50,7 @@ export { Toggle, toggleVariants } from './toggle';
 export { ToggleGroup, ToggleGroupItem } from './toggle-group';
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
 export { Text, textVariants } from './text';
-export { useToast } from './use-toast'; 
+export { useToast } from './use-toast';
+
+// Progressive Feedback System
+export * from '../feedback';
