@@ -304,6 +304,57 @@ function MyFileExplorer({ files, onSelectFile, onRenameFile, onDeleteFile }) {
 - Clear separation of concerns
 - Easier to understand and debug
 
+## UI Component Migration
+
+The FileExplorer component has been migrated to use Symphony's design system components from `@symphony/ui` for consistent styling and accessibility.
+
+### Component Replacements
+
+| Old Element | New Component | Notes |
+|-------------|---------------|-------|
+| `<div>` (container) | `<Flex direction="column">` | Semantic layout |
+| `<div>` (header) | `<Flex align="center" justify="between">` | Flexbox layout |
+| `<h2>` | `<Heading level={6}>` | Proper heading hierarchy |
+| `<p>` (empty state) | `<Text>` | Typography component |
+| `<div>` (scrollable) | `<ScrollArea>` | Accessible scrolling |
+| `<div>` (file list) | `<Flex direction="column" gap={1}>` | Consistent spacing |
+
+### Example: Before and After
+
+**Before:**
+```jsx
+<div className='bg-gray-800 text-white w-64 p-3 border-r border-gray-700 flex flex-col relative'>
+  <div className='flex items-center justify-between mb-4 relative'>
+    <h2 className='text-xs tracking-widest text-gray-300'>EXPLORER</h2>
+    <button>⚙️</button>
+  </div>
+  <div className='flex-grow overflow-y-auto'>
+    {/* content */}
+  </div>
+</div>
+```
+
+**After:**
+```jsx
+<Flex direction="column" className='bg-gray-800 text-white w-64 p-3 border-r border-gray-700 relative'>
+  <Flex align="center" justify="between" className='mb-4 relative'>
+    <Heading level={6} className='text-xs tracking-widest text-gray-300'>EXPLORER</Heading>
+    <Button variant="ghost" size="sm">⚙️</Button>
+  </Flex>
+  <ScrollArea className='flex-grow overflow-y-auto'>
+    {/* content */}
+  </ScrollArea>
+</Flex>
+```
+
+### Benefits of UI Component Migration
+
+1. **Consistent Styling** - All components follow Symphony's design system
+2. **Accessibility** - Built-in ARIA attributes and keyboard navigation
+3. **Theming** - Automatic theme support across the IDE
+4. **Type Safety** - Full TypeScript support with proper prop types
+5. **Maintainability** - Centralized component updates
+
 ## Common Issues
 
 ### Issue 1: Import Errors
@@ -338,9 +389,11 @@ const fileTree = useFileTree({
 1. ✅ Migrate to FolderManagement feature
 2. ✅ Migrate to FileTree feature
 3. ✅ Migrate to FileSearch feature
-4. ⏳ Build custom UI components
-5. ⏳ Remove old file-explorer dependencies
+4. ✅ Migrate main component to use @symphony/ui components (Flex, Heading, Text, ScrollArea)
+5. ⏳ Migrate sub-components (FileTreeNode, FilterControls, ContextMenu, ActionButtons)
+6. ⏳ Build custom UI components
+7. ⏳ Remove old file-explorer dependencies
 
 ---
 
-**Last Updated**: October 13, 2025
+**Last Updated**: December 23, 2025

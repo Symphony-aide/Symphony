@@ -1,7 +1,6 @@
 //ShortcutSettingsModal.jsx
 import React, { useState } from "react";
-import { Input } from "ui";
-import { Button } from "ui";
+import { Input, Button, Flex, Text, Box } from "ui";
 
 export default function ShortcutSettingsModal({ shortcuts, setShortcuts, onClose }) {
 	const [localShortcuts, setLocalShortcuts] = useState(shortcuts || []);
@@ -20,12 +19,12 @@ export default function ShortcutSettingsModal({ shortcuts, setShortcuts, onClose
 	};
 
 	return (
-		<div className='space-y-3'>
+		<Flex direction="column" gap={3}>
 			{localShortcuts.map((item, index) => (
-				<div key={item.operation || index} className='flex justify-between items-center'>
-					<span className='text-sm capitalize text-slate-300'>
+				<Flex key={item.operation || index} justify="between" align="center">
+					<Text className='text-sm capitalize text-slate-300'>
 						{item.operation?.replace(/([A-Z])/g, ' $1') || `Shortcut ${index}`}
-					</span>
+					</Text>
 					<Input
 						type='text'
 						value={item.shortcut || ''}
@@ -34,17 +33,17 @@ export default function ShortcutSettingsModal({ shortcuts, setShortcuts, onClose
 						placeholder='e.g., Ctrl+S'
 						size="sm"
 					/>
-				</div>
+				</Flex>
 			))}
 
-			<div className='flex justify-end space-x-2 mt-4'>
+			<Flex justify="end" gap={2} className='mt-4'>
 				<Button onClick={onClose} variant="secondary" size="sm" className='bg-slate-600 hover:bg-slate-500'>
 					Close
 				</Button>
 				<Button onClick={handleSave} className='bg-indigo-600 hover:bg-indigo-500' size="sm">
 					Save
 				</Button>
-			</div>
-		</div>
+			</Flex>
+		</Flex>
 	);
 }

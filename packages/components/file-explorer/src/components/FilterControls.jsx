@@ -1,5 +1,6 @@
 // FilterControls.jsx
 import React from "react";
+import { Flex, Box, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "ui";
 
 const FilterControls = ({
 	extFilter,
@@ -14,65 +15,69 @@ const FilterControls = ({
 	allStatuses,
 }) => {
 	return (
-		<div className='space-y-2 mb-3'>
-			<div className='flex items-center space-x-2'>
-				<label className='text-xs text-gray-300 w-12'>Ext</label>
-				<select
-					value={extFilter}
-					onChange={e => setExtFilter(e.target.value)}
-					className='flex-1 p-1 rounded bg-gray-700 text-white text-sm'
-				>
-					{allExtensions.map(ext => (
-						<option key={ext} value={ext}>
-							{ext === "all" ? "All" : ext}
-						</option>
-					))}
-				</select>
-			</div>
+		<Flex direction="column" gap={2} className='mb-3'>
+			<Flex align="center" gap={2}>
+				<Label className='text-xs text-gray-300 w-12'>Ext</Label>
+				<Select value={extFilter} onValueChange={setExtFilter}>
+					<SelectTrigger className='flex-1 p-1 rounded bg-gray-700 text-white text-sm'>
+						<SelectValue placeholder="All" />
+					</SelectTrigger>
+					<SelectContent>
+						{allExtensions.map(ext => (
+							<SelectItem key={ext} value={ext}>
+								{ext === "all" ? "All" : ext}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+			</Flex>
 
-			<div className='flex items-center space-x-2'>
-				<label className='text-xs text-gray-300 w-12'>Size</label>
-				<select
-					value={sizeFilter}
-					onChange={e => setSizeFilter(e.target.value)}
-					className='flex-1 p-1 rounded bg-gray-700 text-white text-sm'
-				>
-					<option value='all'>All</option>
-					<option value='tiny'>&lt; 1 KB</option>
-					<option value='small'>1–10 KB</option>
-					<option value='medium'>10–100 KB</option>
-					<option value='large'>&gt; 100 KB</option>
-				</select>
-			</div>
+			<Flex align="center" gap={2}>
+				<Label className='text-xs text-gray-300 w-12'>Size</Label>
+				<Select value={sizeFilter} onValueChange={setSizeFilter}>
+					<SelectTrigger className='flex-1 p-1 rounded bg-gray-700 text-white text-sm'>
+						<SelectValue placeholder="All" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value='all'>All</SelectItem>
+						<SelectItem value='tiny'>&lt; 1 KB</SelectItem>
+						<SelectItem value='small'>1–10 KB</SelectItem>
+						<SelectItem value='medium'>10–100 KB</SelectItem>
+						<SelectItem value='large'>&gt; 100 KB</SelectItem>
+					</SelectContent>
+				</Select>
+			</Flex>
 
-			<div className='flex items-center space-x-2'>
-				<label className='text-xs text-gray-300 w-12'>Status</label>
-				<select
-					value={statusFilter}
-					onChange={e => setStatusFilter(e.target.value)}
-					className='flex-1 p-1 rounded bg-gray-700 text-white text-sm'
-				>
-					{allStatuses.map(s => (
-						<option key={s} value={s}>
-							{s === "all" ? "All" : s}
-						</option>
-					))}
-				</select>
-			</div>
+			<Flex align="center" gap={2}>
+				<Label className='text-xs text-gray-300 w-12'>Status</Label>
+				<Select value={statusFilter} onValueChange={setStatusFilter}>
+					<SelectTrigger className='flex-1 p-1 rounded bg-gray-700 text-white text-sm'>
+						<SelectValue placeholder="All" />
+					</SelectTrigger>
+					<SelectContent>
+						{allStatuses.map(s => (
+							<SelectItem key={s} value={s}>
+								{s === "all" ? "All" : s}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+			</Flex>
 
-			<div className='flex items-center space-x-2'>
-				<label className='text-xs text-gray-300 w-12'>Sort</label>
-				<select
-					value={sortBy}
-					onChange={e => setSortBy(e.target.value)}
-					className='flex-1 p-1 rounded bg-gray-700 text-white text-sm'
-				>
-					<option value='name'>Name</option>
-					<option value='size'>Size</option>
-					<option value='status'>Status</option>
-				</select>
-			</div>
-		</div>
+			<Flex align="center" gap={2}>
+				<Label className='text-xs text-gray-300 w-12'>Sort</Label>
+				<Select value={sortBy} onValueChange={setSortBy}>
+					<SelectTrigger className='flex-1 p-1 rounded bg-gray-700 text-white text-sm'>
+						<SelectValue placeholder="Name" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value='name'>Name</SelectItem>
+						<SelectItem value='size'>Size</SelectItem>
+						<SelectItem value='status'>Status</SelectItem>
+					</SelectContent>
+				</Select>
+			</Flex>
+		</Flex>
 	);
 };
 

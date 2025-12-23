@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-} from 'ui';
-import {
   Command,
   CommandDialog,
   CommandEmpty,
@@ -14,6 +9,11 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
+  CommandShortcut,
+  Flex,
+  Box,
+  Text,
+  Code,
 } from 'ui';
 
 export default function CommandPalette({ 
@@ -86,21 +86,21 @@ export default function CommandPalette({
                     {command.icon && (
                       <command.icon className="w-4 h-4 flex-shrink-0" />
                     )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="truncate">{command.label}</span>
+                    <Box className="flex-1 min-w-0">
+                      <Flex align="center" justify="between">
+                        <Text className="truncate">{command.label}</Text>
                         {command.shortcut && (
-                          <kbd className="ml-2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-border-default bg-bg-tertiary px-1.5 font-mono text-[10px] font-medium text-text-tertiary">
+                          <Code className="ml-2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-border-default bg-bg-tertiary px-1.5 text-[10px] font-medium text-text-tertiary">
                             {command.shortcut}
-                          </kbd>
+                          </Code>
                         )}
-                      </div>
+                      </Flex>
                       {command.description && (
-                        <p className="text-xs text-text-tertiary truncate mt-0.5">
+                        <Text size="xs" className="text-text-tertiary truncate mt-0.5">
                           {command.description}
-                        </p>
+                        </Text>
                       )}
-                    </div>
+                    </Box>
                   </CommandItem>
                 ))}
               </CommandGroup>

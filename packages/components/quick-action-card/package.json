@@ -4,9 +4,19 @@
   "private": true,
   "type": "module",
   "main": "./index.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
   "dependencies": {
     "ui": "workspace:*",
     "lucide-react": "^0.261.0",
     "@symphony/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^26.1.0",
+    "vitest": "^3.2.4"
   }
 }

@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { Bell } from 'lucide-react';
-import { Button, Badge, ScrollArea, Separator } from 'ui';
-import {
+import { 
+  Button, 
+  Badge, 
+  ScrollArea, 
+  Box, 
+  Flex, 
+  Heading, 
+  Text,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -36,7 +42,7 @@ export default function NotificationCenter({
           
           {/* Notification Badge */}
           {unreadCount > 0 && (
-            <div className="absolute top-1 right-1 w-2 h-2 bg-symphony-primary rounded-full animate-pulse" />
+            <Box className="absolute top-1 right-1 w-2 h-2 bg-symphony-primary rounded-full animate-pulse" />
           )}
         </Button>
       </PopoverTrigger>
@@ -46,10 +52,14 @@ export default function NotificationCenter({
         className="w-80 p-0 bg-bg-secondary/95 backdrop-blur-md border-border-default rounded-xl shadow-2xl overflow-hidden"
       >
         {/* Header */}
-        <div className="bg-bg-secondary/80 px-4 py-3 border-b border-border-subtle flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-text-primary">
+        <Flex 
+          align="center" 
+          justify="between" 
+          className="bg-bg-secondary/80 px-4 py-3 border-b border-border-subtle"
+        >
+          <Heading level={6} className="text-sm font-semibold text-text-primary">
             Notifications
-          </h3>
+          </Heading>
           {unreadCount > 0 && (
             <Badge 
               variant="secondary" 
@@ -58,7 +68,7 @@ export default function NotificationCenter({
               {unreadCount}
             </Badge>
           )}
-        </div>
+        </Flex>
 
         {/* Notification List */}
         {notifications.length > 0 ? (
@@ -74,7 +84,12 @@ export default function NotificationCenter({
             </ScrollArea>
 
             {/* Footer */}
-            <div className="px-4 py-2 bg-bg-secondary/80 border-t border-border-subtle flex items-center justify-between gap-2">
+            <Flex 
+              align="center" 
+              justify="between" 
+              gap={2}
+              className="px-4 py-2 bg-bg-secondary/80 border-t border-border-subtle"
+            >
               {unreadCount > 0 && (
                 <Button
                   variant="ghost"
@@ -93,15 +108,15 @@ export default function NotificationCenter({
               >
                 View All Notifications
               </Button>
-            </div>
+            </Flex>
           </>
         ) : (
-          <div className="px-4 py-8 text-center">
-            <Bell className="w-8 h-8 mx-auto mb-2 text-text-tertiary opacity-50" />
-            <p className="text-sm text-text-tertiary">
+          <Flex direction="column" align="center" className="px-4 py-8">
+            <Bell className="w-8 h-8 mb-2 text-text-tertiary opacity-50" />
+            <Text size="sm" className="text-text-tertiary">
               No notifications
-            </p>
-          </div>
+            </Text>
+          </Flex>
         )}
       </PopoverContent>
     </Popover>

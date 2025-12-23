@@ -13,6 +13,36 @@ Searchable command palette with keyboard shortcuts for Symphony IDE.
 - Accessible with keyboard navigation
 - Search input component for header
 
+## UI Component Architecture
+
+This component uses Symphony's UI component library (`@symphony/ui`) for consistent styling and accessibility:
+
+| Element | UI Component | Purpose |
+|---------|--------------|---------|
+| Dialog | `CommandDialog` | Modal container with keyboard handling |
+| Search | `CommandInput` | Fuzzy search input |
+| List | `CommandList`, `CommandGroup`, `CommandItem` | Command listing and grouping |
+| Layout | `Box`, `Flex` | Structural layout within command items |
+| Labels | `Text` | Command labels and descriptions |
+| Shortcuts | `Code` | Keyboard shortcut display |
+
+### Component Hierarchy
+
+```
+CommandDialog
+└── Command
+    ├── CommandInput
+    └── CommandList
+        └── CommandGroup (per category)
+            └── CommandItem
+                ├── Icon (optional)
+                └── Box
+                    ├── Flex (label + shortcut)
+                    │   ├── Text (label)
+                    │   └── Code (shortcut)
+                    └── Text size="xs" (description)
+```
+
 ## Usage
 
 ### Full Command Palette

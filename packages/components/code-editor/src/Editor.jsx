@@ -12,6 +12,7 @@ import { useFileOperations } from "./hooks/useFileOperations";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useAutoSave } from "./hooks/useAutoSave";
 import { useOutlineManager } from "./hooks/useOutlineManager";
+import { Flex, Box, Text } from "ui";
 
 export default function Editor() {
 	// State management hooks
@@ -90,18 +91,18 @@ export default function Editor() {
 
 	return (
 		<FilesProvider>
-			<div className='h-screen w-full flex flex-col bg-[#1e1e1e] text-white'>
+			<Flex direction="column" className='h-screen w-full bg-[#1e1e1e] text-white'>
 				{/* Toolbar with Undo/Redo */}
-				<div className="bg-[#2d2d30] border-b border-gray-600 px-4 py-2 flex items-center gap-4">
+				<Flex align="center" gap={4} className="bg-[#2d2d30] border-b border-gray-600 px-4 py-2">
 					<UndoRedoToolbar 
 						className="flex items-center"
 						showDescriptions={false}
 						iconSize={14}
 					/>
-					<div className="text-xs text-gray-400">
+					<Text size="xs" className="text-gray-400">
 						Global Undo/Redo System Active
-					</div>
-				</div>
+					</Text>
+				</Flex>
 
 				<LayoutManager factory={factory} />
 
@@ -130,7 +131,7 @@ export default function Editor() {
 					settingsTab={editorSettings.settingsTab}
 					onReplaceAll={handleReplaceAll}
 				/>
-			</div>
+			</Flex>
 		</FilesProvider>
 	);
 }

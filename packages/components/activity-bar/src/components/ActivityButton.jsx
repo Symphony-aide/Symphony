@@ -1,6 +1,5 @@
 import React from 'react';
-import { Button } from 'ui';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'ui';
+import { Button, Box, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'ui';
 
 export default function ActivityButton({ 
   icon: Icon, 
@@ -12,7 +11,9 @@ export default function ActivityButton({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onClick}
             className={`
               group relative p-2.5 rounded-lg transition-all
@@ -27,12 +28,12 @@ export default function ActivityButton({
             
             {/* Active Indicator */}
             {isActive && (
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t" />
+              <Box className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-6 bg-symphony-primary rounded-t" />
             )}
-          </button>
+          </Button>
         </TooltipTrigger>
         <TooltipContent side="right">
-          <p>{label}</p>
+          <Text>{label}</Text>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

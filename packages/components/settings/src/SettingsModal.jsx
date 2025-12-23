@@ -9,7 +9,7 @@ import TerminalSettings from "./TerminalSettings";
 import GlobalSearchReplace from "./GlobalSearchReplace";
 import ProjectSettingsStatus from "./ProjectSettingsStatus";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, Badge, Card } from "ui";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, Badge, Card, Flex, Box, Heading, Text } from "ui";
 import { Button } from "ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "ui";
 
@@ -65,7 +65,7 @@ export default function SettingsModal({
 				</DialogHeader>
 
 				{/* Scope Selector */}
-				<div className='flex bg-slate-800 border-b border-slate-700'>
+				<Flex className='bg-slate-800 border-b border-slate-700'>
 					<Button
 						variant="ghost"
 						className={`flex-1 py-3 px-4 font-medium transition-colors ${
@@ -78,10 +78,10 @@ export default function SettingsModal({
 							setActiveTab('appearance');
 						}}
 					>
-						<div className="flex flex-col">
-							🌐 Global Settings
-							<div className="text-xs opacity-75 mt-1">User-wide preferences</div>
-						</div>
+						<Flex direction="column">
+							<Text>🌐 Global Settings</Text>
+							<Text className="text-xs opacity-75 mt-1">User-wide preferences</Text>
+						</Flex>
 					</Button>
 					<Button
 						variant="ghost"
@@ -95,12 +95,12 @@ export default function SettingsModal({
 							setActiveTab('editor');
 						}}
 					>
-						<div className="flex flex-col">
-							📁 Project Settings
-							<div className="text-xs opacity-75 mt-1">Project-specific overrides</div>
-						</div>
+						<Flex direction="column">
+							<Text>📁 Project Settings</Text>
+							<Text className="text-xs opacity-75 mt-1">Project-specific overrides</Text>
+						</Flex>
 					</Button>
-				</div>
+				</Flex>
 
 				{/* Category Tabs */}
 				<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -117,36 +117,36 @@ export default function SettingsModal({
 					</TabsList>
 
 					{/* Content */}
-					<div className='p-4 max-h-[70vh] overflow-y-auto'>
+					<Box className='p-4 max-h-[70vh] overflow-y-auto'>
 						{/* Global Settings Content */}
 						{activeScope === 'global' && (
 							<>
 								<TabsContent value="appearance" className="space-y-4">
 									<Card className="bg-slate-800 p-4">
-										<h3 className="text-lg font-semibold mb-3 flex items-center">
+										<Heading level={3} className="text-lg font-semibold mb-3 flex items-center">
 											🎨 Appearance Settings
 											<Badge className="ml-2 bg-indigo-600">Global</Badge>
-										</h3>
+										</Heading>
 										<EditorThemeSettings themeSettings={themeSettings} setThemeSettings={setThemeSettings} />
 									</Card>
 								</TabsContent>
 								
 								<TabsContent value="shortcuts" className="space-y-4">
 									<Card className="bg-slate-800 p-4">
-										<h3 className="text-lg font-semibold mb-3 flex items-center">
+										<Heading level={3} className="text-lg font-semibold mb-3 flex items-center">
 											⌨️ Keyboard Shortcuts
 											<Badge className="ml-2 bg-indigo-600">Global</Badge>
-										</h3>
+										</Heading>
 										<ShortcutSettingsModal shortcuts={shortcuts} setShortcuts={setShortcuts} onClose={() => {}} />
 									</Card>
 								</TabsContent>
 								
 								<TabsContent value="terminal" className="space-y-4">
 									<Card className="bg-slate-800 p-4">
-										<h3 className="text-lg font-semibold mb-3 flex items-center">
+										<Heading level={3} className="text-lg font-semibold mb-3 flex items-center">
 											🖥️ Terminal Settings
 											<Badge className="ml-2 bg-indigo-600">Global</Badge>
-										</h3>
+										</Heading>
 										<TerminalSettings
 											terminalSettings={terminalSettings}
 											setTerminalSettings={setTerminalSettings}
@@ -162,10 +162,10 @@ export default function SettingsModal({
 								<TabsContent value="editor" className="space-y-4">
 									{/* Theme Override Section */}
 									<Card className="bg-slate-800 p-4">
-										<h3 className="text-lg font-semibold mb-3 flex items-center">
+										<Heading level={3} className="text-lg font-semibold mb-3 flex items-center">
 											🎨 Theme Override
 											<Badge className="ml-2 bg-emerald-600">Project</Badge>
-										</h3>
+										</Heading>
 										<EnhancedThemeSettings
 											themeSettings={themeSettings}
 											setThemeSettings={setThemeSettings}
@@ -176,11 +176,11 @@ export default function SettingsModal({
 
 									{/* Editor Behavior Section */}
 									<Card className="bg-slate-800 p-4">
-										<h3 className="text-lg font-semibold mb-3 flex items-center">
+										<Heading level={3} className="text-lg font-semibold mb-3 flex items-center">
 											📝 Editor Behavior
 											<Badge className="ml-2 bg-emerald-600">Project</Badge>
-										</h3>
-										<div className="space-y-4">
+										</Heading>
+										<Flex direction="column" gap={4}>
 											<AutoSaveSettings
 												enabled={autoSaveSettings.enabled}
 												interval={autoSaveSettings.interval}
@@ -194,22 +194,22 @@ export default function SettingsModal({
 												enabled={glyphMarginSettings.enabled} 
 												onChange={setGlyphMarginSettings} 
 											/>
-										</div>
+										</Flex>
 									</Card>
 								</TabsContent>
 								
 								<TabsContent value="searchreplace" className="space-y-4">
 									<Card className="bg-slate-800 p-4">
-										<h3 className="text-lg font-semibold mb-3 flex items-center">
+										<Heading level={3} className="text-lg font-semibold mb-3 flex items-center">
 											🔍 Search & Replace
 											<Badge className="ml-2 bg-emerald-600">Project</Badge>
-										</h3>
+										</Heading>
 										<GlobalSearchReplace onReplaceAll={onReplaceAll} />
 									</Card>
 								</TabsContent>
 							</>
 						)}
-					</div>
+					</Box>
 				</Tabs>
 			</DialogContent>
 		</Dialog>

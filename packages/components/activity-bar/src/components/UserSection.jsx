@@ -1,7 +1,6 @@
 import React from 'react';
-import { Avatar, AvatarFallback } from 'ui';
+import { Avatar, AvatarFallback, Button, Box, Flex, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'ui';
 import { Settings } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'ui';
 
 export default function UserSection({ 
   userName = 'User', 
@@ -12,21 +11,23 @@ export default function UserSection({
   const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
 
   return (
-    <div className="flex flex-col gap-1">
+    <Flex direction="column" gap={1}>
       {/* Settings Button */}
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={onSettingsClick}
               className="p-2.5 rounded-lg text-text-tertiary hover:bg-bg-tertiary hover:text-text-primary transition-all"
               aria-label="Settings"
             >
               <Settings className="w-5 h-5" />
-            </button>
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="right">
-            <p>Settings</p>
+            <Text>Settings</Text>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -35,27 +36,33 @@ export default function UserSection({
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={onUserClick}
-              className="relative group cursor-pointer"
+              className="relative group cursor-pointer p-0"
               aria-label="Account"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-symphony-primary to-symphony-accent flex items-center justify-center text-white text-xs font-semibold shadow-lg ring-2 ring-bg-secondary hover:ring-symphony-primary/50 transition-all">
-                <span className="font-bold">{initials}</span>
-              </div>
+              <Flex 
+                align="center" 
+                justify="center" 
+                className="w-8 h-8 rounded-full bg-gradient-to-br from-symphony-primary to-symphony-accent text-white text-xs font-semibold shadow-lg ring-2 ring-bg-secondary hover:ring-symphony-primary/50 transition-all"
+              >
+                <Text className="font-bold">{initials}</Text>
+              </Flex>
               
               {/* Online Status Indicator */}
-              <div className={`
+              <Box className={`
                 absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-bg-secondary
                 ${isOnline ? 'bg-green-500' : 'bg-gray-500'}
               `} />
-            </button>
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="right">
-            <p>{userName}</p>
+            <Text>{userName}</Text>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-    </div>
+    </Flex>
   );
 }

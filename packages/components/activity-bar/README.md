@@ -10,6 +10,14 @@ Vertical navigation bar for Symphony IDE with activity buttons and user section.
 - Settings button
 - User avatar with online status indicator
 - Glassmorphic design with Symphony branding
+- **Built with UI components** from `@symphony/ui` (Flex, Separator)
+
+## Architecture
+
+This component uses UI components from `packages/ui` for consistent styling and theming:
+
+- `Flex` - Layout container for vertical arrangement and alignment
+- `Separator` - Visual divider between main activities and user section
 
 ## Usage
 
@@ -50,3 +58,20 @@ function App() {
 - `source` - Source Control
 - `orchestra` - AI Orchestra
 - `extensions` - Extensions Marketplace
+
+
+## UI Components Used
+
+| Component | Purpose |
+|-----------|---------|
+| `Flex` | Main container layout with vertical direction and center alignment |
+| `Separator` | Visual divider between activity buttons and user section |
+
+## Migration Notes
+
+This component has been migrated to use UI components from `@symphony/ui` as part of the component packages migration initiative. The migration:
+
+- Replaced `<aside>` element with `<Flex as="aside">`
+- Replaced `<div>` containers with `<Flex>` components
+- Added `<Separator>` between main activities and user section
+- Maintains all existing functionality and props API

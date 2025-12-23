@@ -33,9 +33,16 @@ const flexVariants = cva('flex', {
     },
     gap: {
       none: 'gap-0',
+      1: 'gap-1',
+      2: 'gap-2',
       sm: 'gap-2',
+      3: 'gap-3',
+      4: 'gap-4',
       md: 'gap-4',
+      5: 'gap-5',
+      6: 'gap-6',
       lg: 'gap-6',
+      8: 'gap-8',
       xl: 'gap-8',
     },
   },
@@ -48,16 +55,20 @@ const flexVariants = cva('flex', {
   },
 });
 
-export interface FlexProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof flexVariants> {}
+type FlexElement = 'div' | 'aside' | 'section' | 'header' | 'footer' | 'nav' | 'main' | 'article';
 
-const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
-  ({ className, direction, justify, align, wrap, gap, ...props }, ref) => {
+export interface FlexProps
+  extends React.HTMLAttributes<HTMLElement>,
+    VariantProps<typeof flexVariants> {
+  as?: FlexElement;
+}
+
+const Flex = React.forwardRef<HTMLElement, FlexProps>(
+  ({ className, direction, justify, align, wrap, gap, as: Component = 'div', ...props }, ref) => {
     return (
-      <div
+      <Component
         className={cn(flexVariants({ direction, justify, align, wrap, gap, className }))}
-        ref={ref}
+        ref={ref as React.Ref<HTMLDivElement>}
         {...props}
       />
     );

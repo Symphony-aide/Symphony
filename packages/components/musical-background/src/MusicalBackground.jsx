@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { Box } from 'ui';
 
 export default function MusicalBackground({ 
   className = '',
@@ -58,10 +59,10 @@ export default function MusicalBackground({
   }, [animated]);
 
   return (
-    <div className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
+    <Box className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
       {/* Gradient Mesh Background */}
       {gradientMesh && (
-        <div 
+        <Box 
           className="absolute inset-0"
           style={{
             background: `
@@ -115,6 +116,6 @@ export default function MusicalBackground({
           }
         `}</style>
       )}
-    </div>
+    </Box>
   );
 }

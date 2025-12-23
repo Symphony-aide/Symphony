@@ -6,6 +6,10 @@
 	"main": "./src/index.js",
 	"module": "./src/index.js",
 	"types": "./src/index.d.ts",
+	"scripts": {
+		"test": "vitest run",
+		"test:watch": "vitest"
+	},
 	"dependencies": {
 		"@babel/parser": "^7.28.0",
 		"@babel/standalone": "^7.28.1",
@@ -28,5 +32,11 @@
 		"ui": "workspace:*",
 		"use-undo": "^1.1.1",
 		"vscode-icons-js": "^11.6.1"
+	},
+	"devDependencies": {
+		"@testing-library/react": "^16.0.0",
+		"@vitejs/plugin-react": "^4.3.4",
+		"jsdom": "^26.1.0",
+		"vitest": "^3.2.4"
 	}
 }

@@ -6,6 +6,16 @@ A code outline view component that displays symbols, functions, and variables fr
 
 This package provides an outline view component for the Symphony application that shows a hierarchical view of code symbols, making it easy to navigate through large files.
 
+## Architecture
+
+OutlineView uses Symphony's UI component library (`@symphony/ui`) for consistent styling and accessibility:
+
+- `ScrollArea` - Scrollable container for long symbol lists
+- `Box` - Layout container with padding control
+- `Flex` - Flexible layout for symbol rows
+- `Heading` - Section title typography
+- `Text` - Symbol type, name, and line number display
+
 ## Exported Components
 
 ### `OutlineView`
@@ -16,7 +26,8 @@ The main outline view component that displays code symbols in a navigable tree s
 - Click-to-navigate functionality
 - Symbol type indicators with color coding
 - Line number references
-- Responsive design with dark theme
+- Scrollable container for large files
+- Built with Symphony UI components for consistency
 
 **Usage:**
 ```tsx
@@ -99,8 +110,23 @@ const App = () => {
 };
 ```
 
+## UI Component Architecture
+
+The component uses Symphony UI primitives instead of raw HTML elements:
+
+| Element | UI Component | Purpose |
+|---------|--------------|---------|
+| Container | `ScrollArea` | Scrollable wrapper for symbol list |
+| Content wrapper | `Box` | Padding and layout control |
+| Title | `Heading` | "Outline" section header |
+| Empty state | `Text` | "No symbols found" message |
+| Symbol list | `Flex direction="column"` | Vertical list layout |
+| Symbol row | `Flex` | Horizontal symbol display |
+| Symbol parts | `Text as="span"` | Type, name, and line number |
+
 ## Dependencies
 
 - React
 - Jotai (state management)
+- @symphony/ui (UI components)
 - Tailwind CSS (styling)

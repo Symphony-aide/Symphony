@@ -1,5 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
+import { Button, Flex, Box, Text, Badge } from 'ui';
 
 export default function Tab({ 
   id,
@@ -18,7 +19,8 @@ export default function Tab({
 
   if (isActive) {
     return (
-      <button
+      <Button
+        variant="ghost"
         onClick={() => onClick?.(id)}
         className={`
           blob-tab group relative flex items-center space-x-2 text-sm font-medium
@@ -36,32 +38,35 @@ export default function Tab({
         }}
       >
         {/* Bottom accent line */}
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-symphony-primary to-symphony-light rounded-t" />
+        <Box className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-symphony-primary to-symphony-light rounded-t" />
         
         {/* Bottom connector to hide border */}
-        <div className="absolute -bottom-px left-0 right-0 h-px bg-bg-primary z-10" />
+        <Box className="absolute -bottom-px left-0 right-0 h-px bg-bg-primary z-10" />
 
         {Icon && <Icon className="w-4 h-4 flex-shrink-0" />}
-        <span className="truncate max-w-[150px]">{label}</span>
+        <Text className="truncate max-w-[150px]">{label}</Text>
         
         {/* Dirty indicator or close button */}
         {isDirty ? (
-          <div className="w-2 h-2 rounded-full bg-symphony-primary flex-shrink-0" />
+          <Box className="w-2 h-2 rounded-full bg-symphony-primary flex-shrink-0" />
         ) : (
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handleClose}
-            className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-symphony-primary/20 transition-opacity flex-shrink-0"
+            className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-symphony-primary/20 transition-opacity flex-shrink-0 h-auto w-auto"
             aria-label="Close tab"
           >
             <X className="w-3 h-3" />
-          </button>
+          </Button>
         )}
-      </button>
+      </Button>
     );
   }
 
   return (
-    <button
+    <Button
+      variant="ghost"
       onClick={() => onClick?.(id)}
       className={`
         group relative flex items-center space-x-2 text-xs h-full px-4
@@ -73,20 +78,22 @@ export default function Tab({
       `}
     >
       {Icon && <Icon className="w-3.5 h-3.5 flex-shrink-0" />}
-      <span className="truncate max-w-[120px]">{label}</span>
+      <Text className="truncate max-w-[120px]">{label}</Text>
       
       {/* Dirty indicator or close button */}
       {isDirty ? (
-        <div className="w-1.5 h-1.5 rounded-full bg-text-tertiary flex-shrink-0" />
+        <Box className="w-1.5 h-1.5 rounded-full bg-text-tertiary flex-shrink-0" />
       ) : (
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={handleClose}
-          className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-bg-secondary transition-opacity flex-shrink-0"
+          className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-bg-secondary transition-opacity flex-shrink-0 h-auto w-auto"
           aria-label="Close tab"
         >
           <X className="w-3 h-3" />
-        </button>
+        </Button>
       )}
-    </button>
+    </Button>
   );
 }

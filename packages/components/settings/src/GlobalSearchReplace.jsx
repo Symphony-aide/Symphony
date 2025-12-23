@@ -1,14 +1,13 @@
 //GlobalSearchReplace.jsx
 import React, { useState } from 'react';
-import { Input } from "ui";
-import { Button } from "ui";
+import { Input, Button, Flex } from "ui";
 
 export default function GlobalSearchReplace({ onReplaceAll }) {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [replaceTerm, setReplaceTerm] = useState('');
 
 	return (
-		<div className='flex items-center space-x-2 mb-4'>
+		<Flex align="center" gap={2} className='mb-4'>
 			<Input
 				type='text'
 				value={searchTerm}
@@ -30,6 +29,6 @@ export default function GlobalSearchReplace({ onReplaceAll }) {
 			>
 				Replace All
 			</Button>
-		</div>
+		</Flex>
 	);
 }

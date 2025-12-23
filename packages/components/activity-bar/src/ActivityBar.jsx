@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FolderOpen, LayoutDashboard, GitBranch, Bot, Puzzle } from 'lucide-react';
+import { Flex, Separator } from 'ui';
 import ActivityButton from './components/ActivityButton.jsx';
 import UserSection from './components/UserSection.jsx';
 
@@ -27,9 +28,14 @@ export default function ActivityBar({
   ];
 
   return (
-    <aside className="w-14 bg-bg-secondary border-r border-border-subtle flex flex-col items-center py-4 gap-1">
+    <Flex 
+      as="aside" 
+      direction="column" 
+      align="center" 
+      className="w-14 bg-bg-secondary border-r border-border-subtle py-4 gap-1"
+    >
       {/* Main Activities */}
-      <div className="flex-1 flex flex-col gap-1">
+      <Flex direction="column" gap={1} className="flex-1">
         {activities.map((activity) => (
           <ActivityButton
             key={activity.id}
@@ -39,7 +45,9 @@ export default function ActivityBar({
             onClick={() => handleButtonClick(activity.id)}
           />
         ))}
-      </div>
+      </Flex>
+
+      <Separator className="w-8 my-2" />
 
       {/* Bottom User Section */}
       <UserSection
@@ -48,6 +56,6 @@ export default function ActivityBar({
         onSettingsClick={onSettingsClick}
         onUserClick={onUserClick}
       />
-    </aside>
+    </Flex>
   );
 }

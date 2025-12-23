@@ -13,6 +13,37 @@ Dropdown notification panel with unread badges and multiple notification types.
 - Empty state
 - Custom hook for state management
 
+## Architecture
+
+This component uses Symphony's semantic UI components from `@symphony/ui`:
+
+| Element | UI Component | Purpose |
+|---------|--------------|---------|
+| Layout containers | `Box`, `Flex` | Semantic layout with flexbox support |
+| Headers | `Heading` | Accessible heading hierarchy |
+| Text content | `Text` | Consistent typography with size variants |
+| Notification items | `Button` | Accessible clickable items |
+| Badges | `Badge` | Unread count display |
+| Scrolling | `ScrollArea` | Virtualized scrollable content |
+| Dropdown | `Popover` | Accessible dropdown panel |
+
+### Component Structure
+
+```
+NotificationCenter
+├── PopoverTrigger (Button with Bell icon)
+│   └── Box (unread indicator dot)
+├── PopoverContent
+│   ├── Flex (header with Heading + Badge)
+│   ├── ScrollArea (notification list)
+│   │   └── NotificationItem[] (Button-based items)
+│   │       ├── Flex (icon container)
+│   │       ├── Box (content wrapper)
+│   │       │   └── Text (title, message, timestamp)
+│   │       └── Box (unread dot)
+│   └── Flex (footer with action buttons)
+```
+
 ## Usage
 
 ```jsx
@@ -99,3 +130,32 @@ const {
 - **ai**: Accent blue - AI agent status
 - **warning**: Yellow - Warnings and cautions
 - **info**: Blue - General information
+
+
+## UI Component Migration
+
+This component has been migrated to use Symphony's semantic UI components as part of the component-packages-migration initiative. The migration replaces raw HTML elements with their UI component equivalents:
+
+### Before/After Mapping
+
+| Before | After | Notes |
+|--------|-------|-------|
+| `<div>` | `<Box>` or `<Flex>` | Use `Flex` for flexbox layouts |
+| `<h3>` | `<Heading level={6}>` | Semantic heading with proper hierarchy |
+| `<p>` | `<Text>` | Typography component with size variants |
+| `<span>` | `<Text>` | Inline text with consistent styling |
+
+### Benefits
+
+- **Accessibility**: UI components include proper ARIA attributes
+- **Consistency**: Unified styling across all Symphony components
+- **Maintainability**: Centralized component definitions
+- **Theme Support**: Automatic theme integration
+
+### NotificationItem Component
+
+The `NotificationItem` sub-component uses:
+- `Button` (variant="ghost") for the clickable notification row
+- `Flex` for icon and content layout
+- `Box` for content wrapper and unread indicator
+- `Text` with size variants for title, message, and timestamp

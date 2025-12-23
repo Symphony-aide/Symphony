@@ -8,6 +8,7 @@ import { useEnhancedThemeManager } from "./hooks/useEnhancedThemeManager";
 import { useEnhancedMonacoConfig } from "./hooks/useEnhancedMonacoConfig";
 import EditorTabs from "./components/EditorTabs";
 import SyntaxHighlighter from "../../syntax-highlighting/src/SyntaxHighlighter";
+import { Flex, Box, Text, Button } from "ui";
 
 export default function EditorPanel({
 	files,
@@ -84,9 +85,10 @@ export default function EditorPanel({
 	};
 
 	return (
-		<div
+		<Flex
 			ref={containerRef}
-			className='flex flex-col h-full w-full p-2 bg-gray-900 rounded-lg border border-gray-700'
+			direction="column"
+			className='h-full w-full p-2 bg-gray-900 rounded-lg border border-gray-700'
 		>
 			{/* Tabs */}
 			<EditorTabs
@@ -99,20 +101,22 @@ export default function EditorPanel({
 			/>
 
 			{/* Editor */}
-			<div className='flex-grow rounded overflow-hidden border border-gray-700'>
+			<Box className='flex-grow rounded overflow-hidden border border-gray-700'>
 				{/* Language indicator and view toggle */}
-				<div className="flex items-center justify-between px-3 py-1 bg-gray-800 border-b border-gray-700 text-xs text-gray-400">
-					<div className="flex items-center space-x-3">
-						<span>
+				<Flex align="center" justify="between" className="px-3 py-1 bg-gray-800 border-b border-gray-700 text-xs text-gray-400">
+					<Flex align="center" gap={3}>
+						<Text size="xs">
 							{languageInfo.getLanguageDisplayName(languageInfo.detectedLanguage)}
 							{languageInfo.confidence !== 'high' && (
-								<span className="ml-1 opacity-60">({languageInfo.confidence} confidence)</span>
+								<Text as="span" size="xs" className="ml-1 opacity-60">({languageInfo.confidence} confidence)</Text>
 							)}
-						</span>
+						</Text>
 
 						{/* View Mode Toggle */}
-						<div className="flex items-center space-x-1 bg-gray-700 rounded p-1">
-							<button
+						<Flex align="center" gap={1} className="bg-gray-700 rounded p-1">
+							<Button
+								variant="ghost"
+								size="sm"
 								onClick={() => setViewMode('editor')}
 								className={`px-2 py-1 rounded text-xs transition-colors ${
 									viewMode === 'editor'
@@ -121,8 +125,10 @@ export default function EditorPanel({
 								}`}
 							>
 								✏️ Edit
-							</button>
-							<button
+							</Button>
+							<Button
+								variant="ghost"
+								size="sm"
 								onClick={() => setViewMode('preview')}
 								className={`px-2 py-1 rounded text-xs transition-colors ${
 									viewMode === 'preview'
@@ -131,14 +137,14 @@ export default function EditorPanel({
 								}`}
 							>
 								👁️ Preview
-							</button>
-						</div>
-					</div>
+							</Button>
+						</Flex>
+					</Flex>
 
-					<span className="text-xs opacity-60">
+					<Text size="xs" className="opacity-60">
 						{activeFile?.content?.split('\n').length || 0} lines
-					</span>
-				</div>
+					</Text>
+				</Flex>
 
 				{/* Conditional rendering based on view mode */}
 				{viewMode === 'editor' ? (
@@ -160,7 +166,7 @@ export default function EditorPanel({
 						}}
 					/>
 				) : (
-					<div className="h-full overflow-auto" style={{ height: 'calc(100% - 28px)' }}>
+					<Box className="h-full overflow-auto" style={{ height: 'calc(100% - 28px)' }}>
 						<SyntaxHighlighter
 							code={activeFile?.content || ""}
 							language={languageInfo.detectedLanguage}
@@ -170,9 +176,9 @@ export default function EditorPanel({
 							onLanguageDetected={onLanguageDetected}
 							className="w-full h-full"
 						/>
-					</div>
+					</Box>
 				)}
-			</div>
-		</div>
+			</Box>
+		</Flex>
 	);
 }

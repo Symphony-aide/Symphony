@@ -12,6 +12,16 @@ Elegant tab management with fluid "blob" design for active tabs in Symphony IDE.
 - Context menu (Close Others, Close All)
 - Icons with labels
 - Symphony primary color theming
+- **Built with Symphony UI primitives** (`Flex`, `Box`, `Text`, `Button`)
+
+## Architecture
+
+The TabBar component uses Symphony's UI primitive components for consistent styling and layout:
+
+- `Flex` - Used for the main container layout and tab list alignment
+- `Box` - Used for decorative elements (accent lines, dirty indicators)
+- `Text` - Used for tab labels with proper typography
+- `Button` - Used for tabs and close buttons with consistent interaction states
 
 ## Usage
 
@@ -73,3 +83,33 @@ The active tab features:
 - Gradient bottom accent line
 - Smooth scale-up on hover
 - Higher z-index for layering effect
+
+## UI Component Usage
+
+This component has been migrated to use Symphony's UI primitives for consistent styling:
+
+```jsx
+// Main TabBar layout uses Flex for alignment
+<Flex align="center" justify="between" className="...">
+  {/* Tab list container */}
+  <Flex align="center" className="h-full overflow-x-auto">
+    {tabs.map((tab) => <Tab key={tab.id} {...tab} />)}
+  </Flex>
+  
+  {/* More options dropdown */}
+  <DropdownMenu>...</DropdownMenu>
+</Flex>
+
+// Tab component uses Box for decorative elements
+<Button variant="ghost" ...>
+  <Box className="..." /> {/* Accent line */}
+  <Text>{label}</Text>
+  <Box className="..." /> {/* Dirty indicator */}
+</Button>
+```
+
+## Dependencies
+
+- `ui` (workspace) - Symphony UI primitives (`Flex`, `Box`, `Text`, `Button`, `DropdownMenu`)
+- `lucide-react` - Icons
+- `@symphony/shared` - Shared utilities
