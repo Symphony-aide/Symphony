@@ -4,6 +4,7 @@ import { useLanguageDetection } from "./hooks/useLanguageDetection";
 import { useTextMateGrammar } from "./hooks/useTextMateGrammar";
 import { useTokenizer } from "./hooks/useTokenizer";
 import { useThemeManager } from "./hooks/useThemeManager";
+import { Box, Flex, Text } from "ui";
 
 export default function SyntaxHighlighter({
 	code = "",
@@ -54,50 +55,53 @@ export default function SyntaxHighlighter({
 	const renderedLines = useMemo(() => {
 		if (!tokens || tokens.length === 0) {
 			return code.split('\n').map((line, index) => (
-				<div key={index} className="flex items-start min-h-[1.4em] relative hover:bg-white/5">
+				<Flex key={index} align="start" className="min-h-[1.4em] relative hover:bg-white/5">
 					{showLineNumbers && (
-						<span 
+						<Text 
+							as="span"
 							className="inline-block min-w-[2.5rem] pr-4 text-right select-none opacity-70 flex-shrink-0 tabular-nums"
 							style={{ color: themeData.lineNumber }}
 						>
 							{lineNumberStart + index}
-						</span>
+						</Text>
 					)}
-					<span className="flex-1 whitespace-pre break-words">{line || '\u00A0'}</span>
-				</div>
+					<Text as="span" className="flex-1 whitespace-pre break-words">{line || '\u00A0'}</Text>
+				</Flex>
 			));
 		}
 		
 		return tokens.map((line, lineIndex) => (
-			<div key={lineIndex} className="flex items-start min-h-[1.4em] relative hover:bg-white/5">
+			<Flex key={lineIndex} align="start" className="min-h-[1.4em] relative hover:bg-white/5">
 				{showLineNumbers && (
-					<span 
+					<Text 
+						as="span"
 						className="inline-block min-w-[2.5rem] pr-4 text-right select-none opacity-70 flex-shrink-0 tabular-nums"
 						style={{ color: themeData.lineNumber }}
 					>
 						{lineNumberStart + lineIndex}
-					</span>
+					</Text>
 				)}
-				<span className="flex-1 whitespace-pre break-words">
+				<Text as="span" className="flex-1 whitespace-pre break-words">
 					{line.map((token, tokenIndex) => {
 						const tokenClasses = getTokenClasses(token.scopes);
 						return (
-							<span
+							<Text
+								as="span"
 								key={tokenIndex}
 								className={`relative ${tokenClasses}`}
 								style={{ color: themeData.getTokenColor(token.scopes) }}
 							>
 								{token.content}
-							</span>
+							</Text>
 						);
 					})}
-				</span>
-			</div>
+				</Text>
+			</Flex>
 		));
 	}, [tokens, code, showLineNumbers, lineNumberStart, themeData, getTokenClasses]);
 
 	return (
-		<div 
+		<Box 
 			className={`font-mono text-sm leading-relaxed whitespace-pre overflow-auto rounded border-0 relative p-2 focus:outline-2 focus:outline-blue-500 focus:outline-offset-2 ${className}`}
 			data-language={detectedLanguage}
 			data-theme={themeData.type}
@@ -111,9 +115,9 @@ export default function SyntaxHighlighter({
 			aria-label={`Code editor for ${detectedLanguage}`}
 			aria-readonly="true"
 		>
-			<div className="min-h-full">
+			<Box className="min-h-full">
 				{renderedLines}
-			</div>
-		</div>
+			</Box>
+		</Box>
 	);
 }

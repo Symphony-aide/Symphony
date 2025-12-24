@@ -151,6 +151,13 @@
   - [x] Update LayoutManager.jsx to use Flex, Box, Heading, Button components
   - [x] Write property tests for CodeEditor UI component usage (10 tests pass)
 
+- [x] 15.2 Migrate SyntaxHighlighter component (added)
+  - [x] Update SyntaxHighlighter.jsx to use Box, Flex, Text components
+    - Replaced outer `<div>` with `<Box>` component
+    - Replaced line container `<div>` with `<Flex align="start">` component
+    - Replaced line number `<span>` with `<Text as="span">` component
+    - Replaced token `<span>` with `<Text as="span">` component
+
 
 
 
