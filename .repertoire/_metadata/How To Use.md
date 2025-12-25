@@ -239,6 +239,14 @@ DEFINITION.md must include:
 - Dependencies (Requires & Enables)
 - Timeline with effort estimate
 
+#### Naming patterns
+
+- Symphony carets should have the prefix `sy`, but not the full name `symphony`
+    - DO: `sy-ipc-protocol`
+    - DONT: `symphony-ipc-protocol`
+
+- APPError should be named SymphonyError
+
 BEFORE choosing any external library/package/crate, answer these questions:
 
 For each external dependency, create a comprehensive comparison table, example:
