@@ -13,11 +13,12 @@ Each sub-milestone is designed to be completable in 2-4 weeks.
 
 ```
 M1: Core Infrastructure (3-4 months)
-├── M1.1: IPC Protocol & Serialization (3 weeks)
-├── M1.2: Transport Layer (3 weeks)
-├── M1.3: Message Bus Core (3 weeks)
-├── M1.4: Python-Rust Bridge (3 weeks)
-└── M1.5: Extension SDK Foundation (3 weeks)
+├── M1.1: Environment Setup & Port Definitions (2 weeks)
+├── M1.2: IPC Protocol & Serialization (3 weeks)
+├── M1.3: Transport Layer (3 weeks)
+├── M1.4: Message Bus Core (3 weeks)
+├── M1.5: Python-Rust Bridge (3 weeks)
+└── M1.6: Extension SDK Foundation (3 weeks)
 
 M5: Visual Orchestration Backend (2-3 months)
 ├── M5.1: Workflow Data Model (2 weeks)
@@ -53,7 +54,29 @@ M3: The Pit - Infrastructure Extensions (3-4 months)
 
 ---
 
-### M1.1: IPC Protocol & Serialization (3 weeks)
+### M1.1: Environment Setup & Port Definitions (2 weeks)
+
+**Goal**: Establish Hexagonal Architecture foundation with port definitions
+
+**Deliverables**:
+- Core port trait definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort)
+- Development environment setup for H2A2 architecture
+- Domain types and error definitions
+- Mock adapters for testing
+- Architecture documentation
+
+**Crates to Create**:
+```
+apps/backend/crates/symphony-core-ports/
+├── src/
+│   ├── ports.rs         # Port trait definitions
+│   ├── types.rs         # Domain types
+│   ├── errors.rs        # Error types
+│   ├── mocks.rs         # Mock implementations
+│   └── lib.rs
+```
+
+### M1.2: IPC Protocol & Serialization (3 weeks)
 
 **Goal**: Define message formats and serialization for all IPC communication
 
@@ -92,7 +115,7 @@ apps/backend/crates/symphony-ipc-protocol/
 
 ---
 
-### M1.2: Transport Layer (3 weeks)
+### M1.3: Transport Layer (3 weeks)
 
 **Goal**: Platform-specific transport implementations
 
@@ -133,7 +156,7 @@ apps/backend/crates/symphony-ipc-transport/
 
 ---
 
-### M1.3: Message Bus Core (3 weeks)
+### M1.4: Message Bus Core (3 weeks)
 
 **Goal**: Central message routing and management system
 
@@ -176,7 +199,7 @@ apps/backend/crates/symphony-ipc-bus/
 
 ---
 
-### M1.4: Python-Rust Bridge (3 weeks)
+### M1.5: Python-Rust Bridge (3 weeks)
 
 **Goal**: Seamless FFI between Python Conductor and Rust infrastructure
 
@@ -218,7 +241,7 @@ apps/backend/crates/symphony-python-bridge/
 
 ---
 
-### M1.5: Extension SDK Foundation (3 weeks)
+### M1.6: Extension SDK Foundation (3 weeks)
 
 **Goal**: Core SDK for extension development
 

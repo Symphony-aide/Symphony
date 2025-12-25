@@ -8,46 +8,59 @@
 
 ## 📋 Overview
 
-M1 establishes the communication backbone for Symphony's AIDE layer. Every component
-depends on this infrastructure for message passing, cross-language integration, and
-extension management.
+M1 establishes the Hexagonal Architecture foundation and communication backbone for Symphony's AIDE layer according to the H2A2 architecture. Every component depends on this infrastructure for port definitions, message passing, cross-language integration, and extension management.
 
 ```
 M1: Core Infrastructure
-├── M1.1: IPC Protocol & Serialization
-│   ├── M1.1.1: Message Envelope Design
-│   ├── M1.1.2: MessagePack Serialization
-│   ├── M1.1.3: Bincode Serialization
-│   ├── M1.1.4: Schema Validation
-│   ├── M1.1.5: Message Registry
-│   ├── M1.1.6: Pretty Printer
-│   └── M1.1.7: Property Tests
-├── M1.2: Transport Layer
-│   ├── M1.2.1: Transport Trait
-│   ├── M1.2.2: Unix Socket Transport
-│   ├── M1.2.3: Named Pipe Transport
-│   ├── M1.2.4: Shared Memory Transport
-│   ├── M1.2.5: Connection Pooling
-│   ├── M1.2.6: Reconnection Logic
-│   └── M1.2.7: Transport Tests
-├── M1.3: Message Bus Core
-│   ├── M1.3.1: Async Message Handler
-│   ├── M1.3.2: Routing Engine
-│   ├── M1.3.3: Endpoint Registration
-│   ├── M1.3.4: Request/Response Correlation
-│   ├── M1.3.5: Pub/Sub System
-│   ├── M1.3.6: Health Monitoring
-│   ├── M1.3.7: Message Batching
-│   └── M1.3.8: Load Tests
-├── M1.4: Python-Rust Bridge
-│   ├── M1.4.1: PyO3 Setup
-│   ├── M1.4.2: Primitive Conversions
-│   ├── M1.4.3: Collection Conversions
-│   ├── M1.4.4: Error Conversion
-│   ├── M1.4.5: Async Support
-│   ├── M1.4.6: IPC Bus API
-│   ├── M1.4.7: Python Tests
-│   └── M1.4.8: Benchmarks
+├── M1.1: Environment Setup & Port Definitions
+│   ├── M1.1.1: Port Interface Definitions
+│   ├── M1.1.2: Development Environment Setup
+│   ├── M1.1.3: Domain Types & Errors
+│   ├── M1.1.4: Mock Adapters for Testing
+│   └── M1.1.5: Architecture Documentation
+├── M1.2: IPC Protocol & Serialization
+│   ├── M1.2.1: Message Envelope Design
+│   ├── M1.2.2: MessagePack Serialization
+│   ├── M1.2.3: Bincode Serialization
+│   ├── M1.2.4: Schema Validation
+│   ├── M1.2.5: Message Registry
+│   ├── M1.2.6: Pretty Printer
+│   └── M1.2.7: Property Tests
+├── M1.3: Transport Layer
+│   ├── M1.3.1: Transport Trait
+│   ├── M1.3.2: Unix Socket Transport
+│   ├── M1.3.3: Named Pipe Transport
+│   ├── M1.3.4: Shared Memory Transport
+│   ├── M1.3.5: Connection Pooling
+│   ├── M1.3.6: Reconnection Logic
+│   └── M1.3.7: Transport Tests
+├── M1.4: Message Bus Core
+│   ├── M1.4.1: Async Message Handler
+│   ├── M1.4.2: Routing Engine
+│   ├── M1.4.3: Endpoint Registration
+│   ├── M1.4.4: Request/Response Correlation
+│   ├── M1.4.5: Pub/Sub System
+│   ├── M1.4.6: Health Monitoring
+│   ├── M1.4.7: Message Batching
+│   └── M1.4.8: Load Tests
+├── M1.5: Python-Rust Bridge
+│   ├── M1.5.1: PyO3 Setup
+│   ├── M1.5.2: Primitive Conversions
+│   ├── M1.5.3: Collection Conversions
+│   ├── M1.5.4: Error Conversion
+│   ├── M1.5.5: Async Support
+│   ├── M1.5.6: IPC Bus API
+│   ├── M1.5.7: Python Tests
+│   └── M1.5.8: Benchmarks
+└── M1.6: Extension SDK Foundation
+    ├── M1.6.1: Manifest Schema
+    ├── M1.6.2: Manifest Parser
+    ├── M1.6.3: Lifecycle Trait
+    ├── M1.6.4: Permission Declaration
+    ├── M1.6.5: Extension Trait
+    ├── M1.6.6: Derive Macros
+    ├── M1.6.7: Pretty Printer
+    └── M1.6.8: Property Tests
 └── M1.5: Extension SDK Foundation
     ├── M1.5.1: Manifest Schema
     ├── M1.5.2: Manifest Parser
@@ -61,77 +74,257 @@ M1: Core Infrastructure
 
 ---
 
-## 🔧 M1.1: IPC Protocol & Serialization
+## 🏗️ M1.1: Environment Setup & Port Definitions
 
-**Crate**: `symphony-ipc-protocol`
-**Duration**: 3 weeks
+**Crate**: `symphony-core-ports`
+**Duration**: 2 weeks
 **Dependencies**: None (foundational)
 
+**Goal**: Establish the Hexagonal Architecture foundation with port definitions and development environment setup according to H2A2 architecture.
 
-### M1.1.1: Message Envelope Design (2 days)
+### M1.1.1: Port Interface Definitions (3 days)
 
-**Goal**: Define the core message structure for all IPC communication
+**Goal**: Define the core port interfaces for Hexagonal Architecture as specified in H2A2
 
 **Deliverables**:
 ```rust
-// src/message.rs
+// src/ports.rs
 
-/// Unique identifier for messages
-pub struct MessageId(pub Uuid);
-
-/// Message header with routing and metadata
-pub struct MessageHeader {
-    pub id: MessageId,
-    pub correlation_id: Option<MessageId>,
-    pub message_type: MessageType,
-    pub source: EndpointId,
-    pub target: EndpointId,
-    pub timestamp: SystemTime,
-    pub ttl: Option<Duration>,
-    pub priority: Priority,
-    pub version: ProtocolVersion,
+/// Core editing operations port (Xi-editor abstraction)
+#[async_trait]
+pub trait TextEditingPort: Send + Sync {
+    async fn insert(&self, buffer_id: BufferId, pos: usize, text: &str) -> Result<Revision>;
+    async fn delete(&self, buffer_id: BufferId, range: Range<usize>) -> Result<Revision>;
+    async fn get_content(&self, buffer_id: BufferId) -> Result<RopeSlice>;
+    async fn undo(&self, buffer_id: BufferId) -> Result<Revision>;
+    async fn redo(&self, buffer_id: BufferId) -> Result<Revision>;
+    fn subscribe(&self, buffer_id: BufferId) -> Receiver<BufferEvent>;
 }
 
-/// Message types supported by the protocol
-pub enum MessageType {
-    Request,
-    Response,
-    Event,
-    Error,
-    Heartbeat,
+/// High-performance Pit operations port
+#[async_trait]
+pub trait PitPort: Send + Sync {
+    async fn allocate_model(&self, spec: ModelSpec) -> Result<ModelHandle>;
+    async fn release_model(&self, handle: ModelHandle) -> Result<()>;
+    async fn execute_dag_node(&self, node: DagNode) -> Result<NodeResult>;
+    async fn store_artifact(&self, content: ArtifactContent) -> Result<ArtifactId>;
+    async fn resolve_conflict(&self, conflict: Conflict) -> Result<Resolution>;
 }
 
-/// Priority levels for message routing
-pub enum Priority {
-    Low = 0,
-    Normal = 1,
-    High = 2,
-    Critical = 3,
+/// Extension lifecycle and communication port
+#[async_trait]
+pub trait ExtensionPort: Send + Sync {
+    async fn load(&self, manifest: ExtensionManifest) -> Result<ExtensionId>;
+    async fn unload(&self, id: ExtensionId) -> Result<()>;
+    async fn invoke(&self, id: ExtensionId, request: Request) -> Result<Response>;
+    fn events(&self, id: ExtensionId) -> Receiver<ExtensionEvent>;
 }
 
-/// Complete message envelope
-pub struct Message<T> {
-    pub header: MessageHeader,
-    pub payload: T,
-    pub metadata: HashMap<String, Value>,
+/// Python Conductor bridge port
+#[async_trait]
+pub trait ConductorPort: Send + Sync {
+    async fn submit_decision(&self, context: DecisionContext) -> Result<Decision>;
+    async fn report_reward(&self, episode: EpisodeId, reward: f64) -> Result<()>;
+    async fn get_policy(&self, context: &PolicyContext) -> Result<Policy>;
 }
 ```
 
 **Tasks**:
-- [x] Define `MessageId` with UUID generation
-- [x] Define `MessageHeader` with all routing fields
-- [x] Define `MessageType` enum
-- [x] Define `Priority` enum
-- [x] Define generic `Message<T>` envelope
-- [x] Add builder pattern for message construction
-- [x] Write unit tests for message creation
+- [ ] Define `TextEditingPort` trait for Xi-editor abstraction
+- [ ] Define `PitPort` trait for high-performance components
+- [ ] Define `ExtensionPort` trait for extension system
+- [ ] Define `ConductorPort` trait for Python bridge
+- [ ] Add comprehensive documentation for each port
+- [ ] Create mock implementations for testing
+- [ ] Write port interface tests
 
 **Acceptance Criteria**:
-- ✅ All message types representable
-- ✅ Builder API is ergonomic
-- ✅ Messages are `Clone`, `Debug`, `PartialEq`
+- ✅ All ports follow H2A2 architecture principles
+- ✅ Ports are async-first with proper error handling
+- ✅ Mock implementations enable isolated testing
 
-**Status**: [x] Complete
+**Status**: [ ] Not Started
+
+---
+
+### M1.1.2: Development Environment Setup (2 days)
+
+**Goal**: Configure development environment for Hexagonal Architecture development
+
+**Deliverables**:
+- Cargo workspace configuration for ports and adapters
+- Development tooling setup (clippy, rustfmt, tarpaulin)
+- CI/CD pipeline configuration
+- Documentation generation setup
+
+**Tasks**:
+- [ ] Create `symphony-core-ports` crate structure
+- [ ] Configure Cargo.toml with proper dependencies
+- [ ] Set up development tooling configuration
+- [ ] Configure GitHub Actions for CI/CD
+- [ ] Set up documentation generation
+- [ ] Create development guidelines document
+
+**Acceptance Criteria**:
+- ✅ All development tools configured and working
+- ✅ CI/CD pipeline runs successfully
+- ✅ Documentation generates correctly
+
+**Status**: [ ] Not Started
+
+---
+
+### M1.1.3: Domain Types & Errors (2 days)
+
+**Goal**: Define core domain types used across all ports
+
+**Deliverables**:
+```rust
+// src/types.rs
+
+/// Buffer identifier for text editing operations
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct BufferId(pub Uuid);
+
+/// Model specification for AI model allocation
+#[derive(Debug, Clone)]
+pub struct ModelSpec {
+    pub model_id: String,
+    pub version: Option<String>,
+    pub config: HashMap<String, Value>,
+}
+
+/// Extension identifier
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ExtensionId(pub String);
+
+/// Extension manifest
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ExtensionManifest {
+    pub id: String,
+    pub name: String,
+    pub version: Version,
+    pub extension_type: ExtensionType,
+}
+
+// src/errors.rs
+
+/// Core error types for all ports
+#[derive(Debug, thiserror::Error)]
+pub enum PortError {
+    #[error("Operation failed: {message}")]
+    OperationFailed { message: String },
+    
+    #[error("Resource not found: {resource}")]
+    NotFound { resource: String },
+    
+    #[error("Permission denied: {operation}")]
+    PermissionDenied { operation: String },
+    
+    #[error("Timeout occurred after {duration:?}")]
+    Timeout { duration: Duration },
+}
+```
+
+**Tasks**:
+- [ ] Define all core domain types
+- [ ] Define comprehensive error types
+- [ ] Add serde support for serializable types
+- [ ] Implement Display and Debug traits
+- [ ] Write type conversion utilities
+- [ ] Create type validation functions
+
+**Acceptance Criteria**:
+- ✅ All domain types are well-defined
+- ✅ Error types cover all failure modes
+- ✅ Types support serialization where needed
+
+**Status**: [ ] Not Started
+
+---
+
+### M1.1.4: Mock Adapters for Testing (3 days)
+
+**Goal**: Create mock implementations of all ports for testing
+
+**Deliverables**:
+```rust
+// src/mocks.rs
+
+/// Mock text editing adapter for testing
+pub struct MockTextEditingAdapter {
+    buffers: Arc<RwLock<HashMap<BufferId, String>>>,
+    events: broadcast::Sender<BufferEvent>,
+}
+
+impl TextEditingPort for MockTextEditingAdapter {
+    async fn insert(&self, buffer_id: BufferId, pos: usize, text: &str) -> Result<Revision> {
+        // Mock implementation
+    }
+    // ... other methods
+}
+
+/// Mock Pit adapter for testing
+pub struct MockPitAdapter {
+    models: Arc<RwLock<HashMap<ModelHandle, ModelSpec>>>,
+    artifacts: Arc<RwLock<HashMap<ArtifactId, Vec<u8>>>>,
+}
+
+// Similar for other ports...
+```
+
+**Tasks**:
+- [ ] Implement `MockTextEditingAdapter`
+- [ ] Implement `MockPitAdapter`
+- [ ] Implement `MockExtensionAdapter`
+- [ ] Implement `MockConductorAdapter`
+- [ ] Add configurable behavior for testing
+- [ ] Create adapter test utilities
+- [ ] Write comprehensive adapter tests
+
+**Acceptance Criteria**:
+- ✅ All ports have working mock implementations
+- ✅ Mocks support configurable test scenarios
+- ✅ Mock behavior is deterministic and testable
+
+**Status**: [ ] Not Started
+
+---
+
+### M1.1.5: Architecture Documentation (2 days)
+
+**Goal**: Document the Hexagonal Architecture implementation
+
+**Deliverables**:
+- Architecture overview document
+- Port interface documentation
+- Adapter implementation guidelines
+- Testing strategy documentation
+
+**Tasks**:
+- [ ] Write architecture overview
+- [ ] Document each port interface
+- [ ] Create adapter implementation guide
+- [ ] Document testing patterns
+- [ ] Create code examples
+- [ ] Set up rustdoc generation
+
+**Acceptance Criteria**:
+- ✅ Architecture is clearly documented
+- ✅ All ports have comprehensive documentation
+- ✅ Implementation guidelines are clear
+
+**Status**: [ ] Not Started
+
+---
+
+## 🔌 M1.2: IPC Protocol & Serialization
+
+**Crate**: `symphony-ipc-protocol`
+**Duration**: 3 weeks
+**Dependencies**: M1.1 (Port Definitions)
+
+### M1.2.1: Message Envelope Design (2 days)
 
 ---
 
@@ -374,13 +567,13 @@ proptest! {
 
 ---
 
-## 🔌 M1.2: Transport Layer
+## 🔌 M1.3: Transport Layer
 
 **Crate**: `symphony-ipc-transport`
 **Duration**: 3 weeks
-**Dependencies**: M1.1
+**Dependencies**: M1.2 (IPC Protocol)
 
-### M1.2.1: Transport Trait (2 days)
+### M1.3.1: Transport Trait (2 days)
 
 **Goal**: Define abstract transport interface
 
@@ -411,7 +604,7 @@ pub trait TransportFactory: Send + Sync {
 
 ---
 
-### M1.2.2: Unix Socket Transport (4 days)
+### M1.3.2: Unix Socket Transport (4 days)
 
 **Goal**: High-performance transport for Linux/macOS
 
@@ -447,7 +640,7 @@ pub struct UnixSocketConfig {
 
 ---
 
-### M1.2.3: Named Pipe Transport (4 days)
+### M1.3.3: Named Pipe Transport (4 days)
 
 **Goal**: Windows-native transport implementation
 
@@ -459,7 +652,7 @@ pub struct UnixSocketConfig {
 
 ---
 
-### M1.2.4: Shared Memory Transport (3 days)
+### M1.3.4: Shared Memory Transport (3 days)
 
 **Goal**: Ultra-low-latency for high-frequency data
 
@@ -475,7 +668,7 @@ pub struct UnixSocketConfig {
 
 ---
 
-### M1.2.5: Connection Pooling (2 days)
+### M1.3.5: Connection Pooling (2 days)
 
 **Goal**: Efficient connection reuse for high-throughput scenarios
 
@@ -521,7 +714,7 @@ impl<T: Transport> ConnectionPool<T> {
 
 ---
 
-### M1.2.6: Reconnection Logic (2 days)
+### M1.3.6: Reconnection Logic (2 days)
 
 **Goal**: Automatic reconnection with exponential backoff
 
@@ -564,7 +757,7 @@ impl<T: Transport> ReconnectingTransport<T> {
 
 ---
 
-### M1.2.7: Transport Tests (2 days)
+### M1.3.7: Transport Tests (2 days)
 
 **Goal**: Comprehensive integration tests for all transports
 
@@ -583,14 +776,14 @@ impl<T: Transport> ReconnectingTransport<T> {
 
 ---
 
-## 🚌 M1.3: Message Bus Core
+## 🚌 M1.4: Message Bus Core
 
 **Crate**: `symphony-ipc-bus`
 **Duration**: 3 weeks
-**Dependencies**: M1.1, M1.2
+**Dependencies**: M1.2 (IPC Protocol), M1.3 (Transport Layer)
 
 
-### M1.3.1: Async Message Handler (3 days)
+### M1.4.1: Async Message Handler (3 days)
 
 **Goal**: Core async message processing with tokio
 
@@ -637,7 +830,7 @@ impl MessageProcessor {
 
 ---
 
-### M1.3.2: Routing Engine (3 days)
+### M1.4.2: Routing Engine (3 days)
 
 **Goal**: Pattern-based message routing
 
@@ -681,7 +874,7 @@ impl Router {
 
 ---
 
-### M1.3.3: Endpoint Registration (2 days)
+### M1.4.3: Endpoint Registration (2 days)
 
 **Goal**: Dynamic endpoint registration and discovery
 
@@ -731,7 +924,7 @@ impl EndpointRegistry {
 
 ---
 
-### M1.3.4: Request/Response Correlation (3 days)
+### M1.4.4: Request/Response Correlation (3 days)
 
 **Goal**: Track request/response pairs with timeouts
 
@@ -776,7 +969,7 @@ impl RequestCorrelator {
 
 ---
 
-### M1.3.5: Pub/Sub System (3 days)
+### M1.4.5: Pub/Sub System (3 days)
 
 **Goal**: Topic-based publish/subscribe messaging
 
@@ -822,7 +1015,7 @@ impl PubSubManager {
 
 ---
 
-### M1.3.6: Health Monitoring (2 days)
+### M1.4.6: Health Monitoring (2 days)
 
 **Goal**: Monitor bus and endpoint health
 
@@ -869,7 +1062,7 @@ impl BusHealthMonitor {
 
 ---
 
-### M1.3.7: Message Batching (2 days)
+### M1.4.7: Message Batching (2 days)
 
 **Goal**: Batch messages for improved throughput
 
@@ -912,7 +1105,7 @@ impl MessageBatcher {
 
 ---
 
-### M1.3.8: Load Tests (2 days)
+### M1.4.8: Load Tests (2 days)
 
 **Goal**: Verify bus performance under load
 
@@ -931,13 +1124,13 @@ impl MessageBatcher {
 
 ---
 
-## 🐍 M1.4: Python-Rust Bridge
+## 🐍 M1.5: Python-Rust Bridge
 
 **Crate**: `symphony-python-bridge`
 **Duration**: 3 weeks
-**Dependencies**: M1.3
+**Dependencies**: M1.4 (Message Bus Core)
 
-### M1.4.1-M1.4.8: PyO3 Integration
+### M1.5.1-M1.5.8: PyO3 Integration
 
 **Key Components**:
 ```rust
@@ -967,23 +1160,23 @@ fn symphony_ipc(_py: Python, m: &PyModule) -> PyResult<()> {
 ```
 
 **Tasks** (summarized):
-- [ ] M1.4.1: PyO3 project setup with maturin
-- [ ] M1.4.2-M1.4.3: Type conversions (primitives, collections)
-- [ ] M1.4.4: Error conversion to Python exceptions
-- [ ] M1.4.5: Async support with pyo3-asyncio
-- [ ] M1.4.6: Expose full IPC Bus API
-- [ ] M1.4.7: Python integration tests
-- [ ] M1.4.8: FFI overhead benchmarks (<0.01ms)
+- [ ] M1.5.1: PyO3 project setup with maturin
+- [ ] M1.5.2-M1.5.3: Type conversions (primitives, collections)
+- [ ] M1.5.4: Error conversion to Python exceptions
+- [ ] M1.5.5: Async support with pyo3-asyncio
+- [ ] M1.5.6: Expose full IPC Bus API
+- [ ] M1.5.7: Python integration tests
+- [ ] M1.5.8: FFI overhead benchmarks (<0.01ms)
 
 ---
 
-## 📦 M1.5: Extension SDK Foundation
+## 📦 M1.6: Extension SDK Foundation
 
 **Crate**: `symphony-extension-sdk`
 **Duration**: 3 weeks
-**Dependencies**: M1.1
+**Dependencies**: M1.2 (IPC Protocol)
 
-### M1.5.1-M1.5.8: SDK Implementation
+### M1.6.1-M1.6.8: SDK Implementation
 
 **Key Components**:
 ```rust
@@ -1016,14 +1209,14 @@ pub trait Extension: ExtensionLifecycle + Send + Sync {
 ```
 
 **Tasks** (summarized):
-- [ ] M1.5.1: TOML manifest schema definition
-- [ ] M1.5.2: Manifest parser with validation
-- [ ] M1.5.3: Lifecycle trait with hooks
-- [ ] M1.5.4: Permission declaration system
-- [ ] M1.5.5: Base Extension trait
-- [ ] M1.5.6: Derive macros for boilerplate
-- [ ] M1.5.7: Manifest pretty-printer
-- [ ] M1.5.8: Property tests for manifest round-trip
+- [ ] M1.6.1: TOML manifest schema definition
+- [ ] M1.6.2: Manifest parser with validation
+- [ ] M1.6.3: Lifecycle trait with hooks
+- [ ] M1.6.4: Permission declaration system
+- [ ] M1.6.5: Base Extension trait
+- [ ] M1.6.6: Derive macros for boilerplate
+- [ ] M1.6.7: Manifest pretty-printer
+- [ ] M1.6.8: Property tests for manifest round-trip
 
 ---
 
@@ -1031,20 +1224,25 @@ pub trait Extension: ExtensionLifecycle + Send + Sync {
 
 | Sub-Milestone | Tasks | Duration | Status |
 |---------------|-------|----------|--------|
-| M1.1.1 Message Envelope | 7 | 2 days | 📋 |
-| M1.1.2 MessagePack | 6 | 3 days | 📋 |
-| M1.1.3 Bincode | 5 | 2 days | 📋 |
-| M1.1.4 Schema Validation | 6 | 3 days | 📋 |
-| M1.1.5 Message Registry | 5 | 2 days | 📋 |
-| M1.1.6 Pretty Printer | 5 | 1 day | 📋 |
-| M1.1.7 Property Tests | 5 | 2 days | 📋 |
-| M1.2.x Transport Layer | 15 | 3 weeks | 📋 |
-| M1.3.x Message Bus | 8 | 3 weeks | 📋 |
-| M1.4.x Python Bridge | 8 | 3 weeks | 📋 |
-| M1.5.x Extension SDK | 8 | 3 weeks | 📋 |
+| M1.1.1 Port Definitions | 7 | 3 days | 📋 |
+| M1.1.2 Environment Setup | 6 | 2 days | 📋 |
+| M1.1.3 Domain Types | 6 | 2 days | 📋 |
+| M1.1.4 Mock Adapters | 7 | 3 days | 📋 |
+| M1.1.5 Documentation | 6 | 2 days | 📋 |
+| M1.2.1 Message Envelope | 7 | 2 days | ✅ |
+| M1.2.2 MessagePack | 6 | 3 days | 📋 |
+| M1.2.3 Bincode | 5 | 2 days | 📋 |
+| M1.2.4 Schema Validation | 6 | 3 days | 📋 |
+| M1.2.5 Message Registry | 5 | 2 days | 📋 |
+| M1.2.6 Pretty Printer | 5 | 1 day | 📋 |
+| M1.2.7 Property Tests | 5 | 2 days | 📋 |
+| M1.3.x Transport Layer | 15 | 3 weeks | 📋 |
+| M1.4.x Message Bus | 8 | 3 weeks | 📋 |
+| M1.5.x Python Bridge | 8 | 3 weeks | 📋 |
+| M1.6.x Extension SDK | 8 | 3 weeks | 📋 |
 
-**Total Tasks**: ~78 detailed tasks
-**Total Duration**: 15 weeks (with parallelization: ~10 weeks)
+**Total Tasks**: ~110 detailed tasks
+**Total Duration**: 18 weeks (with parallelization: ~12 weeks)
 
 ---
 

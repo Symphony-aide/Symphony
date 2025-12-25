@@ -52,7 +52,28 @@ M6: Production Ready
 
 **Goal**: Build the foundational systems that Symphony AIDE layer requires
 
-### 1.1 IPC Communication Bus
+### 1.1 Environment Setup & Port Definitions
+**Priority**: 🔴 Critical - Foundation for H2A2 architecture
+
+**Deliverables**:
+- Hexagonal Architecture port definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort)
+- Development environment setup and tooling
+- Domain types and comprehensive error handling
+- Mock adapters for isolated testing
+- Architecture documentation and guidelines
+
+**Crates to Create**:
+```
+apps/backend/crates/symphony-core-ports/
+├── src/
+│   ├── ports.rs         # Port trait definitions
+│   ├── types.rs         # Domain types
+│   ├── errors.rs        # Error types
+│   ├── mocks.rs         # Mock implementations
+│   └── lib.rs
+```
+
+### 1.2 IPC Communication Bus
 **Priority**: 🔴 Critical - Everything depends on this
 
 **Deliverables**:
@@ -73,7 +94,7 @@ apps/backend/crates/symphony-ipc/
 │   └── lib.rs
 ```
 
-### 1.2 Python-Rust Bridge
+### 1.3 Python-Rust Bridge
 **Priority**: 🔴 Critical - Conductor needs this
 
 **Deliverables**:
@@ -92,7 +113,7 @@ apps/backend/crates/symphony-python-bridge/
 │   └── lib.rs
 ```
 
-### 1.3 Extension SDK Foundation
+### 1.4 Extension SDK Foundation
 **Priority**: 🟡 High - Needed before extension development
 
 **Deliverables**:
@@ -113,10 +134,12 @@ apps/backend/crates/symphony-extension-sdk/
 ```
 
 **Success Criteria**:
+- ✅ H2A2 architecture ports defined and documented
 - ✅ IPC bus handles 10,000+ messages/sec with <0.3ms latency
 - ✅ Python can call Rust functions with <0.01ms overhead
 - ✅ Extension manifest system validates and loads correctly
 - ✅ All tests passing with >80% code coverage
+- ✅ Mock adapters enable isolated domain testing
 
 ---
 
