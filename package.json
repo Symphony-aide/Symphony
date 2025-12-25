@@ -8,7 +8,6 @@
   ],
   "type": "module",
   "scripts": {
-    "preinstall": "node pnpm-prepare.js",
     "server": "jake server",
     "server_dev": "jake server_dev",
     "server_build": "jake server_build",
