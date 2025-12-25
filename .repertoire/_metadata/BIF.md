@@ -84,6 +84,8 @@ An atomic feature must:
 
 **Scale:** Poor / Basic / Good / Excellent
 
+**Reasoning Required:** Explain why this rating was assigned with specific code evidence
+
 **Look for Anti-Patterns:**
 
 - Excessive nesting (>3 levels)
@@ -98,6 +100,10 @@ An atomic feature must:
 - Clear separation
 - Feature isolation
 - Meaningful naming
+
+**Example Reasoning:**
+- "Excellent: Follows all SOLID principles, comprehensive error handling at lines 45-60, clear separation of concerns"
+- "Poor: 4-level nested conditionals at line 125, magic numbers without constants, duplicated logic in 3 locations"
 
 ### 3.3 Documentation & Comments
 
@@ -176,11 +182,15 @@ An atomic feature must:
 
 ✅ Justify every rating with code evidence
 
+✅ **Provide reasoning for every rating** - explain WHY the rating was assigned
+
 ✅ Check if something is a separate package before listing as feature
 
 ✅ Identify the SMALLEST atomic features
 
 ✅ Be specific in collapse predictions (include numbers)
+
+✅ **Include reasoning column in all evaluation tables**
 
 ### Must Not Do:
 
@@ -223,12 +233,12 @@ Contains:
 
 ## 6. Evaluation Table Format
 
-### Main Table (one row per feature):
+### Enhanced Table Format (with Reasoning):
 
-| Component | Type | Feature | Completeness | Code Quality | Docs | Reliability | Performance | Integration | Maintenance | When Collapse | Notes |
+| Component | Type | Feature | Completeness | Code Quality | Docs | Reliability | Performance | Integration | Maintenance | When Collapse | Reasoning |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Terminal | Component | Auto-complete | Partial (35%) | Basic | None | Medium | Poor | Partial | Low | 1000+ suggestions → UI freeze >500ms | No debouncing |
-| Terminal | Component | PTY | Full (90%) | Excellent | Good | Enterprise | Excellent | Full | Enterprise | 100+ sessions → leak ~500MB | Well implemented |
+| Terminal | Component | Auto-complete | Partial (35%) | Basic | None | Medium | Poor | Partial | Low | 1000+ suggestions → UI freeze >500ms | No debouncing, O(n²) search algorithm, missing error handling for API failures |
+| Terminal | Component | PTY | Full (90%) | Excellent | Good | Enterprise | Excellent | Full | Enterprise | 100+ sessions → leak ~500MB | Well-architected with proper cleanup, comprehensive error handling, good separation of concerns |
 
 ---
 

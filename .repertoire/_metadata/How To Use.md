@@ -219,6 +219,17 @@ Result:
 
 OUTPUT FOR EACH FEATURE:
 
+**HIERARCHICAL ORGANIZATION**: Features are organized by parent milestone:
+- Features for M1.1 (IPC Protocol) → `.repertoire/features/m1.1/F001_*, F002_*, ...`
+- Features for M1.2 (Transport Layer) → `.repertoire/features/m1.2/F006_*, F007_*, ...`
+- Features for M5.1 (Workflow Model) → `.repertoire/features/m5.1/F050_*, F051_*, ...`
+
+This structure provides:
+- Clear milestone mapping and progress tracking
+- Logical grouping of related features
+- Easy dependency management within milestone groups
+- Scalable organization for large projects
+
 DEFINITION.md must include:
 - Clear problem statement
 - Specific solution approach
@@ -526,32 +537,44 @@ Read entire codebase for this feature and:
    a) Feature Completeness (0-100%)
       - Cite specific missing capabilities
       - Reference line numbers
+      - **Reasoning**: Explain why this percentage was assigned
 
    b) Code Quality / Maintainability (Poor/Basic/Good/Excellent)
       - Identify anti-patterns with line numbers
       - Note good practices with line numbers
+      - **Reasoning**: Justify the rating with specific code evidence
 
    c) Documentation & Comments (None/Basic/Good/Excellent)
       - Check JSDoc/TSDoc [Sometimes simple focus doc is enough, it is not problem]
       - Review inline explanations
+      - **Reasoning**: Explain what documentation exists and its quality
 
    d) Reliability / Fault-Tolerance (Low/Medium/High/Enterprise)
       - Find all error handling (or lack thereof)
       - Check null/undefined guards
+      - **Reasoning**: Detail error handling coverage and robustness
 
    e) Performance & Efficiency (Poor/Acceptable/Good/Excellent)
       - Analyze code complexity
       - Identify optimization opportunities
+      - **Reasoning**: Explain performance characteristics and bottlenecks
+
+   f) Integration & Extensibility (Not Compatible/Partial/Full/Enterprise)
+      - Assess modularity and extension [import] points
+      - Check coupling and cohesion
+      - **Reasoning**: Explain integration capabilities and limitations
 
    g) Maintenance & Support (Low/Medium/High/Enterprise)
       - Assess modularity
       - Count dependencies
+      - **Reasoning**: Explain maintainability factors and risks
 
    h) Stress Collapse Estimation
       - Predict failure conditions with numbers
       - Base on code analysis (not execution)
       - Format: "[Condition] → [Expected failure]"
       - Example: "1000+ items → UI freeze >500ms"
+      - **Reasoning**: Explain the analysis that led to this prediction
 
 3. Create Component Summary:
    - Statistics (completeness distribution, quality distribution)
