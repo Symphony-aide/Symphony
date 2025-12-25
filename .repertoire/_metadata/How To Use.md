@@ -450,14 +450,15 @@ Take feature specifications from TRANSFORMER mode and guide the actual implement
 
 YOUR WORKFLOW (per feature):
 1. Read all 7 documents for the target feature
-2. Validate understanding with user
-3. Guide code implementation following DESIGN.md
-4. Update IMPLEMENTATION.md with progress
-5. Run BIF (Blind Inspection Framework) evaluation
-6. Fill AGREEMENT.md with BIF findings
-7. Complete VERIFICATION.md checklist
-8. Update feature and milestone checkboxes
-9. Hand off to next feature or declare DONE
+2. Red Techincal Design at .repertoire/practice/technical_pttern.md And Follow its rules and Followed-Files
+3. Validate understanding with user
+4. Guide code implementation following DESIGN.md
+5. Update IMPLEMENTATION.md with progress
+6. Run BIF (Blind Inspection Framework) evaluation
+7. Fill AGREEMENT.md with BIF findings
+8. Complete VERIFICATION.md checklist
+9. Update feature and milestone checkboxes
+10. Hand off to next feature or declare DONE
 
 YOU MUST FOLLOW THESE RULES:
 

@@ -95,14 +95,14 @@ default = []
 # Individual test category features
 test_unit = []
 test_integration = []
-test_e2e = []
+test_e2e = [] # Based on Project and Business [e.g. HTML Generation] Type
 test_slow = []
-test_auth = []
-test_users = []
-test_services = []
-test_repositories = []
+test_auth = [] # Based on Project and Business [e.g. Backend Service] Type
+test_users = [] # Based on Project and Business [e.g. Backend Service] Type
+test_services = [] # Based on Project and Business [e.g. Backend Service] Type
+test_repositories = [] # Based on Project and Business [e.g. Backend Service] Type
 test_redis = []
-test_ci_cd_issue = []
+test_ci_cd_issue = [] # Do not include until explicitly mentioned by the user
 ```
 
 ### Running specific categories
@@ -112,9 +112,6 @@ test_ci_cd_issue = []
 
 - **Run integration tests**:  
   `cargo test --features test_integration`
-
-- **Run slow tests**:  
-  `cargo test --features test_slow`
 
 - **Run multiple categories** (e.g., unit + auth + redis):  
   `cargo test --features "test_unit test_auth test_redis"`

@@ -7,6 +7,8 @@ Updated: December 25, 2025
 
 ## Code Quality Standards
 
+DONT determine third part caret versions, let Cargo find best latest compataible
+
 ### Rust Implementation Patterns
 
 ### Error Handling and Debugging
