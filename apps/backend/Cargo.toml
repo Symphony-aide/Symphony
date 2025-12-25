@@ -10,7 +10,6 @@ members = [
     "crates/utils/xi-unicode",
     "crates/utils/xi-trace",
     "crates/plugins/xi-syntect-plugin",
-    "crates/core/symphony-ipc-protocol",
 ]
 
 [workspace.dependencies]
