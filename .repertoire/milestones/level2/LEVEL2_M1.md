@@ -18,58 +18,92 @@ M1: Core Infrastructure
 │   ├── M1.1.3: Domain Types & Errors
 │   ├── M1.1.4: Mock Adapters for Testing
 │   └── M1.1.5: Architecture Documentation
-├── M1.2: IPC Protocol & Serialization
-│   ├── M1.2.1: Message Envelope Design
-│   ├── M1.2.2: MessagePack Serialization
-│   ├── M1.2.3: Bincode Serialization
-│   ├── M1.2.4: Schema Validation
-│   ├── M1.2.5: Message Registry
-│   ├── M1.2.6: Pretty Printer
-│   └── M1.2.7: Property Tests
-├── M1.3: Transport Layer
-│   ├── M1.3.1: Transport Trait
-│   ├── M1.3.2: Unix Socket Transport
-│   ├── M1.3.3: Named Pipe Transport
-│   ├── M1.3.4: Shared Memory Transport
-│   ├── M1.3.5: Connection Pooling
-│   ├── M1.3.6: Reconnection Logic
-│   └── M1.3.7: Transport Tests
-├── M1.4: Message Bus Core
-│   ├── M1.4.1: Async Message Handler
-│   ├── M1.4.2: Routing Engine
-│   ├── M1.4.3: Endpoint Registration
-│   ├── M1.4.4: Request/Response Correlation
-│   ├── M1.4.5: Pub/Sub System
-│   ├── M1.4.6: Health Monitoring
-│   ├── M1.4.7: Message Batching
-│   └── M1.4.8: Load Tests
-├── M1.5: Python-Rust Bridge
-│   ├── M1.5.1: PyO3 Setup
-│   ├── M1.5.2: Primitive Conversions
-│   ├── M1.5.3: Collection Conversions
-│   ├── M1.5.4: Error Conversion
-│   ├── M1.5.5: Async Support
-│   ├── M1.5.6: IPC Bus API
-│   ├── M1.5.7: Python Tests
-│   └── M1.5.8: Benchmarks
-└── M1.6: Extension SDK Foundation
-    ├── M1.6.1: Manifest Schema
-    ├── M1.6.2: Manifest Parser
-    ├── M1.6.3: Lifecycle Trait
-    ├── M1.6.4: Permission Declaration
-    ├── M1.6.5: Extension Trait
-    ├── M1.6.6: Derive Macros
-    ├── M1.6.7: Pretty Printer
-    └── M1.6.8: Property Tests
-└── M1.5: Extension SDK Foundation
-    ├── M1.5.1: Manifest Schema
-    ├── M1.5.2: Manifest Parser
-    ├── M1.5.3: Lifecycle Trait
-    ├── M1.5.4: Permission Declaration
-    ├── M1.5.5: Extension Trait
-    ├── M1.5.6: Derive Macros
-    ├── M1.5.7: Pretty Printer
-    └── M1.5.8: Property Tests
+├── M1.2: Two-Binary Architecture Implementation (NEW)
+│   ├── M1.2.1: Symphony Binary Structure
+│   ├── M1.2.2: XI-editor Binary Structure
+│   ├── M1.2.3: Process Lifecycle Management
+│   ├── M1.2.4: Health Monitoring System
+│   └── M1.2.5: Binary Synchronization Framework
+├── M1.3: IPC Protocol & Serialization
+│   ├── M1.3.1: Message Envelope Design
+│   ├── M1.3.2: MessagePack Serialization
+│   ├── M1.3.3: Bincode Serialization
+│   ├── M1.3.4: Schema Validation
+│   ├── M1.3.5: Message Registry
+│   ├── M1.3.6: JSON-RPC Protocol (NEW)
+│   ├── M1.3.7: XI-editor Message Types (NEW)
+│   ├── M1.3.8: Pretty Printer
+│   └── M1.3.9: Property Tests
+├── M1.4: Transport Layer
+│   ├── M1.4.1: Transport Trait
+│   ├── M1.4.2: Unix Socket Transport
+│   ├── M1.4.3: Named Pipe Transport
+│   ├── M1.4.4: Shared Memory Transport
+│   ├── M1.4.5: Stdio Transport (NEW)
+│   ├── M1.4.6: Connection Pooling
+│   ├── M1.4.7: Reconnection Logic
+│   └── M1.4.8: Transport Tests
+├── M1.5: Message Bus Core
+│   ├── M1.5.1: Async Message Handler
+│   ├── M1.5.2: Routing Engine
+│   ├── M1.5.3: Endpoint Registration
+│   ├── M1.5.4: Request/Response Correlation
+│   ├── M1.5.5: Pub/Sub System
+│   ├── M1.5.6: Health Monitoring
+│   ├── M1.5.7: Binary Coordination (NEW)
+│   ├── M1.5.8: XI-editor Bridge (NEW)
+│   ├── M1.5.9: Message Batching
+│   └── M1.5.10: Load Tests
+├── M1.6: Python-Rust Bridge
+│   ├── M1.6.1: PyO3 Setup
+│   ├── M1.6.2: Primitive Conversions
+│   ├── M1.6.3: Collection Conversions
+│   ├── M1.6.4: Error Conversion
+│   ├── M1.6.5: Async Support
+│   ├── M1.6.6: IPC Bus API
+│   ├── M1.6.7: Conductor Subprocess Management (NEW)
+│   ├── M1.6.8: Direct Pit Access (NEW)
+│   ├── M1.6.9: Python Tests
+│   └── M1.6.10: Benchmarks
+├── M1.7: Extension SDK Foundation
+│   ├── M1.7.1: Manifest Schema
+│   ├── M1.7.2: Manifest Parser
+│   ├── M1.7.3: Lifecycle Trait
+│   ├── M1.7.4: Permission Declaration
+│   ├── M1.7.5: Extension Trait
+│   ├── M1.7.6: Derive Macros
+│   ├── M1.7.7: Actor-Based Isolation (NEW)
+│   ├── M1.7.8: Extension Process Management (NEW)
+│   ├── M1.7.9: Pretty Printer
+│   └── M1.7.10: Property Tests
+├── M1.8: Concrete Adapters Implementation (NEW)
+│   ├── M1.8.1: XiEditorAdapter Implementation
+│   ├── M1.8.2: PitAdapter Implementation
+│   ├── M1.8.3: ActorExtensionAdapter Implementation
+│   ├── M1.8.4: PythonConductorAdapter Implementation
+│   ├── M1.8.5: Adapter Integration Tests
+│   └── M1.8.6: Performance Validation
+├── M1.9: Domain Core Orchestration (NEW)
+│   ├── M1.9.1: SymphonyCore Implementation
+│   ├── M1.9.2: State Synchronization
+│   ├── M1.9.3: Event Streaming
+│   ├── M1.9.4: Process Lifecycle Management
+│   ├── M1.9.5: Workflow Coordination
+│   └── M1.9.6: End-to-End Integration Tests
+├── M1.10: Tauri Integration Layer (NEW)
+│   ├── M1.10.1: Tauri Command Definitions
+│   ├── M1.10.2: State Management Integration
+│   ├── M1.10.3: Error Handling & Type Conversion
+│   ├── M1.10.4: Event Streaming to Frontend
+│   ├── M1.10.5: Frontend-Backend Synchronization
+│   └── M1.10.6: Tauri Integration Tests
+└── M1.11: Actor Layer Implementation (NEW)
+    ├── M1.11.1: Actor Trait Implementation
+    ├── M1.11.2: Process Spawning & Management
+    ├── M1.11.3: Message Passing System
+    ├── M1.11.4: Process Isolation & Sandboxing
+    ├── M1.11.5: Crash Detection & Recovery
+    └── M1.11.6: Actor System Tests
 ```
 
 ---
@@ -207,6 +241,18 @@ pub struct ExtensionManifest {
     pub extension_type: ExtensionType,
 }
 
+/// Binary process identifier (NEW)
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ProcessId(pub String);
+
+/// Binary synchronization event (NEW)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum SyncEvent {
+    FileChanged { path: PathBuf, content: String },
+    BufferUpdated { buffer_id: BufferId, revision: u64 },
+    ProcessHealthCheck { process_id: ProcessId, status: HealthStatus },
+}
+
 // src/errors.rs
 
 /// Core error types for all ports
@@ -223,12 +269,20 @@ pub enum PortError {
     
     #[error("Timeout occurred after {duration:?}")]
     Timeout { duration: Duration },
+    
+    #[error("Process communication failed: {process_id}")]
+    ProcessCommunicationFailed { process_id: ProcessId }, // (NEW)
+    
+    #[error("Binary synchronization error: {details}")]
+    SynchronizationError { details: String }, // (NEW)
 }
 ```
 
 **Tasks**:
 - [ ] Define all core domain types
 - [ ] Define comprehensive error types
+- [ ] **Add binary process types (ProcessId, SyncEvent)** `(NEW)`
+- [ ] **Add process communication error types** `(NEW)`
 - [ ] Add serde support for serializable types
 - [ ] Implement Display and Debug traits
 - [ ] Write type conversion utilities
@@ -238,6 +292,7 @@ pub enum PortError {
 - ✅ All domain types are well-defined
 - ✅ Error types cover all failure modes
 - ✅ Types support serialization where needed
+- ✅ **Binary process types support inter-process communication** `(NEW)`
 
 **Status**: [ ] Not Started
 
@@ -318,13 +373,308 @@ pub struct MockPitAdapter {
 
 ---
 
-## 🔌 M1.2: IPC Protocol & Serialization
+## 🏗️ M1.2: Two-Binary Architecture Implementation `(NEW)`
 
-**Crate**: `symphony-ipc-protocol`
 **Duration**: 3 weeks
 **Dependencies**: M1.1 (Port Definitions)
 
-### M1.2.1: Message Envelope Design (2 days)
+**Goal**: Implement Symphony and XI-editor as separate executable binaries with proper synchronization and communication.
+
+### M1.2.1: Symphony Binary Structure (3 days)
+
+**Goal**: Implement Symphony binary with Tauri frontend integration
+
+**Deliverables**:
+```
+Symphony Binary Structure:
+src-tauri/
+├── Cargo.toml
+└── src/
+    ├── symphonyaide.rs    # Main AIDE orchestration
+    ├── xi-editor.rs       # XI-editor process management  
+    ├── process.rs         # Inter-process communication
+    └── main.rs            # Tauri application entry
+```
+
+**Key Components**:
+```rust
+// src/symphonyaide.rs
+pub struct SymphonyAide {
+    conductor: ConductorEngine,
+    pit: PitManager,
+    xi_editor: XiEditorProcess,
+    sync_manager: SyncManager,
+}
+
+impl SymphonyAide {
+    pub async fn new() -> Result<Self, AideError>;
+    pub async fn start(&mut self) -> Result<(), AideError>;
+    pub async fn shutdown(&mut self) -> Result<(), AideError>;
+}
+
+// src/xi-editor.rs
+pub struct XiEditorProcess {
+    process: tokio::process::Child,
+    rpc_client: JsonRpcClient,
+    health_monitor: ProcessHealthMonitor,
+}
+
+// src/process.rs
+pub struct ProcessManager {
+    processes: HashMap<ProcessId, ProcessHandle>,
+    health_checks: HashMap<ProcessId, HealthCheck>,
+}
+```
+
+**Tasks**:
+- [ ] Create Tauri project structure
+- [ ] Implement SymphonyAide orchestration
+- [ ] Create XI-editor process management
+- [ ] Add process lifecycle management
+- [ ] Implement health monitoring
+- [ ] Add Tauri command handlers
+- [ ] Write integration tests
+
+**Acceptance Criteria**:
+- ✅ Symphony binary starts successfully
+- ✅ Tauri frontend integration works
+- ✅ Process management is reliable
+
+---
+
+### M1.2.2: XI-editor Binary Structure (3 days)
+
+**Goal**: Create standalone XI-editor binary with JSON-RPC server
+
+**Deliverables**:
+```
+XI-editor Binary Structure:
+apps/backend/xi-editor-standalone/
+├── Cargo.toml
+└── src/
+    ├── jsonrpc.rs         # JSON-RPC server implementation
+    ├── xicore.rs          # XI-editor core integration
+    └── main.rs            # Standalone XI-editor entry
+```
+
+**Key Components**:
+```rust
+// src/jsonrpc.rs
+pub struct JsonRpcServer {
+    xi_core: XiCore,
+    transport: StdioTransport,
+    handlers: HashMap<String, Box<dyn RpcHandler>>,
+}
+
+// src/xicore.rs
+pub struct XiCoreWrapper {
+    core: XiCore,
+    buffers: HashMap<BufferId, BufferState>,
+}
+
+// src/main.rs
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let server = JsonRpcServer::new()?;
+    server.run()?;
+    Ok(())
+}
+```
+
+**Tasks**:
+- [ ] Create standalone XI-editor project
+- [ ] Implement JSON-RPC server
+- [ ] Integrate XI-editor core
+- [ ] Add stdio transport
+- [ ] Implement RPC handlers
+- [ ] Add buffer management
+- [ ] Write XI-editor tests
+
+**Acceptance Criteria**:
+- ✅ XI-editor binary runs independently
+- ✅ JSON-RPC server responds correctly
+- ✅ All text editing operations work
+
+---
+
+### M1.2.3: Process Lifecycle Management (4 days)
+
+**Goal**: Manage lifecycle of both binaries with proper startup/shutdown
+
+**Deliverables**:
+```rust
+// Process lifecycle management
+pub struct ProcessLifecycleManager {
+    symphony_config: SymphonyConfig,
+    xi_editor_config: XiEditorConfig,
+    startup_sequence: Vec<StartupStep>,
+    shutdown_sequence: Vec<ShutdownStep>,
+}
+
+pub enum ProcessState {
+    Starting,
+    Running,
+    Stopping,
+    Stopped,
+    Failed { error: String },
+}
+
+pub struct ProcessHandle {
+    id: ProcessId,
+    state: ProcessState,
+    process: tokio::process::Child,
+    started_at: Instant,
+}
+```
+
+**Tasks**:
+- [ ] Implement ProcessLifecycleManager
+- [ ] Define startup sequence (XI-editor first, then Symphony)
+- [ ] Define shutdown sequence (graceful termination)
+- [ ] Add process state tracking
+- [ ] Implement restart logic
+- [ ] Add configuration management
+- [ ] Write lifecycle tests
+
+**Acceptance Criteria**:
+- ✅ Processes start in correct order
+- ✅ Graceful shutdown works
+- ✅ Failed processes restart automatically
+
+---
+
+### M1.2.4: Health Monitoring System (3 days)
+
+**Goal**: Monitor health of both binaries and detect failures
+
+**Deliverables**:
+```rust
+// Health monitoring system
+pub struct BinaryHealthMonitor {
+    symphony_health: HealthStatus,
+    xi_editor_health: HealthStatus,
+    heartbeat_interval: Duration,
+    failure_threshold: u32,
+}
+
+pub enum HealthStatus {
+    Healthy,
+    Degraded { reason: String },
+    Unhealthy { error: String },
+    Unreachable,
+}
+
+pub struct HealthCheck {
+    process_id: ProcessId,
+    last_heartbeat: Instant,
+    consecutive_failures: u32,
+    check_interval: Duration,
+}
+```
+
+**Tasks**:
+- [ ] Implement BinaryHealthMonitor
+- [ ] Add heartbeat mechanism
+- [ ] Implement failure detection
+- [ ] Add automatic recovery
+- [ ] Create health metrics
+- [ ] Add health reporting
+- [ ] Write health monitoring tests
+
+**Acceptance Criteria**:
+- ✅ Health checks detect failures within 1 second
+- ✅ Automatic recovery works
+- ✅ Health metrics are accurate
+
+---
+
+### M1.2.5: Binary Synchronization Framework (3 days)
+
+**Goal**: Ensure data consistency between Symphony and XI-editor
+
+**Deliverables**:
+```rust
+// Binary synchronization framework
+pub struct BinarySyncManager {
+    symphony_state: Arc<RwLock<SymphonyState>>,
+    xi_editor_state: Arc<RwLock<XiEditorState>>,
+    sync_events: broadcast::Sender<SyncEvent>,
+    conflict_resolver: ConflictResolver,
+}
+
+pub enum SyncEvent {
+    // Symphony → XI-editor (via JSON-RPC)
+    FileChanged { path: PathBuf, content: String },
+    ProjectStructureChanged { changes: Vec<StructureChange> },
+    WorkspaceReload { root_path: PathBuf },
+    
+    // XI-editor → Symphony (via STDIO streaming)
+    BufferUpdated { buffer_id: BufferId, revision: u64, content: String },
+    CursorMoved { buffer_id: BufferId, position: Position },
+    FileModified { path: PathBuf, timestamp: SystemTime },
+    ViewClosed { view_id: ViewId },
+}
+
+pub struct ConflictResolver {
+    resolution_strategy: ResolutionStrategy,
+    conflict_log: Vec<ConflictRecord>,
+}
+```
+
+**Synchronization Architecture**: `(NEW)`
+```
+Symphony Process                    XI-editor Process
+      │                                   │
+      ├─ File System Watcher              │
+      │  (detects external changes)       │
+      │                                   │
+      ├─ JSON-RPC: file_changed ────────► │
+      │                                   ├─ Updates buffer
+      │                                   │
+      │ ◄─── STDIO Stream: buffer_updated ─┤
+      │                                   │
+      ├─ AI Analysis                      │
+      │  (processes for suggestions)      │
+      │                                   │
+      ├─ JSON-RPC: insert_suggestion ───► │
+      │                                   ├─ Shows suggestion
+      │                                   │
+      │ ◄─── STDIO Stream: cursor_moved ───┤
+      │                                   │
+      ├─ Context Update                   │
+```
+
+**STDIO Streaming Protocol**: `(NEW)`
+- **Reliability**: OS-level buffering, ordered delivery, immediate error detection
+- **Streaming**: Continuous event stream like Server-Sent Events (SSE)
+- **Format**: Line-delimited JSON for easy parsing
+- **Bidirectional**: Symphony sends via stdin, receives via stdout streaming
+
+**Tasks**:
+- [ ] Implement BinarySyncManager
+- [ ] Define synchronization events (Symphony ↔ XI-editor)
+- [ ] Implement STDIO streaming event handler
+- [ ] Add JSON-RPC operation sender
+- [ ] Add conflict detection and resolution
+- [ ] Implement file system watcher integration
+- [ ] Add state consistency checks
+- [ ] Write synchronization tests with mock processes
+
+**Acceptance Criteria**:
+- ✅ State remains consistent between binaries
+- ✅ STDIO streaming delivers events in real-time (<10ms latency)
+- ✅ Conflicts are resolved automatically
+- ✅ File system changes propagate to both processes
+- ✅ Process failures detected and handled gracefully
+
+---
+
+## 🔌 M1.3: IPC Protocol & Serialization
+
+**Crate**: `symphony-ipc-protocol`
+**Duration**: 3 weeks
+**Dependencies**: M1.1 (Port Definitions), M1.2 (Two-Binary Architecture)
+
+### M1.3.1: Message Envelope Design (2 days)
 
 ---
 
@@ -491,7 +841,112 @@ impl MessageRegistry {
 
 ---
 
-### M1.1.6: Pretty Printer (1 day)
+### M1.3.6: JSON-RPC Protocol `(NEW)` (3 days)
+
+**Goal**: Implement JSON-RPC protocol specifically for Symphony ↔ XI-editor communication
+
+**Deliverables**:
+```rust
+// src/jsonrpc.rs
+
+/// JSON-RPC message for XI-editor communication
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct JsonRpcMessage {
+    pub jsonrpc: String, // Always "2.0"
+    pub method: Option<String>,
+    pub params: Option<Value>,
+    pub id: Option<Value>,
+    pub result: Option<Value>,
+    pub error: Option<JsonRpcError>,
+}
+
+/// JSON-RPC client for Symphony → XI-editor
+pub struct JsonRpcClient {
+    transport: StdioTransport,
+    pending_requests: HashMap<RequestId, oneshot::Sender<JsonRpcMessage>>,
+    request_counter: AtomicU64,
+}
+
+impl JsonRpcClient {
+    pub async fn call(&self, method: &str, params: Value) -> Result<Value, JsonRpcError>;
+    pub async fn notify(&self, method: &str, params: Value) -> Result<(), JsonRpcError>;
+}
+
+/// JSON-RPC server for XI-editor
+pub struct JsonRpcServer {
+    handlers: HashMap<String, Box<dyn JsonRpcHandler>>,
+    xi_core: XiCore,
+}
+```
+
+**Tasks**:
+- [ ] Define JSON-RPC message structure
+- [ ] Implement JsonRpcClient for Symphony
+- [ ] Implement JsonRpcServer for XI-editor
+- [ ] Add request/response correlation
+- [ ] Implement notification support
+- [ ] Add error handling
+- [ ] Write JSON-RPC tests
+
+**Acceptance Criteria**:
+- ✅ JSON-RPC 2.0 compliant
+- ✅ Request/response latency <1ms
+- ✅ Notifications work correctly
+
+---
+
+### M1.3.7: XI-editor Message Types `(NEW)` (2 days)
+
+**Goal**: Define specific message types for XI-editor operations
+
+**Deliverables**:
+```rust
+// src/xi_protocol.rs
+
+/// XI-editor specific operations
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum XiOperation {
+    // Buffer operations
+    NewView { file_path: Option<PathBuf> },
+    CloseView { view_id: ViewId },
+    Insert { view_id: ViewId, chars: String },
+    Delete { view_id: ViewId, range: Range<usize> },
+    
+    // File operations
+    Open { path: PathBuf },
+    Save { view_id: ViewId, path: Option<PathBuf> },
+    
+    // Cursor operations
+    MoveCursor { view_id: ViewId, position: Position },
+    SetSelection { view_id: ViewId, selection: Selection },
+    
+    // Synchronization
+    FileChanged { path: PathBuf, content: String },
+    BufferSync { view_id: ViewId, revision: u64 },
+}
+
+/// XI-editor events sent to Symphony
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum XiEvent {
+    BufferChanged { view_id: ViewId, content: String, revision: u64 },
+    CursorMoved { view_id: ViewId, position: Position },
+    FileModified { path: PathBuf },
+    ViewClosed { view_id: ViewId },
+}
+```
+
+**Tasks**:
+- [ ] Define XiOperation enum for all XI-editor operations
+- [ ] Define XiEvent enum for XI-editor → Symphony events
+- [ ] Add serialization support
+- [ ] Create operation builders
+- [ ] Add validation for operations
+- [ ] Write message type tests
+
+**Acceptance Criteria**:
+- ✅ All XI-editor operations covered
+- ✅ Events support real-time synchronization
+- ✅ Message validation works
 
 **Goal**: Human-readable message output for debugging
 
@@ -525,7 +980,49 @@ impl<T: Serialize> PrettyPrint for Message<T> {
 
 ---
 
-### M1.1.7: Property Tests (2 days)
+### M1.3.8: Pretty Printer (1 day)
+
+**Goal**: Human-readable message output for debugging
+
+**Deliverables**:
+```rust
+// src/pretty.rs
+
+pub trait PrettyPrint {
+    fn pretty_print(&self) -> String;
+    fn pretty_print_compact(&self) -> String;
+}
+
+impl<T: Serialize> PrettyPrint for Message<T> {
+    fn pretty_print(&self) -> String {
+        // Indented, colorized output
+    }
+}
+
+impl PrettyPrint for JsonRpcMessage { // (NEW)
+    fn pretty_print(&self) -> String {
+        // JSON-RPC specific formatting
+    }
+}
+```
+
+**Tasks**:
+- [ ] Implement `PrettyPrint` trait
+- [ ] Add indentation and formatting
+- [ ] Add optional colorization
+- [ ] Create compact single-line format
+- [ ] **Add JSON-RPC specific formatting** `(NEW)`
+- [ ] Add to Debug impl
+
+**Acceptance Criteria**:
+- ✅ Output is human-readable
+- ✅ Supports both verbose and compact modes
+- ✅ Works in logs and terminals
+- ✅ **JSON-RPC messages formatted correctly** `(NEW)`
+
+---
+
+### M1.3.9: Property Tests (2 days)
 
 **Goal**: Ensure serialization correctness with property-based testing
 
@@ -549,6 +1046,13 @@ proptest! {
         let decoded = Message::from_bincode(&bytes).unwrap();
         prop_assert_eq!(msg, decoded);
     }
+    
+    #[test] // (NEW)
+    fn jsonrpc_roundtrip(msg in arb_jsonrpc_message()) {
+        let json = serde_json::to_string(&msg).unwrap();
+        let decoded: JsonRpcMessage = serde_json::from_str(&json).unwrap();
+        prop_assert_eq!(msg, decoded);
+    }
 }
 ```
 
@@ -557,23 +1061,26 @@ proptest! {
 - [ ] Create arbitrary generators for all types
 - [ ] Write round-trip property tests
 - [ ] Write schema validation property tests
+- [ ] **Add JSON-RPC property tests** `(NEW)`
+- [ ] **Add XI-editor message property tests** `(NEW)`
 - [ ] Run with 1000+ test cases
 
 **Acceptance Criteria**:
 - ✅ All property tests pass
 - ✅ Edge cases covered (empty, max size, unicode)
 - ✅ No panics on any input
+- ✅ **JSON-RPC messages handle all edge cases** `(NEW)`
 
 
 ---
 
-## 🔌 M1.3: Transport Layer
+## 🔌 M1.4: Transport Layer
 
 **Crate**: `symphony-ipc-transport`
 **Duration**: 3 weeks
-**Dependencies**: M1.2 (IPC Protocol)
+**Dependencies**: M1.3 (IPC Protocol)
 
-### M1.3.1: Transport Trait (2 days)
+### M1.4.1: Transport Trait (2 days)
 
 **Goal**: Define abstract transport interface
 
@@ -668,7 +1175,89 @@ pub struct UnixSocketConfig {
 
 ---
 
-### M1.3.5: Connection Pooling (2 days)
+### M1.4.5: Stdio Transport `(NEW)` (3 days)
+
+**Goal**: Implement stdio transport for Symphony ↔ XI-editor JSON-RPC communication
+
+**Deliverables**:
+```rust
+// src/stdio.rs
+
+/// Stdio transport for process communication
+pub struct StdioTransport {
+    stdin: tokio::process::ChildStdin,
+    stdout: tokio::process::ChildStdout,
+    buffer: Vec<u8>,
+    line_reader: tokio::io::BufReader<tokio::process::ChildStdout>,
+}
+
+impl StdioTransport {
+    pub fn new(stdin: tokio::process::ChildStdin, stdout: tokio::process::ChildStdout) -> Self;
+    pub async fn send_line(&mut self, line: &str) -> Result<(), TransportError>;
+    pub async fn receive_line(&mut self) -> Result<String, TransportError>;
+    pub async fn stream_events(&mut self) -> impl Stream<Item = Result<String, TransportError>>;
+}
+
+impl Transport for StdioTransport {
+    async fn connect(&mut self, _address: &str) -> Result<(), TransportError> {
+        // Already connected via process spawn
+        Ok(())
+    }
+    
+    async fn send(&self, data: &[u8]) -> Result<(), TransportError> {
+        // Send JSON-RPC message via stdin
+    }
+    
+    async fn receive(&self) -> Result<Vec<u8>, TransportError> {
+        // Receive JSON-RPC message via stdout
+    }
+}
+```
+
+**STDIO Reliability & Streaming**: `(NEW)`
+```
+Reliability Features:
+├── OS-Level Buffering: Kernel manages message delivery
+├── Ordered Delivery: Messages arrive in sequence sent  
+├── Error Detection: Process death detected immediately
+├── Backpressure: OS handles flow control automatically
+└── Cross-Platform: Works on Windows, Linux, macOS
+
+Streaming Capabilities:
+├── Continuous Stream: Like Server-Sent Events (SSE)
+├── Line-Delimited JSON: Easy parsing, no framing needed
+├── Real-time Events: <10ms latency for event delivery
+├── Bidirectional: Send via stdin, receive via stdout
+└── Event Types: buffer_changed, cursor_moved, file_saved, etc.
+
+Example Stream:
+XI-editor stdout → {"event": "buffer_changed", "data": {...}}
+XI-editor stdout → {"event": "cursor_moved", "data": {...}}  
+XI-editor stdout → {"event": "file_saved", "data": {...}}
+Symphony reads these as continuous stream
+```
+
+**Tasks**:
+- [ ] Implement `StdioTransport` struct
+- [ ] Add line-based message framing (newline-delimited JSON)
+- [ ] Implement async read/write with tokio streams
+- [ ] Handle process stdin/stdout with proper buffering
+- [ ] Add continuous event streaming (like SSE)
+- [ ] Implement graceful shutdown and cleanup
+- [ ] Add error handling for broken pipes and process death
+- [ ] Write stdio transport tests with mock processes
+
+**Acceptance Criteria**:
+- ✅ Stdio transport latency <1ms for single messages
+- ✅ Streaming latency <10ms for continuous events
+- ✅ Line-based framing works correctly with JSON
+- ✅ Handles process termination gracefully
+- ✅ OS-level reliability guarantees maintained
+- ✅ Continuous streaming works like SSE
+
+---
+
+### M1.4.6: Connection Pooling (2 days)
 
 **Goal**: Efficient connection reuse for high-throughput scenarios
 
@@ -776,14 +1365,14 @@ impl<T: Transport> ReconnectingTransport<T> {
 
 ---
 
-## 🚌 M1.4: Message Bus Core
+## 🚌 M1.5: Message Bus Core
 
 **Crate**: `symphony-ipc-bus`
 **Duration**: 3 weeks
-**Dependencies**: M1.2 (IPC Protocol), M1.3 (Transport Layer)
+**Dependencies**: M1.3 (IPC Protocol), M1.4 (Transport Layer)
 
 
-### M1.4.1: Async Message Handler (3 days)
+### M1.5.1: Async Message Handler (3 days)
 
 **Goal**: Core async message processing with tokio
 
@@ -1062,7 +1651,101 @@ impl BusHealthMonitor {
 
 ---
 
-### M1.4.7: Message Batching (2 days)
+### M1.5.7: Binary Coordination `(NEW)` (3 days)
+
+**Goal**: Specialized coordination for Symphony ↔ XI-editor communication
+
+**Deliverables**:
+```rust
+// src/binary_sync.rs
+
+/// Binary synchronization coordinator
+pub struct BinarySyncCoordinator {
+    symphony_endpoint: EndpointId,
+    xi_editor_endpoint: EndpointId,
+    sync_state: Arc<RwLock<SyncState>>,
+    event_stream: broadcast::Sender<SyncEvent>,
+}
+
+/// Synchronization state between binaries
+pub struct SyncState {
+    pub file_states: HashMap<PathBuf, FileState>,
+    pub buffer_states: HashMap<BufferId, BufferState>,
+    pub last_sync: Instant,
+    pub pending_operations: Vec<PendingOperation>,
+}
+
+impl BinarySyncCoordinator {
+    pub fn new(symphony_id: EndpointId, xi_editor_id: EndpointId) -> Self;
+    pub async fn sync_file_state(&self, path: &Path) -> Result<(), SyncError>;
+    pub async fn sync_buffer_state(&self, buffer_id: BufferId) -> Result<(), SyncError>;
+    pub async fn handle_sync_event(&self, event: SyncEvent) -> Result<(), SyncError>;
+}
+```
+
+**Tasks**:
+- [ ] Implement `BinarySyncCoordinator`
+- [ ] Add file state synchronization
+- [ ] Add buffer state synchronization
+- [ ] Implement event-driven sync
+- [ ] Add conflict detection
+- [ ] Handle sync failures
+- [ ] Write binary sync tests
+
+**Acceptance Criteria**:
+- ✅ File states stay synchronized
+- ✅ Buffer states stay synchronized
+- ✅ Sync latency <10ms
+
+---
+
+### M1.5.8: XI-editor Bridge `(NEW)` (3 days)
+
+**Goal**: Specialized bridge for XI-editor communication
+
+**Deliverables**:
+```rust
+// src/xi_bridge.rs
+
+/// Bridge for XI-editor communication
+pub struct XiEditorBridge {
+    rpc_client: JsonRpcClient,
+    event_handler: XiEventHandler,
+    buffer_manager: BufferManager,
+    file_watcher: FileWatcher,
+}
+
+/// XI-editor event handler
+pub struct XiEventHandler {
+    event_tx: broadcast::Sender<XiEvent>,
+    buffer_cache: Arc<RwLock<HashMap<ViewId, BufferInfo>>>,
+}
+
+impl XiEditorBridge {
+    pub fn new(rpc_client: JsonRpcClient) -> Self;
+    pub async fn send_operation(&self, op: XiOperation) -> Result<Value, XiError>;
+    pub async fn handle_event(&self, event: XiEvent) -> Result<(), XiError>;
+    pub fn subscribe_events(&self) -> broadcast::Receiver<XiEvent>;
+}
+```
+
+**Tasks**:
+- [ ] Implement `XiEditorBridge`
+- [ ] Add operation sending
+- [ ] Add event handling
+- [ ] Implement buffer management
+- [ ] Add file watching integration
+- [ ] Handle XI-editor disconnection
+- [ ] Write XI-editor bridge tests
+
+**Acceptance Criteria**:
+- ✅ All XI-editor operations work
+- ✅ Events are handled correctly
+- ✅ Disconnection recovery works
+
+---
+
+### M1.5.9: Message Batching (2 days)
 
 **Goal**: Batch messages for improved throughput
 
@@ -1124,13 +1807,13 @@ impl MessageBatcher {
 
 ---
 
-## 🐍 M1.5: Python-Rust Bridge
+## 🐍 M1.6: Python-Rust Bridge
 
 **Crate**: `symphony-python-bridge`
 **Duration**: 3 weeks
-**Dependencies**: M1.4 (Message Bus Core)
+**Dependencies**: M1.5 (Message Bus Core)
 
-### M1.5.1-M1.5.8: PyO3 Integration
+### M1.6.1-M1.6.10: PyO3 Integration
 
 **Key Components**:
 ```rust
@@ -1152,31 +1835,137 @@ impl IPCBus {
     fn subscribe(&self, topic: &str) -> PyResult<PyObject>;
 }
 
+// (NEW) Conductor subprocess management
+#[pyclass]
+pub struct ConductorManager {
+    subprocess: Option<tokio::process::Child>,
+    pit_access: Arc<PitManager>,
+}
+
+#[pymethods]
+impl ConductorManager {
+    fn start_conductor(&mut self) -> PyResult<()>;
+    fn get_pit_access(&self) -> PyResult<PitAccess>; // Direct access, no IPC
+}
+
 #[pymodule]
 fn symphony_ipc(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<IPCBus>()?;
+    m.add_class::<ConductorManager>()?; // (NEW)
     Ok(())
 }
 ```
 
-**Tasks** (summarized):
-- [ ] M1.5.1: PyO3 project setup with maturin
-- [ ] M1.5.2-M1.5.3: Type conversions (primitives, collections)
-- [ ] M1.5.4: Error conversion to Python exceptions
-- [ ] M1.5.5: Async support with pyo3-asyncio
-- [ ] M1.5.6: Expose full IPC Bus API
-- [ ] M1.5.7: Python integration tests
-- [ ] M1.5.8: FFI overhead benchmarks (<0.01ms)
+**Tasks** (updated):
+- [ ] M1.6.1: PyO3 project setup with maturin
+- [ ] M1.6.2-M1.6.3: Type conversions (primitives, collections)
+- [ ] M1.6.4: Error conversion to Python exceptions
+- [ ] M1.6.5: Async support with pyo3-asyncio
+- [ ] M1.6.6: Expose full IPC Bus API
+- [ ] M1.6.7: **Implement Conductor subprocess management within Symphony** `(NEW)`
+- [ ] M1.6.8: **Create direct Pit access for Conductor (no IPC overhead)** `(NEW)`
+- [ ] M1.6.9: Python integration tests
+- [ ] M1.6.10: FFI overhead benchmarks (<0.01ms)
+
+**Success Criteria**:
+- ✅ FFI call overhead <0.01ms
+- ✅ All primitive types convert correctly
+- ✅ Async calls work from Python asyncio
+- ✅ Errors propagate with full context
+- ✅ **Conductor has direct access to The Pit components** `(NEW)`
 
 ---
 
-## 📦 M1.6: Extension SDK Foundation
+## 📦 M1.7: Extension SDK Foundation
 
 **Crate**: `symphony-extension-sdk`
 **Duration**: 3 weeks
-**Dependencies**: M1.2 (IPC Protocol)
+**Dependencies**: M1.3 (IPC Protocol)
 
-### M1.6.1-M1.6.8: SDK Implementation
+### Extension System Architecture Overview `(NEW)`
+
+**Four-Tier Extension System**:
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    SYMPHONY BINARY                          │
+│                                                             │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────┐ │
+│  │  🎻 Instruments │  │   ⚙️ Operators   │  │  🧩 Motifs   │ │
+│  │   (AI Models)   │  │   (Utilities)   │  │ (UI Enhance) │ │
+│  │                 │  │                 │  │              │ │
+│  │ • GPT-4         │  │ • JSON Transform│  │ • Status Bar │ │
+│  │ • Claude        │  │ • File Watcher  │  │ • Minimap    │ │
+│  │ • Local Models  │  │ • Code Format   │  │ • Themes     │ │
+│  │ • Custom AI     │  │ • Data Process  │  │ • Panels     │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────┘ │
+│           │                     │                   │       │
+│           └─────────────────────┼───────────────────┘       │
+│                                 │                           │
+│  ┌─────────────────────────────────────────────────────────┐ │
+│  │         Symphony Extension Manager                      │ │
+│  │         (Actor-based process isolation)                │ │
+│  │  • Process spawning and lifecycle                      │ │
+│  │  • Message passing and IPC                             │ │
+│  │  • Permission and security enforcement                 │ │
+│  │  • Resource monitoring and limits                      │ │
+│  └─────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+                                │
+                          JSON-RPC/IPC
+                                │
+┌─────────────────────────────────────────────────────────────┐
+│                    XI-EDITOR BINARY                         │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────────┐ │
+│  │              🔧 XI-editor Plugins                       │ │
+│  │                (Legacy but proven)                     │ │
+│  │                                                        │ │
+│  │ • Syntax Highlighting (TextMate grammars)              │ │
+│  │ • LSP Integration (Language servers)                   │ │
+│  │ • Language Support (Rust, Python, JS, etc.)           │ │
+│  │ • Basic Text Operations (find, replace, etc.)          │ │
+│  │ • File Type Detection                                  │ │
+│  └─────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Extension Distribution Strategy**:
+
+**Symphony Extensions** (New, AI-focused):
+- **🎻 Instruments**: AI/ML model integrations
+  - External APIs (OpenAI, Anthropic, Cohere)
+  - Local models (Ollama, Hugging Face)
+  - Custom trained models
+  - Model orchestration and routing
+
+- **⚙️ Operators**: Workflow and data processing utilities
+  - Code transformers and analyzers
+  - File system operations
+  - Data format converters
+  - Workflow automation tools
+
+- **🧩 Motifs**: UI enhancements and interface extensions
+  - Custom panels and widgets
+  - Theme and styling systems
+  - Status indicators and notifications
+  - Interactive visualizations
+
+**XI-editor Plugins** (Existing, text-focused):
+- **🔧 Text Editing Features**: Proven, stable, extensive ecosystem
+  - Syntax highlighting for 100+ languages
+  - Language Server Protocol integrations
+  - Advanced text manipulation
+  - File format support
+
+**Extension Communication Flow**:
+```
+User Action → Motif (UI) → Symphony Extension Manager 
+           → Instrument (AI) → Analysis/Generation
+           → Operator (Transform) → XI-editor (via JSON-RPC)
+           → Text Operation → Result → Back through chain
+```
+
+### M1.7.1-M1.7.10: SDK Implementation
 
 **Key Components**:
 ```rust
@@ -1206,17 +1995,107 @@ pub trait Extension: ExtensionLifecycle + Send + Sync {
     fn manifest(&self) -> &ExtensionManifest;
     fn id(&self) -> &str;
 }
+
+// (NEW) Actor-based process isolation for Symphony extensions
+// src/actor.rs
+pub struct ExtensionActor {
+    process: tokio::process::Child,
+    message_tx: mpsc::Sender<ActorMessage>,
+    message_rx: mpsc::Receiver<ActorMessage>,
+    extension_type: ExtensionType,
+}
+
+pub enum ExtensionType {
+    Instrument { model_spec: ModelSpec },
+    Operator { capabilities: Vec<String> },
+    Motif { ui_components: Vec<String> },
+}
+
+// src/process.rs
+pub struct ExtensionProcessManager {
+    processes: HashMap<ExtensionId, ExtensionActor>,
+    isolation_config: IsolationConfig,
+    xi_editor_bridge: Option<XiEditorBridge>, // For XI-editor plugin coordination
+}
+
+pub struct IsolationConfig {
+    pub memory_limit: usize,
+    pub cpu_limit: f64,
+    pub network_access: bool,
+    pub file_system_access: Vec<PathBuf>,
+}
+
+// (NEW) XI-editor plugin coordination
+pub struct XiEditorBridge {
+    pub available_plugins: Vec<XiPlugin>,
+    pub plugin_capabilities: HashMap<String, Vec<String>>,
+}
+
+pub struct XiPlugin {
+    pub name: String,
+    pub version: String,
+    pub capabilities: Vec<String>,
+    pub language_support: Vec<String>,
+}
 ```
 
-**Tasks** (summarized):
-- [ ] M1.6.1: TOML manifest schema definition
-- [ ] M1.6.2: Manifest parser with validation
-- [ ] M1.6.3: Lifecycle trait with hooks
-- [ ] M1.6.4: Permission declaration system
-- [ ] M1.6.5: Base Extension trait
-- [ ] M1.6.6: Derive macros for boilerplate
-- [ ] M1.6.7: Manifest pretty-printer
-- [ ] M1.6.8: Property tests for manifest round-trip
+**Extension Interaction Patterns**: `(NEW)`
+```rust
+// Pattern 1: Motif → Instrument → Operator → XI-editor
+async fn ai_code_generation_workflow() {
+    // 1. Motif (UI) receives user request
+    let request = motif.get_user_request().await;
+    
+    // 2. Instrument (AI) generates code
+    let generated_code = instrument.generate_code(request).await;
+    
+    // 3. Operator (Transform) formats code
+    let formatted_code = operator.format_code(generated_code).await;
+    
+    // 4. XI-editor (via JSON-RPC) inserts code
+    xi_editor.insert_text(buffer_id, formatted_code).await;
+}
+
+// Pattern 2: XI-editor → Symphony Extension Chain
+async fn code_analysis_workflow() {
+    // 1. XI-editor detects code change (via STDIO stream)
+    let change_event = xi_editor_stream.next().await;
+    
+    // 2. Operator (Analyzer) processes change
+    let analysis = operator.analyze_code(change_event.content).await;
+    
+    // 3. Instrument (AI) provides suggestions
+    let suggestions = instrument.get_suggestions(analysis).await;
+    
+    // 4. Motif (UI) displays suggestions
+    motif.show_suggestions(suggestions).await;
+}
+```
+```
+
+**Tasks** (updated):
+- [ ] M1.7.1: TOML manifest schema definition
+- [ ] M1.7.2: Manifest parser with validation
+- [ ] M1.7.3: Lifecycle trait with hooks
+- [ ] M1.7.4: Permission declaration system
+- [ ] M1.7.5: Base Extension trait
+- [ ] M1.7.6: Derive macros for boilerplate
+- [ ] M1.7.7: **Implement Actor-based process isolation for Symphony extensions** `(NEW)`
+- [ ] M1.7.8: **Create extension process spawning and management** `(NEW)`
+- [ ] M1.7.9: **Implement XI-editor plugin coordination bridge** `(NEW)`
+- [ ] M1.7.10: **Define extension interaction patterns (Motif→Instrument→Operator→XI-editor)** `(NEW)`
+- [ ] M1.7.11: Manifest pretty-printer
+- [ ] M1.7.12: Property tests for manifest round-trip
+
+**Success Criteria**:
+- ✅ Manifest parsing <1ms for typical manifests
+- ✅ Invalid manifests rejected with clear errors
+- ✅ Lifecycle hooks called in correct order
+- ✅ Permission violations detected at declaration time
+- ✅ **Symphony extensions run in isolated processes with crash protection** `(NEW)`
+- ✅ **Four extension types (Instruments, Operators, Motifs, XI-plugins) work together** `(NEW)`
+- ✅ **Extension interaction patterns enable complex AI workflows** `(NEW)`
+- ✅ **XI-editor plugin capabilities discoverable from Symphony** `(NEW)`
 
 ---
 
@@ -1226,24 +2105,1372 @@ pub trait Extension: ExtensionLifecycle + Send + Sync {
 |---------------|-------|----------|--------|
 | M1.1.1 Port Definitions | 7 | 3 days | 📋 |
 | M1.1.2 Environment Setup | 6 | 2 days | 📋 |
-| M1.1.3 Domain Types | 6 | 2 days | 📋 |
+| M1.1.3 Domain Types | 8 | 2 days | 📋 |
 | M1.1.4 Mock Adapters | 7 | 3 days | 📋 |
 | M1.1.5 Documentation | 6 | 2 days | 📋 |
-| M1.2.1 Message Envelope | 7 | 2 days | ✅ |
-| M1.2.2 MessagePack | 6 | 3 days | 📋 |
-| M1.2.3 Bincode | 5 | 2 days | 📋 |
-| M1.2.4 Schema Validation | 6 | 3 days | 📋 |
-| M1.2.5 Message Registry | 5 | 2 days | 📋 |
-| M1.2.6 Pretty Printer | 5 | 1 day | 📋 |
-| M1.2.7 Property Tests | 5 | 2 days | 📋 |
-| M1.3.x Transport Layer | 15 | 3 weeks | 📋 |
-| M1.4.x Message Bus | 8 | 3 weeks | 📋 |
-| M1.5.x Python Bridge | 8 | 3 weeks | 📋 |
-| M1.6.x Extension SDK | 8 | 3 weeks | 📋 |
+| **M1.2.1 Symphony Binary** `(NEW)` | 7 | 3 days | 📋 |
+| **M1.2.2 XI-editor Binary** `(NEW)` | 7 | 3 days | 📋 |
+| **M1.2.3 Process Lifecycle** `(NEW)` | 7 | 4 days | 📋 |
+| **M1.2.4 Health Monitoring** `(NEW)` | 7 | 3 days | 📋 |
+| **M1.2.5 Binary Synchronization** `(NEW)` | 8 | 3 days | 📋 |
+| M1.3.1 Message Envelope | 7 | 2 days | ✅ |
+| M1.3.2 MessagePack | 6 | 3 days | 📋 |
+| M1.3.3 Bincode | 5 | 2 days | 📋 |
+| M1.3.4 Schema Validation | 6 | 3 days | 📋 |
+| M1.3.5 Message Registry | 5 | 2 days | 📋 |
+| **M1.3.6 JSON-RPC Protocol** `(NEW)` | 7 | 3 days | 📋 |
+| **M1.3.7 XI-editor Messages** `(NEW)` | 6 | 2 days | 📋 |
+| M1.3.8 Pretty Printer | 6 | 1 day | 📋 |
+| M1.3.9 Property Tests | 9 | 2 days | 📋 |
+| M1.4.x Transport Layer | 18 | 3 weeks | 📋 |
+| **M1.4.5 Stdio Transport** `(NEW)` | 8 | 3 days | 📋 |
+| M1.5.x Message Bus | 10 | 3 weeks | 📋 |
+| **M1.5.7 Binary Coordination** `(NEW)` | 7 | 3 days | 📋 |
+| **M1.5.8 XI-editor Bridge** `(NEW)` | 7 | 3 days | 📋 |
+| M1.6.x Python Bridge | 10 | 3 weeks | 📋 |
+| **M1.6.7 Conductor Subprocess** `(NEW)` | 1 | - | 📋 |
+| **M1.6.8 Direct Pit Access** `(NEW)` | 1 | - | 📋 |
+| M1.7.x Extension SDK | 12 | 3 weeks | 📋 |
+| **M1.7.7-10 Four-Tier Extensions** `(NEW)` | 4 | - | 📋 |
 
-**Total Tasks**: ~110 detailed tasks
-**Total Duration**: 18 weeks (with parallelization: ~12 weeks)
+**Total Tasks**: ~165 detailed tasks (55 new tasks added)
+**Total Duration**: 24 weeks (with parallelization: ~16 weeks)
+
+**Key Architectural Clarifications Added**:
+
+### STDIO Transport & Streaming:
+- ✅ **OS-level reliability**: Kernel-managed, ordered delivery, immediate error detection
+- ✅ **SSE-like streaming**: Continuous event stream with <10ms latency
+- ✅ **Line-delimited JSON**: Easy parsing, no complex framing needed
+- ✅ **Bidirectional**: Symphony sends via stdin, receives via stdout streaming
+
+### Binary Synchronization:
+- ✅ **File System Watcher**: Symphony detects external changes, streams to XI-editor
+- ✅ **Buffer Synchronization**: XI-editor streams text changes to Symphony for AI analysis
+- ✅ **Event-driven**: Real-time coordination through continuous STDIO streaming
+- ✅ **Conflict Resolution**: Automatic handling of concurrent operations
+
+### Four-Tier Extension System:
+- ✅ **🎻 Instruments** (Symphony): AI/ML models (GPT, Claude, local models)
+- ✅ **⚙️ Operators** (Symphony): Workflow utilities (transformers, analyzers)
+- ✅ **🧩 Motifs** (Symphony): UI enhancements (panels, themes, widgets)
+- ✅ **🔧 XI-plugins** (XI-editor): Text editing features (syntax, LSP, languages)
+
+### Extension Interaction Patterns:
+- ✅ **AI Workflow**: Motif → Instrument → Operator → XI-editor
+- ✅ **Analysis Workflow**: XI-editor → Operator → Instrument → Motif
+- ✅ **Actor Isolation**: Symphony extensions in separate processes
+- ✅ **Plugin Coordination**: XI-editor capabilities discoverable from Symphony
+
+**Architecture Benefits**:
+- ✅ **Best of Both Worlds**: XI-editor's proven text editing + Symphony's AI orchestration
+- ✅ **Extension Compatibility**: Existing XI-editor plugins work unchanged
+- ✅ **Innovation Space**: New Symphony extensions for AI workflows
+- ✅ **Clean Boundaries**: Each system handles what it does best
+- ✅ **Reliable Communication**: OS-level STDIO with SSE-like streaming
 
 ---
 
 **Next**: [MILESTONE_LEVEL2_M5.md](./MILESTONE_LEVEL2_M5.md)
+
+---
+
+## 🔧 M1.8: Concrete Adapters Implementation `(NEW)`
+
+**Crate**: `symphony-adapters`
+**Duration**: 4 weeks
+**Dependencies**: M1.1 (Port Definitions), M1.3 (IPC Protocol), M1.6 (Python Bridge)
+
+**Goal**: Implement concrete adapters for all four ports to complete H2A2 architecture.
+
+### M1.8.1: XiEditorAdapter Implementation (5 days)
+
+**Goal**: Implement TextEditingPort adapter for XI-editor binary communication
+
+**Deliverables**:
+```rust
+// src/xi_editor.rs
+pub struct XiEditorAdapter {
+    rpc_client: xi_rpc::RpcPeer,
+    buffer_cache: Arc<RwLock<HashMap<BufferId, BufferMetadata>>>,
+    event_stream: broadcast::Sender<BufferEvent>,
+}
+
+#[async_trait]
+impl TextEditingPort for XiEditorAdapter {
+    async fn insert(&self, buffer_id: BufferId, pos: usize, text: &str) -> PortResult<Revision> {
+        let params = json!({
+            "buffer_id": buffer_id,
+            "pos": pos,
+            "text": text
+        });
+        
+        let result = self.rpc_client.send_rpc_request("insert", &params).await?;
+        Ok(Revision::new(result["revision"].as_u64().unwrap()))
+    }
+    
+    // ... other TextEditingPort methods
+}
+```
+
+**Tasks**:
+- [ ] M1.8.1.1: Implement JSON-RPC client for XI-editor communication
+- [ ] M1.8.1.2: Create buffer metadata caching system
+- [ ] M1.8.1.3: Implement all TextEditingPort methods
+- [ ] M1.8.1.4: Add event streaming from XI-editor
+- [ ] M1.8.1.5: Handle XI-editor process failures and reconnection
+
+**Acceptance Criteria**:
+- ✅ All TextEditingPort methods implemented
+- ✅ JSON-RPC latency <1ms for text operations
+- ✅ Buffer state synchronized with XI-editor
+- ✅ Event streaming works correctly
+
+---
+
+### M1.8.2: PitAdapter Implementation (4 days)
+
+**Goal**: Implement PitPort adapter for direct in-process Pit access
+
+**Deliverables**:
+```rust
+// src/pit.rs
+pub struct PitAdapter {
+    pool_manager: Arc<PoolManager>,
+    dag_tracker: Arc<DagTracker>,
+    artifact_store: Arc<ArtifactStore>,
+    arbitration_engine: Arc<ArbitrationEngine>,
+    stale_manager: Arc<StaleManager>,
+}
+
+#[async_trait]
+impl PitPort for PitAdapter {
+    async fn allocate_model(&self, spec: ModelSpec) -> PortResult<ModelHandle> {
+        // Direct in-process call - no IPC overhead
+        self.pool_manager.allocate(spec).await
+            .map_err(|e| PortError::operation_failed(e.to_string()))
+    }
+    
+    // ... other PitPort methods
+}
+```
+
+**Tasks**:
+- [ ] M1.8.2.1: Implement direct Pit component access
+- [ ] M1.8.2.2: Create PitAdapter with all five Pit modules
+- [ ] M1.8.2.3: Implement all PitPort methods
+- [ ] M1.8.2.4: Add performance monitoring and metrics
+
+**Acceptance Criteria**:
+- ✅ All PitPort methods implemented
+- ✅ Direct access achieves 50-100ns performance targets
+- ✅ No IPC overhead for Pit operations
+- ✅ Performance metrics available
+
+---
+
+### M1.8.3: ActorExtensionAdapter Implementation (5 days)
+
+**Goal**: Implement ExtensionPort adapter with Actor model process isolation
+
+**Deliverables**:
+```rust
+// src/extensions.rs
+pub struct ActorExtensionAdapter {
+    extension_processes: HashMap<ExtensionId, ExtensionActor>,
+    message_bus: MessageBus,
+    isolation_config: IsolationConfig,
+}
+
+pub struct ExtensionActor {
+    process: tokio::process::Child,
+    stdin: tokio::process::ChildStdin,
+    stdout: tokio::process::ChildStdout,
+    extension_type: ExtensionType,
+}
+
+#[async_trait]
+impl ExtensionPort for ActorExtensionAdapter {
+    async fn load(&self, manifest: ExtensionManifest) -> PortResult<ExtensionId> {
+        let actor = ExtensionActor::spawn(manifest).await?;
+        let extension_id = ExtensionId::new(manifest.id);
+        self.extension_processes.insert(extension_id.clone(), actor);
+        Ok(extension_id)
+    }
+    
+    // ... other ExtensionPort methods
+}
+```
+
+**Tasks**:
+- [ ] M1.8.3.1: Implement ExtensionActor for process management
+- [ ] M1.8.3.2: Create process isolation and sandboxing
+- [ ] M1.8.3.3: Implement message passing system
+- [ ] M1.8.3.4: Add crash detection and recovery
+- [ ] M1.8.3.5: Implement all ExtensionPort methods
+
+**Acceptance Criteria**:
+- ✅ Extensions run in isolated processes
+- ✅ Message passing works reliably
+- ✅ Extension crashes don't affect Symphony
+- ✅ Automatic recovery from failures
+
+---
+
+### M1.8.4: PythonConductorAdapter Implementation (4 days)
+
+**Goal**: Implement ConductorPort adapter for Python Conductor subprocess
+
+**Deliverables**:
+```rust
+// src/conductor.rs
+pub struct PythonConductorAdapter {
+    python_process: tokio::process::Child,
+    pyo3_bridge: PyO3Bridge,
+    pit_access: Arc<PitAdapter>,
+}
+
+#[async_trait]
+impl ConductorPort for PythonConductorAdapter {
+    async fn submit_decision(&self, context: DecisionContext) -> PortResult<Decision> {
+        // Call Python Conductor via PyO3
+        let decision = self.pyo3_bridge.call_python_method(
+            "submit_decision", 
+            context
+        ).await?;
+        Ok(decision)
+    }
+    
+    // ... other ConductorPort methods
+}
+```
+
+**Tasks**:
+- [ ] M1.8.4.1: Implement Python subprocess management
+- [ ] M1.8.4.2: Create PyO3 bridge integration
+- [ ] M1.8.4.3: Provide direct Pit access to Conductor
+- [ ] M1.8.4.4: Implement all ConductorPort methods
+
+**Acceptance Criteria**:
+- ✅ Python Conductor runs as subprocess
+- ✅ PyO3 bridge works correctly
+- ✅ Conductor has direct Pit access
+- ✅ FFI overhead <0.01ms
+
+---
+
+### M1.8.5: Adapter Integration Tests (3 days)
+
+**Goal**: Comprehensive integration tests for all adapters
+
+**Tasks**:
+- [ ] M1.8.5.1: Write XiEditorAdapter integration tests
+- [ ] M1.8.5.2: Write PitAdapter integration tests
+- [ ] M1.8.5.3: Write ActorExtensionAdapter integration tests
+- [ ] M1.8.5.4: Write PythonConductorAdapter integration tests
+- [ ] M1.8.5.5: Write cross-adapter integration tests
+
+**Acceptance Criteria**:
+- ✅ All adapters tested in isolation
+- ✅ Cross-adapter interactions tested
+- ✅ Performance targets validated
+- ✅ Error handling tested
+
+---
+
+### M1.8.6: Performance Validation (2 days)
+
+**Goal**: Validate all adapters meet performance targets
+
+**Tasks**:
+- [ ] M1.8.6.1: Benchmark XiEditorAdapter latency
+- [ ] M1.8.6.2: Benchmark PitAdapter performance
+- [ ] M1.8.6.3: Benchmark ActorExtensionAdapter throughput
+- [ ] M1.8.6.4: Benchmark PythonConductorAdapter FFI overhead
+
+**Acceptance Criteria**:
+- ✅ XiEditorAdapter: <1ms JSON-RPC latency
+- ✅ PitAdapter: 50-100ns allocation time
+- ✅ ActorExtensionAdapter: Reliable message passing
+- ✅ PythonConductorAdapter: <0.01ms FFI overhead
+
+---
+
+## 🎯 M1.9: Domain Core Orchestration `(NEW)`
+
+**Crate**: `symphony-domain`
+**Duration**: 3 weeks
+**Dependencies**: M1.8 (Concrete Adapters)
+
+**Goal**: Implement Symphony's orchestration engine that coordinates all components through port interfaces.
+
+### M1.9.1: SymphonyCore Implementation (5 days)
+
+**Goal**: Create the main orchestration engine using all four ports
+
+**Deliverables**:
+```rust
+// src/core.rs
+pub struct SymphonyCore {
+    text_editing: Arc<dyn TextEditingPort>,
+    pit: Arc<dyn PitPort>,
+    extensions: Arc<dyn ExtensionPort>,
+    conductor: Arc<dyn ConductorPort>,
+    state: Arc<RwLock<SymphonyState>>,
+}
+
+impl SymphonyCore {
+    pub async fn new() -> Result<Self, SymphonyError> {
+        let text_editing = Arc::new(XiEditorAdapter::new().await?);
+        let pit = Arc::new(PitAdapter::new().await?);
+        let extensions = Arc::new(ActorExtensionAdapter::new().await?);
+        let conductor = Arc::new(PythonConductorAdapter::new().await?);
+        
+        Ok(Self {
+            text_editing,
+            pit,
+            extensions,
+            conductor,
+            state: Arc::new(RwLock::new(SymphonyState::new())),
+        })
+    }
+    
+    pub async fn process_user_action(&self, action: UserAction) -> Result<ActionResult, SymphonyError> {
+        // 1. Send to Conductor for AI decision making
+        let decision_context = DecisionContext::from_action(&action);
+        let decision = self.conductor.submit_decision(decision_context).await?;
+        
+        // 2. Use The Pit for infrastructure needs
+        if decision.needs_model {
+            let model = self.pit.allocate_model(decision.model_spec).await?;
+        }
+        
+        // 3. Execute file operations via XI-editor
+        for file_op in decision.file_operations {
+            self.execute_file_operation(file_op).await?;
+        }
+        
+        // 4. Update UI via extensions
+        for ui_update in decision.ui_updates {
+            self.update_ui_component(ui_update).await?;
+        }
+        
+        Ok(ActionResult::from_decision(decision))
+    }
+}
+```
+
+**Tasks**:
+- [ ] M1.9.1.1: Implement SymphonyCore struct with all four ports
+- [ ] M1.9.1.2: Create user action processing workflow
+- [ ] M1.9.1.3: Implement file operation coordination
+- [ ] M1.9.1.4: Add UI update coordination
+- [ ] M1.9.1.5: Create error handling and recovery
+
+**Acceptance Criteria**:
+- ✅ SymphonyCore uses all four port interfaces
+- ✅ User actions processed through complete workflow
+- ✅ File operations coordinated with XI-editor
+- ✅ UI updates coordinated with extensions
+
+---
+
+### M1.9.2: State Synchronization (4 days)
+
+**Goal**: Maintain synchronized state between Symphony and XI-editor binaries
+
+**Deliverables**:
+```rust
+// src/sync.rs
+pub struct StateSynchronizer {
+    symphony_state: Arc<RwLock<SymphonyState>>,
+    xi_editor_adapter: Arc<XiEditorAdapter>,
+    sync_events: broadcast::Sender<SyncEvent>,
+}
+
+impl StateSynchronizer {
+    pub async fn sync_file_state(&self, file_path: &Path) -> Result<(), SyncError> {
+        let symphony_state = self.symphony_state.read().await;
+        let file_info = symphony_state.get_file_info(file_path)?;
+        
+        if file_info.needs_update {
+            self.xi_editor_adapter.update_file(file_path, &file_info.content).await?;
+        }
+        
+        Ok(())
+    }
+    
+    pub async fn handle_xi_editor_event(&self, event: XiEvent) -> Result<(), SyncError> {
+        match event {
+            XiEvent::BufferChanged { buffer_id, content, revision } => {
+                let mut symphony_state = self.symphony_state.write().await;
+                symphony_state.update_buffer(buffer_id, content, revision);
+            }
+            // ... other events
+        }
+        Ok(())
+    }
+}
+```
+
+**Tasks**:
+- [ ] M1.9.2.1: Implement StateSynchronizer
+- [ ] M1.9.2.2: Create file state synchronization
+- [ ] M1.9.2.3: Create buffer state synchronization
+- [ ] M1.9.2.4: Handle XI-editor events
+- [ ] M1.9.2.5: Handle Symphony state changes
+
+**Acceptance Criteria**:
+- ✅ File states synchronized between binaries
+- ✅ Buffer states synchronized in real-time
+- ✅ Events handled correctly
+- ✅ Sync latency <10ms
+
+---
+
+### M1.9.3: Event Streaming (4 days)
+
+**Goal**: Implement bidirectional event streaming between Symphony and XI-editor
+
+**Deliverables**:
+```rust
+// src/events.rs
+pub struct EventStreamer {
+    symphony_events: broadcast::Sender<SymphonyEvent>,
+    xi_editor_events: broadcast::Receiver<XiEvent>,
+    conductor: Arc<dyn ConductorPort>,
+}
+
+impl EventStreamer {
+    pub async fn start_event_streaming(&self) -> Result<(), EventError> {
+        // Stream Symphony events to XI-editor
+        let symphony_events = self.symphony_events.subscribe();
+        tokio::spawn(async move {
+            while let Ok(event) = symphony_events.recv().await {
+                match event {
+                    SymphonyEvent::FileSystemChange { path, change } => {
+                        // Send to XI-editor
+                    }
+                    SymphonyEvent::ProjectStructureUpdate { structure } => {
+                        // Update XI-editor project view
+                    }
+                }
+            }
+        });
+        
+        // Stream XI-editor events to Symphony
+        let xi_events = self.xi_editor_events.resubscribe();
+        let conductor = self.conductor.clone();
+        tokio::spawn(async move {
+            while let Ok(event) = xi_events.recv().await {
+                match event {
+                    XiEvent::BufferChanged { buffer_id, content } => {
+                        conductor.analyze_code_change(buffer_id, content).await;
+                    }
+                    XiEvent::CursorMoved { buffer_id, position } => {
+                        conductor.update_context(buffer_id, position).await;
+                    }
+                }
+            }
+        });
+        
+        Ok(())
+    }
+}
+```
+
+**Tasks**:
+- [ ] M1.9.3.1: Implement EventStreamer
+- [ ] M1.9.3.2: Create Symphony → XI-editor event streaming
+- [ ] M1.9.3.3: Create XI-editor → Symphony event streaming
+- [ ] M1.9.3.4: Add event filtering and routing
+- [ ] M1.9.3.5: Handle event streaming failures
+
+**Acceptance Criteria**:
+- ✅ Bidirectional event streaming works
+- ✅ Events delivered in real-time (<10ms)
+- ✅ Event filtering works correctly
+- ✅ Streaming failures handled gracefully
+
+---
+
+### M1.9.4: Process Lifecycle Management (3 days)
+
+**Goal**: Manage lifecycle of Symphony and XI-editor processes
+
+**Deliverables**:
+```rust
+// src/lifecycle.rs
+pub struct ProcessLifecycleManager {
+    symphony_config: SymphonyConfig,
+    xi_editor_process: Option<XiEditorProcess>,
+    health_monitor: HealthMonitor,
+}
+
+impl ProcessLifecycleManager {
+    pub async fn start_xi_editor(&mut self) -> Result<(), LifecycleError> {
+        let process = XiEditorProcess::spawn(&self.symphony_config.xi_editor).await?;
+        self.xi_editor_process = Some(process);
+        Ok(())
+    }
+    
+    pub async fn ensure_processes_healthy(&mut self) -> Result<(), LifecycleError> {
+        if let Some(ref mut xi_editor) = self.xi_editor_process {
+            if !xi_editor.is_healthy().await {
+                xi_editor.restart().await?;
+            }
+        }
+        Ok(())
+    }
+}
+```
+
+**Tasks**:
+- [ ] M1.9.4.1: Implement ProcessLifecycleManager
+- [ ] M1.9.4.2: Create XI-editor process management
+- [ ] M1.9.4.3: Add health monitoring
+- [ ] M1.9.4.4: Implement process restart logic
+- [ ] M1.9.4.5: Handle graceful shutdown
+
+**Acceptance Criteria**:
+- ✅ XI-editor process managed correctly
+- ✅ Health monitoring detects failures
+- ✅ Process restart works automatically
+- ✅ Graceful shutdown implemented
+
+---
+
+### M1.9.5: Workflow Coordination (3 days)
+
+**Goal**: Coordinate complex workflows across all components
+
+**Deliverables**:
+```rust
+// src/workflows.rs
+pub struct WorkflowCoordinator {
+    symphony_core: Arc<SymphonyCore>,
+    active_workflows: HashMap<WorkflowId, WorkflowExecution>,
+}
+
+impl WorkflowCoordinator {
+    pub async fn execute_workflow(&mut self, workflow: Workflow) -> Result<WorkflowResult, WorkflowError> {
+        let execution = WorkflowExecution::new(workflow);
+        
+        for step in execution.steps() {
+            match step.component {
+                WorkflowComponent::Conductor => {
+                    let result = self.symphony_core.conductor.execute_step(step).await?;
+                    execution.record_result(step.id, result);
+                }
+                WorkflowComponent::Pit => {
+                    let result = self.symphony_core.pit.execute_step(step).await?;
+                    execution.record_result(step.id, result);
+                }
+                WorkflowComponent::XiEditor => {
+                    let result = self.symphony_core.text_editing.execute_step(step).await?;
+                    execution.record_result(step.id, result);
+                }
+                WorkflowComponent::Extensions => {
+                    let result = self.symphony_core.extensions.execute_step(step).await?;
+                    execution.record_result(step.id, result);
+                }
+            }
+        }
+        
+        Ok(execution.finalize())
+    }
+}
+```
+
+**Tasks**:
+- [ ] M1.9.5.1: Implement WorkflowCoordinator
+- [ ] M1.9.5.2: Create workflow execution engine
+- [ ] M1.9.5.3: Add step-by-step coordination
+- [ ] M1.9.5.4: Implement error handling and rollback
+- [ ] M1.9.5.5: Add workflow monitoring
+
+**Acceptance Criteria**:
+- ✅ Complex workflows execute correctly
+- ✅ All components coordinated properly
+- ✅ Error handling and rollback work
+- ✅ Workflow monitoring available
+
+---
+
+### M1.9.6: End-to-End Integration Tests (2 days)
+
+**Goal**: Comprehensive integration tests for the complete system
+
+**Tasks**:
+- [ ] M1.9.6.1: Write complete user workflow tests
+- [ ] M1.9.6.2: Write cross-component integration tests
+- [ ] M1.9.6.3: Write failure scenario tests
+- [ ] M1.9.6.4: Write performance integration tests
+
+**Acceptance Criteria**:
+- ✅ Complete user workflows tested
+- ✅ All component interactions tested
+- ✅ Failure scenarios handled correctly
+- ✅ Performance targets met in integration
+
+---
+
+## 🖥️ M1.10: Tauri Integration Layer `(NEW)`
+
+**Integration Structure**: `src-tauri/`
+**Duration**: 3 weeks
+**Dependencies**: M1.9 (Domain Core)
+
+**Goal**: Integrate Symphony backend with Tauri frontend for complete application.
+
+### M1.10.1: Tauri Command Definitions (5 days)
+
+**Goal**: Define Tauri commands for all Symphony operations
+
+**Deliverables**:
+```rust
+// src-tauri/src/commands/conductor.rs
+#[tauri::command]
+async fn submit_decision(
+    state: tauri::State<'_, SymphonyCore>,
+    context: DecisionContext
+) -> Result<Decision, String> {
+    state.conductor.submit_decision(context).await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn execute_workflow(
+    state: tauri::State<'_, SymphonyCore>,
+    workflow: Workflow
+) -> Result<WorkflowResult, String> {
+    state.execute_workflow(workflow).await
+        .map_err(|e| e.to_string())
+}
+
+// src-tauri/src/commands/text_editing.rs
+#[tauri::command]
+async fn insert_text(
+    state: tauri::State<'_, SymphonyCore>,
+    buffer_id: String,
+    pos: usize,
+    text: String
+) -> Result<u64, String> {
+    let buffer_id = BufferId::new(buffer_id);
+    let revision = state.text_editing.insert(buffer_id, pos, &text).await
+        .map_err(|e| e.to_string())?;
+    Ok(revision.0)
+}
+
+#[tauri::command]
+async fn get_buffer_content(
+    state: tauri::State<'_, SymphonyCore>,
+    buffer_id: String
+) -> Result<String, String> {
+    let buffer_id = BufferId::new(buffer_id);
+    let content = state.text_editing.get_content(buffer_id).await
+        .map_err(|e| e.to_string())?;
+    Ok(content.to_string())
+}
+```
+
+**Tasks**:
+- [ ] M1.10.1.1: Define Conductor operation commands
+- [ ] M1.10.1.2: Define text editing operation commands
+- [ ] M1.10.1.3: Define extension operation commands
+- [ ] M1.10.1.4: Define workflow operation commands
+- [ ] M1.10.1.5: Add command validation and error handling
+
+**Acceptance Criteria**:
+- ✅ All Symphony operations accessible via Tauri
+- ✅ Type safety maintained across boundary
+- ✅ Error handling provides clear feedback
+- ✅ Command validation works correctly
+
+---
+
+### M1.10.2: State Management Integration (4 days)
+
+**Goal**: Integrate Tauri state management with SymphonyCore
+
+**Deliverables**:
+```rust
+// src-tauri/src/state.rs
+pub struct AppState {
+    symphony_core: Arc<SymphonyCore>,
+    event_listeners: HashMap<String, EventListener>,
+}
+
+impl AppState {
+    pub async fn new() -> Result<Self, AppError> {
+        let symphony_core = Arc::new(SymphonyCore::new().await?);
+        
+        Ok(Self {
+            symphony_core,
+            event_listeners: HashMap::new(),
+        })
+    }
+    
+    pub fn symphony_core(&self) -> &Arc<SymphonyCore> {
+        &self.symphony_core
+    }
+}
+
+// src-tauri/src/main.rs
+fn main() {
+    let app_state = AppState::new().await.expect("Failed to initialize Symphony");
+    
+    tauri::Builder::default()
+        .manage(app_state)
+        .invoke_handler(tauri::generate_handler![
+            submit_decision,
+            execute_workflow,
+            insert_text,
+            get_buffer_content,
+            // ... other commands
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
+}
+```
+
+**Tasks**:
+- [ ] M1.10.2.1: Implement AppState with SymphonyCore
+- [ ] M1.10.2.2: Create state initialization
+- [ ] M1.10.2.3: Add state management utilities
+- [ ] M1.10.2.4: Implement state cleanup on shutdown
+
+**Acceptance Criteria**:
+- ✅ AppState manages SymphonyCore correctly
+- ✅ State initialization works reliably
+- ✅ State cleanup on shutdown works
+- ✅ Thread safety maintained
+
+---
+
+### M1.10.3: Error Handling & Type Conversion (3 days)
+
+**Goal**: Robust error handling and type conversion across Tauri boundary
+
+**Deliverables**:
+```rust
+// src-tauri/src/errors.rs
+#[derive(Debug, thiserror::Error)]
+pub enum TauriError {
+    #[error("Symphony error: {0}")]
+    Symphony(#[from] SymphonyError),
+    
+    #[error("Serialization error: {0}")]
+    Serialization(#[from] serde_json::Error),
+    
+    #[error("Invalid input: {0}")]
+    InvalidInput(String),
+}
+
+impl From<TauriError> for String {
+    fn from(error: TauriError) -> Self {
+        error.to_string()
+    }
+}
+
+// src-tauri/src/types.rs
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TauriDecisionContext {
+    pub situation: String,
+    pub available_actions: Vec<String>,
+    pub constraints: HashMap<String, serde_json::Value>,
+}
+
+impl From<TauriDecisionContext> for DecisionContext {
+    fn from(tauri_context: TauriDecisionContext) -> Self {
+        DecisionContext {
+            situation: tauri_context.situation,
+            available_actions: tauri_context.available_actions,
+            constraints: tauri_context.constraints,
+        }
+    }
+}
+```
+
+**Tasks**:
+- [ ] M1.10.3.1: Implement comprehensive error types
+- [ ] M1.10.3.2: Create type conversion utilities
+- [ ] M1.10.3.3: Add input validation
+- [ ] M1.10.3.4: Implement error serialization
+
+**Acceptance Criteria**:
+- ✅ All errors handled gracefully
+- ✅ Type conversion works correctly
+- ✅ Input validation prevents crashes
+- ✅ Error messages are user-friendly
+
+---
+
+### M1.10.4: Event Streaming to Frontend (4 days)
+
+**Goal**: Stream events from Symphony backend to Tauri frontend
+
+**Deliverables**:
+```rust
+// src-tauri/src/events.rs
+pub struct EventStreamer {
+    app_handle: tauri::AppHandle,
+    symphony_events: broadcast::Receiver<SymphonyEvent>,
+}
+
+impl EventStreamer {
+    pub async fn start_streaming(&mut self) -> Result<(), EventError> {
+        while let Ok(event) = self.symphony_events.recv().await {
+            match event {
+                SymphonyEvent::BufferChanged { buffer_id, content } => {
+                    self.app_handle.emit_all("buffer-changed", BufferChangedPayload {
+                        buffer_id: buffer_id.to_string(),
+                        content,
+                    })?;
+                }
+                SymphonyEvent::WorkflowProgress { workflow_id, progress } => {
+                    self.app_handle.emit_all("workflow-progress", WorkflowProgressPayload {
+                        workflow_id: workflow_id.to_string(),
+                        progress,
+                    })?;
+                }
+                // ... other events
+            }
+        }
+        Ok(())
+    }
+}
+
+#[tauri::command]
+async fn subscribe_to_events(
+    app_handle: tauri::AppHandle,
+    state: tauri::State<'_, AppState>
+) -> Result<(), String> {
+    let events = state.symphony_core().subscribe_to_events().await
+        .map_err(|e| e.to_string())?;
+    
+    let mut streamer = EventStreamer {
+        app_handle,
+        symphony_events: events,
+    };
+    
+    tokio::spawn(async move {
+        streamer.start_streaming().await;
+    });
+    
+    Ok(())
+}
+```
+
+**Tasks**:
+- [ ] M1.10.4.1: Implement EventStreamer
+- [ ] M1.10.4.2: Create event subscription system
+- [ ] M1.10.4.3: Add event filtering and routing
+- [ ] M1.10.4.4: Handle event streaming failures
+
+**Acceptance Criteria**:
+- ✅ Events streamed to frontend in real-time
+- ✅ Event filtering works correctly
+- ✅ Streaming failures handled gracefully
+- ✅ Frontend receives all relevant events
+
+---
+
+### M1.10.5: Frontend-Backend Synchronization (3 days)
+
+**Goal**: Maintain synchronization between frontend and backend state
+
+**Deliverables**:
+```rust
+// src-tauri/src/sync.rs
+pub struct FrontendSynchronizer {
+    app_handle: tauri::AppHandle,
+    symphony_core: Arc<SymphonyCore>,
+    sync_interval: Duration,
+}
+
+impl FrontendSynchronizer {
+    pub async fn start_sync_loop(&self) -> Result<(), SyncError> {
+        let mut interval = tokio::time::interval(self.sync_interval);
+        
+        loop {
+            interval.tick().await;
+            
+            // Sync application state
+            let app_state = self.symphony_core.get_application_state().await?;
+            self.app_handle.emit_all("app-state-sync", app_state)?;
+            
+            // Sync buffer states
+            let buffer_states = self.symphony_core.get_all_buffer_states().await?;
+            self.app_handle.emit_all("buffer-states-sync", buffer_states)?;
+            
+            // Sync workflow states
+            let workflow_states = self.symphony_core.get_workflow_states().await?;
+            self.app_handle.emit_all("workflow-states-sync", workflow_states)?;
+        }
+    }
+}
+
+#[tauri::command]
+async fn sync_frontend_state(
+    state: tauri::State<'_, AppState>
+) -> Result<FrontendState, String> {
+    let symphony_state = state.symphony_core().get_complete_state().await
+        .map_err(|e| e.to_string())?;
+    
+    Ok(FrontendState::from(symphony_state))
+}
+```
+
+**Tasks**:
+- [ ] M1.10.5.1: Implement FrontendSynchronizer
+- [ ] M1.10.5.2: Create periodic state synchronization
+- [ ] M1.10.5.3: Add on-demand synchronization
+- [ ] M1.10.5.4: Handle synchronization conflicts
+
+**Acceptance Criteria**:
+- ✅ Frontend and backend state synchronized
+- ✅ Periodic sync works correctly
+- ✅ On-demand sync available
+- ✅ Sync conflicts resolved properly
+
+---
+
+### M1.10.6: Tauri Integration Tests (2 days)
+
+**Goal**: Comprehensive tests for Tauri integration
+
+**Tasks**:
+- [ ] M1.10.6.1: Write Tauri command tests
+- [ ] M1.10.6.2: Write event streaming tests
+- [ ] M1.10.6.3: Write state synchronization tests
+- [ ] M1.10.6.4: Write error handling tests
+
+**Acceptance Criteria**:
+- ✅ All Tauri commands tested
+- ✅ Event streaming tested
+- ✅ State synchronization tested
+- ✅ Error scenarios tested
+
+---
+
+## 🎭 M1.11: Actor Layer Implementation `(NEW)`
+
+**Crate**: `symphony-actors`
+**Duration**: 3 weeks
+**Dependencies**: M1.7 (Extension SDK), M1.8 (Concrete Adapters)
+
+**Goal**: Implement Actor model for extension process isolation and management.
+
+### M1.11.1: Actor Trait Implementation (4 days)
+
+**Goal**: Define and implement core Actor trait for extension processes
+
+**Deliverables**:
+```rust
+// src/actor.rs
+#[async_trait]
+pub trait Actor: Send + Sync {
+    async fn start(&mut self) -> Result<(), ActorError>;
+    async fn stop(&mut self) -> Result<(), ActorError>;
+    async fn send_message(&self, message: ActorMessage) -> Result<(), ActorError>;
+    async fn receive_message(&mut self) -> Result<ActorMessage, ActorError>;
+    fn is_running(&self) -> bool;
+    fn actor_id(&self) -> &ActorId;
+}
+
+pub struct ExtensionActor {
+    id: ActorId,
+    process: Option<tokio::process::Child>,
+    stdin: Option<tokio::process::ChildStdin>,
+    stdout: Option<tokio::process::ChildStdout>,
+    manifest: ExtensionManifest,
+    state: ActorState,
+}
+
+#[async_trait]
+impl Actor for ExtensionActor {
+    async fn start(&mut self) -> Result<(), ActorError> {
+        let mut cmd = tokio::process::Command::new("symphony-extension-runner");
+        cmd.arg("--manifest").arg(&self.manifest.path);
+        cmd.stdin(Stdio::piped());
+        cmd.stdout(Stdio::piped());
+        cmd.stderr(Stdio::piped());
+        
+        let mut process = cmd.spawn()?;
+        self.stdin = process.stdin.take();
+        self.stdout = process.stdout.take();
+        self.process = Some(process);
+        self.state = ActorState::Running;
+        
+        Ok(())
+    }
+    
+    // ... other Actor methods
+}
+```
+
+**Tasks**:
+- [ ] M1.11.1.1: Define Actor trait interface
+- [ ] M1.11.1.2: Implement ExtensionActor struct
+- [ ] M1.11.1.3: Create actor lifecycle management
+- [ ] M1.11.1.4: Add actor state tracking
+- [ ] M1.11.1.5: Implement actor message handling
+
+**Acceptance Criteria**:
+- ✅ Actor trait well-defined and flexible
+- ✅ ExtensionActor implements all methods
+- ✅ Lifecycle management works correctly
+- ✅ State tracking is accurate
+
+---
+
+### M1.11.2: Process Spawning & Management (4 days)
+
+**Goal**: Robust process spawning and management for extension actors
+
+**Deliverables**:
+```rust
+// src/process.rs
+pub struct ProcessManager {
+    actors: HashMap<ActorId, Box<dyn Actor>>,
+    process_configs: HashMap<ExtensionType, ProcessConfig>,
+    resource_monitor: ResourceMonitor,
+}
+
+pub struct ProcessConfig {
+    pub memory_limit: usize,
+    pub cpu_limit: f64,
+    pub timeout: Duration,
+    pub restart_policy: RestartPolicy,
+}
+
+impl ProcessManager {
+    pub async fn spawn_extension(&mut self, manifest: ExtensionManifest) -> Result<ActorId, ProcessError> {
+        let config = self.process_configs.get(&manifest.extension_type)
+            .cloned()
+            .unwrap_or_default();
+        
+        let mut actor = ExtensionActor::new(manifest, config);
+        actor.start().await?;
+        
+        let actor_id = actor.actor_id().clone();
+        self.actors.insert(actor_id.clone(), Box::new(actor));
+        
+        // Start resource monitoring
+        self.resource_monitor.start_monitoring(&actor_id).await?;
+        
+        Ok(actor_id)
+    }
+    
+    pub async fn terminate_extension(&mut self, actor_id: &ActorId) -> Result<(), ProcessError> {
+        if let Some(mut actor) = self.actors.remove(actor_id) {
+            actor.stop().await?;
+            self.resource_monitor.stop_monitoring(actor_id).await?;
+        }
+        Ok(())
+    }
+}
+```
+
+**Tasks**:
+- [ ] M1.11.2.1: Implement ProcessManager
+- [ ] M1.11.2.2: Create process configuration system
+- [ ] M1.11.2.3: Add resource monitoring
+- [ ] M1.11.2.4: Implement process termination
+- [ ] M1.11.2.5: Add restart policies
+
+**Acceptance Criteria**:
+- ✅ Process spawning works reliably
+- ✅ Resource limits enforced
+- ✅ Process termination is clean
+- ✅ Restart policies work correctly
+
+---
+
+### M1.11.3: Message Passing System (5 days)
+
+**Goal**: Reliable message passing between Symphony and extension actors
+
+**Deliverables**:
+```rust
+// src/messaging.rs
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ActorMessage {
+    Request {
+        id: MessageId,
+        method: String,
+        params: serde_json::Value,
+    },
+    Response {
+        id: MessageId,
+        result: Result<serde_json::Value, String>,
+    },
+    Notification {
+        method: String,
+        params: serde_json::Value,
+    },
+    Heartbeat,
+    Shutdown,
+}
+
+pub struct MessageBus {
+    actors: HashMap<ActorId, mpsc::Sender<ActorMessage>>,
+    pending_requests: HashMap<MessageId, oneshot::Sender<ActorMessage>>,
+    message_timeout: Duration,
+}
+
+impl MessageBus {
+    pub async fn send_request(&self, actor_id: &ActorId, method: String, params: serde_json::Value) -> Result<serde_json::Value, MessageError> {
+        let message_id = MessageId::new();
+        let (tx, rx) = oneshot::channel();
+        
+        self.pending_requests.insert(message_id.clone(), tx);
+        
+        let message = ActorMessage::Request {
+            id: message_id,
+            method,
+            params,
+        };
+        
+        if let Some(sender) = self.actors.get(actor_id) {
+            sender.send(message).await?;
+        } else {
+            return Err(MessageError::ActorNotFound(actor_id.clone()));
+        }
+        
+        let response = tokio::time::timeout(self.message_timeout, rx).await??;
+        
+        match response {
+            ActorMessage::Response { result, .. } => result.map_err(MessageError::RemoteError),
+            _ => Err(MessageError::InvalidResponse),
+        }
+    }
+}
+```
+
+**Tasks**:
+- [ ] M1.11.3.1: Define ActorMessage types
+- [ ] M1.11.3.2: Implement MessageBus
+- [ ] M1.11.3.3: Add request/response correlation
+- [ ] M1.11.3.4: Implement message timeouts
+- [ ] M1.11.3.5: Add message serialization
+
+**Acceptance Criteria**:
+- ✅ Message passing works reliably
+- ✅ Request/response correlation works
+- ✅ Timeouts prevent hanging
+- ✅ Serialization handles all types
+
+---
+
+### M1.11.4: Process Isolation & Sandboxing (4 days)
+
+**Goal**: Secure process isolation and sandboxing for extension actors
+
+**Deliverables**:
+```rust
+// src/isolation.rs
+pub struct ProcessSandbox {
+    filesystem_restrictions: Vec<PathBuf>,
+    network_restrictions: NetworkPolicy,
+    resource_limits: ResourceLimits,
+}
+
+pub struct ResourceLimits {
+    pub max_memory: usize,
+    pub max_cpu_percent: f64,
+    pub max_file_descriptors: u32,
+    pub max_execution_time: Duration,
+}
+
+impl ProcessSandbox {
+    pub fn apply_restrictions(&self, cmd: &mut tokio::process::Command) -> Result<(), SandboxError> {
+        // Apply filesystem restrictions
+        for restricted_path in &self.filesystem_restrictions {
+            // Platform-specific implementation
+            #[cfg(unix)]
+            self.apply_unix_restrictions(cmd, restricted_path)?;
+            
+            #[cfg(windows)]
+            self.apply_windows_restrictions(cmd, restricted_path)?;
+        }
+        
+        // Apply resource limits
+        self.apply_resource_limits(cmd)?;
+        
+        // Apply network restrictions
+        self.apply_network_restrictions(cmd)?;
+        
+        Ok(())
+    }
+    
+    #[cfg(unix)]
+    fn apply_unix_restrictions(&self, cmd: &mut tokio::process::Command, path: &Path) -> Result<(), SandboxError> {
+        // Use chroot, namespaces, or similar
+        // Implementation depends on platform capabilities
+        Ok(())
+    }
+    
+    #[cfg(windows)]
+    fn apply_windows_restrictions(&self, cmd: &mut tokio::process::Command, path: &Path) -> Result<(), SandboxError> {
+        // Use Job Objects or similar Windows mechanisms
+        Ok(())
+    }
+}
+```
+
+**Tasks**:
+- [ ] M1.11.4.1: Implement ProcessSandbox
+- [ ] M1.11.4.2: Add filesystem restrictions
+- [ ] M1.11.4.3: Add network restrictions
+- [ ] M1.11.4.4: Add resource limits
+- [ ] M1.11.4.5: Platform-specific implementations
+
+**Acceptance Criteria**:
+- ✅ Extensions cannot access restricted files
+- ✅ Network access controlled properly
+- ✅ Resource limits enforced
+- ✅ Platform-specific features work
+
+---
+
+### M1.11.5: Crash Detection & Recovery (3 days)
+
+**Goal**: Detect extension crashes and implement recovery mechanisms
+
+**Deliverables**:
+```rust
+// src/recovery.rs
+pub struct CrashDetector {
+    monitored_actors: HashMap<ActorId, ActorMonitor>,
+    recovery_policies: HashMap<ExtensionType, RecoveryPolicy>,
+}
+
+pub struct ActorMonitor {
+    actor_id: ActorId,
+    last_heartbeat: Instant,
+    crash_count: u32,
+    health_check_interval: Duration,
+}
+
+pub enum RecoveryPolicy {
+    Restart { max_attempts: u32, backoff: Duration },
+    Disable,
+    Notify,
+}
+
+impl CrashDetector {
+    pub async fn start_monitoring(&mut self) -> Result<(), RecoveryError> {
+        let mut interval = tokio::time::interval(Duration::from_secs(1));
+        
+        loop {
+            interval.tick().await;
+            
+            for (actor_id, monitor) in &mut self.monitored_actors {
+                if monitor.last_heartbeat.elapsed() > monitor.health_check_interval {
+                    self.handle_potential_crash(actor_id.clone()).await?;
+                }
+            }
+        }
+    }
+    
+    async fn handle_potential_crash(&mut self, actor_id: ActorId) -> Result<(), RecoveryError> {
+        if let Some(monitor) = self.monitored_actors.get_mut(&actor_id) {
+            monitor.crash_count += 1;
+            
+            // Get recovery policy for this extension type
+            if let Some(policy) = self.recovery_policies.get(&monitor.extension_type) {
+                match policy {
+                    RecoveryPolicy::Restart { max_attempts, backoff } => {
+                        if monitor.crash_count <= *max_attempts {
+                            tokio::time::sleep(*backoff).await;
+                            self.restart_actor(&actor_id).await?;
+                        } else {
+                            self.disable_actor(&actor_id).await?;
+                        }
+                    }
+                    RecoveryPolicy::Disable => {
+                        self.disable_actor(&actor_id).await?;
+                    }
+                    RecoveryPolicy::Notify => {
+                        self.notify_crash(&actor_id).await?;
+                    }
+                }
+            }
+        }
+        
+        Ok(())
+    }
+}
+```
+
+**Tasks**:
+- [ ] M1.11.5.1: Implement CrashDetector
+- [ ] M1.11.5.2: Add heartbeat monitoring
+- [ ] M1.11.5.3: Implement recovery policies
+- [ ] M1.11.5.4: Add crash notification system
+- [ ] M1.11.5.5: Create crash logging and metrics
+
+**Acceptance Criteria**:
+- ✅ Crashes detected within 5 seconds
+- ✅ Recovery policies work correctly
+- ✅ Restart attempts respect limits
+- ✅ Crash metrics collected
+
+---
+
+### M1.11.6: Actor System Tests (2 days)
+
+**Goal**: Comprehensive tests for the actor system
+
+**Tasks**:
+- [ ] M1.11.6.1: Write actor lifecycle tests
+- [ ] M1.11.6.2: Write message passing tests
+- [ ] M1.11.6.3: Write isolation and sandboxing tests
+- [ ] M1.11.6.4: Write crash recovery tests
+- [ ] M1.11.6.5: Write performance tests
+
+**Acceptance Criteria**:
+- ✅ All actor functionality tested
+- ✅ Message passing reliability verified
+- ✅ Isolation effectiveness tested
+- ✅ Recovery mechanisms validated
+- ✅ Performance targets met
+
+---
+
+## 📊 Updated M1 Summary
+
+| Sub-Milestone | Tasks | Duration | Status |
+|---------------|-------|----------|--------|
+| **Original M1 Components** | | | |
+| M1.1.x Port Definitions | 34 | 2 weeks | 🚧 |
+| M1.2.x Two-Binary Architecture | 36 | 3 weeks | 📋 |
+| M1.3.x IPC Protocol | 63 | 3 weeks | 📋 |
+| M1.4.x Transport Layer | 26 | 3 weeks | 📋 |
+| M1.5.x Message Bus | 30 | 3 weeks | 📋 |
+| M1.6.x Python Bridge | 30 | 3 weeks | 📋 |
+| M1.7.x Extension SDK | 30 | 3 weeks | 📋 |
+| **NEW H2A2 Components** | | | |
+| **M1.8.x Concrete Adapters** | **23** | **4 weeks** | **📋** |
+| **M1.9.x Domain Core** | **21** | **3 weeks** | **📋** |
+| **M1.10.x Tauri Integration** | **21** | **3 weeks** | **📋** |
+| **M1.11.x Actor Layer** | **24** | **3 weeks** | **📋** |
+
+**Total Tasks**: ~338 detailed tasks (89 new H2A2 tasks added)
+**Total Duration**: 34 weeks (with parallelization: ~20 weeks)
+
+**H2A2 Architecture Now Complete**:
+- ✅ **Hexagonal Ports**: Defined in M1.1 (symphony-core-ports)
+- ✅ **Concrete Adapters**: Implemented in M1.8 (symphony-adapters)
+- ✅ **Domain Core**: Orchestration in M1.9 (symphony-domain)
+- ✅ **Actor Layer**: Process isolation in M1.11 (symphony-actors)
+
+**Two-Binary Architecture Fully Specified**:
+- ✅ **Symphony Binary**: Tauri + Conductor + Pit + Domain Core + Adapters
+- ✅ **XI-editor Binary**: Standalone text editor with JSON-RPC
+- ✅ **Synchronization**: Bidirectional event streaming and state sync
+- ✅ **Integration**: Complete Tauri frontend integration
+
+The milestone structure now fully addresses the H2A2 architecture gaps and provides a complete implementation path for Symphony's two-binary architecture with proper frontend-backend integration.

@@ -73,7 +73,57 @@ apps/backend/crates/symphony-core-ports/
 │   └── lib.rs
 ```
 
-### 1.2 IPC Communication Bus
+### 1.2 Two-Binary Architecture Setup `(NEW)`
+**Priority**: 🔴 Critical - Implements two separate executable approach
+
+**Deliverables**:
+- Symphony Binary: AIDE orchestration with Tauri frontend
+- XI-editor Binary: Dedicated text editing process
+- Inter-process communication via JSON-RPC
+- Process lifecycle management and health monitoring
+- Synchronization mechanisms between binaries
+
+**Binary Structure**: `(NEW)`
+```
+Symphony Binary (symphony.exe):
+├── Frontend (React + Tauri)
+├── Conductor (Python subprocess)  
+├── The Pit (5 in-process modules)
+└── Domain Core (Rust orchestration)
+
+XI-editor Binary (xi-editor.exe):
+├── JSON-RPC Handler
+├── XI-Core Engine (buffers, rope, editing)
+└── Plugin System (syntax, LSP)
+```
+
+**Tauri Structure**: `(NEW)`
+```
+src-tauri/
+├── Cargo.toml
+└── src/
+    ├── symphonyaide.rs    # Main AIDE orchestration
+    ├── xi-editor.rs       # XI-editor process management
+    └── process.rs         # Inter-process communication
+```
+
+### 1.3 Binary Synchronization System `(NEW)`
+**Priority**: 🔴 Critical - Ensures data consistency between processes
+
+**Deliverables**:
+- State synchronization protocols between Symphony and XI-editor
+- Event streaming for real-time updates (file changes, cursor movements)
+- Buffer state management across process boundaries
+- Conflict resolution for concurrent operations
+- Health monitoring and automatic recovery mechanisms
+
+**Synchronization Methods**: `(NEW)`
+- **File System Events**: Symphony watches filesystem, streams changes to XI-editor
+- **Buffer Synchronization**: XI-editor notifies Symphony of text changes for AI analysis
+- **Bidirectional Event Streams**: Real-time coordination without tight coupling
+- **Health Checks**: Automatic process restart and reconnection on failures
+
+### 1.4 IPC Communication Bus
 **Priority**: 🔴 Critical - Everything depends on this
 
 **Deliverables**:
@@ -82,6 +132,7 @@ apps/backend/crates/symphony-core-ports/
 - Message routing and validation
 - Security and authentication layer
 - Performance: <0.3ms message latency
+- **JSON-RPC Protocol**: `(NEW)` Specific implementation for Symphony ↔ XI-editor communication
 
 **Crates to Create**:
 ```
@@ -91,10 +142,16 @@ apps/backend/crates/symphony-ipc/
 │   ├── protocol.rs      # Binary serialization
 │   ├── transport.rs     # Platform-specific transport
 │   ├── security.rs      # Authentication & validation
+│   ├── jsonrpc.rs       # JSON-RPC for XI-editor (NEW)
 │   └── lib.rs
 ```
 
-### 1.3 Python-Rust Bridge
+**Performance Targets**: `(NEW)`
+- Message latency: <1ms for text operations between binaries
+- Throughput: 1,000+ operations/second for Symphony ↔ XI-editor
+- Automatic reconnection within 100ms on failure
+
+### 1.5 Python-Rust Bridge
 **Priority**: 🔴 Critical - Conductor needs this
 
 **Deliverables**:
@@ -102,6 +159,7 @@ apps/backend/crates/symphony-ipc/
 - Type conversion layer (Rust types ↔ Python types)
 - Error handling across language boundary
 - Performance: ~0.01ms overhead per call
+- **In-Process Integration**: `(NEW)` Conductor runs within Symphony binary for direct Pit access
 
 **Crates to Create**:
 ```
@@ -110,10 +168,17 @@ apps/backend/crates/symphony-python-bridge/
 │   ├── bindings.rs      # PyO3 FFI bindings
 │   ├── types.rs         # Type conversion
 │   ├── errors.rs        # Error handling
+│   ├── conductor.rs     # Conductor subprocess management (NEW)
 │   └── lib.rs
 ```
 
-### 1.4 Extension SDK Foundation
+**Integration Model**: `(NEW)`
+- Conductor runs as Python subprocess within Symphony binary
+- Direct in-process access to The Pit (Pool Manager, DAG Tracker, etc.)
+- No IPC overhead for AI operations - maintains 50-100ns performance targets
+- Seamless integration with Tauri frontend commands
+
+### 1.6 Extension SDK Foundation
 **Priority**: 🟡 High - Needed before extension development
 
 **Deliverables**:
@@ -121,6 +186,7 @@ apps/backend/crates/symphony-python-bridge/
 - Extension lifecycle hooks (load, activate, deactivate, unload)
 - Permission system foundation
 - Extension registry and discovery
+- **Actor-Based Isolation**: `(NEW)` Extensions run as separate processes for safety
 
 **Crates to Create**:
 ```
@@ -130,46 +196,104 @@ apps/backend/crates/symphony-extension-sdk/
 │   ├── lifecycle.rs     # Extension lifecycle
 │   ├── permissions.rs   # Permission system
 │   ├── registry.rs      # Extension registry
+│   ├── actor.rs         # Actor-based process isolation (NEW)
 │   └── lib.rs
 ```
 
+### 1.7 Concrete Adapters Implementation `(NEW)`
+**Priority**: 🔴 Critical - H2A2 architecture requires concrete implementations
+
+**Deliverables**:
+- XiEditorAdapter implementing TextEditingPort (JSON-RPC to XI-editor binary)
+- PitAdapter implementing PitPort (direct in-process access to The Pit)
+- ActorExtensionAdapter implementing ExtensionPort (process isolation)
+- PythonConductorAdapter implementing ConductorPort (PyO3 bridge)
+
+**Crates to Create**:
+```
+apps/backend/crates/symphony-adapters/
+├── src/
+│   ├── xi_editor.rs     # XiEditorAdapter (JSON-RPC)
+│   ├── pit.rs           # PitAdapter (in-process)
+│   ├── extensions.rs    # ActorExtensionAdapter (process isolation)
+│   ├── conductor.rs     # PythonConductorAdapter (PyO3)
+│   └── lib.rs
+```
+
+### 1.8 Domain Core Orchestration `(NEW)`
+**Priority**: 🔴 Critical - The heart of Symphony AIDE system
+
+**Deliverables**:
+- SymphonyCore orchestration engine using all four ports
+- Business logic coordinating Conductor, Pit, XI-editor, and Extensions
+- State management and synchronization between binaries
+- Event streaming and process lifecycle management
+
+**Crates to Create**:
+```
+apps/backend/crates/symphony-domain/
+├── src/
+│   ├── core.rs          # SymphonyCore orchestration
+│   ├── state.rs         # State management
+│   ├── sync.rs          # Binary synchronization
+│   ├── events.rs        # Event streaming
+│   └── lib.rs
+```
+
+### 1.9 Tauri Integration Layer `(NEW)`
+**Priority**: 🔴 Critical - Frontend-backend integration
+
+**Deliverables**:
+- Tauri command definitions for all Symphony operations
+- State management integration with SymphonyCore
+- Error handling across Tauri boundary
+- Frontend-backend type synchronization
+
+**Integration Structure**:
+```
+src-tauri/
+├── src/
+│   ├── commands/        # Tauri command handlers
+│   ├── state.rs         # Application state management
+│   ├── events.rs        # Event handling
+│   └── main.rs          # Tauri application entry
+```
+
 **Success Criteria**:
-- ✅ H2A2 architecture ports defined and documented
-- ✅ IPC bus handles 10,000+ messages/sec with <0.3ms latency
-- ✅ Python can call Rust functions with <0.01ms overhead
-- ✅ Extension manifest system validates and loads correctly
+- ✅ H2A2 architecture fully implemented (Ports + Adapters + Domain + Actors)
+- ✅ Two-binary architecture operational (Symphony + XI-editor)
+- ✅ Concrete adapters implement all port interfaces
+- ✅ Domain core orchestrates all components using ports
+- ✅ Actor layer provides extension process isolation
+- ✅ Symphony and XI-editor maintain synchronized state
+- ✅ Tauri frontend integrates with Symphony backend
+- ✅ JSON-RPC latency <1ms for XI-editor operations
+- ✅ Python Conductor has direct access to The Pit components
+- ✅ Extension system provides safe isolation via Actor model
 - ✅ All tests passing with >80% code coverage
-- ✅ Mock adapters enable isolated domain testing
+- ✅ Health monitoring detects and recovers from process failures
 
 ---
 
 ## 🎩 M2: The Conductor (4-5 months)
 
-**Goal**: Build the intelligent orchestration engine that coordinates all AI workflows
+**Goal**: Build the intelligent orchestration engine within Symphony binary
 
-### 2.1 Conductor Core (Python)
-**Priority**: 🔴 Critical - The brain of Symphony
+### 2.1 Conductor Core Integration `(NEW)`
+**Priority**: 🔴 Critical - The brain of Symphony AIDE
 
 **Deliverables**:
-- Orchestration engine with RL model integration
-- Model lifecycle management (start, stop, monitor)
-- State tracking and workflow coordination
-- Communication protocol with Rust backend via PyO3
+- Python-based orchestration engine integrated within Symphony binary
+- Direct access to The Pit components for microsecond-level performance
+- RL model integration via Function Quest Game framework
+- Workflow coordination and decision-making algorithms
+- State management for complex AI workflows
 
-**Components**:
-```
-apps/backend/conductor/
-├── core/
-│   ├── orchestrator.py      # Main orchestration engine
-│   ├── lifecycle.py          # Model lifecycle management
-│   ├── state.py              # State tracking
-│   └── communication.py      # Rust bridge communication
-├── rl/
-│   ├── fqg_integration.py    # Function Quest Game integration
-│   ├── training.py           # RL training loop
-│   └── inference.py          # RL inference for decisions
-└── tests/
-```
+**Integration Architecture**: `(NEW)`
+- Conductor runs as Python subprocess within Symphony process
+- Direct in-process calls to The Pit - no IPC overhead for AI operations
+- Seamless communication with Tauri frontend via PyO3 bindings
+- Independent of XI-editor - can operate without text editing functionality
 
 ### 2.2 Function Quest Game (FQG) Integration
 **Priority**: 🟡 High - Training ground for Conductor
