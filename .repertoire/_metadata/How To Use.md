@@ -464,11 +464,16 @@ YOU MUST FOLLOW THESE RULES:
 
 DO's:
 ✅ Start by reading all 7 documents for current feature
+✅ **MANDATORY**: Read .repertoire/practice/technical_pattern.md and ALL referenced files
 ✅ Summarize feature goal and acceptance criteria before coding
 ✅ Follow the architecture defined in DESIGN.md
-✅ Write tests BEFORE implementation (ATDD approach)
+✅ **MANDATORY**: Write tests BEFORE implementation (TDD approach - Red, Green, Refactor)
 ✅ Update IMPLEMENTATION.md checkboxes as you progress
 ✅ Document any deviations from design with rationale
+✅ **MANDATORY**: Fix ALL warnings, even in tests - warnings are not acceptable
+✅ **MANDATORY**: If feature depends on unimplemented components, create stubs with todo!()
+✅ **MANDATORY**: Use proper error handling patterns from .repertoire/practice/error_handling.md
+✅ **MANDATORY**: Follow documentation standards from .repertoire/practice/rust_doc_style_guide.md
 ✅ Run BIF evaluation after implementation completes
 ✅ Be thorough in BIF analysis (all 8 dimensions)
 ✅ Reference specific file paths and line numbers in BIF
@@ -476,10 +481,15 @@ DO's:
 ✅ Complete VERIFICATION.md checklist honestly
 ✅ Update parent milestone checkboxes when feature completes
 ✅ Provide clear handoff message to next feature
+✅ **MANDATORY**: Extend commons crate when needed (following OCP principle)
+✅ **MANDATORY**: Use "Loud Smart Duck Debugging" pattern for temporary debug output
 
 DON'Ts:
 ❌ NEVER start coding without reading all 7 documents
+❌ NEVER start coding without reading technical_pattern.md and referenced files
 ❌ NEVER skip writing tests (ATDD is mandatory)
+❌ NEVER skip TDD approach (Red-Green-Refactor cycle)
+❌ NEVER ignore warnings - all warnings must be fixed
 ❌ NEVER deviate from design without documenting why
 ❌ NEVER leave IMPLEMENTATION.md checkboxes unchecked
 ❌ NEVER skip BIF evaluation (it's mandatory)
@@ -489,6 +499,8 @@ DON'Ts:
 ❌ NEVER update parent checkboxes without feature completion
 ❌ NEVER proceed to next feature without user approval
 ❌ NEVER rush verification (quality over speed)
+❌ NEVER use println! or eprintln! for debugging - use duck!() macro
+❌ NEVER duplicate error handling patterns - use commons crate
 
 IMPLEMENTATION PHASE:
 
@@ -503,33 +515,44 @@ Ask user:
 
 Step 2: TEST-FIRST APPROACH
 Before writing implementation:
-1. Write acceptance tests from TESTING.md
-2. Write unit tests (happy path, edge cases, errors)
-3. All tests should FAIL initially (Red phase)
-4. Update TESTING.md with * [ 1 ] as tests are written
+1. **MANDATORY**: Write acceptance tests from TESTING.md (Red phase)
+2. **MANDATORY**: Write unit tests (happy path, edge cases, errors) (Red phase)
+3. **MANDATORY**: Use recommended testing tools:
+   - **rstest** for fixtures and parameterization
+   - **tokio::test** for async runtime support
+   - **cargo nextest run** (preferred) or `cargo test` (fallback)
+4. **MANDATORY**: All tests should FAIL initially (Red phase of TDD)
+5. **MANDATORY**: Verify tests fail for the right reasons
+6. Update TESTING.md with * [ 1 ] as tests are written
+7. **CRITICAL**: If dependencies are not implemented, create stubs with todo!()
 
 Step 3: IMPLEMENTATION
 Follow DESIGN.md:
 1. Create modules/classes as specified
-2. Implement public APIs
+2. Implement public APIs (Green phase - make tests pass)
 3. Implement data structures
-4. Add error handling
-5. Update IMPLEMENTATION.md checkboxes:
+4. Add error handling using patterns from .repertoire/practice/error_handling.md
+5. **MANDATORY**: Use duck!() macro for temporary debugging (not println!)
+6. **MANDATORY**: Follow documentation standards from rust_doc_style_guide.md
+7. Update IMPLEMENTATION.md checkboxes:
    * [ ] → * [ - ] → * [ 1 ]
-6. Document any design changes in "Design Decisions During Implementation"
+8. Document any design changes in "Design Decisions During Implementation"
 
-Step 4: MAKE TESTS PASS
+Step 4: MAKE TESTS PASS (Green Phase)
 1. Run tests continuously
 2. Fix failures one by one (Green phase)
-3. Refactor for quality (Refactor phase)
+3. **MANDATORY**: Create stubs with todo!() for unimplemented dependencies
 4. Ensure all tests pass
 
-Step 5: CODE QUALITY CHECKS
-* [ ] Run linter (no errors)
-* [ ] Run type checker (if applicable)
-* [ ] Run build command (if applicable)
-* [ ] Run compile command (if applicable)
-* [ ] Add/update comments
+Step 5: REFACTOR PHASE
+1. **MANDATORY**: Fix ALL warnings (including test warnings)
+2. Refactor for quality (Refactor phase)
+3. Run linter (no errors or warnings)
+4. Run type checker (if applicable)
+5. Run build command (if applicable)
+6. Run compile command (if applicable)
+7. Add/update comments following documentation standards
+8. **MANDATORY**: Extend commons crate if shared patterns emerge
 
 BLIND INSPECTION FRAMEWORK (BIF) PHASE:
 

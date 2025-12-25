@@ -1,4 +1,78 @@
-### Testing Pattern
+### Testing Pattern - MANDATORY TDD APPROACH
+
+**CRITICAL**: ALL implementations MUST follow Test-Driven Development (TDD):
+
+1. **RED PHASE**: Write failing tests first
+2. **GREEN PHASE**: Write minimal code to make tests pass  
+3. **REFACTOR PHASE**: Improve code quality while keeping tests green
+
+**ZERO TOLERANCE**: Skipping TDD or writing implementation before tests is NOT ALLOWED.
+
+---
+
+### RECOMMENDED TESTING TOOLS
+
+**MANDATORY TOOLS FOR RUST TESTING**:
+
+1. **rstest** - For fixtures and parameterization
+
+2. **tokio::test** - For async runtime support
+
+3. **cargo nextest** - Enhanced test runner (with fallback)
+   - Faster test execution with better output formatting
+   - Improved test discovery and parallel execution
+   - Fallback to `cargo test` if nextest is not available
+
+**EXAMPLE USAGE**:
+```rust
+use rstest::*;
+use tokio_test;
+
+// Fixture-based testing with rstest
+#[fixture]
+fn sample_user() -> User {
+    User::new("test_user", "test@example.com")
+}
+
+// Parameterized testing
+#[rstest]
+#[case("valid@email.com", true)]
+#[case("invalid-email", false)]
+#[case("", false)]
+fn test_email_validation(#[case] email: &str, #[case] expected: bool) {
+    assert_eq!(validate_email(email), expected);
+}
+
+// Async testing with tokio::test
+#[tokio::test]
+async fn test_async_operation() {
+    let result = async_function().await;
+    assert!(result.is_ok());
+}
+
+```
+
+**CARGO.TOML DEPENDENCIES**:
+```toml
+[dev-dependencies]
+rstest = "*"
+tokio-test = "*"
+```
+
+**TEST EXECUTION COMMANDS**:
+```bash
+# Preferred: Use cargo nextest (faster, better output)
+cargo nextest run
+
+# Fallback: Use standard cargo test if nextest unavailable
+cargo test
+```
+
+---
+
+### Test Organization with Feature Flags
+
+**MANDATORY**: All tests must be organized with feature flags for selective execution:
 
 ```rust
 #[cfg(test)]
@@ -6,6 +80,7 @@ mod tests {
     use super::*;
 
     // Unit tests - test individual components (fast, isolated)
+    // MANDATORY: These must be written FIRST (RED phase)
     #[cfg(feature = "test_unit")]
     #[test]
     fn test_component_behavior() {
@@ -20,6 +95,7 @@ mod tests {
     }
 
     // Property tests - test invariants across many inputs
+    // MANDATORY: Write these for any function with mathematical properties
     #[cfg(feature = "test_unit")] // or a separate feature if desired
     mod property_tests {
         use proptest::prelude::*;
@@ -83,9 +159,7 @@ mod tests {
 }
 ```
 
-### How to use these markers with `cargo test`
-
-Add the features to your `Cargo.toml` (optional features, enabled only for testing):
+### MANDATORY Cargo.toml Configuration
 
 ```toml
 [features]
@@ -103,20 +177,59 @@ test_services = [] # Based on Project and Business [e.g. Backend Service] Type
 test_repositories = [] # Based on Project and Business [e.g. Backend Service] Type
 test_redis = []
 test_ci_cd_issue = [] # Do not include until explicitly mentioned by the user
+test_fixtures = [] # For rstest-based fixture tests
+
+[dev-dependencies]
+# MANDATORY testing tools
+rstest = "0.18"           # Fixtures and parameterization
+tokio-test = "0.4"        # Async runtime support
+proptest = "1.4"          # Property-based testing
 ```
 
 ### Running specific categories
 
 - **Run only unit tests** (default, fast):  
-  `cargo test`
+  `cargo nextest run` or `cargo test` (fallback)
 
-- **Run integration tests**:  
-  `cargo test --features test_integration`
-
-- **Run multiple categories** (e.g., unit + auth + redis):  
-  `cargo test --features "test_unit test_auth test_redis"`
+- **Run multiple categories** (e.g., unit + auth + redis) 
+  `cargo nextest run --features "test_unit test_auth test_redis"` or `cargo test --features "test_unit test_auth test_redis"` (fallback)
 
 - **Run all tests** (including slow/e2e/etc.):  
-  `cargo test --all-features`
+  `cargo nextest run --all-features` or `cargo test --all-features` (fallback)
 
 ---
+
+### TDD Workflow - STEP BY STEP
+
+**PHASE 1: RED (Write Failing Tests)**
+
+1. ✅ Read feature requirements completely
+2. ✅ Write acceptance tests that FAIL (no implementation exists)
+3. ✅ Write unit tests for each function that FAIL
+4. ✅ Write property tests for mathematical functions that FAIL
+5. ✅ Verify tests fail for the RIGHT REASONS (not compilation errors)
+6. ✅ Commit failing tests
+
+**PHASE 2: GREEN (Make Tests Pass)**
+
+1. ✅ Write MINIMAL implementation to make tests pass
+2. ✅ Create stubs with todo!() for unimplemented dependencies
+3. ✅ Use duck!() macro for temporary debugging
+4. ✅ Run tests frequently - aim for all green
+5. ✅ Don't worry about code quality yet - just make it work
+6. ✅ Commit working implementation
+
+**PHASE 3: REFACTOR (Improve Quality)**
+
+1. ✅ Fix ALL warnings (including test warnings)
+2. ✅ Improve code structure and readability
+3. ✅ Add proper documentation with examples
+4. ✅ Extract common patterns to commons crate
+5. ✅ Run tests after each refactor - keep them green
+6. ✅ Commit clean, refactored code
+
+---
+
+### WARNING HANDLING IN TESTS
+
+**ZERO TOLERANCE**: Test warnings are NOT ALLOWED.
