@@ -118,18 +118,20 @@ pub struct Message<T> {
 ```
 
 **Tasks**:
-- [ ] Define `MessageId` with UUID generation
-- [ ] Define `MessageHeader` with all routing fields
-- [ ] Define `MessageType` enum
-- [ ] Define `Priority` enum
-- [ ] Define generic `Message<T>` envelope
-- [ ] Add builder pattern for message construction
-- [ ] Write unit tests for message creation
+- [x] Define `MessageId` with UUID generation
+- [x] Define `MessageHeader` with all routing fields
+- [x] Define `MessageType` enum
+- [x] Define `Priority` enum
+- [x] Define generic `Message<T>` envelope
+- [x] Add builder pattern for message construction
+- [x] Write unit tests for message creation
 
 **Acceptance Criteria**:
 - ✅ All message types representable
 - ✅ Builder API is ergonomic
 - ✅ Messages are `Clone`, `Debug`, `PartialEq`
+
+**Status**: [x] Complete
 
 ---
 
