@@ -22,13 +22,22 @@ This framework bridges **strategic planning** (milestones) with **tactical execu
 
 ```
 repertoire/
-├── milestones/
-│   ├── LEVEL0.md              # Strategic objectives (highest level)
-│   ├── level1/
-│   │   ├── LEVEL1.md          # Intermediate breakdown of all milestones
-│   └── level2/
-│       ├── LEVEL2_M1.md       # Concrete steps for M1
-│       ├── LEVEL2_M2.md       # Concrete steps for M2
+├── milestones/                 # Level-based milestone organization
+│   ├── level0/                # Strategic architecture
+│   │   ├── requirements.md    # High-level goals and properties
+│   │   ├── design.md         # Main architecture diagram
+│   │   └── notes.md          # Decisions and insights
+│   ├── level1/                # Component breakdown
+│   │   ├── requirements.md    # Component responsibilities
+│   │   ├── design.md         # Component diagrams
+│   │   └── notes.md          # Implementation notes
+│   └── level2/                # Implementation details
+│       ├── level2_m1/         # M1 specific requirements
+│       │   ├── requirements.md # M1 specific requirements
+│       │   ├── design.md      # M1 implementation diagrams
+│       │   └── notes.md       # M1 decisions
+│       ├── level2_m2/         # M2 specific requirements
+│       │   └── ...
 │       └── ...
 ├── features/                   # Hierarchical feature organization
 │   ├── m1.1/                  # Features for milestone M1.1 (IPC Protocol)
@@ -53,6 +62,85 @@ repertoire/
 - **Dependency Management**: Related features are co-located
 - **Progress Tracking**: Easy to see milestone completion status
 - **Scalability**: Structure supports hundreds of features without confusion
+- **Level-Based Architecture**: Three-level milestone structure (level0, level1, level2) with dedicated files for requirements, design, and notes
+
+**New Milestone Structure:**
+- **Level 0**: Highest-level architecture, one main diagram, describes system as whole
+- **Level 1**: Breaks down Level 0, more details, multiple diagrams allowed  
+- **Level 2**: Breaks down Level 1, concrete implementation details, one diagram per sub-milestone
+
+**File Organization per Level:**
+
+### requirements.md
+**Purpose**: What this level is responsible for
+**Content**:
+- **High-level goals only** - Strategic objectives without implementation details
+- **Acceptance criteria** - Measurable conditions that define completion using Gherkin-style ATDD format
+- **Correctness properties** - Formal statements about what the system should do (characteristics or behaviors that should hold true across all valid executions)
+- **Glossary keywords** - Domain-specific terminology and definitions
+- **ATDD approach compatibility** - Requirements structured to be super applicable for Test-Driven Development
+
+**Example Structure (Gherkin-style ATDD)**:
+```markdown
+### Requirement 1: Enhanced CLI Management System
+**Goal**: Provide comprehensive command-line interface management
+
+**Acceptance Criteria (Gherkin-style)**:
+Scenario: Discover available CLI commands
+  Given the CLI tool is installed
+  When the user runs `tool --help`
+  Then a list of available commands is shown
+
+Scenario: Execute CLI command with fast response
+  Given the CLI tool is ready
+  When the user runs any valid command
+  Then the command executes within 100ms response time
+
+Scenario: Handle invalid commands gracefully
+  Given the CLI tool is running
+  When the user runs an invalid command
+  Then an error message with actionable guidance is displayed
+
+**Correctness Properties**:
+- Property 1: All valid commands must return exit code 0
+- Property 2: Invalid commands must return non-zero exit codes
+- Property 3: Help flag (--help) must be supported by all commands
+
+**Glossary**:
+- CLI: Command Line Interface
+- ATDD: Acceptance Test-Driven Development
+```
+
+### design.md  
+**Purpose**: Architecture and structure representation
+**Content**:
+- **High-level ASCII diagrams** (recommended) - Simple, readable visual representations
+- **Mermaid diagrams** (alternative) - When ASCII is insufficient
+- **Architectural patterns** - How components interact and relate
+- **Keep it simple and readable** - Avoid over-complexity
+
+**Guidelines**:
+- Use ASCII art for maximum compatibility and simplicity
+- One main diagram per level (Level 0), multiple allowed for Level 1/2
+- Focus on relationships and data flow, not implementation details
+
+### notes.md
+**Purpose**: Incremental decision and insight tracking  
+**Content**:
+- **Empty by default** - No pre-populated content
+- **Filled incrementally** - Added as decisions, issues, or insights emerge during development
+- **Decision log** - Why certain choices were made
+- **Issue tracking** - Problems encountered and their resolutions
+- **Insights** - Lessons learned and important discoveries
+
+### LEVEL.md (Legacy Support)
+**Purpose**: Backward compatibility with existing milestone files
+**Content**:
+- **LEVEL0.md** - Contains all strategic milestones (M1, M2, M3, etc.)
+- **LEVEL1_M{X}.md** - Contains tactical breakdown for specific milestone M{X}
+- **LEVEL2_M{X}_S{Y}.md** - Contains concrete implementation steps for milestone M{X}, section S{Y}
+
+**Migration Note**: These files are maintained for backward compatibility but new projects should use the level-based directory structure (level0/, level1/, level2/) with requirements.md, design.md, and notes.md files.
 
 ---
 
@@ -97,11 +185,16 @@ All milestones and features use a stateful checkbox system to track progress:
 
 ### Level 0: Strategic Vision
 
-**File:** `LEVEL0.md`
+**Files:** `level0/requirements.md`, `level0/design.md`, `level0/notes.md`
 
 **Purpose:** Define the "what" and "why" at the highest level.
 
-**Format:**
+**File Structure:**
+- **requirements.md**: High-level goals and properties, acceptance criteria, correctness properties, glossary keywords
+- **design.md**: Main architecture diagram describing system as whole
+- **notes.md**: Strategic decisions and insights (filled incrementally)
+
+**Format in requirements.md:**
 
 ```markdown
 ## 🚧 M{NUMBER}: <NAME>
@@ -159,11 +252,16 @@ lifecycle management, and marketplace integration.
 
 ### Level 1: Tactical Breakdown
 
-**Files:** `LEVEL1/LEVEL1_M{X}.md`
+**Files:** `level1/requirements.md`, `level1/design.md`, `level1/notes.md`
 
-**Purpose:** Break strategic goals into implementable phases.
+**Purpose:** Break strategic goals into implementable phases with component responsibilities.
 
-**Format:**
+**File Structure:**
+- **requirements.md**: Component responsibilities and breakdown of Level 0 milestones
+- **design.md**: Component diagrams (multiple diagrams allowed)
+- **notes.md**: Implementation notes and decisions (filled incrementally)
+
+**Format in requirements.md:**
 
 ```markdown
 # Level 1 Breakdown: M{X} - <NAME>
@@ -217,11 +315,16 @@ lifecycle management, and marketplace integration.
 
 ### Level 2: Concrete Implementation Steps
 
-**Files:** `LEVEL2/LEVEL2_M{X}_S{Y}.md`
+**Files:** `level2/level2_m{N}/requirements.md`, `level2/level2_m{N}/design.md`, `level2/level2_m{N}/notes.md`
 
 **Purpose:** The lowest planning level before features. Each step here becomes one or more features.
 
-**Example:**
+**File Structure:**
+- **requirements.md**: M{N} specific requirements and concrete implementation steps
+- **design.md**: M{N} implementation diagrams (one diagram per sub-milestone)
+- **notes.md**: M{N} specific decisions and insights (filled incrementally)
+
+**Example in requirements.md:**
 
 ```markdown
 # Level 2 Steps: M1_S1 - Sandboxed Execution Environment
@@ -991,13 +1094,13 @@ class ImportantClass:
 ### Phase 1: Strategic Planning (Top-Down)
 
 ```
-1. Define LEVEL0.md milestones with checkboxes
+1. Define level0/requirements.md milestones with checkboxes
    * [ ] for each deliverable/metric
    ↓
-2. Break each milestone into LEVEL1/{milestone}.md sections
+2. Break each milestone into level1/requirements.md sections
    * [ ] for each step/output
    ↓
-3. Break each section into LEVEL2/{milestone}_{section}.md steps
+3. Break each section into level2/level2_m{N}/requirements.md steps
    * [ ] for each sub-task
    ↓
 4. Validate that Level 2 steps are implementable
@@ -1015,6 +1118,7 @@ class ImportantClass:
 
 ```
 6. Start at Level 2 (lowest planning level)
+   - Read requirements.md from level2/level2_m{N}/ directories
    ↓
 7. For each Level 2 step:
    - Identify atomic features
@@ -1224,9 +1328,9 @@ All complete? → M1 updated → * [ 1 ]
 
 ### File Locations:
 
-- `LEVEL0.md` → Contains all `M{N}`
-- `LEVEL1/M{N}.md` → Contains all `M{N.X}`
-- `LEVEL2/M{N.X}.md` → Contains all `M{N.X.Y}`
+- `level0/requirements.md` → Contains all `M{N}` strategic milestones
+- `level1/requirements.md` → Contains all `M{N.X}` tactical sections  
+- `level2/level2_m{N}/requirements.md` → Contains all `M{N.X.Y}` implementation steps
 
 ### Status Checkboxes:
 

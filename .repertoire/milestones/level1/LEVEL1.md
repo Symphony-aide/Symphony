@@ -82,7 +82,7 @@ apps/backend/crates/symphony-core-ports/
 │   └── lib.rs
 ```
 
-### M1.2: Two-Binary Architecture Implementation `(NEW)` (3 weeks)
+### M1.2: Two-Binary Architecture Implementation (3 weeks)
 
 **Goal**: Implement Symphony and XI-editor as separate executable binaries
 
@@ -90,33 +90,34 @@ apps/backend/crates/symphony-core-ports/
 - Symphony binary with Tauri frontend integration
 - XI-editor binary with JSON-RPC server
 - Process lifecycle management and health monitoring
-- Basic inter-process communication setup
-- Synchronization framework between binaries
+- Inter-process communication setup via JSON-RPC
+- Binary synchronization framework for state consistency
 
-**Binary Structure Implementation**: `(NEW)`
+**Binary Structure Implementation**:
 ```
 Symphony Binary Structure:
-src-tauri/
-├── Cargo.toml
-└── src/
-    ├── symphonyaide.rs    # Main AIDE orchestration
-    ├── xi-editor.rs       # XI-editor process management  
-    ├── process.rs         # Inter-process communication
-    └── main.rs            # Tauri application entry
+apps/backend/src/
+├── main.rs              # Symphony AIDE orchestration entry
+├── tauri_integration.rs # Tauri frontend integration  
+├── xi_client.rs         # JSON-RPC client to XI-editor
+├── process_manager.rs   # XI-editor process lifecycle
+└── health_monitor.rs    # Process health monitoring
 
 XI-editor Binary Structure:
-apps/backend/xi-editor-standalone/
+apps/backend/xi-standalone/
 ├── Cargo.toml
 └── src/
-    ├── jsonrpc.rs         # JSON-RPC server implementation
-    ├── xicore.rs          # XI-editor core integration
-    └── main.rs            # Standalone XI-editor entry
+    ├── main.rs          # Standalone XI-editor entry
+    ├── jsonrpc_server.rs # JSON-RPC server implementation
+    ├── xi_integration.rs # XI-editor core integration
+    └── buffer_manager.rs # Buffer state management
 ```
 
-**Synchronization Design**: `(NEW)`
+**Synchronization Design**:
 - **State Sync Protocol**: Bidirectional event streaming between binaries
 - **Health Monitoring**: Process heartbeats and automatic restart capability
 - **Buffer Management**: Coordinated text buffer state across process boundaries
+- **Failure Recovery**: Graceful handling of process crashes with state preservation
 
 ### M1.3: IPC Protocol & Serialization (3 weeks)
 
