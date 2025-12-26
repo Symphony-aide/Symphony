@@ -1,0 +1,543 @@
+SYMPHONY IDE — AI-FIRST DEVELOPMENT ENVIRONMENT
+Complete Project Context for LLM Integration
+
+=== CORE IDENTITY ===
+Symphony is an AI-First Development Environment (AIDE) implementing Agent-Driven Development (ADD). It inverts traditional software development: instead of humans orchestrating tools, intelligent agents drive the process while humans provide vision and guidance. Philosophy: "Minimal Core, Maximum Potential."
+
+=== PARADIGM DEFINITIONS ===
+
+AGENT-DRIVEN DEVELOPMENT (ADD):
+
+- Autonomous AI agents collaborate as specialized team members
+- Humans act as Conductors providing vision, creativity, and strategic direction
+- AI agents handle implementation, testing, integration, optimization
+- All decisions documented through structured artifacts
+- Workflow: Intent Capture → Vision Refinement → Intelligent Breakdown → Architecture Design → Work Coordination → Logic Development → Implementation Sprint → Final Assembly
+
+AI-FIRST DEVELOPMENT ENVIRONMENT (AIDE):
+
+- AI is the architectural foundation, not an afterthought
+- Every component designed for intelligent interaction
+- Environment evolves and learns with each project
+- Three agent types: Planning Agents (architects), Generation Agents (coders), Review Agents (quality), Orchestration Agents (coordinators)
+- Artifacts serve as structured communication language between agents
+
+=== MINIMAL CORE COMPONENTS ===
+Symphony ships with exactly 6 core components:
+
+1. Text Editor: Xi-Editor based, Rust-powered, CRDT-based undo, Rope data structure, multi-cursor, regex find/replace
+2. File Tree Explorer: Project navigation, file operations
+3. Syntax Highlighting Engine: TextMate grammar support, Syntect engine, 100+ languages
+4. Settings System: Configuration persistence, extension settings integration
+5. Native Terminal: Integrated shell, process management
+6. Extension System: Loading, sandboxing, API provisioning, inter-extension communication
+
+All other features (debugging, language servers, Git, AI models) come from extensions.
+
+=== THE CONDUCTOR ===
+Role: Microkernel maestro orchestrating all extensions
+Architecture: Python-based Reinforcement Learning model
+Training: Function Quest Game (FQG) — logic puzzles where models = functions, outputs = return values, orchestration = function call sequences
+Core Functions:
+
+- Model Lifecycle Management: start, stop, monitor all models
+- Orchestration Logic: determines what, when, why
+- State Tracking: knows where everything is in development process
+- Communication Protocols: enables inter-model communication
+
+The Conductor uses microkernel-like behavior:
+
+- Minimal kernel = orchestration + RL logic only
+- All functionality runs as extensions
+- IPC communication via defined protocols
+- Hot-swappable extensions at runtime
+
+=== DUAL ENSEMBLE ARCHITECTURE (DEA) ===
+
+THE PIT (Internal Ensemble / Infrastructure as Extensions):
+Five privileged Rust extensions always registered as Players:
+
+1. POOL MANAGER:
+    - AI model lifecycle management (50μs allocation)
+    - Predictive loading, health monitoring
+    - Cost awareness, resource optimization
+    - States: Idle → Loading → Warm → Active → Cooldown → Idle
+2. DAG TRACKER:
+    - Workflow dependency graphs (100,000+ updates/sec)
+    - Dynamic routing, critical path detection
+    - Recovery planning, pattern learning
+    - Dependencies: Hard, Soft, Optional, Parallel
+3. ARTIFACT STORE:
+    - All workflow data storage (microsecond operations)
+    - Quality scoring: structure, semantics, utility
+    - Smart versioning, relationship mapping
+    - Deduplication, compression, caching
+    - AES-256 encryption, audit trails
+4. ARBITRATION ENGINE:
+    - Resource conflict resolution (10,000+ decisions/sec)
+    - Multi-dimensional analysis: business value, user impact, cost efficiency, learning value
+    - Strategies: Collaborative, Prioritization, Round Robin, Specialization
+    - Fairness enforcement, decision rationale logging
+5. STALE MANAGER:
+    - Training data curation (sub-millisecond cleanup)
+    - Retention policies: 1-month local → cloud archive → deletion (last resort)
+    - Training value assessment prioritizes model improvement
+    - Storage tier management: hot (local), warm (recent), cold (cloud)
+
+THE GRAND STAGE (External Ensemble / User-Faced Extensions):
+
+Three extension types:
+
+1. INSTRUMENTS: AI/ML models as extensions
+    - Unified interface with predictable schemas
+    - Configurable intelligence via GUI panels
+    - Maestro Mode: Conductor auto-selects optimal models
+    - Manual Mode: user controls configuration
+    - Examples: GPT, Claude, local LLMs, custom models
+2. OPERATORS: Workflow utilities
+    - Data preparation, file conversion, decision logic
+    - Deterministic, lightweight, free (no credits consumed)
+    - Composable: chain, nest, parallelize
+3. ADDONS (MOTIFS): UX enhancements
+    - Custom dashboards, specialized editors
+    - Developer tools, UI modifications
+    - Integrate with Instruments and Operators
+
+=== PLAYER FRAMEWORK ===
+
+EXTENSION vs PLAYER:
+
+- Extension: Installable independently, called manually, no Conductor involvement
+- Player: Registered with Conductor, actively orchestrated, commits to governance policies
+
+Player Registration Requirements:
+
+1. Capability Declaration: manifest, I/O contracts, resource commitment, performance profile
+2. Policy Compliance:
+    - Security: network isolation, file access restrictions, process containment
+    - Quality: error handling, state management, semantic stability
+3. Behavioral Standards: non-blocking, proper error reporting, resource cleanup, timeout handling
+
+Player Benefits:
+
+- Intelligent selection by Conductor for optimal task fit
+- Adaptive fallback when performance degrades
+- Elevated marketplace visibility
+- Performance optimization and monitoring
+
+Player States: PENDING → VALIDATING → VALIDATED → ACTIVE → MONITORING
+
+=== PROCESS ARCHITECTURE ===
+
+THREE-TIER PROCESS MODEL:
+
+TIER 1: IN-PROCESS (The Pit)
+
+- Shared memory space, zero serialization
+- Latency: 10-100 nanoseconds per call
+- Throughput: 1,000,000+ ops/sec
+- Python-Rust integration via PyO3 FFI
+- Conductor calls Pit extensions as native Python functions
+- Shared fate: crashes propagate to host process
+
+TIER 2: IPC (User-Facing Extensions)
+
+- Process isolation, structured serialization
+- Latency: 0.1-0.5 milliseconds per call
+- Throughput: 10,000-100,000 ops/sec
+- IPC Bus: Rust-based communication backbone
+- Transports: Unix sockets, named pipes, shared memory
+- Crash isolation: extension failures don't affect Conductor
+
+OUT-OF-PROCESS FOUR-LAYER ARCHITECTURE:
+
+1. Conductor Core (Python RL Model)
+2. IPC Bus (Rust Communication Backbone)
+3. Extension Processes (Isolated Execution)
+4. User Interface (React + Shadcn)
+
+Performance Characteristics:
+
+- FFI Call Overhead: ~0.01ms
+- FFI Throughput: 50,000+ calls/sec
+- UI Event → Extension: 0.2-0.5ms
+- Extension → IPC Bus: 0.1-0.3ms
+- Conductor Decision: 0.5-2ms
+
+=== MELODY SYSTEM ===
+
+MELODY: User-created workflow — visual, composable sequence of extensions
+
+Components:
+
+1. Nodes: Extension instances (Instruments, Operators, Addons)
+2. Connections: Data pathways (Sequential, Parallel, Conditional, Looping)
+3. Triggers: Start events (Manual, Event-Based, Scheduled, API, Chained)
+4. Configuration: Parameters, error handling, resource limits, permissions
+
+HARMONY BOARD: Visual workflow design interface
+
+- Canvas: Infinite drag-and-drop workspace
+- Palette: Categorized extension library
+- Inspector: Node configuration panel
+- Preview Mode: Simulate with mock data
+- Debug Console: Step-through execution
+- Versioning: Git-like history
+
+Task Assignment Structure (Conductor-generated):
+
+- Objective: Action verb
+- Inputs: References to prior outputs
+- Parameters: Model-specific settings
+- Outputs: Expected format
+- Conditions: Preconditions for activation
+
+Error Handling Strategies:
+
+- Retry: Same model, different parameters
+- Fallback: Switch to backup model
+- Skip: Bypass non-essential steps
+- Compensate: Run corrective node
+- Halt & Notify: Pause and escalate
+
+Artifact Categories:
+
+- Inputs: Trigger payload, configs
+- Intermediates: Per-node outputs (versioned)
+- Outputs: Final deliverables
+- Metadata: Timelines, costs, provenance
+
+POLYPHONY: Melody marketplace with public/private tiers
+
+=== ORCHESTRA KIT ===
+
+Complete extension ecosystem framework:
+
+- Manifest System: Extension "contract" with Symphony
+- Lifecycle Management: Install → Dependency Resolution → Permission Review → Sandbox Setup → Configuration → Registration → Activation
+- Inter-Extension Communication: Safe, validated, rate-limited channels
+- Marketplace: Free, freemium, pay-per-use, subscription, enterprise licensing
+
+Manifest Contents:
+
+- Basic Identity
+- Capabilities Declaration
+- Permission Requests
+- Runtime Configuration
+- Dependencies
+
+Security Model:
+
+- Sandboxed execution with granular permissions
+- File, network, process isolation
+- Automated scanning + human review
+- Dependency analysis, vulnerability assessment
+
+=== VIRTUALNODE BRIDGE ===
+
+Bridges Rust backend with React/Shadcn frontend via intermediate representation:
+
+VirtualNode Structure:
+
+- id: String
+- component_type: ComponentType
+- props: HashMap<String, PropValue>
+- children: Vec<VirtualNode>
+- event_handlers: Vec<EventHandler>
+
+Benefits:
+
+- Declarative UI description from Rust
+- Type-safe serialization across boundaries
+- Event-driven communication (React events → Rust enums)
+- Immutable data flow, efficient change detection
+
+=== XI-EDITOR INTEGRATION ===
+
+Symphony's text editing foundation built on Xi-Editor (Apache 2.0):
+
+Key Technologies:
+
+- Rope Data Structure: B-tree of ~1KB text chunks, O(log n) operations
+- CRDT-Based Undo: Complete revision graph, branching history
+- Syntect: Syntax highlighting engine, Sublime Text compatibility
+- Process-Based Plugins: Crash-proof, sandboxed execution
+
+Performance Targets:
+
+- 100MB file: <2 seconds open
+- 1000+ multi-cursors: instant response
+- Replace all in 10MB file: <1 second
+- 16ms frame budget (60 FPS)
+
+Features:
+
+- Full Unicode support
+- Unlimited multi-cursor editing
+- Regex find/replace
+- Smart indentation
+- Line ending handling (LF, CRLF, CR)
+- File watching, autosave
+- Theme support (all Sublime Text themes)
+
+=== KERNEL ARCHITECTURE OPTIONS ===
+
+Symphony evaluates 5 patterns (Microkernel recommended):
+
+1. MICROKERNEL (Recommended):
+    - Minimal core, maximum modularity
+    - IPC-based communication
+    - Hot-swappable components
+    - Exceptional reliability, easy maintenance
+2. MONOLITHIC:
+    - All components in kernel space
+    - Direct function calls
+    - Maximum performance
+    - Single failure domain
+3. HYBRID:
+    - Performance-critical in kernel
+    - Security-sensitive in user space
+    - Balanced approach
+4. EXOKERNEL:
+    - Minimal kernel duties (resource allocation only)
+    - Direct component interaction
+    - Ultimate customization
+    - Research-oriented
+5. NANOKERNEL:
+    - Capability-based security
+    - User-space coordination
+    - Fine-grained permissions
+
+Symphony's Conductor adopts Microkernel-like BEHAVIOR (not backend implementation):
+
+- Conductor = minimal orchestration + RL logic only
+- Extensions do the real work
+- Message passing protocols
+- Dynamic load/unload
+
+=== ORCHESTRATION SYSTEM ===
+
+Two Orchestration Modes:
+
+1. AUTOMATIC (Conductor Intelligence):
+    - Extension lifecycle management
+    - Resource allocation
+    - Failure recovery
+    - Performance optimization
+2. MANUAL (Melody Creation):
+    - Visual workflow design
+    - Extension configuration
+    - Task assignment
+    - Flow control
+
+Activation Decision Process:
+
+- Analyze Context → Check Dependencies → Evaluate Resources → Review Quality Gates → Activate/Queue → Monitor → Handle Success/Failure
+
+Adaptive Failure Handling:
+
+1. Simple Retry: Same model, different parameters
+2. Fallback Models: Switch to backup
+3. Reverse Reconstruction: Generate missing outputs from later results
+4. Graceful Skip: Continue without failed component
+
+Flow Types:
+
+- Sequential: A → B → C → D
+- Branching: Conditional paths based on content/quality/preferences
+- Reverse Reconstruction: Missing A ← Generate from B ← C
+- Parallel: Concurrent independent operations
+
+Performance Optimization:
+
+- Lazy Loading: Extensions load on demand
+- Predictive Preloading: Pool Manager anticipates needs
+- Parallel Optimization: Auto-identifies parallelizable steps
+- Cost Optimization: Appropriate model tier selection
+
+=== TECHNOLOGY STACK ===
+
+Core:
+
+- Conductor: Python 3.11+, PyTorch/TensorFlow (RL), Asyncio
+- The Pit: Rust (memory safety, performance)
+- IPC Bus: Hardcoded Rust crate
+- UI: React 18+, TypeScript, Shadcn UI, Zustand
+- Desktop: Tauri
+- Text Editor: Xi-Editor (Rust, Apache 2.0)
+
+Extension Development:
+
+- Languages: Python, Node.js/TypeScript, Rust, WebAssembly
+- SDKs: Python SDK (AI/data), Node/Web SDK (UI), WASM Runtime (security)
+- CLI: symphony-ext create/test/publish
+
+Communication:
+
+- Python ↔ Rust: PyO3 FFI
+- Conductor ↔ Extensions: IPC Bus (Unix sockets, named pipes, shared memory)
+- Extensions ↔ UI: VirtualNode (JSON serialization)
+
+=== BUSINESS MODEL ===
+
+Core: Proprietary (ensures quality, security, stability)
+Extensions: Full creator ownership
+
+- Choose: free, freemium, pay-per-use, subscription, enterprise
+- Symphony handles: payments, usage tracking, analytics
+- Developer revenue sharing
+
+Marketplace Features:
+
+- Category browsing, search with filters
+- One-click installation
+- Verified publishers, security badges
+- Reviews, ratings, compatibility info
+
+=== WAVE POSITIONING ===
+
+Symphony represents Wave 2 of AI development evolution:
+
+- Wave 1: Basic rule-based automation
+- Wave 1.5: Current AI assistants (Cursor, Windsurf) — smarter autocomplete
+- Wave 2: TRUE AI PARTNERSHIP — Symphony: agents understand and orchestrate entire workflows
+- Wave 3: Future autonomous systems handling complete projects
+
+=== KEY TERMINOLOGY ===
+
+ADD: Agent-Driven Development
+AIDE: AI-First Development Environment
+Conductor: Microkernel orchestrator (Python RL model)
+The Pit: Internal Ensemble (5 Rust infrastructure extensions)
+The Grand Stage: External Ensemble (user-facing extensions)
+Instruments: AI/ML model extensions
+Operators: Workflow utility extensions
+Addons/Motifs: UX enhancement extensions
+Player: Extension registered for Conductor orchestration
+Melody: User-created visual workflow
+Harmony Board: Visual workflow design interface
+Polyphony: Melody marketplace
+Orchestra Kit: Complete extension ecosystem framework
+VirtualNode: Rust-React bridge abstraction
+FQG: Function Quest Game (Conductor training)
+IPC Bus: Inter-process communication backbone
+DEA: Dual Ensemble Architecture
+
+=== INVARIANTS ===
+
+1. Conductor operates as microkernel: minimal core, all functionality as extensions
+2. The Pit runs in-process for <100μs latency; user extensions run out-of-process for isolation
+3. All AI models are Instruments (extensions), never hardcoded
+4. All inter-component communication is artifact-based and logged
+5. Extensions declare all permissions upfront; sandboxing is mandatory
+6. Players commit to governance policies; non-Players work independently
+7. Melodies are visual, composable, shareable workflow definitions
+8. Core is proprietary; extensions are creator-owned
+9. Xi-Editor provides text editing foundation under Apache 2.0
+10. Symphony targets Wave 2: true AI partnership, not just assistance
+
+=== PERFORMANCE TARGETS ===
+
+The Pit (In-Process):
+
+- Model Allocation: <50μs
+- Workflow State Update: <25μs
+- Artifact Metadata Store: <15μs
+- Conflict Resolution: <75μs
+- Memory Reclamation: <10μs
+
+User Extensions (IPC):
+
+- UI Event → Extension: 0.2-0.5ms
+- Extension → IPC Bus: 0.1-0.3ms
+- IPC Bus → Conductor: 0.01-0.05ms
+- Conductor Decision: 0.5-2ms
+- Virtual DOM Update: 1-5ms
+
+System:
+
+- IDE Startup: <1 second (with 3 extensions)
+- 100MB file open: <2 seconds
+- Multi-cursor (1000+): instant response
+- UI: 60fps maintained during background processing
+
+=== EXECUTION MODEL SUMMARY ===
+
+IN-PROCESS (The Pit):
+
+- Performance: 5000x faster than IPC
+- Use: Infrastructure operations requiring nanosecond response
+- Trade-off: Shared fate (crash propagation)
+- Integration: PyO3 FFI, direct function calls, shared memory
+
+OUT-OF-PROCESS (User Extensions):
+
+- Safety: Crash isolation, memory protection
+- Use: User-facing features, memory-intensive operations
+- Trade-off: Communication overhead (0.1-0.5ms)
+- Integration: IPC Bus, Unix sockets, structured serialization
+
+=== WORKFLOW EXECUTION FLOW ===
+
+1. User submits request via UI
+2. Request reaches Conductor through IPC Bus
+3. Conductor RL model analyzes and plans workflow
+4. The Pit allocates resources (Pool Manager, in-process)
+5. DAG Tracker maps dependencies (in-process)
+6. Conductor dispatches to appropriate extensions (IPC)
+7. Extensions execute, return results through IPC Bus
+8. Artifacts stored via Artifact Store (in-process)
+9. Progress updates sent to UI via VirtualNode
+10. Completion triggers notifications, cleanup
+
+=== EXTENSION LIFECYCLE (CHAMBERING FLOW) ===
+
+1. REQUESTING: Conductor signals Orchestra Kit
+2. REGISTRATION: Extension declares capabilities/requirements
+3. ACTIVATION: Conductor activates with context/parameters
+4. USAGE: Conductor invokes for task; DAG Tracker monitors
+5. RETURN & UNLOADING: Results returned, Stale Manager cleans up
+6. STATE UPDATE: Global state updated, metrics fed to RL model
+
+=== SECURITY GUARANTEES ===
+
+- Extensions run in process-isolated sandboxes
+- Permissions explicitly declared and user-approved
+- Network access: only approved endpoints
+- File access: only declared paths
+- Resource limits enforced (memory, CPU)
+- Automated scanning: vulnerabilities, dependencies, data exfiltration
+- Human review for popular extensions
+- AES-256 encryption at rest
+- Full audit trails
+
+=== RELIABILITY MECHANISMS ===
+
+Crash Recovery:
+
+- State Persistence: Regular checkpointing
+- Write-Ahead Logging: Operations logged before execution
+- Atomic Commits: Complete or not at all
+- Auto-restart: Based on policy (Immediate, Backoff, Manual)
+
+Graceful Degradation:
+
+- Critical path preservation
+- Resource reallocation
+- Progressive recovery
+- State reconstruction from logs
+
+=== DESIGN PRINCIPLES ===
+
+1. Minimal Core: Only essential components in core; everything else = extensions
+2. Extension-First: Features compete and improve through community innovation
+3. Generic Primitives: No hardcoded protocols; flexible building blocks
+4. AI-Centric: Every component designed for intelligent interaction
+5. Transparent: All decisions documented through artifacts
+6. Secure: Sandboxing, permissions, isolation by default
+7. Performant: Strategic placement — in-process for speed, out-of-process for safety
+8. Composable: Extensions combine to create emergent capabilities
+9. Learnable: System improves from patterns and feedback
+10. Open Ecosystem: Creator ownership, multiple business models
+
+=== END OF CONTEXT ===

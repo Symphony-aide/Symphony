@@ -13,11 +13,16 @@ Each sub-milestone is designed to be completable in 2-4 weeks.
 
 ```
 M1: Core Infrastructure (3-4 months)
-├── M1.1: IPC Protocol & Serialization (3 weeks)
-├── M1.2: Transport Layer (3 weeks)
-├── M1.3: Message Bus Core (3 weeks)
-├── M1.4: Python-Rust Bridge (3 weeks)
-└── M1.5: Extension SDK Foundation (3 weeks)
+├── M1.1: Environment Setup & Port Definitions (2 weeks)
+├── M1.2: IPC Protocol & Serialization (3 weeks)
+├── M1.3: Transport Layer (3 weeks)
+├── M1.4: Message Bus Core (3 weeks)
+├── M1.5: Python-Rust Bridge (3 weeks)
+├── M1.6: Extension SDK Foundation (3 weeks)
+├── M1.7: Concrete Adapters Implementation (4 weeks) [NEW]
+├── M1.8: Domain Core Orchestration (3 weeks) [NEW]
+├── M1.9: Tauri Integration Layer (3 weeks) [NEW]
+└── M1.10: Actor Layer Implementation (3 weeks) [NEW]
 
 M5: Visual Orchestration Backend (2-3 months)
 ├── M5.1: Workflow Data Model (2 weeks)
@@ -53,7 +58,67 @@ M3: The Pit - Infrastructure Extensions (3-4 months)
 
 ---
 
-### M1.1: IPC Protocol & Serialization (3 weeks)
+### M1.1: Environment Setup & Port Definitions (2 weeks)
+
+**Goal**: Establish Hexagonal Architecture foundation with port definitions
+
+**Deliverables**:
+- Core port trait definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort)
+- Development environment setup for H2A2 architecture
+- Domain types and error definitions
+- Mock adapters for testing
+- Architecture documentation
+- **Two-Binary Integration**: `(NEW)` Port definitions adapted for inter-process communication
+
+**Crates to Create**:
+```
+apps/backend/crates/symphony-core-ports/
+├── src/
+│   ├── ports.rs         # Port trait definitions
+│   ├── types.rs         # Domain types
+│   ├── errors.rs        # Error types
+│   ├── mocks.rs         # Mock implementations
+│   ├── binary.rs        # Two-binary specific adaptations (NEW)
+│   └── lib.rs
+```
+
+### M1.2: Two-Binary Architecture Implementation `(NEW)` (3 weeks)
+
+**Goal**: Implement Symphony and XI-editor as separate executable binaries
+
+**Deliverables**:
+- Symphony binary with Tauri frontend integration
+- XI-editor binary with JSON-RPC server
+- Process lifecycle management and health monitoring
+- Basic inter-process communication setup
+- Synchronization framework between binaries
+
+**Binary Structure Implementation**: `(NEW)`
+```
+Symphony Binary Structure:
+src-tauri/
+├── Cargo.toml
+└── src/
+    ├── symphonyaide.rs    # Main AIDE orchestration
+    ├── xi-editor.rs       # XI-editor process management  
+    ├── process.rs         # Inter-process communication
+    └── main.rs            # Tauri application entry
+
+XI-editor Binary Structure:
+apps/backend/xi-editor-standalone/
+├── Cargo.toml
+└── src/
+    ├── jsonrpc.rs         # JSON-RPC server implementation
+    ├── xicore.rs          # XI-editor core integration
+    └── main.rs            # Standalone XI-editor entry
+```
+
+**Synchronization Design**: `(NEW)`
+- **State Sync Protocol**: Bidirectional event streaming between binaries
+- **Health Monitoring**: Process heartbeats and automatic restart capability
+- **Buffer Management**: Coordinated text buffer state across process boundaries
+
+### M1.3: IPC Protocol & Serialization (3 weeks)
 
 **Goal**: Define message formats and serialization for all IPC communication
 
@@ -62,6 +127,7 @@ M3: The Pit - Infrastructure Extensions (3-4 months)
 - Binary serialization using MessagePack/Bincode
 - Schema validation system
 - Message type registry
+- **JSON-RPC Implementation**: `(NEW)` Specific protocol for Symphony ↔ XI-editor communication
 
 **Crate**: `symphony-ipc-protocol`
 ```
@@ -72,27 +138,31 @@ apps/backend/crates/symphony-ipc-protocol/
 │   ├── schema.rs         # Schema definitions
 │   ├── serialize.rs      # MessagePack/Bincode impl
 │   ├── validate.rs       # Schema validation
-│   └── registry.rs       # Message type registry
-└── Cargo.toml
+│   ├── registry.rs       # Message type registry
+│   ├── jsonrpc.rs        # JSON-RPC for XI-editor (NEW)
+│   └── xi_protocol.rs    # XI-editor specific messages (NEW)
 ```
 
 **Sub-tasks**:
-- [ ] M1.1.1: Define message envelope structure (MessageHeader, MessagePayload)
-- [ ] M1.1.2: Implement MessagePack serialization with serde
-- [ ] M1.1.3: Implement Bincode serialization as alternative
-- [ ] M1.1.4: Create schema validation framework
-- [ ] M1.1.5: Build message type registry with versioning
-- [ ] M1.1.6: Add pretty-printer for debugging
-- [ ] M1.1.7: Write property tests for round-trip serialization
+- [ ] M1.2.1: Define message envelope structure (MessageHeader, MessagePayload)
+- [ ] M1.2.2: Implement MessagePack serialization with serde
+- [ ] M1.2.3: Implement Bincode serialization as alternative
+- [ ] M1.2.4: Create schema validation framework
+- [ ] M1.2.5: Build message type registry with versioning
+- [ ] M1.2.6: **Implement JSON-RPC protocol for XI-editor communication** `(NEW)`
+- [ ] M1.2.7: **Define XI-editor specific message types (buffer ops, file ops)** `(NEW)`
+- [ ] M1.2.8: Add pretty-printer for debugging
+- [ ] M1.2.9: Write property tests for round-trip serialization
 
 **Success Criteria**:
 - ✅ Messages serialize/deserialize in <0.01ms
 - ✅ Schema validation catches malformed messages
 - ✅ Round-trip property tests pass for all message types
+- ✅ **JSON-RPC latency <1ms for XI-editor operations** `(NEW)`
 
 ---
 
-### M1.2: Transport Layer (3 weeks)
+### M1.4: Transport Layer (3 weeks)
 
 **Goal**: Platform-specific transport implementations
 
@@ -101,6 +171,7 @@ apps/backend/crates/symphony-ipc-protocol/
 - Named pipe transport (Windows)
 - Shared memory transport (high-frequency)
 - Transport abstraction trait
+- **Stdio Transport**: `(NEW)` For Symphony ↔ XI-editor JSON-RPC communication
 
 **Crate**: `symphony-ipc-transport`
 ```
@@ -111,29 +182,32 @@ apps/backend/crates/symphony-ipc-transport/
 │   ├── unix_socket.rs    # Unix domain sockets
 │   ├── named_pipe.rs     # Windows named pipes
 │   ├── shared_memory.rs  # Shared memory for hot path
+│   ├── stdio.rs          # Stdio transport for XI-editor (NEW)
 │   └── config.rs         # Transport configuration
 └── Cargo.toml
 ```
 
 **Sub-tasks**:
-- [ ] M1.2.1: Define Transport trait (connect, send, receive, close)
-- [ ] M1.2.2: Implement Unix domain socket transport
-- [ ] M1.2.3: Implement Windows named pipe transport
-- [ ] M1.2.4: Implement shared memory transport for high-frequency data
-- [ ] M1.2.5: Add connection pooling and reuse
-- [ ] M1.2.6: Implement automatic reconnection with backoff
-- [ ] M1.2.7: Write integration tests for each transport
+- [ ] M1.3.1: Define Transport trait (connect, send, receive, close)
+- [ ] M1.3.2: Implement Unix domain socket transport
+- [ ] M1.3.3: Implement Windows named pipe transport
+- [ ] M1.3.4: Implement shared memory transport for high-frequency data
+- [ ] M1.3.5: **Implement stdio transport for XI-editor process communication** `(NEW)`
+- [ ] M1.3.6: Add connection pooling and reuse
+- [ ] M1.3.7: Implement automatic reconnection with backoff
+- [ ] M1.3.8: Write integration tests for each transport
 
 **Success Criteria**:
 - ✅ Unix socket latency <0.1ms
 - ✅ Named pipe latency <0.2ms
 - ✅ Shared memory latency <0.01ms
+- ✅ **Stdio transport latency <1ms for XI-editor operations** `(NEW)`
 - ✅ Automatic reconnection works within 5 attempts
 
 
 ---
 
-### M1.3: Message Bus Core (3 weeks)
+### M1.5: Message Bus Core (3 weeks)
 
 **Goal**: Central message routing and management system
 
@@ -143,6 +217,7 @@ apps/backend/crates/symphony-ipc-transport/
 - Request/response correlation
 - Pub/sub for broadcast messages
 - Health monitoring
+- **Binary Coordination**: `(NEW)` Specialized routing for Symphony ↔ XI-editor communication
 
 **Crate**: `symphony-ipc-bus`
 ```
@@ -154,29 +229,34 @@ apps/backend/crates/symphony-ipc-bus/
 │   ├── endpoint.rs       # Endpoint management
 │   ├── correlation.rs    # Request/response tracking
 │   ├── pubsub.rs         # Publish/subscribe system
-│   └── health.rs         # Health monitoring
+│   ├── health.rs         # Health monitoring
+│   ├── binary_sync.rs    # Binary synchronization (NEW)
+│   └── xi_bridge.rs      # XI-editor bridge (NEW)
 └── Cargo.toml
 ```
 
 **Sub-tasks**:
-- [ ] M1.3.1: Implement core bus with async message handling
-- [ ] M1.3.2: Build routing engine with pattern matching
-- [ ] M1.3.3: Create endpoint registration system
-- [ ] M1.3.4: Implement request/response correlation
-- [ ] M1.3.5: Add pub/sub for system-wide events
-- [ ] M1.3.6: Build health monitoring and metrics
-- [ ] M1.3.7: Add message batching for throughput
-- [ ] M1.3.8: Write load tests for 10,000+ msg/sec
+- [ ] M1.4.1: Implement core bus with async message handling
+- [ ] M1.4.2: Build routing engine with pattern matching
+- [ ] M1.4.3: Create endpoint registration system
+- [ ] M1.4.4: Implement request/response correlation
+- [ ] M1.4.5: Add pub/sub for system-wide events
+- [ ] M1.4.6: Build health monitoring and metrics
+- [ ] M1.4.7: **Implement binary synchronization coordinator** `(NEW)`
+- [ ] M1.4.8: **Create XI-editor bridge for seamless communication** `(NEW)`
+- [ ] M1.4.9: Add message batching for throughput
+- [ ] M1.4.10: Write load tests for 10,000+ msg/sec
 
 **Success Criteria**:
 - ✅ Handles 10,000+ messages/second
 - ✅ Average routing latency <0.1ms
 - ✅ Pub/sub delivers to all subscribers within 1ms
 - ✅ Health checks detect failures within 100ms
+- ✅ **Binary synchronization maintains consistent state** `(NEW)`
 
 ---
 
-### M1.4: Python-Rust Bridge (3 weeks)
+### M1.6: Python-Rust Bridge (3 weeks)
 
 **Goal**: Seamless FFI between Python Conductor and Rust infrastructure
 
@@ -185,6 +265,7 @@ apps/backend/crates/symphony-ipc-bus/
 - Type conversion layer
 - Error handling across boundary
 - Async support for Python
+- **In-Process Integration**: `(NEW)` Conductor subprocess within Symphony binary
 
 **Crate**: `symphony-python-bridge`
 ```
@@ -195,30 +276,35 @@ apps/backend/crates/symphony-python-bridge/
 │   ├── types.rs          # Type conversion
 │   ├── errors.rs         # Error handling
 │   ├── async_support.rs  # Async/await bridge
-│   └── pit_api.rs        # Pit extension APIs
+│   ├── pit_api.rs        # Pit extension APIs
+│   ├── conductor.rs      # Conductor subprocess management (NEW)
+│   └── subprocess.rs     # Python subprocess integration (NEW)
 └── Cargo.toml
 ```
 
 **Sub-tasks**:
-- [ ] M1.4.1: Set up PyO3 project structure
-- [ ] M1.4.2: Implement primitive type conversions
-- [ ] M1.4.3: Implement collection type conversions (Vec, HashMap)
-- [ ] M1.4.4: Create error conversion (Rust Result → Python Exception)
-- [ ] M1.4.5: Add async support with tokio-pyo3
-- [ ] M1.4.6: Expose IPC bus API to Python
-- [ ] M1.4.7: Write Python integration tests
-- [ ] M1.4.8: Benchmark FFI overhead
+- [ ] M1.5.1: Set up PyO3 project structure
+- [ ] M1.5.2: Implement primitive type conversions
+- [ ] M1.5.3: Implement collection type conversions (Vec, HashMap)
+- [ ] M1.5.4: Create error conversion (Rust Result → Python Exception)
+- [ ] M1.5.5: Add async support with tokio-pyo3
+- [ ] M1.5.6: Expose IPC bus API to Python
+- [ ] M1.5.7: **Implement Conductor subprocess management within Symphony** `(NEW)`
+- [ ] M1.5.8: **Create direct Pit access for Conductor (no IPC overhead)** `(NEW)`
+- [ ] M1.5.9: Write Python integration tests
+- [ ] M1.5.10: Benchmark FFI overhead
 
 **Success Criteria**:
 - ✅ FFI call overhead <0.01ms
 - ✅ All primitive types convert correctly
 - ✅ Async calls work from Python asyncio
 - ✅ Errors propagate with full context
+- ✅ **Conductor has direct access to The Pit components** `(NEW)`
 
 
 ---
 
-### M1.5: Extension SDK Foundation (3 weeks)
+### M1.7: Extension SDK Foundation (3 weeks)
 
 **Goal**: Core SDK for extension development
 
@@ -227,6 +313,7 @@ apps/backend/crates/symphony-python-bridge/
 - Lifecycle hook system
 - Permission declaration framework
 - Extension trait definitions
+- **Actor-Based Isolation**: `(NEW)` Extensions run as separate processes
 
 **Crate**: `symphony-extension-sdk`
 ```
@@ -237,25 +324,192 @@ apps/backend/crates/symphony-extension-sdk/
 │   ├── lifecycle.rs      # Lifecycle hooks
 │   ├── permissions.rs    # Permission system
 │   ├── traits.rs         # Extension traits
-│   └── macros.rs         # Derive macros for extensions
+│   ├── macros.rs         # Derive macros for extensions
+│   ├── actor.rs          # Actor-based process isolation (NEW)
+│   └── process.rs        # Extension process management (NEW)
 └── Cargo.toml
 ```
 
 **Sub-tasks**:
-- [ ] M1.5.1: Define manifest schema (TOML format)
-- [ ] M1.5.2: Implement manifest parser with validation
-- [ ] M1.5.3: Create lifecycle trait (on_load, on_activate, on_deactivate, on_unload)
-- [ ] M1.5.4: Build permission declaration system
-- [ ] M1.5.5: Define Extension trait for all extension types
-- [ ] M1.5.6: Create derive macros for boilerplate reduction
-- [ ] M1.5.7: Add manifest pretty-printer
-- [ ] M1.5.8: Write property tests for manifest round-trip
+- [ ] M1.6.1: Define manifest schema (TOML format)
+- [ ] M1.6.2: Implement manifest parser with validation
+- [ ] M1.6.3: Create lifecycle trait (on_load, on_activate, on_deactivate, on_unload)
+- [ ] M1.6.4: Build permission declaration system
+- [ ] M1.6.5: Define Extension trait for all extension types
+- [ ] M1.6.6: Create derive macros for boilerplate reduction
+- [ ] M1.6.7: **Implement Actor-based process isolation for extensions** `(NEW)`
+- [ ] M1.6.8: **Create extension process spawning and management** `(NEW)`
+- [ ] M1.6.9: Add manifest pretty-printer
+- [ ] M1.6.10: Write property tests for manifest round-trip
 
 **Success Criteria**:
 - ✅ Manifest parsing <1ms for typical manifests
 - ✅ Invalid manifests rejected with clear errors
 - ✅ Lifecycle hooks called in correct order
 - ✅ Permission violations detected at declaration time
+- ✅ **Extensions run in isolated processes with crash protection** `(NEW)`
+
+---
+
+### M1.8: Concrete Adapters Implementation `(NEW)` (4 weeks)
+
+**Goal**: Implement concrete adapters for all ports (H2A2 architecture completion)
+
+**Deliverables**:
+- XiEditorAdapter implementing TextEditingPort (JSON-RPC to XI-editor binary)
+- PitAdapter implementing PitPort (direct in-process access to The Pit)
+- ActorExtensionAdapter implementing ExtensionPort (process isolation)
+- PythonConductorAdapter implementing ConductorPort (PyO3 bridge)
+
+**Crate**: `symphony-adapters`
+```
+apps/backend/crates/symphony-adapters/
+├── src/
+│   ├── lib.rs
+│   ├── xi_editor.rs      # XiEditorAdapter (JSON-RPC communication)
+│   ├── pit.rs            # PitAdapter (in-process Pit access)
+│   ├── extensions.rs     # ActorExtensionAdapter (process isolation)
+│   ├── conductor.rs      # PythonConductorAdapter (PyO3 bridge)
+│   └── common.rs         # Shared adapter utilities
+└── Cargo.toml
+```
+
+**Sub-tasks**:
+- [ ] M1.8.1: Implement XiEditorAdapter with JSON-RPC client
+- [ ] M1.8.2: Implement PitAdapter with direct Pit component access
+- [ ] M1.8.3: Implement ActorExtensionAdapter with process isolation
+- [ ] M1.8.4: Implement PythonConductorAdapter with PyO3 integration
+- [ ] M1.8.5: Create adapter integration tests
+- [ ] M1.8.6: Validate adapter performance meets targets
+
+**Success Criteria**:
+- ✅ All four port interfaces have concrete implementations
+- ✅ XiEditorAdapter communicates with XI-editor binary via JSON-RPC
+- ✅ PitAdapter provides direct access to Pit components
+- ✅ ActorExtensionAdapter isolates extensions in separate processes
+- ✅ PythonConductorAdapter bridges to Python Conductor subprocess
+
+---
+
+### M1.9: Domain Core Orchestration `(NEW)` (3 weeks)
+
+**Goal**: Implement Symphony's orchestration engine using all ports
+
+**Deliverables**:
+- SymphonyCore orchestration engine coordinating all components
+- Business logic layer using the four port interfaces
+- State management and synchronization between Symphony and XI-editor binaries
+- Event streaming and process lifecycle management
+
+**Crate**: `symphony-domain`
+```
+apps/backend/crates/symphony-domain/
+├── src/
+│   ├── lib.rs
+│   ├── core.rs           # SymphonyCore orchestration engine
+│   ├── state.rs          # State management
+│   ├── sync.rs           # Binary synchronization
+│   ├── events.rs         # Event streaming
+│   ├── lifecycle.rs      # Process lifecycle management
+│   └── workflows.rs      # Workflow coordination
+└── Cargo.toml
+```
+
+**Sub-tasks**:
+- [ ] M1.9.1: Implement SymphonyCore using all four ports
+- [ ] M1.9.2: Create state synchronization between Symphony and XI-editor
+- [ ] M1.9.3: Implement bidirectional event streaming
+- [ ] M1.9.4: Add process lifecycle management
+- [ ] M1.9.5: Create workflow coordination logic
+- [ ] M1.9.6: Write end-to-end integration tests
+
+**Success Criteria**:
+- ✅ SymphonyCore orchestrates all components through port interfaces
+- ✅ State remains synchronized between Symphony and XI-editor binaries
+- ✅ Event streaming enables real-time coordination
+- ✅ Process failures are detected and handled gracefully
+- ✅ Workflows execute correctly across all components
+
+---
+
+### M1.10: Tauri Integration Layer `(NEW)` (3 weeks)
+
+**Goal**: Integrate Symphony backend with Tauri frontend
+
+**Deliverables**:
+- Tauri command definitions for all Symphony operations
+- State management integration with SymphonyCore
+- Error handling across Tauri boundary
+- Frontend-backend type synchronization
+
+**Integration Structure**:
+```
+src-tauri/
+├── src/
+│   ├── commands/         # Tauri command handlers
+│   │   ├── conductor.rs  # Conductor operations
+│   │   ├── text_editing.rs # Text editing operations
+│   │   ├── extensions.rs # Extension operations
+│   │   └── workflows.rs  # Workflow operations
+│   ├── state.rs          # Application state management
+│   ├── events.rs         # Event handling
+│   └── main.rs           # Tauri application entry
+```
+
+**Sub-tasks**:
+- [ ] M1.10.1: Define Tauri commands for all port operations
+- [ ] M1.10.2: Implement state management with SymphonyCore
+- [ ] M1.10.3: Add error handling and type conversion
+- [ ] M1.10.4: Create event streaming to frontend
+- [ ] M1.10.5: Implement frontend-backend synchronization
+- [ ] M1.10.6: Write Tauri integration tests
+
+**Success Criteria**:
+- ✅ All Symphony operations accessible via Tauri commands
+- ✅ Frontend and backend state remain synchronized
+- ✅ Error handling provides clear feedback to frontend
+- ✅ Type safety maintained across Tauri boundary
+- ✅ Event streaming enables real-time UI updates
+
+---
+
+### M1.10: Actor Layer Implementation `(NEW)` (3 weeks)
+
+**Goal**: Implement Actor model for extension process isolation
+
+**Deliverables**:
+- Extension process isolation system
+- Actor message passing infrastructure
+- Process lifecycle management for extensions
+- Crash isolation and recovery mechanisms
+
+**Crate**: `symphony-actors`
+```
+apps/backend/crates/symphony-actors/
+├── src/
+│   ├── lib.rs
+│   ├── actor.rs          # Actor trait and base implementation
+│   ├── process.rs        # Process management
+│   ├── messaging.rs      # Message passing system
+│   ├── isolation.rs      # Process isolation
+│   └── recovery.rs       # Crash recovery
+└── Cargo.toml
+```
+
+**Sub-tasks**:
+- [ ] M1.10.1: Implement Actor trait for extension processes
+- [ ] M1.10.2: Create process spawning and management
+- [ ] M1.10.3: Implement message passing system
+- [ ] M1.10.4: Add process isolation and sandboxing
+- [ ] M1.10.5: Create crash detection and recovery
+- [ ] M1.10.6: Write actor system tests
+
+**Success Criteria**:
+- ✅ Extensions run in isolated processes
+- ✅ Message passing works reliably between processes
+- ✅ Extension crashes don't affect Symphony or XI-editor
+- ✅ Automatic recovery from extension failures
+- ✅ Process resource limits enforced
 
 ---
 

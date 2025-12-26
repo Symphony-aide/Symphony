@@ -24,27 +24,35 @@ This framework bridges **strategic planning** (milestones) with **tactical execu
 repertoire/
 ├── milestones/
 │   ├── LEVEL0.md              # Strategic objectives (highest level)
-│   ├── LEVEL1/
-│   │   ├── LEVEL1_M1.md       # Intermediate breakdown of M1
-│   │   ├── LEVEL1_M2.md       # Intermediate breakdown of M2
-│   │   └── ...
-│   └── LEVEL2/
-│       ├── LEVEL2_M1_S1.md    # Concrete steps for M1's first section
-│       ├── LEVEL2_M1_S2.md    # Concrete steps for M1's second section
+│   ├── level1/
+│   │   ├── LEVEL1.md          # Intermediate breakdown of all milestones
+│   └── level2/
+│       ├── LEVEL2_M1.md       # Concrete steps for M1
+│       ├── LEVEL2_M2.md       # Concrete steps for M2
 │       └── ...
-└── features/
-    ├── F001_feature_name/
-    │   ├── DEFINITION.md
-    │   ├── PLANNING.md
-    │   ├── DESIGN.md
-    │   ├── TESTING.md
-    │   ├── IMPLEMENTATION.md
-    │   ├── AGREEMENT.md         # BIF evaluation
-    │   └── VERIFICATION.md
-    └── F002_another_feature/
-        └── ...
-
+├── features/                   # Hierarchical feature organization
+│   ├── m1.1/                  # Features for milestone M1.1 (IPC Protocol)
+│   │   ├── F001_message_envelope_design/
+│   │   ├── F002_messagepack_serialization/
+│   │   ├── F003_bincode_serialization/
+│   │   └── ...
+│   ├── m1.2/                  # Features for milestone M1.2 (Transport Layer)
+│   │   ├── F006_transport_trait/
+│   │   ├── F007_unix_socket_transport/
+│   │   └── ...
+│   ├── m1.3/                  # Features for milestone M1.3 (Message Bus)
+│   │   └── ...
+│   └── m5.1/                  # Features for milestone M5.1 (Workflow Model)
+│       └── ...
+└── practice/
+    └── technical_pattern.md   # Technical implementation patterns
 ```
+
+**Hierarchical Organization Benefits:**
+- **Clear Milestone Mapping**: Features are grouped by their parent milestone
+- **Dependency Management**: Related features are co-located
+- **Progress Tracking**: Easy to see milestone completion status
+- **Scalability**: Structure supports hundreds of features without confusion
 
 ---
 
@@ -741,16 +749,17 @@ class ImportantClass:
 
 #### 2. Code Quality / Maintainability
 **Rating**: Basic
+**Reasoning**: Code follows basic patterns but has several maintainability issues that increase long-term costs
 
 **Evidence**:
-- Line 125: Nested if statements (4 levels deep)
-- Line 145: Magic number `1000` without explanation
-- Line 160: Duplicated logic from line 130
+- Line 125: Nested if statements (4 levels deep) - violates readability guidelines
+- Line 145: Magic number `1000` without explanation - reduces maintainability
+- Line 160: Duplicated logic from line 130 - DRY principle violation
 
 **Issues**:
-- Excessive nesting violates KISS
-- No separation of concerns
-- Code duplication
+- Excessive nesting violates KISS principle
+- No separation of concerns between validation and processing
+- Code duplication increases maintenance burden
 
 ---
 
@@ -780,16 +789,17 @@ class ImportantClass:
 
 #### 5. Performance & Efficiency
 **Rating**: Poor
+**Reasoning**: Multiple algorithmic and implementation inefficiencies that will cause performance degradation under load
 
 **Evidence**:
-- Line 125: O(n²) nested loop, should be O(n)
-- Line 145: No debouncing for frequent calls
-- Line 160: Creating new object on every iteration
+- Line 125: O(n²) nested loop, should be O(n) - algorithmic inefficiency
+- Line 145: No debouncing for frequent calls - unnecessary processing overhead
+- Line 160: Creating new object on every iteration - memory allocation pressure
 
 **Issues**:
-- Algorithm complexity too high
-- Unnecessary object creation
-- No optimization for common case
+- Algorithm complexity too high for expected data sizes
+- Unnecessary object creation in hot path
+- No optimization for common case scenarios
 
 ---
 

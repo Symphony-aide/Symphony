@@ -42,11 +42,27 @@ Everything else—debugging, language servers, AI models, specialized tools—co
 
 ## Architecture
 
-Symphony uses a microkernel architecture where the minimal core orchestrates an ecosystem of intelligent extensions. This design ensures:
+Symphony uses a **two-layer microkernel architecture** built on proven foundations:
 
+### Layer 1: XI-editor Foundation ✅
+Battle-tested text editing core providing:
+- **Rope Data Structure**: Efficient text manipulation for large files
+- **JSON-RPC Protocol**: Async frontend-backend communication
+- **LSP Integration**: Language Server Protocol support
+- **Plugin System**: Extensibility infrastructure
+- **Sub-16ms Operations**: 60 FPS performance targets
+
+### Layer 2: Symphony AIDE Features 🚧
+AI orchestration and intelligent workflows:
+- **IPC Protocol**: ✅ Message envelope system for inter-process communication
+- **The Conductor**: Python-based orchestration engine (planned)
+- **The Pit**: Five infrastructure extensions (planned)
+- **Orchestra Kit**: Extension ecosystem (planned)
+
+This design ensures:
 - **Reliability**: Component failures don't crash the system
 - **Flexibility**: Unlimited customization through extensions
-- **Performance**: Load only what you need
+- **Performance**: Load only what you need, built on proven foundations
 - **Security**: Controlled permissions and sandboxing
 
 ## Getting Started

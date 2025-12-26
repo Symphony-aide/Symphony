@@ -76,74 +76,22 @@ Use heading level 1 (single `#`) for these standard sections:
 ### `# Examples` (Critical)
 
 - Code examples are one of the most effective ways to demonstrate usage and are automatically tested by `cargo test`
-- Provide at least one copy-pasteable example for every public item
-- Keep examples minimal and self-contained
 
-```rust
-/// Parses a configuration file from the given path
-///
-/// Returns a `Config` struct populated with values from the file.
-///
-/// # Examples
-///
-/// ```
-/// use my_crate::parse_config;
-///
-/// let config = parse_config("config.toml")?;
-/// assert_eq!(config.port, 8080);
-/// ```
-pub fn parse_config(path: &str) -> Result<Config> { ... }
-```
 
 ### `# Errors`
 
 - If your function returns `Result<T, E>`, describe the conditions under which it returns `Err(E)`
 - Use doc links to reference specific error types
 
-```rust
-/// Reads a file and returns its contents
-///
-/// # Errors
-///
-/// Returns [`std::io::Error`] if:
-/// - The file doesn't exist
-/// - The process lacks read permissions
-/// - An I/O error occurs during reading
-pub fn read_file(path: &Path) -> Result<String, std::io::Error> { ... }
-```
-
 ### `# Panics`
 
 - If your function can panic, documenting it is very important - panics are programming errors that kill threads
-- Document calls to `.unwrap()`, `debug_assert!`, `panic!`, etc.
 
-```rust
-/// Calculates the average of a slice of numbers
-///
-/// # Panics
-///
-/// Panics if the slice is empty (division by zero).
-pub fn average(numbers: &[f64]) -> f64 {
-    numbers.iter().sum::<f64>() / numbers.len() as f64
-}
-```
 
 ### `# Safety`
 
 - If your function is `unsafe`, explain which invariants the caller is responsible for upholding
 - Be explicit about what is "unsafe" and specify undefined behavior if applicable
-
-```rust
-/// Reads data from a raw pointer without bounds checking
-///
-/// # Safety
-///
-/// The caller must ensure:
-/// - `ptr` is valid and properly aligned
-/// - `ptr` points to `len` consecutive, initialized values
-/// - The memory is not mutated during the lifetime `'a`
-pub unsafe fn read_raw<'a>(ptr: *const u8, len: usize) -> &'a [u8] { ... }
-```
 
 ### Other Common Sections
 
@@ -221,35 +169,24 @@ Code blocks marked with `rust` are automatically compiled and tested by rustdoc
 
 ### Use Markdown Features
 
-Rustdoc supports Markdown for formatting - use headings, lists, code, etc.
+* **Headings:** `# H1`, `## H2`, `### H3`, etc.
+* **Paragraphs & line breaks:** Blank lines create paragraphs, single line breaks are ignored.
+* **Emphasis:** `*italic*`, `_italic_`, `**bold**`, `__bold__`, `~~strikethrough~~`.
+* **Inline code:** `` `inline_code` ``.
+* **Code blocks:** Fenced with triple backticks (`rust`) or indented four spaces, with Rust code blocks treated as doctests.
+* **Lists:** Unordered (`- item`) and ordered (`1. item`) with nested items supported.
+* **Blockquotes:** `> This is a quote`.
+* **Horizontal rules:** `---` or `***`.
+* **Links:** `[text](URL)`.
+* **Images:** `![alt](URL)` with relative or absolute paths.
+* **Tables:** `| Header | Header |` with `|---|---|` separator rows.
+* **Intra-doc links:** ``[`Type`]``, ``[`crate::module::Type`]`` automatically link to API items.
+* **Doctests:** Fenced Rust code blocks run as tests, with modifiers like `no_run`, `ignore`, `should_panic`, `compile_fail`.
+* **Special section headings:** `# Examples`, `# Panics`, `# Errors`, `# Safety`, etc., recognized semantically.
+* **HTML:** Limited inline HTML tags like `<b>`, `<br>`, `<sup>`.
+* **Footnotes:** Supported with `[^1]` references and `[^1]: Footnote text`.
+* **Escaping:** Backslashes `\*` prevent Markdown formatting.
 
-```rust
-/// Processes data with various options
-///
-/// Supports the following operations:
-/// - **Filtering**: Remove unwanted entries
-/// - **Mapping**: Transform values
-/// - **Sorting**: Order by specified field
-///
-/// Use `Option::None` to skip a step.
-```
-
-### Code References
-
-Use backticks for inline code and proper linking:
-
-```rust
-/// Converts a `String` to [`Cow<str>`](std::borrow::Cow)
-///
-/// See also [`to_uppercase`](String::to_uppercase) for case conversion
-```
-
-### Line Length
-
-- Keep documentation lines under 100-120 characters
-- This improves readability in side-by-side diffs
-
----
 
 ## What NOT to Document
 
@@ -258,181 +195,3 @@ Use backticks for inline code and proper linking:
 1. **Type information already in signatures** - The type system already defines what types a function passes and returns
 2. **Obvious implementations** - Don't just restate what the code does
 3. **Private implementation details in public docs** - Use regular `//` comments for internal notes
-
-```rust
-// ❌ BAD: Redundant with signature
-/// Takes a String and returns a String
-pub fn process(input: String) -> String { ... }
-
-// ✅ GOOD: Explains behavior and purpose
-/// Normalizes whitespace by replacing all sequences of whitespace
-/// characters with a single space
-pub fn process(input: String) -> String { ... }
-```
-
----
-
-## File Organization Template
-
-Here's a recommended template for a typical Rust file:
-
-```rust
-//! Module-level documentation here
-//!
-//! Explain the module's purpose, main types, and how they work together.
-//!
-//! # Examples
-//!
-//! ```
-//! // Module-level example showing typical usage
-//! ```
-
-// Standard library imports
-use std::collections::HashMap;
-use std::sync::Arc;
-
-// External crate imports
-use serde::{Deserialize, Serialize};
-
-// Internal imports
-use crate::error::Error;
-
-// Private constants (with // comments if needed)
-const DEFAULT_TIMEOUT: u64 = 30;
-
-/// Public struct with full documentation
-///
-/// Detailed description of what this represents and when to use it.
-///
-/// # Examples
-///
-/// ```
-/// use my_crate::Config;
-///
-/// let config = Config::default();
-/// ```
-#[derive(Debug, Clone)]
-pub struct Config {
-    /// Port number for the server
-    ///
-    /// Defaults to 8080 if not specified.
-    pub port: u16,
-    
-    /// Connection timeout in seconds
-    pub timeout: u64,
-}
-
-impl Config {
-    /// Creates a new configuration with default values
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use my_crate::Config;
-    ///
-    /// let config = Config::new();
-    /// assert_eq!(config.port, 8080);
-    /// ```
-    pub fn new() -> Self {
-        Self {
-            port: 8080,
-            timeout: DEFAULT_TIMEOUT,
-        }
-    }
-    
-    // Private helper method - use // for internal notes
-    fn validate(&self) -> bool {
-        // Check if port is in valid range
-        self.port > 0
-    }
-}
-
-// Private functions use // comments
-// This is only called internally
-fn internal_helper() {
-    // Implementation details here
-}
-
-/// Public function with full documentation
-///
-/// # Arguments
-///
-/// * `input` - The string to process
-/// * `options` - Configuration options
-///
-/// # Returns
-///
-/// Returns the processed string with applied transformations.
-///
-/// # Errors
-///
-/// Returns [`Error::InvalidInput`] if the input contains invalid characters.
-///
-/// # Examples
-///
-/// ```
-/// use my_crate::{process, Config};
-///
-/// let result = process("hello", &Config::new())?;
-/// assert_eq!(result, "HELLO");
-/// ```
-pub fn process(input: &str, options: &Config) -> Result<String, Error> {
-    // Implementation here
-    Ok(input.to_uppercase())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    
-    // Tests use // comments since they're not public API
-    #[test]
-    fn test_config_creation() {
-        let config = Config::new();
-        assert_eq!(config.port, 8080);
-    }
-}
-```
-
----
-
-## Checklist for Every File
-
-Before committing, verify:
-
-- [ ] All public items have `///` documentation
-- [ ] Each public item has a clear summary line
-- [ ] Functions starting with verbs, structs/modules with nouns
-- [ ] At least one `# Examples` section for public APIs
-- [ ] `# Errors` section for functions returning `Result`
-- [ ] `# Panics` section for functions that can panic
-- [ ] `# Safety` section for unsafe functions
-- [ ] Code examples compile and pass `cargo test`
-- [ ] Private/internal code uses `//` comments, not `///`
-- [ ] Module has `//!` documentation at the top
-- [ ] No placeholder or TODO documentation in public APIs
-
----
-
-## Testing Documentation
-
-Run `cargo test` to verify all documentation examples compile and run correctly
-
-```bash
-# Test all documentation examples
-cargo test --doc
-
-# Build and open documentation
-cargo doc --open
-
-# Test everything including doctests
-cargo test
-```
-
----
-
-## Additional Resources
-
-- [The rustdoc Book](https://doc.rust-lang.org/rustdoc/)
-- [RFC 1574: API Documentation Conventions](https://rust-lang.github.io/rfcs/1574-more-api-documentation-conventions.html)
-- [The Rust Book: Documentation](https://doc.rust-lang.org/book/ch14-02-publishing-to-crates-io.html#making-useful-documentation-comments)
