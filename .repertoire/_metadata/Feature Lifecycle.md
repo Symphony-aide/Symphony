@@ -14,7 +14,8 @@
 
 - Decide **how it will be implemented** (high-level plan).
 - Identify **dependencies**: modules, APIs, data structures, or other milestone steps.
-- Define **timeline / urgency**, since you’re in a hurry.
+- Define Decisions
+- Construct Phases for work
 
 **Goal:** Reduce surprises during coding.
 
@@ -72,7 +73,7 @@
 ### 🔑 **Summary of Step Order**
 
 1. **Feature Definition** → what & acceptance criteria
-2. **Planning** → how, dependencies, timeline
+2. **Planning** → how, dependencies, decisions, components, phases
 3. **Technical Design** → modules, system, data, failures
 4. **Testing Strategy (ATDD)** → tests, edge cases, refactoring safety
 5. **Implementation** → code + blind inspection

@@ -124,6 +124,50 @@ Scenario: Handle invalid commands gracefully
 - One main diagram per level (Level 0), multiple allowed for Level 1/2
 - Focus on relationships and data flow, not implementation details
 
+### LEVEL.md
+**Purpose**: The actual milestone guidemap - detailed implementation breakdown and guidance
+**Content**:
+- **Complete milestone breakdown** - All milestones with detailed deliverables and sub-tasks
+- **Implementation guidance** - Step-by-step breakdown of what needs to be built
+- **Crate/module structure** - Specific code organization and file structure
+- **Success criteria** - Concrete checkboxes for completion tracking
+- **Dependencies and integration points** - How components connect and depend on each other
+
+**File Naming Convention**:
+- **LEVEL0.md** - Strategic milestones (M1, M2, M3, etc.) with complete implementation roadmap
+- **LEVEL1_M{X}.md** - Tactical breakdown for specific milestone M{X}
+- **LEVEL2_M{X}_S{Y}.md** - Concrete implementation steps for milestone M{X}, section S{Y}
+
+**Example Structure**:
+```markdown
+## 🚧 M1: Core Infrastructure (3-4 months)
+
+**Goal**: Build the foundational systems that Symphony AIDE layer requires
+
+### 1.1 Environment Setup & Port Definitions
+**Priority**: 🔴 Critical - Foundation for H2A2 architecture
+
+**Deliverables**:
+- Hexagonal Architecture port definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort)
+- Development environment setup and tooling
+- Domain types and comprehensive error handling
+
+**Crates to Create**:
+```
+apps/backend/crates/symphony-core-ports/
+├── src/
+│   ├── ports.rs         # Port trait definitions
+│   ├── types.rs         # Domain types
+│   ├── errors.rs        # Error types
+│   └── lib.rs
+```
+
+**Success Criteria**:
+- ✅ H2A2 architecture fully implemented
+- ✅ All port interfaces defined and documented
+- ✅ Mock adapters available for testing
+```
+
 ### notes.md
 **Purpose**: Incremental decision and insight tracking  
 **Content**:
@@ -132,15 +176,6 @@ Scenario: Handle invalid commands gracefully
 - **Decision log** - Why certain choices were made
 - **Issue tracking** - Problems encountered and their resolutions
 - **Insights** - Lessons learned and important discoveries
-
-### LEVEL.md (Legacy Support)
-**Purpose**: Backward compatibility with existing milestone files
-**Content**:
-- **LEVEL0.md** - Contains all strategic milestones (M1, M2, M3, etc.)
-- **LEVEL1_M{X}.md** - Contains tactical breakdown for specific milestone M{X}
-- **LEVEL2_M{X}_S{Y}.md** - Contains concrete implementation steps for milestone M{X}, section S{Y}
-
-**Migration Note**: These files are maintained for backward compatibility but new projects should use the level-based directory structure (level0/, level1/, level2/) with requirements.md, design.md, and notes.md files.
 
 ---
 

@@ -52,16 +52,18 @@ Scenario: Discover available CLI commands
 - **Mermaid diagrams** (alternative) - When ASCII is insufficient
 - **Focus on relationships** - Component interactions and data flow, not implementation details
 
+**LEVEL.md**: The actual milestone guidemap - detailed implementation breakdown and guidance
+- **Complete milestone breakdown** - All milestones with detailed deliverables and sub-tasks
+- **Implementation guidance** - Step-by-step breakdown of what needs to be built
+- **Crate/module structure** - Specific code organization and file structure
+- **Success criteria** - Concrete checkboxes for completion tracking
+- **Dependencies and integration points** - How components connect and depend on each other
+- **File naming**: LEVEL0.md, LEVEL1_M{X}.md, LEVEL2_M{X}_S{Y}.md
+
 **notes.md**: Empty by default, filled incrementally as decisions, issues, or insights appear
 - **Decision log** - Why certain choices were made
 - **Issue tracking** - Problems encountered and resolutions
 - **Insights** - Lessons learned during development
-
-**LEVEL.md (Legacy Support)**: Backward compatibility files
-- **LEVEL0.md** - Strategic milestones (M1, M2, M3, etc.)
-- **LEVEL1_M{X}.md** - Tactical breakdown for milestone M{X}
-- **LEVEL2_M{X}_S{Y}.md** - Implementation steps for milestone M{X}, section S{Y}
-- **Migration Note**: Maintained for compatibility; new projects should use level-based directories
 
 ### Level Meanings
 
@@ -129,7 +131,7 @@ YOUR QUESTIONS SHOULD COVER:
 - Target users and their needs
 - Critical vs. nice-to-have features
 - Technical constraints (platform, language, performance)
-- Timeline and resource constraints
+- Resource constraints
 - External dependencies and integrations
 - Security and compliance requirements
 - Scalability requirements
@@ -309,7 +311,6 @@ DEFINITION.md must include:
 - Success metrics with numbers
 - User stories with concrete examples
 - Dependencies (Requires & Enables)
-- Timeline with effort estimate
 
 #### Naming patterns
 
