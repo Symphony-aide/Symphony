@@ -8,6 +8,20 @@ This directory contains milestone breakdowns and roadmaps for the Symphony Rust 
 
 The goal is to provide a decomposition of the massive scope of work into manageable chunks. You should use these files as a reference to understand the *what* and *why*, but use your own engineering judgment and vision for the *how*.
 
+## 📖 Glossary
+
+| Term | Definition |
+|------|------------|
+| **OFB Python** | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
+| **Pre-validation** | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic) |
+| **Authoritative Validation** | Complete validation including RBAC, business rules, and data constraints performed by OFB Python |
+| **Two-Layer Architecture** | Rust (orchestration + pre-validation) + OFB Python (validation + persistence) |
+| **Mock-Based Contract Testing** | Testing approach using mocked dependencies to verify component contracts |
+| **WireMock Contract Verification** | HTTP endpoint mocking for testing integration with OFB Python services |
+| **Three-Layer Testing** | Unit tests (<100ms), Integration tests (<5s), Pre-validation tests (<1ms) |
+
+---
+
 ## 🗺️ High-Level Vision
 
 The roadmap is decomposed into several key phases, designed to build the "Symphony AIDE" (AI-First Development Environment) layer on top of the existing XI-editor foundation.

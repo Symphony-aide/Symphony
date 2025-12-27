@@ -238,6 +238,46 @@ symphony-workflow-execution/
 
 ## 🧪 Testing Strategy
 
+### Three-Layer Testing Architecture
+
+**Layer 1: Unit Tests (Rust) - <100ms**
+- **Mock-Based Contract Testing**: All external dependencies mocked using mockall
+- **Boundary Separation**: Rust tests focus on workflow data structures, DAG algorithms, and serialization
+- **Coverage**: Workflow creation/modification, node/edge types, builder API, validation algorithms
+- **Property Tests**: Topological sort correctness, cycle detection, serialization round-trips
+- **Performance**: Sub-100ms execution for entire unit test suite
+
+**Layer 2: Integration Tests (Rust + OFB Python) - <5s**
+- **WireMock Contract Verification**: HTTP endpoints mocked with WireMock for OFB Python integration
+- **Cross-Component Workflows**: Full execution lifecycle, pause/resume, retry/skip flows
+- **Event Streaming**: Multiple subscribers, concurrent executions
+- **Template System**: Instantiation with OFB Python validation
+- **Audit Logging**: Persistence and querying with OFB Python storage
+
+**Layer 3: Pre-validation Tests (Rust) - <1ms**
+- **Technical Validation Only**: Schema validation, type checking, basic structural constraints
+- **No Business Logic**: Pre-validation does NOT include user permissions, workflow authorization, or data persistence
+- **Fast Rejection**: Prevent unnecessary HTTP requests to OFB Python layer
+- **Examples**: JSON schema validation, DAG cycle detection, required field checks
+
+### Testing Boundary Separation
+
+**Rust Layer Tests**:
+- Workflow data model operations
+- DAG validation algorithms (cycle detection, topological sort)
+- Serialization formats (JSON, MessagePack, Bincode)
+- Template instantiation logic
+- State machine transitions
+- Event streaming and progress tracking
+- Performance benchmarks (10,000+ node workflows)
+
+**OFB Python Layer Tests** (via WireMock):
+- Authoritative workflow validation with business rules
+- User permission checking for workflow operations
+- Template marketplace integration
+- Audit log persistence and querying
+- Workflow execution authorization
+
 ### Unit Tests
 - Workflow creation and modification
 - All node and edge types

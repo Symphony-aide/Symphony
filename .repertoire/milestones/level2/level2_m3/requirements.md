@@ -22,6 +22,9 @@
 | **Artifact Store** | Intelligent data persistence and versioning component |
 | **Arbitration Engine** | Conflict resolution and decision-making component |
 | **Stale Manager** | Training data curation and system optimization component |
+| **Mock-Based Contract Testing** | Testing approach using mock implementations to verify trait contracts and format validation without external dependencies |
+| **WireMock Contract Verification** | Integration testing using WireMock to verify HTTP request/response format matches OFB Python API expectations |
+| **Three-Layer Testing** | Unit tests (mocks), Integration tests (WireMock), Pre-validation tests (performance + logic) |
 
 ---
 

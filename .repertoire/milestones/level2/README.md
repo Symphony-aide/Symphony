@@ -113,7 +113,19 @@ graph TD
 - **Windows**: Named pipes, Job Objects
 
 ### Testing Strategy
-- **Unit Tests**: Every public function
+
+**Three-Layer Testing Architecture**:
+- **Layer 1**: Unit tests with mocked dependencies (<100ms)
+- **Layer 2**: Integration tests with WireMock for OFB Python (<5s)  
+- **Layer 3**: Pre-validation tests for fast rejection (<1ms)
+
+**Testing Boundary Separation**:
+- **Rust Layer**: Orchestration logic, algorithms, data structures, performance-critical operations
+- **OFB Python Layer**: Authoritative validation, RBAC, data persistence, business rules
+
+**Key Testing Approaches**:
+- **Mock-Based Contract Testing**: All external dependencies mocked using mockall
+- **WireMock Contract Verification**: HTTP endpoints mocked for OFB Python integration
 - **Property Tests**: Serialization round-trips, state machines
 - **Integration Tests**: Cross-crate functionality
 - **Benchmarks**: Performance regression detection

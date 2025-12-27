@@ -30,6 +30,9 @@
 - **Operator**: Extension type for workflow utilities
 - **Addon**: Extension type for UI enhancements
 - **Virtual DOM**: Efficient rendering abstraction for UI components
+- **Mock-Based Contract Testing**: Testing approach using mock implementations to verify trait contracts and format validation without external dependencies
+- **WireMock Contract Verification**: Integration testing using WireMock to verify HTTP request/response format matches OFB Python API expectations
+- **Three-Layer Testing**: Unit tests (mocks), Integration tests (WireMock), Pre-validation tests (performance + logic)
 
 ---
 
@@ -47,7 +50,14 @@ Scenario: Manifest parsing and validation
   And both TOML and JSON formats are supported
   And invalid manifests are rejected with clear errors
 
-Scenario: Two-layer manifest validation
+Scenario: Two-layer manifest validation with OFB Python
+  Given an extension manifest needs validation
+  When manifest validation is performed
+  Then Rust pre-validation checks basic format and structure in <1ms
+  And OFB Python performs authoritative validation including security scanning
+  And extension permissions are validated by OFB Python RBAC system
+  And marketplace compatibility is verified by OFB Python
+  And validation errors are properly categorized (pre-validation vs authoritative)
   Given an extension manifest needs validation
   When validation is performed
   Then Rust pre-validation checks basic format and structure

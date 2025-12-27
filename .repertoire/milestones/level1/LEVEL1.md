@@ -20,6 +20,9 @@
 - **DAG**: Directed Acyclic Graph
 - **The Pit**: Five infrastructure extensions (Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, Stale Manager)
 - **Orchestra Kit**: Extension ecosystem (Instruments, Operators, Addons/Motifs)
+- **Mock-Based Contract Testing**: Testing approach using mock implementations to verify trait contracts and format validation without external dependencies
+- **WireMock Contract Verification**: Integration testing using WireMock to verify HTTP request/response format matches OFB Python API expectations
+- **Three-Layer Testing**: Unit tests (mocks), Integration tests (WireMock), Pre-validation tests (performance + logic)
 
 ---
 
@@ -46,7 +49,10 @@ apps/backend/crates/symphony-core-ports/
 │   ├── prevalidation.rs # Pre-validation trait definitions (NEW)
 │   └── data_contracts.rs # Data access contracts (NEW)
 └── tests/
-    └── integration_tests.rs
+    ├── integration_tests.rs
+    ├── mock_contract_tests.rs      # Mock-based contract testing (NEW)
+    ├── pre_validation_tests.rs     # Pre-validation performance tests (NEW)
+    └── wiremock_contract_tests.rs  # WireMock integration tests (NEW)
 ```
 
 **Concrete Deliverables**:
@@ -472,6 +478,10 @@ src-tauri/
 - [ ] **All RBAC and business rule validation occurs in OFB Python** `(NEW)`
 - [ ] **Error categorization distinguishes pre-validation from authoritative validation** `(NEW)`
 - [ ] **Data access use cases follow clean architecture principles** `(NEW)`
+- [ ] **Three-layer testing approach operational (Unit/Integration/Pre-validation)** `(NEW)`
+- [ ] **Mock-based contract testing verifies trait compliance without external dependencies** `(NEW)`
+- [ ] **WireMock contract verification ensures HTTP format matches OFB Python API expectations** `(NEW)`
+- [ ] **Unit tests complete in <100ms, integration tests in <5s, pre-validation tests in <1ms** `(NEW)`
 - [ ] **Six port interfaces implemented: TextEditing, Pit, Extension, Conductor, DataAccess, PreValidation** `(NEW)`
 - [ ] All tests passing with >80% code coverage
 - [ ] Health monitoring detects and recovers from process failures

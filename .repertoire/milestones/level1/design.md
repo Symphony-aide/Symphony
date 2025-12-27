@@ -15,6 +15,9 @@
 | **H2A2** | Harmonic Hexagonal Actor Architecture |
 | **The Pit** | Five infrastructure extensions (Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, Stale Manager) |
 | **Orchestra Kit** | Extension ecosystem (Instruments, Operators, Addons/Motifs) |
+| **Mock-Based Contract Testing** | Testing approach using mock implementations to verify trait contracts and format validation without external dependencies |
+| **WireMock Contract Verification** | Integration testing using WireMock to verify HTTP request/response format matches OFB Python API expectations |
+| **Three-Layer Testing** | Unit tests (mocks), Integration tests (WireMock), Pre-validation tests (performance + logic) |
 
 ---
 
@@ -35,7 +38,10 @@ apps/backend/crates/symphony-core-ports/
 │   ├── binary.rs        # Two-binary specific adaptations (NEW)
 │   └── lib.rs
 └── tests/
-    └── integration_tests.rs
+    ├── integration_tests.rs
+    ├── mock_contract_tests.rs      # Mock-based contract testing (NEW)
+    ├── pre_validation_tests.rs     # Pre-validation performance tests (NEW)
+    └── wiremock_contract_tests.rs  # WireMock integration tests (NEW)
 ```
 
 **Port Interface Design**:
@@ -63,7 +69,7 @@ pub trait ConductorPort: Send + Sync {
     async fn get_status(&self) -> Result<ConductorStatus>;
 }
 
-// NEW: Two-Layer Data Architecture Ports
+// NEW: Two-Layer Data Architecture Ports with Testing Support
 pub trait DataAccessPort: Send + Sync {
     async fn create_workflow(&self, request: CreateWorkflowRequest) -> Result<Workflow>;
     async fn get_workflow(&self, id: WorkflowId) -> Result<Option<Workflow>>;
@@ -75,6 +81,18 @@ pub trait PreValidationPort: Send + Sync {
     fn validate_workflow_request(&self, request: &CreateWorkflowRequest) -> Result<(), PreValidationError>;
     fn validate_user_request(&self, request: &CreateUserRequest) -> Result<(), PreValidationError>;
     fn validate_extension_manifest(&self, path: &Path) -> Result<(), PreValidationError>;
+}
+
+// NEW: Testing Support Traits
+pub trait MockDataAccess: DataAccessPort {
+    fn with_test_data(data: TestDataSet) -> Self;
+    fn with_error(error: DataError) -> Self;
+    fn reset(&mut self);
+}
+
+pub trait ContractTestable {
+    fn verify_request_format(&self, request: &dyn serde::Serialize) -> Result<(), ContractError>;
+    fn verify_response_format(&self, response: &dyn serde::de::DeserializeOwned) -> Result<(), ContractError>;
 }
 ```
 
@@ -390,8 +408,290 @@ Two-Layer Performance Targets:
 │ HTTP to OFB Python  │ Single call per operation    │
 │ Error categorization│ Immediate distinction        │
 │ Business logic      │ Pure Rust performance        │
+│ Unit tests (mocks)  │ <100ms per test suite        │
+│ Integration tests   │ <5s per test suite           │
+│ WireMock tests      │ <2s per contract test        │
 └─────────────────────┴──────────────────────────────┘
 ```
+
+---
+
+## 🧪 M1.12: Testing Infrastructure Implementation `(NEW)`
+
+### Three-Layer Testing Architecture
+
+**Testing Philosophy**: Mock-Based Contract & Format Testing with clear OFB Python boundary separation.
+
+**Testing Scope & Boundaries**:
+
+**What We Test (Rust Layer)**:
+- ✅ **Contract Compliance**: Rust implementations follow trait contracts correctly
+- ✅ **Format Validation**: Request/response serialization works as expected
+- ✅ **Pre-validation Logic**: Fast technical checks work correctly (<1ms)
+- ✅ **Business Logic**: Rust domain calculations and transformations
+- ✅ **Error Handling**: Proper error propagation and conversion
+- ✅ **Integration Contracts**: HTTP requests match expected OFB Python API format
+
+**What We DON'T Test (OFB Python Boundary)**:
+- ❌ **OFB Python Business Rules**: RBAC, validation logic, database constraints
+- ❌ **OFB Python API Implementation**: Handled by Python team's test suite
+- ❌ **Database Operations**: OFB Python layer responsibility
+- ❌ **Authentication/Authorization**: OFB Python API handles all security
+
+### Testing Crate Structure
+
+```
+apps/backend/crates/symphony-testing/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs
+│   ├── mock_framework/          # Mock-based contract testing
+│   │   ├── mod.rs
+│   │   ├── mock_data_access.rs  # Mock implementations for all data access traits
+│   │   ├── mock_validators.rs   # Mock pre-validation implementations
+│   │   └── test_data_builder.rs # Test data construction utilities
+│   ├── wiremock_framework/      # WireMock contract verification
+│   │   ├── mod.rs
+│   │   ├── contract_server.rs   # WireMock server setup and management
+│   │   ├── ofb_python_mocks.rs  # OFB Python API contract mocks
+│   │   └── response_builders.rs # OFB Python response format builders
+│   ├── performance_testing/     # Pre-validation performance tests
+│   │   ├── mod.rs
+│   │   ├── benchmarks.rs        # Performance benchmarking utilities
+│   │   └── validators.rs        # Pre-validation performance validators
+│   └── test_config/             # Environment-based test configuration
+│       ├── mod.rs
+│       └── config.rs            # Test mode configuration (mock/wiremock/integration)
+└── tests/
+    ├── mock_contract_tests.rs   # Unit tests with mock implementations
+    ├── wiremock_contract_tests.rs # Integration tests with WireMock
+    └── performance_tests.rs     # Pre-validation performance validation
+```
+
+### Layer 1: Unit Tests - Mock-Based Contract Testing
+
+**Purpose**: Verify Rust business logic and contract compliance without external dependencies.
+
+```rust
+// Mock implementation example for testing
+pub struct MockWorkflowDataAccess {
+    workflows: Arc<RwLock<HashMap<WorkflowId, Workflow>>>,
+    force_error: Option<DataError>,
+}
+
+impl MockWorkflowDataAccess {
+    pub fn new() -> Self {
+        Self {
+            workflows: Arc::new(RwLock::new(HashMap::new())),
+            force_error: None,
+        }
+    }
+    
+    pub fn with_test_workflow(workflow: Workflow) -> Self {
+        let mock = Self::new();
+        mock.workflows.write().unwrap().insert(workflow.id.clone(), workflow);
+        mock
+    }
+    
+    pub fn with_error(error: DataError) -> Self {
+        Self {
+            workflows: Arc::new(RwLock::new(HashMap::new())),
+            force_error: Some(error),
+        }
+    }
+}
+
+impl WorkflowDataAccess for MockWorkflowDataAccess {
+    async fn create_workflow(&self, request: CreateWorkflowRequest) -> Result<Workflow, DataError> {
+        if let Some(error) = &self.force_error {
+            return Err(error.clone());
+        }
+        
+        let workflow = Workflow {
+            id: WorkflowId::new(&format!("workflow-{}", uuid::Uuid::new_v4())),
+            spec: request.spec,
+            user_id: request.user_id,
+            project_id: request.project_id,
+            created_at: chrono::Utc::now(),
+            status: WorkflowStatus::Created,
+        };
+        
+        self.workflows.write().unwrap().insert(workflow.id.clone(), workflow.clone());
+        Ok(workflow)
+    }
+}
+```
+
+### Layer 2: Integration Tests - WireMock Contract Verification
+
+**Purpose**: Verify HTTP request/response format matches OFB Python API expectations.
+
+```rust
+// WireMock contract testing example
+#[tokio::test]
+async fn test_create_workflow_ofb_python_contract() {
+    // Arrange - Start WireMock server
+    let mock_server = MockServer::start().await;
+    
+    // Define expected contract (matches OFB Python API specification)
+    let expected_request = serde_json::json!({
+        "spec": {
+            "name": "Contract Test Workflow",
+            "steps": [{"name": "step1", "command": "echo test"}]
+        },
+        "user_id": "user-123",
+        "project_id": "project-456",
+        "estimated_cost": {
+            "compute_units": 10,
+            "estimated_duration_ms": 5000
+        }
+    });
+    
+    let expected_response = serde_json::json!({
+        "id": "workflow-789",
+        "spec": {
+            "name": "Contract Test Workflow",
+            "steps": [{"name": "step1", "command": "echo test"}]
+        },
+        "user_id": "user-123",
+        "project_id": "project-456",
+        "created_at": "2025-12-27T10:00:00Z",
+        "status": "created"
+    });
+    
+    // Mock OFB Python API response
+    Mock::given(method("POST"))
+        .and(path("/workflows"))
+        .and(body_json(&expected_request))
+        .respond_with(ResponseTemplate::new(201).set_body_json(&expected_response))
+        .expect(1) // Verify exactly one call
+        .mount(&mock_server)
+        .await;
+    
+    // Configure HTTP adapter to use WireMock
+    let config = DataSourceConfig::Http {
+        base_url: mock_server.uri(),
+        timeout: Duration::from_secs(5),
+        retry_attempts: 1,
+    };
+    
+    let workflow_access = DataAccessFactory::create_workflow_data_access(&config);
+    
+    // Act - Execute request
+    let result = workflow_access.create_workflow(CreateWorkflowRequest {
+        spec: WorkflowSpec {
+            name: "Contract Test Workflow".to_string(),
+            steps: vec![WorkflowStep::new("step1", "echo test")],
+        },
+        user_id: UserId::new("user-123"),
+        project_id: ProjectId::new("project-456"),
+        estimated_cost: WorkflowCost {
+            compute_units: 10,
+            estimated_duration_ms: 5000,
+        },
+    }).await;
+    
+    // Assert - Verify contract compliance
+    assert!(result.is_ok());
+    let workflow = result.unwrap();
+    assert_eq!(workflow.id, WorkflowId::new("workflow-789"));
+    assert_eq!(workflow.spec.name, "Contract Test Workflow");
+    
+    // WireMock automatically verifies the request format matched exactly
+}
+```
+
+### Layer 3: Pre-validation Tests - Performance & Logic Validation
+
+**Purpose**: Verify pre-validation logic works correctly and performs within time limits.
+
+```rust
+#[test]
+fn test_pre_validation_performance_requirement() {
+    let validator = WorkflowPreValidator::new();
+    
+    let request = CreateWorkflowRequest {
+        spec: WorkflowSpec {
+            name: "Performance Test Workflow".to_string(),
+            steps: vec![WorkflowStep::new("step1", "echo hello")],
+        },
+        user_id: UserId::new("user-123"),
+        project_id: ProjectId::new("project-456"),
+    };
+    
+    // Measure performance - must be <1ms
+    let start = std::time::Instant::now();
+    let result = validator.should_attempt_request(&request);
+    let duration = start.elapsed();
+    
+    assert!(result.is_ok());
+    assert!(duration < std::time::Duration::from_millis(1), 
+           "Pre-validation took {:?}, should be <1ms", duration);
+}
+```
+
+### Environment-Based Test Configuration
+
+```rust
+impl DataSourceConfig {
+    pub fn for_testing() -> Self {
+        match std::env::var("SYMPHONY_TEST_MODE").as_deref() {
+            Ok("mock") => Self::Mock,
+            Ok("wiremock") => Self::Http {
+                base_url: "http://localhost:8080".to_string(), // WireMock server
+                timeout: Duration::from_secs(5),
+                retry_attempts: 1,
+            },
+            Ok("integration") => Self::Http {
+                base_url: std::env::var("TEST_OFB_PYTHON_API_URL")
+                    .unwrap_or_else(|_| "http://localhost:8000".to_string()),
+                timeout: Duration::from_secs(10),
+                retry_attempts: 1,
+            },
+            _ => Self::Mock, // Default for unit tests
+        }
+    }
+}
+```
+
+### Test Execution Commands
+
+```bash
+# Unit tests (fast, mock-based)
+SYMPHONY_TEST_MODE=mock cargo test
+
+# Integration tests (WireMock contract verification)
+SYMPHONY_TEST_MODE=wiremock cargo test --features integration-tests
+
+# Contract tests (verify OFB Python API compatibility)
+SYMPHONY_TEST_MODE=wiremock cargo test ofb_python_contract_tests --features integration-tests
+
+# Performance tests (pre-validation benchmarks)
+cargo test pre_validation_performance --release
+
+# Full test suite
+cargo test --all-features
+```
+
+### Test Quality Requirements
+
+**Reliability Measures**:
+- ✅ **Deterministic**: All tests use controlled mock data or WireMock responses
+- ✅ **Isolated**: Each test gets fresh mock instances, no shared state
+- ✅ **Fast**: Unit tests complete in <100ms, integration tests in <5s
+- ✅ **Consistent**: Same inputs always produce same outputs
+
+**Coverage Requirements**:
+- ✅ **Business Logic**: 90%+ coverage for use cases and business rules
+- ✅ **Pre-validation**: 100% coverage for all validation paths
+- ✅ **Error Handling**: All error types and conversion paths tested
+- ✅ **Contract Compliance**: All HTTP endpoints and formats verified with OFB Python
+
+**OFB Python API Boundary**:
+- ✅ **Clear Separation**: We test request format, not OFB Python business logic
+- ✅ **Contract Focus**: Verify our requests match OFB Python API expectations
+- ✅ **Error Format**: Test error response parsing, not error generation logic
+- ✅ **No Duplication**: Don't test what OFB Python team already tests
 
 ---
 
@@ -660,27 +960,27 @@ Storage Performance Targets:
 ## 📊 Crate Dependency Graph
 
 ```
-Crate Dependency Architecture (Updated with Two-Layer Data):
+Crate Dependency Architecture (Updated with Testing Infrastructure):
 ┌─────────────────────────────────────────────────────────┐
 │                 Core Foundation                         │
 ├─────────────────────────────────────────────────────────┤
 │           symphony-core-ports                           │
 └─────────────────┬───────────────────────────────────────┘
                   │
-    ┌─────────────┼─────────────┬─────────────────────────┐
-    ▼             ▼             ▼                         ▼
-┌─────────┐ ┌─────────┐ ┌─────────────┐         ┌─────────────┐
-│symphony-│ │symphony-│ │symphony-    │         │symphony-    │
-│ipc-     │ │workflow-│ │extension-   │         │data-        │
-│protocol │ │model    │ │sdk          │         │contracts    │ (NEW)
-└─────────┘ └─────────┘ └─────────────┘         └─────────────┘
-    │             │             │                         │
-    ▼             ▼             ▼                         ▼
-┌─────────┐ ┌─────────┐ ┌─────────────┐         ┌─────────────┐
-│symphony-│ │symphony-│ │symphony-    │         │symphony-    │
-│ipc-     │ │workflow-│ │permissions  │         │data-layer   │ (NEW)
-│transport│ │execution│ │             │         │             │
-└─────────┘ └─────────┘ └─────────────┘         └─────────────┘
+    ┌─────────────┼─────────────┬─────────────────────────┬─────────────────┐
+    ▼             ▼             ▼                         ▼                 ▼
+┌─────────┐ ┌─────────┐ ┌─────────────┐         ┌─────────────┐   ┌─────────────┐
+│symphony-│ │symphony-│ │symphony-    │         │symphony-    │   │symphony-    │
+│ipc-     │ │workflow-│ │extension-   │         │data-        │   │testing      │ (NEW)
+│protocol │ │model    │ │sdk          │         │contracts    │   │             │
+└─────────┘ └─────────┘ └─────────────┘         └─────────────┘   └─────────────┘
+    │             │             │                         │                 │
+    ▼             ▼             ▼                         ▼                 ▼
+┌─────────┐ ┌─────────┐ ┌─────────────┐         ┌─────────────┐   ┌─────────────┐
+│symphony-│ │symphony-│ │symphony-    │         │symphony-    │   │  wiremock   │
+│ipc-     │ │workflow-│ │permissions  │         │data-layer   │   │  mockall    │
+│transport│ │execution│ │             │         │             │   │  criterion  │
+└─────────┘ └─────────┘ └─────────────┘         └─────────────┘   └─────────────┘
     │                           │                         │
     ▼                           ▼                         ▼
 ┌─────────┐                 ┌─────────────┐         ┌─────────────┐
@@ -747,7 +1047,7 @@ pub struct ComponentConfig {
 
 ### Latency Targets by Component
 ```
-Component Performance Targets (Updated with Data Layer):
+Component Performance Targets (Updated with Testing Infrastructure):
 ┌─────────────────────┬──────────────┬─────────────┐
 │ Component           │ Operation    │ Target      │
 ├─────────────────────┼──────────────┼─────────────┤
@@ -763,6 +1063,10 @@ Component Performance Targets (Updated with Data Layer):
 │ Pre-validation      │ Technical    │ <1ms        │
 │ HTTP Client         │ OFB Python   │ Single call │
 │ Data Access         │ Use Case     │ <10ms       │
+│ Unit Tests (Mocks)  │ Test Suite   │ <100ms      │
+│ Integration Tests   │ Test Suite   │ <5s         │
+│ WireMock Tests      │ Contract     │ <2s         │
+│ Performance Tests   │ Benchmark    │ <10s        │
 └─────────────────────┴──────────────┴─────────────┘
 ```
 

@@ -295,3 +295,61 @@ Permission Types:
 | **Hot Reload** | Detection time | <1s |
 | **Registry Lookup** | Query time | O(1) |
 | **Marketplace Search** | Response time | <500ms |
+
+---
+
+## 🧪 Testing Strategy
+
+### Three-Layer Testing Architecture
+
+**Layer 1: Unit Tests (Rust) - <100ms**
+- **Mock-Based Contract Testing**: All external dependencies mocked using mockall
+- **Boundary Separation**: Rust tests focus on extension loading, sandboxing, and permission checking
+- **Coverage**: Every public function, edge cases, error conditions
+- **Security Tests**: Escape attempt tests, permission bypass attempts, resource limit enforcement
+- **Performance**: Sub-100ms execution for entire unit test suite
+
+**Layer 2: Integration Tests (Rust + OFB Python) - <5s**
+- **WireMock Contract Verification**: HTTP endpoints mocked with WireMock for OFB Python integration
+- **Cross-Component Workflows**: End-to-end extension lifecycle testing
+- **Sandbox Integration**: Real process spawning with resource limits
+- **Permission Flow**: Complete request/grant/audit cycle testing
+- **Marketplace Integration**: Extension discovery and installation flows
+
+**Layer 3: Pre-validation Tests (Rust) - <1ms**
+- **Technical Validation Only**: Manifest schema validation, dependency checking, basic constraints
+- **No Business Logic**: Pre-validation does NOT include RBAC, marketplace verification, or user permissions
+- **Fast Rejection**: Prevent unnecessary HTTP requests to OFB Python layer
+- **Examples**: JSON schema validation, version constraint parsing, resource requirement validation
+
+### Testing Boundary Separation
+
+**Rust Layer Tests**:
+- Manifest parsing and validation
+- Permission type checking and scoping
+- Process spawning and sandboxing
+- Extension discovery and loading
+- Registry operations and search
+- Performance benchmarks (<0.01ms permission checks)
+
+**OFB Python Layer Tests** (via WireMock):
+- Authoritative extension verification
+- Marketplace authentication and authorization
+- User permission management
+- Extension signing and trust verification
+- Usage analytics and billing
+
+### Security Tests
+- Sandbox escape attempts
+- Permission bypass attempts
+- Resource limit enforcement
+- Malicious extension handling
+- Network isolation verification
+- Filesystem sandbox validation
+
+### Performance Tests
+- Extension discovery (<100ms per directory)
+- Permission checking (<0.01ms)
+- Process spawning (<100ms)
+- Registry queries (O(1))
+- Hot reload detection (<1s)

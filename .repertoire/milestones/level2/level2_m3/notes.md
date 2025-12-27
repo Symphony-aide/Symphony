@@ -9,6 +9,20 @@
 
 ## 📝 Decision Log
 
+### December 27, 2025: Testing Strategy Integration
+**Decision**: Integrated comprehensive three-layer testing strategy for M3 Infrastructure Extensions
+**Rationale**: Ensures clear separation between Rust orchestration logic and OFB Python validation/persistence
+**Impact**: Updated design.md with detailed testing architecture
+
+**Testing Layers for M3**:
+- **Layer 1**: Unit tests for Pit components with mocked dependencies (<100ms)
+- **Layer 2**: Integration tests with WireMock for OFB Python integration (<5s)
+- **Layer 3**: Pre-validation tests for fast technical validation (<1ms)
+
+**Boundary Separation**:
+- **Rust Layer**: Pool Manager state machine, DAG execution algorithms, Artifact Store operations
+- **OFB Python Layer**: Authoritative validation with RBAC, data persistence, business rule enforcement
+
 ### December 27, 2025: Four-File Architecture Migration
 **Decision**: Migrated Level 2 M3 from single LEVEL2_M3.md to four-file structure
 **Rationale**: Separation of concerns - ATDD requirements, technical design, implementation guidemap, and incremental notes

@@ -7,6 +7,21 @@
 
 ---
 
+## 📋 Glossary
+
+**Terms and Definitions**:
+- **OFB Python**: Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary
+- **Pre-validation**: Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic)
+- **Authoritative Validation**: Complete validation including RBAC, business rules, and data constraints performed by OFB Python
+- **Two-Layer Architecture**: Rust (orchestration + pre-validation) + OFB Python (validation + persistence)
+- **H2A2**: Harmonic Hexagonal Actor Architecture
+- **AIDE**: AI-First Development Environment
+- **Mock-Based Contract Testing**: Testing approach using mock implementations to verify trait contracts and format validation without external dependencies
+- **WireMock Contract Verification**: Integration testing using WireMock to verify HTTP request/response format matches OFB Python API expectations
+- **Three-Layer Testing**: Unit tests (mocks), Integration tests (WireMock), Pre-validation tests (performance + logic)
+
+---
+
 ## 📋 Implementation Execution Plan
 
 ### M0: Foundation (COMPLETED - December 2025)
@@ -43,11 +58,23 @@ apps/backend/crates/symphony-core-ports/
 │   ├── prevalidation.rs # Pre-validation trait definitions (NEW)
 │   └── data_contracts.rs # Data access contracts (NEW)
 └── tests/
-    └── integration_tests.rs
+    ├── integration_tests.rs
+    ├── mock_contract_tests.rs      # Mock-based contract testing (NEW)
+    ├── pre_validation_tests.rs     # Pre-validation performance tests (NEW)
+    └── wiremock_contract_tests.rs  # WireMock integration tests (NEW)
 ```
 
 **Concrete Deliverables**:
 - [ ] Port trait definitions implemented (including DataAccessPort)
+- [ ] Domain types defined with comprehensive error handling
+- [ ] Mock adapters created for isolated testing
+- [ ] Pre-validation traits defined for technical validation only
+- [ ] Data access contracts established for OFB Python integration
+- [ ] Architecture documentation updated
+- [ ] Development environment setup guide completed
+- [ ] Mock-based contract testing framework established
+- [ ] WireMock integration testing framework prepared for OFB Python API contract verification
+- [ ] Three-layer testing approach documented and implemented
 - [ ] Domain types defined with comprehensive error handling
 - [ ] Mock adapters created for isolated testing
 - [ ] Pre-validation traits defined for technical validation only
@@ -343,6 +370,10 @@ src-tauri/
 - [ ] Data access use cases follow clean architecture principles
 - [ ] All tests passing with >80% code coverage
 - [ ] Health monitoring detects and recovers from process failures
+- [ ] Three-layer testing approach operational (Unit/Integration/Pre-validation)
+- [ ] Mock-based contract testing verifies trait compliance without external dependencies
+- [ ] WireMock contract verification ensures HTTP format matches OFB Python API expectations
+- [ ] Unit tests complete in <100ms, integration tests in <5s, pre-validation tests in <1ms
 
 ---
 

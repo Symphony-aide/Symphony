@@ -510,7 +510,42 @@ TESTING.md must include:
 - Unit test suites (happy path, edge cases, errors)
 - Integration test scenarios
 - Test execution plan (pre/during/post implementation)
+- Three-layer testing architecture implementation
+- Testing boundary separation (Rust vs OFB Python)
+- Performance testing requirements (<100ms unit, <5s integration, <1ms pre-validation)
 - Reflect the Answered Questions
+
+### Testing Strategy Integration
+
+TESTING.md must implement Symphony's three-layer testing architecture:
+
+**Layer 1: Unit Tests (Rust) - <100ms**
+- Mock all external dependencies using mockall
+- Focus on Rust orchestration logic, algorithms, data structures
+- Test every public function, edge cases, error conditions
+- Use rstest for fixtures and parameterized testing
+- Include property tests for algorithm correctness
+
+**Layer 2: Integration Tests (Rust + OFB Python) - <5s**
+- Use WireMock for OFB Python HTTP endpoint mocking
+- Test cross-component workflows and real system integration
+- Validate performance under load and stress conditions
+- Test actual IPC communication and process spawning
+
+**Layer 3: Pre-validation Tests (Rust) - <1ms**
+- Test technical validation only (no business logic)
+- Focus on input sanitization, format checking, basic constraints
+- Ensure fast rejection to prevent unnecessary OFB Python calls
+- Examples: JSON schema validation, required field checks
+
+**Testing Boundary Separation**:
+- **Rust Layer**: Test orchestration, algorithms, performance-critical operations
+- **OFB Python Layer**: Mock via WireMock for authoritative validation, RBAC, persistence
+
+**Required Testing Tools**:
+- rstest (fixtures), tokio::test (async), mockall (mocking)
+- criterion (benchmarks), proptest (property tests)
+- WireMock (integration), cargo nextest (test runner)
 
 IMPLEMENTATION.md must include:
 - Template structure with phases
@@ -645,14 +680,25 @@ Step 2: TEST-FIRST APPROACH
 Before writing implementation:
 1. **MANDATORY**: Write acceptance tests from TESTING.md (Red phase)
 2. **MANDATORY**: Write unit tests (happy path, edge cases, errors) (Red phase)
-3. **MANDATORY**: Use recommended testing tools:
+3. **MANDATORY**: Implement three-layer testing architecture:
+   - **Layer 1**: Unit tests with mocked dependencies (<100ms total execution)
+   - **Layer 2**: Integration tests with WireMock for OFB Python (<5s total execution)
+   - **Layer 3**: Pre-validation tests for fast rejection (<1ms per test)
+4. **MANDATORY**: Use recommended testing tools:
    - **rstest** for fixtures and parameterization
    - **tokio::test** for async runtime support
+   - **mockall** for mocking external dependencies
+   - **WireMock** for OFB Python HTTP endpoint mocking
+   - **criterion** for performance benchmarking
+   - **proptest** for property-based testing
    - **cargo nextest run** (preferred) or `cargo test` (fallback)
-4. **MANDATORY**: All tests should FAIL initially (Red phase of TDD)
-5. **MANDATORY**: Verify tests fail for the right reasons
-6. Update TESTING.md with * [ 1 ] as tests are written
-7. **CRITICAL**: If dependencies are not implemented, create stubs with todo!()
+5. **MANDATORY**: All tests should FAIL initially (Red phase of TDD)
+6. **MANDATORY**: Verify tests fail for the right reasons
+7. **MANDATORY**: Separate testing responsibilities:
+   - **Rust Layer**: Test orchestration logic, algorithms, data structures, performance
+   - **OFB Python Layer**: Mock via WireMock for authoritative validation, RBAC, persistence
+8. Update TESTING.md with * [ 1 ] as tests are written
+9. **CRITICAL**: If dependencies are not implemented, create stubs with todo!()
 
 Step 3: IMPLEMENTATION
 Follow DESIGN.md:

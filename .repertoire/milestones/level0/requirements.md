@@ -16,6 +16,9 @@
 - **Pre-validation**: Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic)
 - **Authoritative Validation**: Complete validation including RBAC, business rules, and data constraints performed by OFB Python
 - **Two-Layer Architecture**: Rust (orchestration + pre-validation) + OFB Python (validation + persistence)
+- **Mock-Based Contract Testing**: Testing approach using mock implementations to verify trait contracts and format validation without external dependencies
+- **WireMock Contract Verification**: Integration testing using WireMock to verify HTTP request/response format matches OFB Python API expectations
+- **Three-Layer Testing**: Unit tests (mocks), Integration tests (WireMock), Pre-validation tests (performance + logic)
 
 ---
 
@@ -35,13 +38,16 @@ Scenario: H2A2 Architecture Implementation
   And concrete adapters implement all port interfaces
   And domain core orchestrates components using ports only
 
-Scenario: Two-Layer Data Architecture Implementation
+Scenario: Two-Layer Data Architecture Implementation with Testing
   Given Symphony needs efficient data handling with single source of truth
   When the two-layer data architecture is implemented
   Then Rust performs lightweight pre-validation for efficiency
   And OFB Python handles all authoritative validation (RBAC, business rules, data constraints)
   And pre-validation prevents unnecessary HTTP requests without duplicating business logic
   And all data persistence operations go through OFB Python API
+  And three-layer testing approach validates all components (Unit/Integration/Pre-validation)
+  And mock-based contract testing verifies trait compliance without external dependencies
+  And WireMock contract verification ensures HTTP format matches OFB Python API expectations
 
 Scenario: Pre-validation Performance
   Given the system requires efficient request filtering
@@ -73,6 +79,9 @@ Scenario: IPC Communication Performance
 - Property 5: Pre-validation must never contain business logic or RBAC checks
 - Property 6: All authoritative validation must occur in OFB Python API
 - Property 7: HTTP requests to OFB Python must be single calls per operation
+- Property 8: Mock-based contract testing must verify trait compliance without external dependencies
+- Property 9: WireMock contract verification must ensure HTTP format matches OFB Python API expectations
+- Property 10: Pre-validation tests must complete in <1ms, unit tests in <100ms, integration tests in <5s
 
 **Glossary**:
 - H2A2: Harmonic Hexagonal Actor Architecture
@@ -177,13 +186,16 @@ Scenario: Extension Safety and Isolation
   And extension crashes do not affect Symphony core
   And resource limits prevent system resource exhaustion
 
-Scenario: Extension Data Validation
+Scenario: Extension Data Validation with Testing
   Given extensions need secure data operations
   When extensions interact with Symphony data
   Then extension manifests are pre-validated in Rust for basic format
   And all extension permissions and capabilities are validated by OFB Python
   And extension installation/updates go through OFB Python security scanning
   And extension data access is controlled by OFB Python RBAC system
+  And mock-based testing verifies extension contract compliance
+  And WireMock testing validates extension API format compatibility with OFB Python
+  And pre-validation tests ensure <1ms performance for extension manifest validation
 
 Scenario: Extension Types Support
   Given different types of extensions serve different purposes

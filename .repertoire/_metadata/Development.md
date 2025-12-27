@@ -7,6 +7,20 @@
 
 ---
 
+## 📖 Glossary
+
+| Term | Definition |
+|------|------------|
+| **OFB Python** | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
+| **Pre-validation** | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic) |
+| **Authoritative Validation** | Complete validation including RBAC, business rules, and data constraints performed by OFB Python |
+| **Two-Layer Architecture** | Rust (orchestration + pre-validation) + OFB Python (validation + persistence) |
+| **Mock-Based Contract Testing** | Testing approach using mocked dependencies to verify component contracts |
+| **WireMock Contract Verification** | HTTP endpoint mocking for testing integration with OFB Python services |
+| **Three-Layer Testing** | Unit tests (<100ms), Integration tests (<5s), Pre-validation tests (<1ms) |
+
+---
+
 ## 🎯 Overview
 
 This framework bridges **strategic planning** (milestones) with **tactical execution** (features) using a structured, bottom-up approach that ensures rapid delivery without sacrificing quality.

@@ -7,6 +7,23 @@
 
 ## 📅 Decision Log
 
+### 2025-12-27: Testing Strategy Integration
+
+**Context**: Integrating comprehensive three-layer testing strategy for M5 Visual Orchestration Backend.
+
+**Decision**: Adopted three-layer testing architecture with clear boundary separation between Rust and OFB Python components.
+
+**Testing Layers for M5**:
+- **Layer 1**: Unit tests for workflow data structures, DAG algorithms, and serialization (<100ms)
+- **Layer 2**: Integration tests with WireMock for OFB Python workflow validation (<5s)
+- **Layer 3**: Pre-validation tests for schema validation and structural constraints (<1ms)
+
+**Boundary Separation**:
+- **Rust Layer**: Workflow data model, DAG validation algorithms, serialization, template instantiation, state machine transitions
+- **OFB Python Layer**: Authoritative workflow validation, user permissions, template marketplace, audit log persistence
+
+**Rationale**: Ensures clear separation of concerns and enables fast feedback loops while maintaining comprehensive test coverage.
+
 ### 2025-12-27: Four-File Architecture Migration
 
 **Context**: Migrating M5 from single large file to four-file architecture for better organization.

@@ -18,6 +18,9 @@
 | **IPC** | Inter-Process Communication |
 | **Port** | Interface abstraction in hexagonal architecture |
 | **Adapter** | Concrete implementation of a port interface |
+| **Mock-Based Contract Testing** | Testing approach using mock implementations to verify trait contracts and format validation without external dependencies |
+| **WireMock Contract Verification** | Integration testing using WireMock to verify HTTP request/response format matches OFB Python API expectations |
+| **Three-Layer Testing** | Unit tests (mocks), Integration tests (WireMock), Pre-validation tests (performance + logic) |
 
 ---
 

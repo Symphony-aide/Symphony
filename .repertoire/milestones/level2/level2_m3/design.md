@@ -280,22 +280,44 @@ impl PitManager {
 
 ## 🧪 Testing Strategy
 
-### Unit Tests
-- Every public function tested
-- Edge cases covered
-- Error conditions tested
+### Three-Layer Testing Architecture
 
-### Property Tests
-- State machine invariants (Pool Manager)
-- Cache consistency (Pool Manager)
-- DAG properties (DAG Tracker)
-- Storage round-trips (Artifact Store)
-- Fairness properties (Arbitration)
+**Layer 1: Unit Tests (Rust) - <100ms**
+- **Mock-Based Contract Testing**: All external dependencies mocked using mockall
+- **Boundary Separation**: Rust tests focus on orchestration logic, data structures, and algorithms
+- **Coverage**: Every public function, edge cases, error conditions
+- **Property Tests**: State machine invariants, cache consistency, storage round-trips
+- **Performance**: Sub-100ms execution for entire unit test suite
 
-### Integration Tests
-- Cross-component workflows
-- Python bridge integration
-- Concurrent access patterns
+**Layer 2: Integration Tests (Rust + OFB Python) - <5s**
+- **WireMock Contract Verification**: HTTP endpoints mocked with WireMock for OFB Python integration
+- **Cross-Component Workflows**: End-to-end testing of Pit component interactions
+- **Python Bridge Integration**: PyO3 bindings tested with real Python Conductor calls
+- **Concurrent Access Patterns**: Multi-threaded access to shared resources
+- **Resource Management**: Memory limits, cleanup, and lifecycle testing
+
+**Layer 3: Pre-validation Tests (Rust) - <1ms**
+- **Technical Validation Only**: Input sanitization, format checking, basic constraints
+- **No Business Logic**: Pre-validation does NOT include RBAC, complex business rules, or data persistence
+- **Fast Rejection**: Prevent unnecessary HTTP requests to OFB Python layer
+- **Examples**: JSON schema validation, required field checks, data type verification
+
+### Testing Boundary Separation
+
+**Rust Layer Tests**:
+- Pool Manager state machine transitions
+- DAG Tracker execution algorithms
+- Artifact Store content-addressable storage
+- Arbitration Engine conflict resolution
+- Stale Manager retention policies
+- Performance benchmarks (50-100ns targets)
+
+**OFB Python Layer Tests** (via WireMock):
+- Authoritative validation with RBAC
+- Data persistence and consistency
+- Business rule enforcement
+- Complex constraint validation
+- User permission checking
 
 ### Stress Tests
 - 10,000-node workflows

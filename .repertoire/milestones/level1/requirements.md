@@ -23,6 +23,9 @@
 - **ATDD**: Acceptance Test-Driven Development
 - **The Pit**: Five infrastructure extensions (Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, Stale Manager)
 - **Orchestra Kit**: Extension ecosystem (Instruments, Operators, Addons/Motifs)
+- **Mock-Based Contract Testing**: Testing approach using mock implementations to verify trait contracts and format validation without external dependencies
+- **WireMock Contract Verification**: Integration testing using WireMock to verify HTTP request/response format matches OFB Python API expectations
+- **Three-Layer Testing**: Unit tests (mocks), Integration tests (WireMock), Pre-validation tests (performance + logic)
 
 ---
 
@@ -42,13 +45,16 @@ Scenario: H2A2 Architecture Foundation
   And mock adapters enable isolated testing
   And development environment supports H2A2 architecture
 
-Scenario: Two-Layer Data Architecture Foundation
+Scenario: Two-Layer Data Architecture Foundation with Testing
   Given Symphony needs efficient data handling with single source of truth
   When M1.1 includes data architecture components
   Then pre-validation traits are defined for technical validation only
   And data access ports delegate to OFB Python for authoritative validation
   And HTTP client abstractions support single-call operations to OFB Python
   And error handling distinguishes pre-validation from authoritative validation failures
+  And mock-based contract testing framework is established for trait verification
+  And WireMock integration testing framework is prepared for OFB Python API contract verification
+  And three-layer testing approach is documented and implemented
 
 Scenario: Two-Binary Architecture Implementation
   Given Symphony and XI-editor need process separation
@@ -82,19 +88,24 @@ Scenario: Data Layer Integration
 - Property 6: All authoritative validation must occur in OFB Python API
 - Property 7: HTTP requests to OFB Python must be single calls per operation
 - Property 8: Data access patterns must follow two-layer architecture principles
+- Property 9: Mock-based contract testing must verify trait compliance without external dependencies
+- Property 10: WireMock contract verification must ensure HTTP format matches OFB Python API expectations
+- Property 11: Three-layer testing approach must provide comprehensive coverage (Unit/Integration/Pre-validation)
+- Property 12: Pre-validation tests must complete in <1ms, unit tests in <100ms, integration tests in <5s
 
 **Sub-Milestones**:
-- M1.1: Environment Setup & Port Definitions (2 weeks) - includes pre-validation traits
+- M1.1: Environment Setup & Port Definitions (2 weeks) - includes pre-validation traits + testing framework
 - M1.2: Two-Binary Architecture Implementation (3 weeks) `(NEW)`
 - M1.3: IPC Protocol & Serialization (3 weeks)
 - M1.4: Transport Layer (3 weeks)
 - M1.5: Message Bus Core (3 weeks)
 - M1.6: Python-Rust Bridge (3 weeks)
 - M1.7: Extension SDK Foundation (3 weeks)
-- M1.8: Data Layer Implementation (4 weeks) `(NEW)` - pre-validation + HTTP adapters
-- M1.9: Concrete Adapters Implementation (4 weeks) `(UPDATED)` - includes data adapters
+- M1.8: Data Layer Implementation (4 weeks) `(NEW)` - pre-validation + HTTP adapters + testing
+- M1.9: Concrete Adapters Implementation (4 weeks) `(UPDATED)` - includes data adapters + mock implementations
 - M1.10: Domain Core Orchestration (3 weeks) `(NEW)`
 - M1.11: Tauri Integration Layer (3 weeks) `(NEW)`
+- M1.12: Testing Infrastructure Implementation (2 weeks) `(NEW)` - Three-layer testing setup
 
 ---
 
@@ -263,9 +274,11 @@ Scenario: Artifact Store Performance
 | M1.5: Message Bus Core | 3 weeks | M1.3, M1.4 | * [ ] |
 | M1.6: Python-Rust Bridge | 3 weeks | M1.5 | * [ ] |
 | M1.7: Extension SDK | 3 weeks | M1.1 | * [ ] |
-| M1.8: Concrete Adapters | 4 weeks | M1.1-M1.7 | * [ ] |
-| M1.9: Domain Core | 3 weeks | M1.8 | * [ ] |
-| M1.10: Tauri Integration | 3 weeks | M1.9 | * [ ] |
+| M1.8: Data Layer Implementation | 4 weeks | M1.1-M1.7 | * [ ] |
+| M1.9: Concrete Adapters | 4 weeks | M1.8 | * [ ] |
+| M1.10: Domain Core | 3 weeks | M1.9 | * [ ] |
+| M1.11: Tauri Integration | 3 weeks | M1.10 | * [ ] |
+| M1.12: Testing Infrastructure | 2 weeks | M1.1, M1.8 | * [ ] |
 
 **Total M1 Duration**: 3-4 months with parallel work opportunities
 
@@ -273,8 +286,9 @@ Scenario: Artifact Store Performance
 - Phase 1: M1.1 + M5.1 can run in parallel
 - Phase 2: M1.3 + M1.7 + M5.2/M5.3 can run in parallel
 - Phase 3: M4.1-M4.3 can overlap with M1.6-M1.8
-- Phase 4: M3.1 + M3.3 can run in parallel
-- Phase 5: M3.4 + M3.5 can run in parallel
+- Phase 4: M1.12 (Testing) can run in parallel with M1.9-M1.11
+- Phase 5: M3.1 + M3.3 can run in parallel
+- Phase 6: M3.4 + M3.5 can run in parallel
 
 ---
 

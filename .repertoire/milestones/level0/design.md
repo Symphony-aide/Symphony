@@ -13,6 +13,9 @@
 - **Two-Layer Architecture**: Rust (orchestration + pre-validation) + OFB Python (validation + persistence)
 - **H2A2**: Harmonic Hexagonal Actor Architecture
 - **AIDE**: AI-First Development Environment
+- **Mock-Based Contract Testing**: Testing approach using mock implementations to verify trait contracts and format validation without external dependencies
+- **WireMock Contract Verification**: Integration testing using WireMock to verify HTTP request/response format matches OFB Python API expectations
+- **Three-Layer Testing**: Unit tests (mocks), Integration tests (WireMock), Pre-validation tests (performance + logic)
 
 ---
 
@@ -448,3 +451,163 @@ Fast Check    File exists?    Optimize      POST /workflows   RBAC +     Success
 - **HTTP Request**: Single call per operation
 - **OFB Python Response**: <100ms for typical operations
 - **Error Feedback**: Immediate for pre-validation, authoritative for business rules
+
+---
+
+## 🧪 Testing Strategy Architecture
+
+### Philosophy: Mock-Based Contract & Format Testing
+
+Symphony's testing strategy focuses on **contract verification** and **format validation** using mock implementations, with clear separation between Rust layer testing and OFB Python boundary validation.
+
+### Testing Scope & Boundaries
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           TESTING BOUNDARY SEPARATION                        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │                    WHAT WE TEST (Rust Layer)                           │ │
+│  │                                                                        │ │
+│  │  ✅ Contract Compliance: Rust implementations follow trait contracts   │ │
+│  │  ✅ Format Validation: Request/response serialization works correctly  │ │
+│  │  ✅ Pre-validation Logic: Fast technical checks work correctly (<1ms)  │ │
+│  │  ✅ Business Logic: Rust domain calculations and transformations       │ │
+│  │  ✅ Error Handling: Proper error propagation and conversion            │ │
+│  │  ✅ Integration Contracts: HTTP requests match OFB Python API format   │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │                 WHAT WE DON'T TEST (OFB Python Boundary)               │ │
+│  │                                                                        │ │
+│  │  ❌ OFB Python Business Rules: RBAC, validation logic, DB constraints  │ │
+│  │  ❌ OFB Python API Implementation: Handled by Python team's test suite │ │
+│  │  ❌ Database Operations: OFB Python layer responsibility               │ │
+│  │  ❌ Authentication/Authorization: OFB Python API handles all security  │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Three-Layer Testing Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           THREE-LAYER TESTING STRATEGY                      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │                    LAYER 1: UNIT TESTS (MOCKS)                         │ │
+│  │                                                                        │ │
+│  │  Purpose: Verify Rust business logic and contract compliance           │ │
+│  │  Target: <100ms per test suite                                         │ │
+│  │  Tools: Mock implementations, deterministic test data                  │ │
+│  │                                                                        │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────────┐   │ │
+│  │  │MockWorkflow │  │ MockUser    │  │     MockExtension           │   │ │
+│  │  │DataAccess   │  │ DataAccess  │  │     DataAccess              │   │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────────────────────┘   │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                    │                                       │
+│                                    ▼                                       │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │              LAYER 2: INTEGRATION TESTS (WIREMOCK)                     │ │
+│  │                                                                        │ │
+│  │  Purpose: Verify HTTP format matches OFB Python API expectations       │ │
+│  │  Target: <5s per test suite                                           │ │
+│  │  Tools: WireMock server, contract verification                        │ │
+│  │                                                                        │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────────┐   │ │
+│  │  │OFB Python   │  │ Request     │  │     Response                │   │ │
+│  │  │Contract     │  │ Format      │  │     Format                  │   │ │
+│  │  │Mocks        │  │ Validation  │  │     Validation              │   │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────────────────────┘   │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                    │                                       │
+│                                    ▼                                       │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │            LAYER 3: PRE-VALIDATION TESTS (PERFORMANCE)                 │ │
+│  │                                                                        │ │
+│  │  Purpose: Verify pre-validation logic and performance (<1ms)           │ │
+│  │  Target: <1ms per validation, <10s benchmark suite                    │ │
+│  │  Tools: Criterion benchmarks, performance validators                   │ │
+│  │                                                                        │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────────┐   │ │
+│  │  │Workflow     │  │ User        │  │     Extension               │   │ │
+│  │  │Pre-         │  │ Pre-        │  │     Pre-                    │   │ │
+│  │  │Validation   │  │ Validation  │  │     Validation              │   │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────────────────────┘   │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Test Organization Structure
+
+```
+symphony-testing/
+├── mock_framework/              # Layer 1: Mock-based contract testing
+│   ├── mock_data_access.rs     # Mock implementations for all data access traits
+│   ├── mock_validators.rs      # Mock pre-validation implementations
+│   └── test_data_builder.rs    # Test data construction utilities
+├── wiremock_framework/          # Layer 2: WireMock contract verification
+│   ├── contract_server.rs      # WireMock server setup and management
+│   ├── ofb_python_mocks.rs     # OFB Python API contract mocks
+│   └── response_builders.rs    # OFB Python response format builders
+├── performance_testing/         # Layer 3: Pre-validation performance tests
+│   ├── benchmarks.rs           # Performance benchmarking utilities
+│   └── validators.rs           # Pre-validation performance validators
+└── test_config/                 # Environment-based test configuration
+    └── config.rs               # Test mode configuration (mock/wiremock/integration)
+```
+
+### Test Execution Strategy
+
+```bash
+# Layer 1: Unit tests (fast, mock-based)
+SYMPHONY_TEST_MODE=mock cargo test
+
+# Layer 2: Integration tests (WireMock contract verification)
+SYMPHONY_TEST_MODE=wiremock cargo test --features integration-tests
+
+# Layer 3: Performance tests (pre-validation benchmarks)
+cargo test pre_validation_performance --release
+
+# Full test suite
+cargo test --all-features
+```
+
+### Test Quality Requirements
+
+**Performance Targets**:
+- **Unit Tests (Mocks)**: <100ms per test suite
+- **Integration Tests (WireMock)**: <5s per test suite
+- **Contract Tests**: <2s per OFB Python contract verification
+- **Pre-validation Tests**: <1ms per validation, <10s benchmark suite
+
+**Coverage Requirements**:
+- **Business Logic**: 90%+ coverage for use cases and business rules
+- **Pre-validation**: 100% coverage for all validation paths
+- **Error Handling**: All error types and conversion paths tested
+- **Contract Compliance**: All HTTP endpoints and formats verified with OFB Python
+
+**Reliability Measures**:
+- **Deterministic**: All tests use controlled mock data or WireMock responses
+- **Isolated**: Each test gets fresh mock instances, no shared state
+- **Fast**: Performance targets met consistently
+- **Consistent**: Same inputs always produce same outputs
+
+### OFB Python Boundary Testing
+
+**Clear Separation Principles**:
+- ✅ **Contract Focus**: Verify our requests match OFB Python API expectations
+- ✅ **Format Testing**: Test request/response serialization, not business logic
+- ✅ **Error Format**: Test error response parsing, not error generation logic
+- ✅ **No Duplication**: Don't test what OFB Python team already tests
+
+**Benefits of This Testing Strategy**:
+1. **Fast Feedback**: Unit tests with mocks provide immediate feedback
+2. **Contract Safety**: WireMock ensures HTTP format compatibility with OFB Python
+3. **Clear Boundaries**: We test Rust logic, OFB Python team tests Python logic
+4. **Reliable**: Deterministic tests with no external dependencies
+5. **Maintainable**: Simple mock implementations, easy to update
+6. **Performance Focused**: Pre-validation tests ensure <1ms requirement

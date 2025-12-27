@@ -26,6 +26,9 @@
 - **PyO3**: Python-Rust FFI bridge for Conductor integration
 - **Tauri**: Cross-platform desktop application framework
 - **Extension Types**: Instruments (AI), Operators (utilities), Motifs (UI), XI-plugins (text editing)
+- **Mock-Based Contract Testing**: Testing approach using mock implementations to verify trait contracts and format validation without external dependencies
+- **WireMock Contract Verification**: Integration testing using WireMock to verify HTTP request/response format matches OFB Python API expectations
+- **Three-Layer Testing**: Unit tests (mocks), Integration tests (WireMock), Pre-validation tests (performance + logic)
 
 ---
 
@@ -43,11 +46,14 @@ Scenario: Port interface definition and implementation
   And mock implementations enable isolated testing
   And all ports follow H2A2 architecture principles
 
-Scenario: Data access port with pre-validation
+Scenario: Data access port with pre-validation and testing
   Given Symphony needs efficient data operations
   When DataAccessPort is implemented
   Then pre-validation traits are defined for technical validation only
   And HTTP client abstractions support single-call operations to OFB Python
+  And mock implementations enable isolated testing without external dependencies
+  And WireMock contract verification ensures HTTP format matches OFB Python API expectations
+  And three-layer testing approach provides comprehensive coverage
   And error handling distinguishes pre-validation from authoritative validation failures
   And all business logic validation is delegated to OFB Python
 
@@ -380,6 +386,74 @@ Scenario: Error handling and categorization
 - Property 3: HTTP requests to OFB Python must be single calls per operation
 - Property 4: Error categorization must distinguish validation types
 - Property 5: Data operations must follow clean architecture principles
+- Property 6: Mock-based contract testing must verify trait compliance without external dependencies
+- Property 7: WireMock contract verification must ensure HTTP format matches OFB Python API expectations
+- Property 8: Three-layer testing approach must provide comprehensive coverage with performance targets
+
+---
+
+### Requirement 7: Testing Infrastructure Implementation `(NEW)`
+**Goal**: Establish comprehensive testing strategy with mock-based contract testing and OFB Python boundary separation
+
+**Acceptance Criteria (Gherkin-style)**:
+```gherkin
+Scenario: Three-layer testing architecture
+  Given Symphony needs reliable testing with clear boundaries
+  When testing infrastructure is implemented
+  Then Layer 1 (Unit tests with mocks) completes in <100ms per test suite
+  And Layer 2 (Integration tests with WireMock) completes in <5s per test suite
+  And Layer 3 (Pre-validation performance tests) validates <1ms requirement
+  And test organization follows domain-specific structure
+
+Scenario: Mock-based contract testing
+  Given Rust components need isolated testing
+  When mock implementations are created
+  Then MockWorkflowDataAccess implements WorkflowDataAccess trait correctly
+  And MockUserDataAccess provides deterministic test behavior
+  And MockExtensionDataAccess supports error injection for testing
+  And all mocks enable concurrent access testing
+
+Scenario: WireMock contract verification with OFB Python
+  Given HTTP requests must match OFB Python API expectations
+  When WireMock contract tests are implemented
+  Then request format validation ensures compatibility with OFB Python
+  And response format parsing handles all OFB Python response types
+  And error response format testing covers all OFB Python error scenarios
+  And contract tests verify exactly one HTTP call per operation
+
+Scenario: Pre-validation performance testing
+  Given pre-validation must complete in <1ms
+  When performance tests are implemented
+  Then workflow pre-validation benchmarks meet <1ms requirement
+  And user pre-validation benchmarks meet <1ms requirement
+  And extension manifest pre-validation benchmarks meet <1ms requirement
+  And performance regression detection prevents degradation
+
+Scenario: Test environment configuration
+  Given tests need different execution modes
+  When test configuration is implemented
+  Then SYMPHONY_TEST_MODE=mock enables fast unit testing
+  And SYMPHONY_TEST_MODE=wiremock enables contract verification
+  And SYMPHONY_TEST_MODE=integration enables OFB Python API testing
+  And test configuration supports CI/CD pipeline execution
+
+Scenario: OFB Python boundary testing separation
+  Given testing must respect architectural boundaries
+  When test scope is defined
+  Then Rust layer tests focus on contract compliance and format validation
+  And OFB Python business rules are not tested in Rust test suite
+  And database operations are not tested in Rust layer
+  And authentication/authorization testing is delegated to OFB Python team
+```
+
+**Correctness Properties**:
+- Property 1: Unit tests must complete in <100ms per test suite
+- Property 2: Integration tests must complete in <5s per test suite
+- Property 3: Pre-validation tests must validate <1ms performance requirement
+- Property 4: Mock implementations must provide deterministic behavior
+- Property 5: WireMock tests must verify exact HTTP format compatibility with OFB Python
+- Property 6: Test coverage must exceed 90% for business logic and 100% for pre-validation
+- Property 7: Testing must maintain clear separation between Rust and OFB Python responsibilities
 
 ---
 
