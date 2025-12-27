@@ -10,6 +10,8 @@ members = [
     "crates/utils/xi-unicode",
     "crates/utils/xi-trace",
     "crates/plugins/xi-syntect-plugin",
+    "crates/core/symphony-core-ports",
+    "crates/utils/sy-commons",
 ]
 
 [workspace.dependencies]
@@ -28,7 +30,7 @@ tracing-subscriber = "0.3"
 
 # Error handling
 anyhow = "1.0"
-thiserror = "1.0"
+thiserror = "2.0.17"
 
 [workspace.package]
 version = "0.1.0"
@@ -139,15 +141,15 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-xi-core-lib = { path = "crates/core/xi-core-lib" }
-xi-rpc = { path = "crates/core/xi-rpc" }
-xi-rope = { path = "crates/utils/xi-rope" }
-
-serde.workspace = true
-serde_json.workspace = true
-log.workspace = true
-tokio.workspace = true
-anyhow.workspace = true
+#xi-core-lib = { path = "crates/core/xi-core-lib" }
+#xi-rpc = { path = "crates/core/xi-rpc" }
+#xi-rope = { path = "crates/utils/xi-rope" }
+#
+#serde.workspace = true
+#serde_json.workspace = true
+#log.workspace = true
+#tokio.workspace = true
+#anyhow.workspace = true
 
 env_logger = "0.11"
 
