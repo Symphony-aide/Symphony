@@ -620,34 +620,7 @@ pub struct ConflictResolver {
 }
 ```
 
-**Synchronization Architecture**: `(NEW)`
-```
-Symphony Process                    XI-editor Process
-      │                                   │
-      ├─ File System Watcher              │
-      │  (detects external changes)       │
-      │                                   │
-      ├─ JSON-RPC: file_changed ────────► │
-      │                                   ├─ Updates buffer
-      │                                   │
-      │ ◄─── STDIO Stream: buffer_updated ─┤
-      │                                   │
-      ├─ AI Analysis                      │
-      │  (processes for suggestions)      │
-      │                                   │
-      ├─ JSON-RPC: insert_suggestion ───► │
-      │                                   ├─ Shows suggestion
-      │                                   │
-      │ ◄─── STDIO Stream: cursor_moved ───┤
-      │                                   │
-      ├─ Context Update                   │
-```
-
-**STDIO Streaming Protocol**: `(NEW)`
-- **Reliability**: OS-level buffering, ordered delivery, immediate error detection
-- **Streaming**: Continuous event stream like Server-Sent Events (SSE)
-- **Format**: Line-delimited JSON for easy parsing
-- **Bidirectional**: Symphony sends via stdin, receives via stdout streaming
+**Note**: See `design.md` for Synchronization Architecture diagram and STDIO Streaming Protocol details.
 
 **Tasks**:
 - [ ] Implement BinarySyncManager
@@ -676,9 +649,44 @@ Symphony Process                    XI-editor Process
 
 ### M1.3.1: Message Envelope Design (2 days)
 
+**Goal**: Define message envelope structure for IPC communication
+
+**Deliverables**:
+```rust
+// src/message.rs
+
+/// Message envelope for IPC communication
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Message<T> {
+    pub id: MessageId,
+    pub message_type: String,
+    pub version: Version,
+    pub timestamp: SystemTime,
+    pub payload: T,
+    pub metadata: HashMap<String, Value>,
+}
+
+/// Message identifier
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub struct MessageId(pub Uuid);
+```
+
+**Tasks**:
+- [ ] Define `Message<T>` envelope structure
+- [ ] Define `MessageId` type
+- [ ] Add metadata support
+- [ ] Implement message versioning
+- [ ] Add timestamp handling
+- [ ] Write envelope tests
+
+**Acceptance Criteria**:
+- ✅ Message envelope supports all payload types
+- ✅ Versioning enables backward compatibility
+- ✅ Metadata extensible for future needs
+
 ---
 
-### M1.1.2: MessagePack Serialization (3 days)
+### M1.3.2: MessagePack Serialization (3 days)
 
 **Goal**: Implement efficient binary serialization using MessagePack
 
@@ -719,7 +727,7 @@ impl<T: Serialize + DeserializeOwned> MessagePackSerialize for Message<T> {
 
 ---
 
-### M1.1.3: Bincode Serialization (2 days)
+### M1.3.3: Bincode Serialization (2 days)
 
 **Goal**: Implement alternative binary serialization for maximum performance
 
@@ -756,7 +764,7 @@ pub fn deserialize<T: DeserializeOwned>(bytes: &[u8], format: SerializationForma
 
 ---
 
-### M1.1.4: Schema Validation (3 days)
+### M1.3.4: Schema Validation (3 days)
 
 **Goal**: Validate messages against schemas before processing
 
@@ -806,7 +814,7 @@ pub trait Validate {
 
 ---
 
-### M1.1.5: Message Registry (2 days)
+### M1.3.5: Message Registry (2 days)
 
 **Goal**: Central registry for message types with versioning
 
@@ -959,25 +967,6 @@ pub trait PrettyPrint {
     fn pretty_print_compact(&self) -> String;
 }
 
-impl<T: Serialize> PrettyPrint for Message<T> {
-    fn pretty_print(&self) -> String {
-        // Indented, colorized output
-    }
-}
-```
-
-**Tasks**:
-- [ ] Implement `PrettyPrint` trait
-- [ ] Add indentation and formatting
-- [ ] Add optional colorization
-- [ ] Create compact single-line format
-- [ ] Add to Debug impl
-
-**Acceptance Criteria**:
-- ✅ Output is human-readable
-- ✅ Supports both verbose and compact modes
-- ✅ Works in logs and terminals
-
 ---
 
 ### M1.3.8: Pretty Printer (1 day)
@@ -1111,7 +1100,7 @@ pub trait TransportFactory: Send + Sync {
 
 ---
 
-### M1.3.2: Unix Socket Transport (4 days)
+### M1.4.2: Unix Socket Transport (4 days)
 
 **Goal**: High-performance transport for Linux/macOS
 
@@ -1147,7 +1136,7 @@ pub struct UnixSocketConfig {
 
 ---
 
-### M1.3.3: Named Pipe Transport (4 days)
+### M1.4.3: Named Pipe Transport (4 days)
 
 **Goal**: Windows-native transport implementation
 
@@ -1159,7 +1148,7 @@ pub struct UnixSocketConfig {
 
 ---
 
-### M1.3.4: Shared Memory Transport (3 days)
+### M1.4.4: Shared Memory Transport (3 days)
 
 **Goal**: Ultra-low-latency for high-frequency data
 
@@ -1214,28 +1203,7 @@ impl Transport for StdioTransport {
 }
 ```
 
-**STDIO Reliability & Streaming**: `(NEW)`
-```
-Reliability Features:
-├── OS-Level Buffering: Kernel manages message delivery
-├── Ordered Delivery: Messages arrive in sequence sent  
-├── Error Detection: Process death detected immediately
-├── Backpressure: OS handles flow control automatically
-└── Cross-Platform: Works on Windows, Linux, macOS
-
-Streaming Capabilities:
-├── Continuous Stream: Like Server-Sent Events (SSE)
-├── Line-Delimited JSON: Easy parsing, no framing needed
-├── Real-time Events: <10ms latency for event delivery
-├── Bidirectional: Send via stdin, receive via stdout
-└── Event Types: buffer_changed, cursor_moved, file_saved, etc.
-
-Example Stream:
-XI-editor stdout → {"event": "buffer_changed", "data": {...}}
-XI-editor stdout → {"event": "cursor_moved", "data": {...}}  
-XI-editor stdout → {"event": "file_saved", "data": {...}}
-Symphony reads these as continuous stream
-```
+**Note**: See `design.md` for STDIO Reliability & Streaming architecture details.
 
 **Tasks**:
 - [ ] Implement `StdioTransport` struct
@@ -1303,7 +1271,7 @@ impl<T: Transport> ConnectionPool<T> {
 
 ---
 
-### M1.3.6: Reconnection Logic (2 days)
+### M1.4.7: Reconnection Logic (2 days)
 
 **Goal**: Automatic reconnection with exponential backoff
 
@@ -1346,7 +1314,7 @@ impl<T: Transport> ReconnectingTransport<T> {
 
 ---
 
-### M1.3.7: Transport Tests (2 days)
+### M1.4.7: Transport Tests (2 days)
 
 **Goal**: Comprehensive integration tests for all transports
 
@@ -1419,7 +1387,7 @@ impl MessageProcessor {
 
 ---
 
-### M1.4.2: Routing Engine (3 days)
+### M1.5.2: Routing Engine (3 days)
 
 **Goal**: Pattern-based message routing
 
@@ -1463,7 +1431,7 @@ impl Router {
 
 ---
 
-### M1.4.3: Endpoint Registration (2 days)
+### M1.5.3: Endpoint Registration (2 days)
 
 **Goal**: Dynamic endpoint registration and discovery
 
@@ -1513,7 +1481,7 @@ impl EndpointRegistry {
 
 ---
 
-### M1.4.4: Request/Response Correlation (3 days)
+### M1.5.4: Request/Response Correlation (3 days)
 
 **Goal**: Track request/response pairs with timeouts
 
@@ -1558,7 +1526,7 @@ impl RequestCorrelator {
 
 ---
 
-### M1.4.5: Pub/Sub System (3 days)
+### M1.5.5: Pub/Sub System (3 days)
 
 **Goal**: Topic-based publish/subscribe messaging
 
@@ -1604,7 +1572,7 @@ impl PubSubManager {
 
 ---
 
-### M1.4.6: Health Monitoring (2 days)
+### M1.5.6: Health Monitoring (2 days)
 
 **Goal**: Monitor bus and endpoint health
 
@@ -1788,7 +1756,7 @@ impl MessageBatcher {
 
 ---
 
-### M1.4.8: Load Tests (2 days)
+### M1.5.10: Load Tests (2 days)
 
 **Goal**: Verify bus performance under load
 
@@ -1884,86 +1852,7 @@ fn symphony_ipc(_py: Python, m: &PyModule) -> PyResult<()> {
 
 ### Extension System Architecture Overview `(NEW)`
 
-**Four-Tier Extension System**:
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    SYMPHONY BINARY                          │
-│                                                             │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────┐ │
-│  │  🎻 Instruments │  │   ⚙️ Operators   │  │  🧩 Motifs   │ │
-│  │   (AI Models)   │  │   (Utilities)   │  │ (UI Enhance) │ │
-│  │                 │  │                 │  │              │ │
-│  │ • GPT-4         │  │ • JSON Transform│  │ • Status Bar │ │
-│  │ • Claude        │  │ • File Watcher  │  │ • Minimap    │ │
-│  │ • Local Models  │  │ • Code Format   │  │ • Themes     │ │
-│  │ • Custom AI     │  │ • Data Process  │  │ • Panels     │ │
-│  └─────────────────┘  └─────────────────┘  └─────────────┘ │
-│           │                     │                   │       │
-│           └─────────────────────┼───────────────────┘       │
-│                                 │                           │
-│  ┌─────────────────────────────────────────────────────────┐ │
-│  │         Symphony Extension Manager                      │ │
-│  │         (Actor-based process isolation)                │ │
-│  │  • Process spawning and lifecycle                      │ │
-│  │  • Message passing and IPC                             │ │
-│  │  • Permission and security enforcement                 │ │
-│  │  • Resource monitoring and limits                      │ │
-│  └─────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-                                │
-                          JSON-RPC/IPC
-                                │
-┌─────────────────────────────────────────────────────────────┐
-│                    XI-EDITOR BINARY                         │
-│                                                             │
-│  ┌─────────────────────────────────────────────────────────┐ │
-│  │              🔧 XI-editor Plugins                       │ │
-│  │                (Legacy but proven)                     │ │
-│  │                                                        │ │
-│  │ • Syntax Highlighting (TextMate grammars)              │ │
-│  │ • LSP Integration (Language servers)                   │ │
-│  │ • Language Support (Rust, Python, JS, etc.)           │ │
-│  │ • Basic Text Operations (find, replace, etc.)          │ │
-│  │ • File Type Detection                                  │ │
-│  └─────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Extension Distribution Strategy**:
-
-**Symphony Extensions** (New, AI-focused):
-- **🎻 Instruments**: AI/ML model integrations
-  - External APIs (OpenAI, Anthropic, Cohere)
-  - Local models (Ollama, Hugging Face)
-  - Custom trained models
-  - Model orchestration and routing
-
-- **⚙️ Operators**: Workflow and data processing utilities
-  - Code transformers and analyzers
-  - File system operations
-  - Data format converters
-  - Workflow automation tools
-
-- **🧩 Motifs**: UI enhancements and interface extensions
-  - Custom panels and widgets
-  - Theme and styling systems
-  - Status indicators and notifications
-  - Interactive visualizations
-
-**XI-editor Plugins** (Existing, text-focused):
-- **🔧 Text Editing Features**: Proven, stable, extensive ecosystem
-  - Syntax highlighting for 100+ languages
-  - Language Server Protocol integrations
-  - Advanced text manipulation
-  - File format support
-
-**Extension Communication Flow**:
-```
-User Action → Motif (UI) → Symphony Extension Manager 
-           → Instrument (AI) → Analysis/Generation
-           → Operator (Transform) → XI-editor (via JSON-RPC)
-           → Text Operation → Result → Back through chain
-```
+**Note**: See `design.md` for Four-Tier Extension System diagram and Extension Distribution Strategy details.
 
 ### M1.7.1-M1.7.10: SDK Implementation
 
@@ -2138,29 +2027,7 @@ async fn code_analysis_workflow() {
 
 **Key Architectural Clarifications Added**:
 
-### STDIO Transport & Streaming:
-- ✅ **OS-level reliability**: Kernel-managed, ordered delivery, immediate error detection
-- ✅ **SSE-like streaming**: Continuous event stream with <10ms latency
-- ✅ **Line-delimited JSON**: Easy parsing, no complex framing needed
-- ✅ **Bidirectional**: Symphony sends via stdin, receives via stdout streaming
-
-### Binary Synchronization:
-- ✅ **File System Watcher**: Symphony detects external changes, streams to XI-editor
-- ✅ **Buffer Synchronization**: XI-editor streams text changes to Symphony for AI analysis
-- ✅ **Event-driven**: Real-time coordination through continuous STDIO streaming
-- ✅ **Conflict Resolution**: Automatic handling of concurrent operations
-
-### Four-Tier Extension System:
-- ✅ **🎻 Instruments** (Symphony): AI/ML models (GPT, Claude, local models)
-- ✅ **⚙️ Operators** (Symphony): Workflow utilities (transformers, analyzers)
-- ✅ **🧩 Motifs** (Symphony): UI enhancements (panels, themes, widgets)
-- ✅ **🔧 XI-plugins** (XI-editor): Text editing features (syntax, LSP, languages)
-
-### Extension Interaction Patterns:
-- ✅ **AI Workflow**: Motif → Instrument → Operator → XI-editor
-- ✅ **Analysis Workflow**: XI-editor → Operator → Instrument → Motif
-- ✅ **Actor Isolation**: Symphony extensions in separate processes
-- ✅ **Plugin Coordination**: XI-editor capabilities discoverable from Symphony
+**Note**: See `design.md` for detailed architecture diagrams and `requirements.md` for acceptance criteria.
 
 **Architecture Benefits**:
 - ✅ **Best of Both Worlds**: XI-editor's proven text editing + Symphony's AI orchestration
