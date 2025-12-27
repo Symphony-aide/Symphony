@@ -8,6 +8,23 @@
 
 ---
 
+## 📖 Glossary
+
+| Term | Definition |
+|------|------------|
+| **OFB Python** | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
+| **Pre-validation** | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic) |
+| **Authoritative Validation** | Complete validation including RBAC, business rules, and data constraints performed by OFB Python |
+| **Two-Layer Architecture** | Rust (orchestration + pre-validation) + OFB Python (validation + persistence) |
+| **The Pit** | Five infrastructure extensions (Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, Stale Manager) |
+| **Pool Manager** | AI model lifecycle and resource allocation component |
+| **DAG Tracker** | Workflow dependency mapping and execution component |
+| **Artifact Store** | Intelligent data persistence and versioning component |
+| **Arbitration Engine** | Conflict resolution and decision-making component |
+| **Stale Manager** | Training data curation and system optimization component |
+
+---
+
 ## 🎯 High-Level Requirements
 
 ### Requirement 1: Pool Manager - AI Model Lifecycle Management

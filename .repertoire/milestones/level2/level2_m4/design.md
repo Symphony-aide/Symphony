@@ -3,8 +3,25 @@
 > **Technical Architecture**: Detailed design and crate structures for M4 Extension Ecosystem
 
 **Parent**: Level 1 M4 Extension Ecosystem  
-**Architecture**: Orchestra Kit - Complete extension system with sandboxing  
-**Integration**: M1 IPC, M3 Pit extensions, M5 Workflow nodes
+**Architecture**: Orchestra Kit - Complete extension system with sandboxing + Two-Layer Data Architecture  
+**Integration**: M1 IPC, M3 Pit extensions, M5 Workflow nodes, Data Layer validation
+
+---
+
+## 📖 Glossary
+
+| Term | Definition |
+|------|------------|
+| **OFB Python** | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
+| **Pre-validation** | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic) |
+| **Authoritative Validation** | Complete validation including RBAC, business rules, and data constraints performed by OFB Python |
+| **Two-Layer Architecture** | Rust (orchestration + pre-validation) + OFB Python (validation + persistence) |
+| **Orchestra Kit** | Extension ecosystem (Instruments, Operators, Addons/Motifs) |
+| **Instruments** | AI/ML model extensions (🎻) |
+| **Operators** | Workflow utility extensions (⚙️) |
+| **Addons/Motifs** | UI enhancement extensions (🧩) |
+| **Manifest** | Extension metadata and capability declaration file |
+| **Sandboxing** | Process isolation for security and stability |
 
 ---
 

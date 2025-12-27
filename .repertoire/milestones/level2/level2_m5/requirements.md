@@ -9,6 +9,10 @@
 
 | Term | Definition |
 |------|------------|
+| **OFB Python** | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
+| **Pre-validation** | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic) |
+| **Authoritative Validation** | Complete validation including RBAC, business rules, and data constraints performed by OFB Python |
+| **Two-Layer Architecture** | Rust (orchestration + pre-validation) + OFB Python (validation + persistence) |
 | **Workflow** | A directed acyclic graph (DAG) of nodes and edges representing an AI orchestration pipeline |
 | **Node** | A processing unit in a workflow (Instrument, Operator, Control, Input, Output) |
 | **Edge** | A connection between nodes (Data, Control, Conditional) |

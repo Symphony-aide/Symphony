@@ -6,6 +6,21 @@
 
 ---
 
+## 📋 Glossary
+
+**Terms and Definitions**:
+- **OFB Python**: Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary
+- **Pre-validation**: Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic)
+- **Authoritative Validation**: Complete validation including RBAC, business rules, and data constraints performed by OFB Python
+- **Two-Layer Architecture**: Rust (orchestration + pre-validation) + OFB Python (validation + persistence)
+- **The Pit**: Five infrastructure extensions (Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, Stale Manager)
+- **H2A2**: Harmonic Hexagonal Actor Architecture
+- **Content-Addressable Storage**: Storage system where content is identified by its cryptographic hash
+- **DAG**: Directed Acyclic Graph
+- **LRU**: Least Recently Used (caching strategy)
+
+---
+
 ## 📋 Overview
 
 M3 implements "The Pit" - Symphony's five infrastructure extensions that form

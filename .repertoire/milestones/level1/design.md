@@ -4,6 +4,20 @@
 
 ---
 
+## 📖 Glossary
+
+| Term | Definition |
+|------|------------|
+| **OFB Python** | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
+| **Pre-validation** | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic) |
+| **Authoritative Validation** | Complete validation including RBAC, business rules, and data constraints performed by OFB Python |
+| **Two-Layer Architecture** | Rust (orchestration + pre-validation) + OFB Python (validation + persistence) |
+| **H2A2** | Harmonic Hexagonal Actor Architecture |
+| **The Pit** | Five infrastructure extensions (Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, Stale Manager) |
+| **Orchestra Kit** | Extension ecosystem (Instruments, Operators, Addons/Motifs) |
+
+---
+
 ## 🏗️ M1: Core Infrastructure Architecture
 
 ### M1.1: Environment Setup & Port Definitions
@@ -47,6 +61,20 @@ pub trait ExtensionPort: Send + Sync {
 pub trait ConductorPort: Send + Sync {
     async fn orchestrate(&self, request: OrchestrationRequest) -> Result<OrchestrationResult>;
     async fn get_status(&self) -> Result<ConductorStatus>;
+}
+
+// NEW: Two-Layer Data Architecture Ports
+pub trait DataAccessPort: Send + Sync {
+    async fn create_workflow(&self, request: CreateWorkflowRequest) -> Result<Workflow>;
+    async fn get_workflow(&self, id: WorkflowId) -> Result<Option<Workflow>>;
+    async fn create_user(&self, request: CreateUserRequest) -> Result<User>;
+    async fn get_user(&self, id: UserId) -> Result<Option<User>>;
+}
+
+pub trait PreValidationPort: Send + Sync {
+    fn validate_workflow_request(&self, request: &CreateWorkflowRequest) -> Result<(), PreValidationError>;
+    fn validate_user_request(&self, request: &CreateUserRequest) -> Result<(), PreValidationError>;
+    fn validate_extension_manifest(&self, path: &Path) -> Result<(), PreValidationError>;
 }
 ```
 
@@ -226,6 +254,143 @@ pub struct Router {
 // - 10,000+ messages/second throughput
 // - <0.1ms average routing latency
 // - <1ms pub/sub delivery to all subscribers
+```
+
+### M1.6: Two-Layer Data Architecture `(NEW)`
+
+**Data Layer Architecture Design**:
+```
+Two-Layer Data Architecture:
+┌─────────────────────────────────────────────────────────┐
+│                    Rust Layer                           │
+│              (Orchestration + Pre-validation)           │
+├─────────────────────────────────────────────────────────┤
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐      │
+│  │Pre-validation│ │ Use Cases   │ │HTTP Client  │      │
+│  │(<1ms checks) │ │(Business    │ │(OFB Python) │      │
+│  │             │ │ Logic)      │ │             │      │
+│  └─────────────┘ └─────────────┘ └─────────────┘      │
+└─────────────────────────────────────────────────────────┘
+              │ Single HTTP Calls
+              ▼
+┌─────────────────────────────────────────────────────────┐
+│                  OFB Python Layer                       │
+│            (Validation + Persistence)                   │
+├─────────────────────────────────────────────────────────┤
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐      │
+│  │    RBAC     │ │ Business    │ │  Database   │      │
+│  │ Validation  │ │ Rules       │ │ Operations  │      │
+│  └─────────────┘ └─────────────┘ └─────────────┘      │
+│  ┌─────────────┐ ┌─────────────┐                      │
+│  │ Data        │ │ Audit       │                      │
+│  │ Validation  │ │ Logging     │                      │
+│  └─────────────┘ └─────────────┘                      │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Pre-validation Flow Design**:
+```rust
+// Pre-validation trait for technical checks only
+pub trait PreValidator<T> {
+    type Error: std::error::Error;
+    
+    /// Fast technical validation - NO business logic
+    fn should_attempt_request(&self, input: &T) -> Result<(), Self::Error>;
+}
+
+// Example implementation
+pub struct WorkflowPreValidator;
+
+impl PreValidator<CreateWorkflowRequest> for WorkflowPreValidator {
+    type Error = PreValidationError;
+    
+    fn should_attempt_request(&self, request: &CreateWorkflowRequest) -> Result<(), PreValidationError> {
+        // 1. Basic field presence (NOT business validation)
+        if request.spec.name.trim().is_empty() {
+            return Err(PreValidationError::EmptyName);
+        }
+        
+        // 2. Basic format validation (NOT content validation)
+        if request.spec.name.len() > MAX_NAME_LENGTH {
+            return Err(PreValidationError::NameTooLong);
+        }
+        
+        // 3. Basic JSON serialization check
+        serde_json::to_string(request)
+            .map_err(|_| PreValidationError::SerializationFailed)?;
+        
+        Ok(())
+    }
+}
+```
+
+**Data Access Pattern Design**:
+```rust
+// Use case with two-layer architecture
+pub struct CreateWorkflowUseCase<D, R, P> 
+where
+    D: WorkflowDataAccess,
+    R: WorkflowBusinessRules,
+    P: PreValidator<CreateWorkflowRequest>,
+{
+    data_access: D,
+    business_rules: R,
+    pre_validator: P,
+}
+
+impl<D, R, P> CreateWorkflowUseCase<D, R, P> {
+    pub async fn execute(&self, request: CreateWorkflowRequest) -> Result<Workflow, UseCaseError> {
+        // 1. Pre-validation (fast technical checks)
+        self.pre_validator.should_attempt_request(&request)
+            .map_err(UseCaseError::PreValidationFailed)?;
+        
+        // 2. Apply business logic (calculations, optimizations)
+        let optimized_spec = self.business_rules.optimize_workflow_steps(&request.spec);
+        
+        // 3. Single HTTP call to OFB Python (handles complete validation + persistence)
+        let enhanced_request = CreateWorkflowRequest {
+            spec: optimized_spec,
+            ..request
+        };
+        
+        self.data_access.create_workflow(enhanced_request).await
+            .map_err(UseCaseError::from)
+    }
+}
+```
+
+**Error Categorization Design**:
+```rust
+#[derive(Debug, thiserror::Error)]
+pub enum DataError {
+    #[error("Pre-validation failed: {0}")]
+    PreValidationFailed(String),
+    
+    #[error("Validation failed: {0}")]
+    ValidationFailed(String),
+    
+    #[error("Authorization failed: {0}")]
+    AuthorizationFailed(String),
+    
+    #[error("Resource not found")]
+    NotFound,
+    
+    #[error("Network error: {0}")]
+    NetworkError(String),
+}
+```
+
+**Performance Targets**:
+```
+Two-Layer Performance Targets:
+┌─────────────────────┬──────────────────────────────┐
+│ Operation           │ Target                       │
+├─────────────────────┼──────────────────────────────┤
+│ Pre-validation      │ <1ms for all technical checks│
+│ HTTP to OFB Python  │ Single call per operation    │
+│ Error categorization│ Immediate distinction        │
+│ Business logic      │ Pure Rust performance        │
+└─────────────────────┴──────────────────────────────┘
 ```
 
 ---
@@ -495,40 +660,40 @@ Storage Performance Targets:
 ## 📊 Crate Dependency Graph
 
 ```
-Crate Dependency Architecture:
+Crate Dependency Architecture (Updated with Two-Layer Data):
 ┌─────────────────────────────────────────────────────────┐
 │                 Core Foundation                         │
 ├─────────────────────────────────────────────────────────┤
 │           symphony-core-ports                           │
 └─────────────────┬───────────────────────────────────────┘
                   │
-    ┌─────────────┼─────────────┐
-    ▼             ▼             ▼
-┌─────────┐ ┌─────────┐ ┌─────────────┐
-│symphony-│ │symphony-│ │symphony-    │
-│ipc-     │ │workflow-│ │extension-   │
-│protocol │ │model    │ │sdk          │
-└─────────┘ └─────────┘ └─────────────┘
-    │             │             │
-    ▼             ▼             ▼
-┌─────────┐ ┌─────────┐ ┌─────────────┐
-│symphony-│ │symphony-│ │symphony-    │
-│ipc-     │ │workflow-│ │permissions  │
-│transport│ │execution│ │             │
-└─────────┘ └─────────┘ └─────────────┘
-    │                           │
-    ▼                           ▼
-┌─────────┐                 ┌─────────────┐
-│symphony-│                 │symphony-    │
-│ipc-bus  │                 │sandbox      │
-└─────────┘                 └─────────────┘
-    │                           │
-    ▼                           ▼
-┌─────────┐                 ┌─────────────┐
-│symphony-│                 │symphony-    │
-│python-  │                 │extension-   │
-│bridge   │                 │loader       │
-└─────────┘                 └─────────────┘
+    ┌─────────────┼─────────────┬─────────────────────────┐
+    ▼             ▼             ▼                         ▼
+┌─────────┐ ┌─────────┐ ┌─────────────┐         ┌─────────────┐
+│symphony-│ │symphony-│ │symphony-    │         │symphony-    │
+│ipc-     │ │workflow-│ │extension-   │         │data-        │
+│protocol │ │model    │ │sdk          │         │contracts    │ (NEW)
+└─────────┘ └─────────┘ └─────────────┘         └─────────────┘
+    │             │             │                         │
+    ▼             ▼             ▼                         ▼
+┌─────────┐ ┌─────────┐ ┌─────────────┐         ┌─────────────┐
+│symphony-│ │symphony-│ │symphony-    │         │symphony-    │
+│ipc-     │ │workflow-│ │permissions  │         │data-layer   │ (NEW)
+│transport│ │execution│ │             │         │             │
+└─────────┘ └─────────┘ └─────────────┘         └─────────────┘
+    │                           │                         │
+    ▼                           ▼                         ▼
+┌─────────┐                 ┌─────────────┐         ┌─────────────┐
+│symphony-│                 │symphony-    │         │symphony-    │
+│ipc-bus  │                 │sandbox      │         │adapters     │ (UPDATED)
+└─────────┘                 └─────────────┘         └─────────────┘
+    │                           │                         │
+    ▼                           ▼                         ▼
+┌─────────┐                 ┌─────────────┐         ┌─────────────┐
+│symphony-│                 │symphony-    │         │symphony-    │
+│python-  │                 │extension-   │         │domain       │ (NEW)
+│bridge   │                 │loader       │         │             │
+└─────────┘                 └─────────────┘         └─────────────┘
 ```
 
 ---
@@ -582,7 +747,7 @@ pub struct ComponentConfig {
 
 ### Latency Targets by Component
 ```
-Component Performance Targets:
+Component Performance Targets (Updated with Data Layer):
 ┌─────────────────────┬──────────────┬─────────────┐
 │ Component           │ Operation    │ Target      │
 ├─────────────────────┼──────────────┼─────────────┤
@@ -595,6 +760,9 @@ Component Performance Targets:
 │ Artifact Store      │ Store        │ <5ms        │
 │ Artifact Store      │ Retrieve     │ <2ms        │
 │ Extension Loader    │ Load         │ <100ms      │
+│ Pre-validation      │ Technical    │ <1ms        │
+│ HTTP Client         │ OFB Python   │ Single call │
+│ Data Access         │ Use Case     │ <10ms       │
 └─────────────────────┴──────────────┴─────────────┘
 ```
 

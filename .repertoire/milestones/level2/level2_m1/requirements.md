@@ -4,23 +4,52 @@
 
 **Parent**: Level 1 M1 Core Infrastructure  
 **Goal**: Build foundational communication and integration systems for Symphony AIDE layer  
-**Architecture**: H2A2 (Harmonic Hexagonal Actor Architecture)
+**Architecture**: H2A2 (Harmonic Hexagonal Actor Architecture) + Two-Layer Data Architecture
+
+---
+
+## 📋 Glossary
+
+**Terms and Definitions**:
+- **OFB Python**: Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary
+- **Pre-validation**: Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic)
+- **Authoritative Validation**: Complete validation including RBAC, business rules, and data constraints performed by OFB Python
+- **Two-Layer Architecture**: Rust (orchestration + pre-validation) + OFB Python (validation + persistence)
+- **H2A2**: Harmonic Hexagonal Actor Architecture - hybrid approach combining Hexagonal Architecture with Actor model
+- **Port**: Interface defining what the domain needs (TextEditingPort, PitPort, ExtensionPort, ConductorPort, DataAccessPort)
+- **Adapter**: Concrete implementation of a port interface
+- **The Pit**: Five infrastructure extensions (Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, Stale Manager)
+- **Two-Binary Architecture**: Symphony and XI-editor as separate executable processes
+- **JSON-RPC**: Communication protocol for Symphony ↔ XI-editor interaction
+- **STDIO Streaming**: Continuous event stream via stdin/stdout like Server-Sent Events
+- **Actor Model**: Process isolation pattern for extension safety
+- **PyO3**: Python-Rust FFI bridge for Conductor integration
+- **Tauri**: Cross-platform desktop application framework
+- **Extension Types**: Instruments (AI), Operators (utilities), Motifs (UI), XI-plugins (text editing)
 
 ---
 
 ## 🎯 High-Level Requirements
 
-### Requirement 1: Hexagonal Architecture Foundation
-**Goal**: Establish clean port-based architecture for Symphony AIDE layer
+### Requirement 1: Hexagonal Architecture Foundation + Data Layer
+**Goal**: Establish clean port-based architecture for Symphony AIDE layer with two-layer data architecture
 
 **Acceptance Criteria (Gherkin-style)**:
 ```gherkin
 Scenario: Port interface definition and implementation
-  Given the H2A2 architecture specification
-  When all four port interfaces are defined (TextEditingPort, PitPort, ExtensionPort, ConductorPort)
+  Given the H2A2 architecture specification with two-layer data architecture
+  When all five port interfaces are defined (TextEditingPort, PitPort, ExtensionPort, ConductorPort, DataAccessPort)
   Then each port has comprehensive async trait definitions
   And mock implementations enable isolated testing
   And all ports follow H2A2 architecture principles
+
+Scenario: Data access port with pre-validation
+  Given Symphony needs efficient data operations
+  When DataAccessPort is implemented
+  Then pre-validation traits are defined for technical validation only
+  And HTTP client abstractions support single-call operations to OFB Python
+  And error handling distinguishes pre-validation from authoritative validation failures
+  And all business logic validation is delegated to OFB Python
 
 Scenario: Domain core orchestration through ports
   Given all concrete adapters are implemented
@@ -28,12 +57,15 @@ Scenario: Domain core orchestration through ports
   Then it uses only port interfaces, never direct dependencies
   And business logic remains testable in isolation
   And adapter changes don't affect domain logic
+  And data operations follow two-layer architecture pattern
 ```
 
 **Correctness Properties**:
 - Property 1: Domain core must never import concrete adapter types
 - Property 2: All port methods must be async-first with proper error handling
 - Property 3: Mock implementations must provide deterministic behavior for testing
+- Property 4: Pre-validation must never contain business logic or RBAC checks
+- Property 5: All authoritative validation must be delegated to OFB Python
 
 ---
 
@@ -105,8 +137,8 @@ Scenario: Message bus routing and correlation
 
 ---
 
-### Requirement 4: Python-Rust Integration Bridge
-**Goal**: Enable seamless integration between Rust backend and Python Conductor
+### Requirement 4: Python-Rust Integration Bridge + Data Layer
+**Goal**: Enable seamless integration between Rust backend and Python Conductor + OFB Python data operations
 
 **Acceptance Criteria (Gherkin-style)**:
 ```gherkin
@@ -116,6 +148,14 @@ Scenario: PyO3 FFI bridge performance
   Then FFI call overhead is <0.01ms
   And all primitive types convert correctly
   And async calls work from Python asyncio
+
+Scenario: OFB Python HTTP client integration
+  Given Symphony needs data operations through OFB Python
+  When HTTP client for OFB Python is implemented
+  Then pre-validation occurs before HTTP requests
+  And single HTTP calls handle complete operations
+  And error responses distinguish validation types (pre-validation vs authoritative)
+  And retry logic handles network failures appropriately
 
 Scenario: Conductor subprocess management `(NEW)`
   Given Symphony binary starts
@@ -130,12 +170,15 @@ Scenario: Cross-language error handling
   Then errors propagate with full context
   And Python exceptions map to Rust errors correctly
   And error messages are actionable for developers
+  And OFB Python validation errors are properly categorized
 ```
 
 **Correctness Properties**:
 - Property 1: Type conversions must be bidirectional and lossless
 - Property 2: Memory management must prevent leaks across language boundary
 - Property 3: Error propagation must preserve stack traces and context
+- Property 4: Pre-validation must complete in <1ms for all operations
+- Property 5: HTTP requests to OFB Python must be single calls per operation
 
 ---
 
@@ -173,8 +216,8 @@ Scenario: Four-tier extension architecture `(NEW)`
 
 ---
 
-### Requirement 6: Concrete Adapter Implementation `(NEW)`
-**Goal**: Complete H2A2 architecture with working adapters for all ports
+### Requirement 6: Concrete Adapter Implementation `(NEW)` + Data Layer
+**Goal**: Complete H2A2 architecture with working adapters for all ports including data access
 
 **Acceptance Criteria (Gherkin-style)**:
 ```gherkin
@@ -205,12 +248,23 @@ Scenario: PythonConductorAdapter integration
   Then PyO3 bridge works correctly
   And Conductor has direct Pit access
   And FFI overhead remains <0.01ms
+
+Scenario: DataAccessAdapter with two-layer architecture
+  Given DataAccessAdapter is implemented
+  When data operations are performed
+  Then pre-validation occurs before HTTP requests to OFB Python
+  And HTTP client makes single calls per operation
+  And authoritative validation responses are properly handled
+  And error categorization distinguishes pre-validation from OFB Python errors
+  And all RBAC and business rule validation occurs in OFB Python
 ```
 
 **Correctness Properties**:
 - Property 1: All adapters must implement their respective port interfaces completely
 - Property 2: Adapter failures must not affect domain core logic
 - Property 3: Performance targets must be met under realistic load conditions
+- Property 4: Data operations must follow two-layer architecture principles
+- Property 5: Pre-validation must never duplicate OFB Python business logic
 
 ---
 
@@ -279,6 +333,53 @@ Scenario: Event streaming to frontend
 - Property 1: All backend operations must be accessible from frontend
 - Property 2: Type conversions across Tauri boundary must be safe and complete
 - Property 3: Event streaming must not introduce memory leaks or performance degradation
+
+---
+
+### Requirement 9: Data Layer Implementation `(NEW)`
+**Goal**: Implement complete two-layer data architecture with pre-validation and OFB Python integration
+
+**Acceptance Criteria (Gherkin-style)**:
+```gherkin
+Scenario: Pre-validation trait implementation
+  Given Symphony needs efficient request filtering
+  When pre-validation traits are implemented
+  Then technical validation completes in <1ms
+  And file existence, format validation, and basic structure checks work correctly
+  And business logic validation is never performed in pre-validation layer
+  And pre-validation errors provide immediate user feedback
+
+Scenario: HTTP client for OFB Python
+  Given Symphony needs data operations through OFB Python
+  When HTTP client is implemented
+  Then single HTTP calls handle complete operations
+  And retry logic handles network failures appropriately
+  And timeout handling prevents hanging requests
+  And connection pooling optimizes performance
+
+Scenario: Data access use cases
+  Given Symphony needs domain-specific data operations
+  When data access use cases are implemented
+  Then workflow creation follows two-layer pattern (pre-validation + OFB Python)
+  And user management delegates all validation to OFB Python
+  And project operations use pre-validation for immediate feedback
+  And extension operations follow security validation through OFB Python
+
+Scenario: Error handling and categorization
+  Given data operations can fail in multiple ways
+  When error handling is implemented
+  Then pre-validation errors are distinguished from OFB Python errors
+  And network errors are handled with appropriate retry logic
+  And validation errors from OFB Python are properly categorized (RBAC, business rules, data constraints)
+  And error messages provide actionable feedback to users
+```
+
+**Correctness Properties**:
+- Property 1: Pre-validation must never contain business logic or RBAC checks
+- Property 2: All authoritative validation must occur in OFB Python
+- Property 3: HTTP requests to OFB Python must be single calls per operation
+- Property 4: Error categorization must distinguish validation types
+- Property 5: Data operations must follow clean architecture principles
 
 ---
 

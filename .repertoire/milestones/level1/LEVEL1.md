@@ -3,7 +3,23 @@
 > **Implementation Strategy**: Detailed breakdown of backend-focused sub-milestones with concrete deliverables and crate structures
 
 **Status**: Level 1 decomposition of M1, M5, M4, M3 into actionable 2-4 week sub-milestones  
-**Ordering**: M1 → M5 → M4 → M3 (foundational to complex)
+**Ordering**: M1 → M5 → M4 → M3 (foundational to complex)  
+**Architecture**: H2A2 + Two-Layer Data Architecture
+
+---
+
+## 📋 Glossary
+
+**Terms and Definitions**:
+- **OFB Python**: Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary
+- **Pre-validation**: Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic)
+- **Authoritative Validation**: Complete validation including RBAC, business rules, and data constraints performed by OFB Python
+- **Two-Layer Architecture**: Rust (orchestration + pre-validation) + OFB Python (validation + persistence)
+- **H2A2**: Harmonic Hexagonal Actor Architecture
+- **IPC**: Inter-Process Communication
+- **DAG**: Directed Acyclic Graph
+- **The Pit**: Five infrastructure extensions (Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, Stale Manager)
+- **Orchestra Kit**: Extension ecosystem (Instruments, Operators, Addons/Motifs)
 
 ---
 
@@ -13,8 +29,8 @@
 **Status**: * [ ] - Next Priority
 **Dependencies**: M0 Foundation
 
-#### M1.1: Environment Setup & Port Definitions (2 weeks)
-**Priority**: 🔴 Critical - Foundation for H2A2 architecture
+#### M1.1: Environment Setup & Port Definitions + Data Layer (2 weeks)
+**Priority**: 🔴 Critical - Foundation for H2A2 architecture + Two-Layer Data Architecture
 
 **Crate Structure**:
 ```
@@ -22,21 +38,24 @@ apps/backend/crates/symphony-core-ports/
 ├── Cargo.toml
 ├── src/
 │   ├── lib.rs           # Public API exports
-│   ├── ports.rs         # Port trait definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort)
+│   ├── ports.rs         # Port trait definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort, DataAccessPort)
 │   ├── types.rs         # Domain types and data structures
 │   ├── errors.rs        # Error types and handling
 │   ├── mocks.rs         # Mock implementations for testing
 │   ├── binary.rs        # Two-binary specific adaptations (NEW)
-│   └── lib.rs
+│   ├── prevalidation.rs # Pre-validation trait definitions (NEW)
+│   └── data_contracts.rs # Data access contracts (NEW)
 └── tests/
     └── integration_tests.rs
 ```
 
 **Concrete Deliverables**:
-- [ ] Core port trait definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort)
+- [ ] Core port trait definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort, DataAccessPort)
 - [ ] Development environment setup for H2A2 architecture
 - [ ] Domain types and error definitions
 - [ ] Mock adapters for testing
+- [ ] Pre-validation traits defined for technical validation only
+- [ ] Data access contracts established for OFB Python integration
 - [ ] Architecture documentation
 - [ ] **Two-Binary Integration**: Port definitions adapted for inter-process communication `(NEW)`
 
@@ -199,7 +218,97 @@ apps/backend/crates/symphony-python-bridge/
 - [ ] Async calls work from Python asyncio
 - [ ] Errors propagate with full context
 - [ ] **Conductor has direct access to The Pit components** `(NEW)`
-#### M1.7: Extension SDK Foundation (3 weeks)
+
+#### M1.7: Data Layer Implementation `(NEW)` (3 weeks)
+**Priority**: 🔴 Critical - Two-Layer Data Architecture
+
+**Crate Structure**:
+```
+apps/backend/crates/symphony-data-layer/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs
+│   ├── prevalidation/   # Pre-validation implementations
+│   │   ├── mod.rs
+│   │   ├── workflow.rs  # Workflow pre-validation
+│   │   ├── user.rs      # User pre-validation
+│   │   ├── extension.rs # Extension pre-validation
+│   │   └── project.rs   # Project pre-validation
+│   ├── http_client/     # HTTP client for OFB Python
+│   │   ├── mod.rs
+│   │   ├── client.rs    # HTTP client implementation
+│   │   ├── retry.rs     # Retry logic and error handling
+│   │   └── config.rs    # Configuration and timeouts
+│   ├── adapters/        # Data access adapters
+│   │   ├── mod.rs
+│   │   ├── workflow.rs  # Workflow data access
+│   │   ├── user.rs      # User data access
+│   │   ├── extension.rs # Extension data access
+│   │   └── project.rs   # Project data access
+│   └── use_cases/       # Domain use cases
+│       ├── mod.rs
+│       ├── workflow.rs  # Workflow use cases
+│       ├── user.rs      # User use cases
+│       └── extension.rs # Extension use cases
+└── tests/
+    ├── prevalidation_tests.rs
+    ├── http_client_tests.rs
+    └── integration_tests.rs
+```
+
+**Concrete Deliverables**:
+- [ ] Pre-validation traits implemented for all domains (Workflow, User, Extension, Project)
+- [ ] HTTP client for OFB Python with retry logic and error handling
+- [ ] Data access adapters following two-layer architecture
+- [ ] Domain use cases integrating pre-validation + OFB Python calls
+- [ ] Error categorization (pre-validation vs authoritative validation)
+- [ ] Performance benchmarks (<1ms pre-validation, single HTTP calls)
+- [ ] Configuration system for OFB Python API endpoints
+
+**Performance Targets**:
+- [ ] Pre-validation completes in <1ms for all technical checks
+- [ ] HTTP requests to OFB Python are single calls per operation
+- [ ] Error categorization distinguishes pre-validation from authoritative validation
+- [ ] All RBAC and business rule validation occurs in OFB Python only
+
+#### M1.8: Data Contracts & Abstractions `(NEW)` (2 weeks)
+**Priority**: 🔴 Critical - Clean Architecture Foundation
+
+**Crate Structure**:
+```
+apps/backend/crates/symphony-data-contracts/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs
+│   ├── traits.rs        # Core data access traits (DataStore, QueryableStore, TransactionalStore)
+│   ├── domain/          # Domain-specific contracts
+│   │   ├── mod.rs
+│   │   ├── user.rs      # UserDataAccess trait
+│   │   ├── workflow.rs  # WorkflowDataAccess trait
+│   │   ├── extension.rs # ExtensionDataAccess trait
+│   │   └── project.rs   # ProjectDataAccess trait
+│   ├── errors.rs        # Data layer error types
+│   ├── types.rs         # Common data types and IDs
+│   └── prevalidation.rs # Pre-validation trait definitions
+└── tests/
+    └── contract_tests.rs
+```
+
+**Concrete Deliverables**:
+- [ ] Core data access trait definitions (DataStore, QueryableStore, TransactionalStore)
+- [ ] Domain-specific data access contracts (User, Workflow, Extension, Project)
+- [ ] Pre-validation trait definitions for all domains
+- [ ] Comprehensive error type hierarchy with pre-validation errors
+- [ ] Common data types and ID types
+- [ ] Mock implementations for testing
+
+**Success Criteria**:
+- [ ] All data access operations expressible through trait interfaces
+- [ ] Pre-validation traits support <1ms technical validation
+- [ ] Error types distinguish pre-validation from authoritative validation
+- [ ] Mock implementations enable comprehensive unit testing
+
+#### M1.8: Extension SDK Foundation (3 weeks)
 **Priority**: 🟡 High - Extension development prerequisite
 
 **Crate Structure**:
@@ -237,7 +346,7 @@ apps/backend/crates/symphony-extension-sdk/
 - [ ] Permission violations detected at declaration time
 - [ ] **Extensions run in isolated processes with crash protection** `(NEW)`
 
-#### M1.8: Concrete Adapters Implementation `(NEW)` (4 weeks)
+#### M1.9: Concrete Adapters Implementation `(NEW)` (4 weeks)
 **Priority**: 🔴 Critical - H2A2 architecture completion
 
 **Crate Structure**:
@@ -249,12 +358,14 @@ apps/backend/crates/symphony-adapters/
 │   ├── pit.rs            # PitAdapter implementing PitPort (in-process)
 │   ├── extensions.rs     # ActorExtensionAdapter implementing ExtensionPort
 │   ├── conductor.rs      # PythonConductorAdapter implementing ConductorPort
+│   ├── data_access.rs    # DataAccessAdapter implementing DataAccessPort (NEW)
 │   └── common.rs         # Shared adapter utilities
 └── tests/
     ├── xi_editor_tests.rs
     ├── pit_tests.rs
     ├── extension_tests.rs
-    └── conductor_tests.rs
+    ├── conductor_tests.rs
+    └── data_access_tests.rs
 ```
 
 **Concrete Deliverables**:
@@ -262,14 +373,16 @@ apps/backend/crates/symphony-adapters/
 - [ ] PitAdapter with direct in-process access to The Pit components
 - [ ] ActorExtensionAdapter with process isolation for extensions
 - [ ] PythonConductorAdapter with PyO3 bridge integration
+- [ ] **DataAccessAdapter with two-layer architecture (pre-validation + OFB Python)** `(NEW)`
 - [ ] Comprehensive test coverage for all adapters
 
 **Success Criteria**:
-- [ ] All four port interfaces have concrete implementations
+- [ ] All six port interfaces have concrete implementations
 - [ ] XiEditorAdapter communicates with XI-editor binary via JSON-RPC
 - [ ] PitAdapter provides direct access to Pit components
 - [ ] ActorExtensionAdapter isolates extensions in separate processes
 - [ ] PythonConductorAdapter bridges to Python Conductor subprocess
+- [ ] **DataAccessAdapter follows two-layer architecture principles** `(NEW)`
 #### M1.9: Domain Core Orchestration `(NEW)` (3 weeks)
 **Priority**: 🔴 Critical - Symphony AIDE heart
 
@@ -278,22 +391,24 @@ apps/backend/crates/symphony-adapters/
 apps/backend/crates/symphony-domain/
 ├── src/
 │   ├── lib.rs
-│   ├── core.rs           # SymphonyCore orchestration engine using all four ports
+│   ├── core.rs           # SymphonyCore orchestration engine using all six ports
 │   ├── state.rs          # State management and synchronization
 │   ├── sync.rs           # Binary synchronization coordination
 │   ├── events.rs         # Event streaming and process lifecycle
 │   ├── lifecycle.rs      # Process lifecycle management
-│   └── workflows.rs      # Workflow coordination
+│   ├── workflows.rs      # Workflow coordination
+│   └── use_cases.rs      # Domain use cases with two-layer data integration (NEW)
 └── tests/
     └── integration_tests.rs
 ```
 
 **Concrete Deliverables**:
 - [ ] SymphonyCore orchestration engine coordinating all components
-- [ ] Business logic layer using the four port interfaces
+- [ ] Business logic layer using the six port interfaces (including DataAccessPort)
 - [ ] State management and synchronization between Symphony and XI-editor binaries
 - [ ] Event streaming and process lifecycle management
 - [ ] Workflow coordination logic
+- [ ] **Domain use cases integrating two-layer data architecture** `(NEW)`
 - [ ] End-to-end integration tests
 
 **Success Criteria**:
@@ -302,6 +417,7 @@ apps/backend/crates/symphony-domain/
 - [ ] Event streaming enables real-time coordination
 - [ ] Process failures are detected and handled gracefully
 - [ ] Workflows execute correctly across all components
+- [ ] **Data operations follow two-layer architecture (pre-validation + OFB Python)** `(NEW)`
 
 #### M1.10: Tauri Integration Layer `(NEW)` (3 weeks)
 **Priority**: 🔴 Critical - Frontend-backend bridge
@@ -316,7 +432,8 @@ src-tauri/
 │   │   ├── conductor.rs  # Conductor operations
 │   │   ├── text_editing.rs # Text editing operations
 │   │   ├── extensions.rs # Extension operations
-│   │   └── workflows.rs  # Workflow operations
+│   │   ├── workflows.rs  # Workflow operations
+│   │   └── data.rs       # Data operations with two-layer architecture (NEW)
 │   ├── state.rs         # Application state management
 │   ├── events.rs        # Event handling and streaming
 │   └── error.rs         # Error handling across Tauri boundary
@@ -328,6 +445,7 @@ src-tauri/
 - [ ] Error handling across Tauri boundary with proper serialization
 - [ ] Frontend-backend type synchronization
 - [ ] Event streaming from backend to frontend
+- [ ] **Data command handlers with pre-validation error handling** `(NEW)`
 
 **Success Criteria**:
 - [ ] All Symphony operations accessible via Tauri commands
@@ -335,6 +453,7 @@ src-tauri/
 - [ ] Error handling provides clear feedback to frontend
 - [ ] Type safety maintained across Tauri boundary
 - [ ] Event streaming enables real-time UI updates
+- [ ] **Pre-validation errors provide immediate user feedback** `(NEW)`
 
 ### M1 Success Criteria Checklist
 - [ ] H2A2 architecture fully implemented (Ports + Adapters + Domain + Actors)
@@ -347,6 +466,13 @@ src-tauri/
 - [ ] JSON-RPC latency <1ms for XI-editor operations
 - [ ] Python Conductor has direct access to The Pit components
 - [ ] Extension system provides safe isolation via Actor model
+- [ ] **Two-layer data architecture operational (Pre-validation + OFB Python)** `(NEW)`
+- [ ] **Pre-validation completes in <1ms for all technical checks** `(NEW)`
+- [ ] **HTTP requests to OFB Python are single calls per operation** `(NEW)`
+- [ ] **All RBAC and business rule validation occurs in OFB Python** `(NEW)`
+- [ ] **Error categorization distinguishes pre-validation from authoritative validation** `(NEW)`
+- [ ] **Data access use cases follow clean architecture principles** `(NEW)`
+- [ ] **Six port interfaces implemented: TextEditing, Pit, Extension, Conductor, DataAccess, PreValidation** `(NEW)`
 - [ ] All tests passing with >80% code coverage
 - [ ] Health monitoring detects and recovers from process failures
 ---
@@ -847,12 +973,14 @@ apps/backend/crates/symphony-stale-manager/
 | **M1.4** Transport Layer | 3 weeks | M1.3 | `symphony-ipc-transport` | * [ ] |
 | **M1.5** Message Bus | 3 weeks | M1.3, M1.4 | `symphony-ipc-bus` | * [ ] |
 | **M1.6** Python Bridge | 3 weeks | M1.5 | `symphony-python-bridge` | * [ ] |
-| **M1.7** Extension SDK | 3 weeks | M1.1 | `symphony-extension-sdk` | * [ ] |
-| **M1.8** Concrete Adapters | 4 weeks | M1.1-M1.7 | `symphony-adapters` | * [ ] |
-| **M1.9** Domain Core | 3 weeks | M1.8 | `symphony-domain` | * [ ] |
-| **M1.10** Tauri Integration | 3 weeks | M1.9 | Tauri commands | * [ ] |
+| **M1.7** Data Layer | 3 weeks | M1.1 | `symphony-data-layer` | * [ ] |
+| **M1.8** Data Contracts | 2 weeks | M1.1 | `symphony-data-contracts` | * [ ] |
+| **M1.9** Extension SDK | 3 weeks | M1.1 | `symphony-extension-sdk` | * [ ] |
+| **M1.10** Concrete Adapters | 4 weeks | M1.1-M1.9 | `symphony-adapters` | * [ ] |
+| **M1.11** Domain Core | 3 weeks | M1.10 | `symphony-domain` | * [ ] |
+| **M1.12** Tauri Integration | 3 weeks | M1.11 | Tauri commands | * [ ] |
 
-**Total M1 Duration**: 3-4 months with parallel work opportunities
+**Total M1 Duration**: 4-5 months with parallel work opportunities
 
 ---
 
@@ -862,13 +990,14 @@ apps/backend/crates/symphony-stale-manager/
 Can work in parallel:
 - M1.1 Environment Setup + M5.1 Workflow Model
 - M1.2 Two-Binary Architecture (after M1.1)
+- M1.7 Data Layer + M1.8 Data Contracts (after M1.1)
 - M5.2 DAG Validation + M5.3 Serialization (after M5.1)
 
 ### Phase 2 (Weeks 7-12)
 Can work in parallel:
-- M1.3 IPC Protocol + M1.7 Extension SDK
+- M1.3 IPC Protocol + M1.9 Extension SDK
 - M5.4 Templates + M5.5 Execution API
-- M4.1 Manifest (after M1.7)
+- M4.1 Manifest (after M1.9)
 
 ### Phase 3 (Weeks 13-20)
 Can work in parallel:
@@ -878,13 +1007,13 @@ Can work in parallel:
 
 ### Phase 4 (Weeks 21-28)
 Can work in parallel:
-- M1.6 Python Bridge + M1.8 Concrete Adapters
+- M1.6 Python Bridge + M1.10 Concrete Adapters
 - M4.6 Extension Types
 - M3.1 Pool Manager + M3.3 Artifact Store
 
 ### Phase 5 (Weeks 29-36)
 Can work in parallel:
-- M1.9 Domain Core + M1.10 Tauri Integration
+- M1.11 Domain Core + M1.12 Tauri Integration
 - M3.2 DAG Tracker
 - M3.4 Arbitration + M3.5 Stale Manager
 

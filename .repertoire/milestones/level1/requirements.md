@@ -2,9 +2,27 @@
 
 > **Scope**: Backend-focused decomposition of M1, M5, M4, M3 into actionable sub-milestones
 > **Ordering**: M1 → M5 → M4 → M3 (foundational to complex)
+> **Architecture**: Two-layer data architecture with Rust pre-validation + OFB Python authoritative validation
 
 **Current Status**: Level 1 decomposition of high-level milestones into 2-4 week sub-milestones  
 **Target**: Actionable backend implementation tasks with clear deliverables and success criteria
+
+---
+
+## 📋 Glossary
+
+**Terms and Definitions**:
+- **OFB Python**: Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary
+- **Pre-validation**: Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic)
+- **Authoritative Validation**: Complete validation including RBAC, business rules, and data constraints performed by OFB Python
+- **Two-Layer Architecture**: Rust (orchestration + pre-validation) + OFB Python (validation + persistence)
+- **H2A2**: Harmonic Hexagonal Actor Architecture
+- **IPC**: Inter-Process Communication
+- **DAG**: Directed Acyclic Graph
+- **FFI**: Foreign Function Interface
+- **ATDD**: Acceptance Test-Driven Development
+- **The Pit**: Five infrastructure extensions (Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, Stale Manager)
+- **Orchestra Kit**: Extension ecosystem (Instruments, Operators, Addons/Motifs)
 
 ---
 
@@ -24,6 +42,14 @@ Scenario: H2A2 Architecture Foundation
   And mock adapters enable isolated testing
   And development environment supports H2A2 architecture
 
+Scenario: Two-Layer Data Architecture Foundation
+  Given Symphony needs efficient data handling with single source of truth
+  When M1.1 includes data architecture components
+  Then pre-validation traits are defined for technical validation only
+  And data access ports delegate to OFB Python for authoritative validation
+  And HTTP client abstractions support single-call operations to OFB Python
+  And error handling distinguishes pre-validation from authoritative validation failures
+
 Scenario: Two-Binary Architecture Implementation
   Given Symphony and XI-editor need process separation
   When M1.2 Two-Binary Architecture Setup is complete
@@ -39,23 +65,36 @@ Scenario: High-Performance IPC Communication
   And throughput supports 10,000+ messages/second
   And Python-Rust bridge overhead is <0.01ms
 
+Scenario: Data Layer Integration
+  Given Symphony needs seamless data operations
+  When M1.6-M1.8 data layer is complete
+  Then pre-validation completes in <1ms for all operations
+  And HTTP requests to OFB Python are single calls per operation
+  And all RBAC and business rule validation occurs in OFB Python
+  And data persistence operations go through OFB Python API exclusively
+
 **Correctness Properties**:
 - Property 1: All port interfaces must have concrete adapter implementations
 - Property 2: Binary synchronization must maintain data consistency across processes
 - Property 3: IPC communication must meet performance targets under load
 - Property 4: Extension SDK must support safe process isolation
+- Property 5: Pre-validation must never contain business logic or RBAC checks
+- Property 6: All authoritative validation must occur in OFB Python API
+- Property 7: HTTP requests to OFB Python must be single calls per operation
+- Property 8: Data access patterns must follow two-layer architecture principles
 
 **Sub-Milestones**:
-- M1.1: Environment Setup & Port Definitions (2 weeks)
+- M1.1: Environment Setup & Port Definitions (2 weeks) - includes pre-validation traits
 - M1.2: Two-Binary Architecture Implementation (3 weeks) `(NEW)`
 - M1.3: IPC Protocol & Serialization (3 weeks)
 - M1.4: Transport Layer (3 weeks)
 - M1.5: Message Bus Core (3 weeks)
 - M1.6: Python-Rust Bridge (3 weeks)
 - M1.7: Extension SDK Foundation (3 weeks)
-- M1.8: Concrete Adapters Implementation (4 weeks) `(NEW)`
-- M1.9: Domain Core Orchestration (3 weeks) `(NEW)`
-- M1.10: Tauri Integration Layer (3 weeks) `(NEW)`
+- M1.8: Data Layer Implementation (4 weeks) `(NEW)` - pre-validation + HTTP adapters
+- M1.9: Concrete Adapters Implementation (4 weeks) `(UPDATED)` - includes data adapters
+- M1.10: Domain Core Orchestration (3 weeks) `(NEW)`
+- M1.11: Tauri Integration Layer (3 weeks) `(NEW)`
 
 ---
 

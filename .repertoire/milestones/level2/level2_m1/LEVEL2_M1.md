@@ -1,8 +1,23 @@
 # M1: Core Infrastructure - Level 2 Decomposition
 
 > **Parent**: [MILESTONES_LEVEL1.md](../MILESTONES_LEVEL1.md)
-> **Duration**: 3-4 months
-> **Goal**: Build the foundational communication and integration systems
+> **Duration**: 4-5 months (Updated with Data Layer)
+> **Goal**: Build the foundational communication and integration systems with two-layer data architecture
+
+---
+
+## 📖 Glossary
+
+| Term | Definition |
+|------|------------|
+| **OFB Python** | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
+| **Pre-validation** | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic) |
+| **Authoritative Validation** | Complete validation including RBAC, business rules, and data constraints performed by OFB Python |
+| **Two-Layer Architecture** | Rust (orchestration + pre-validation) + OFB Python (validation + persistence) |
+| **H2A2** | Harmonic Hexagonal Actor Architecture |
+| **IPC** | Inter-Process Communication |
+| **Port** | Interface abstraction in hexagonal architecture |
+| **Adapter** | Concrete implementation of a port interface |
 
 ---
 

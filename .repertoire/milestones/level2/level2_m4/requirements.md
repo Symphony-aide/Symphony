@@ -3,15 +3,40 @@
 > **ATDD Requirements**: Acceptance Test-Driven Development scenarios for M4 Extension Ecosystem
 
 **Parent**: Level 1 M4 Extension Ecosystem  
-**Goal**: Complete extension system for community and commercial extensions  
+**Goal**: Complete extension system for community and commercial extensions with two-layer data architecture  
 **Components**: Manifest System, Permission Framework, Process Isolation, Extension Loader, Registry & Discovery, Extension Types
+
+---
+
+## 📋 Glossary
+
+**Terms and Definitions**:
+- **OFB Python**: Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary
+- **Pre-validation**: Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic)
+- **Authoritative Validation**: Complete validation including RBAC, business rules, and data constraints performed by OFB Python
+- **Two-Layer Architecture**: Rust (orchestration + pre-validation) + OFB Python (validation + persistence)
+- **Orchestra Kit**: Symphony's complete extension ecosystem
+- **Manifest**: TOML/JSON file describing extension metadata
+- **Capability**: What an extension can do (ai.inference, data.transform, ui.panel, etc.)
+- **Permission**: Authorization for security-relevant operations
+- **Permission Scope**: Duration of permission (once, session, persistent, time-limited)
+- **Sandbox**: Isolated execution environment for extensions
+- **Process Isolation**: Running extensions in separate processes with resource limits
+- **Extension Loader**: Component that discovers, resolves, and loads extensions
+- **Hot Reload**: Reloading extensions without restarting Symphony
+- **Registry**: Database of installed extensions
+- **Marketplace**: Remote repository of available extensions
+- **Instrument**: Extension type for AI/ML models
+- **Operator**: Extension type for workflow utilities
+- **Addon**: Extension type for UI enhancements
+- **Virtual DOM**: Efficient rendering abstraction for UI components
 
 ---
 
 ## 🎯 High-Level Requirements
 
-### Requirement 1: Manifest System
-**Goal**: Comprehensive manifest schema for all extension metadata
+### Requirement 1: Manifest System + Data Validation
+**Goal**: Comprehensive manifest schema for all extension metadata with two-layer validation
 
 **Acceptance Criteria (Gherkin-style)**:
 ```gherkin
@@ -22,12 +47,20 @@ Scenario: Manifest parsing and validation
   And both TOML and JSON formats are supported
   And invalid manifests are rejected with clear errors
 
+Scenario: Two-layer manifest validation
+  Given an extension manifest needs validation
+  When validation is performed
+  Then Rust pre-validation checks basic format and structure
+  And OFB Python performs authoritative security scanning and business rule validation
+  And manifest capabilities are validated against extension type constraints by OFB Python
+  And dependency resolution is handled by OFB Python with full context
+
 Scenario: Capability declarations
   Given an extension with declared capabilities
   When capabilities are validated
   Then standard capabilities cover common use cases
   And custom capabilities are supported
-  And inconsistencies with extension type are detected
+  And inconsistencies with extension type are detected by OFB Python
 
 Scenario: Dependency specification
   Given extensions with dependencies
@@ -48,11 +81,13 @@ Scenario: Configuration schema
 - Property 1: Manifest parsing must be deterministic and complete
 - Property 2: Capability validation must catch all inconsistencies
 - Property 3: Version constraint satisfaction must be mathematically correct
+- Property 4: Pre-validation must only check technical format, not business rules
+- Property 5: All security and business validation must occur in OFB Python
 
 ---
 
-### Requirement 2: Permission Framework
-**Goal**: Granular permission system for extension security
+### Requirement 2: Permission Framework + RBAC Integration
+**Goal**: Granular permission system for extension security with OFB Python RBAC
 
 **Acceptance Criteria (Gherkin-style)**:
 ```gherkin
@@ -63,23 +98,31 @@ Scenario: Permission types and scopes
   And permissions are granular with pattern matching
   And scopes cover all use cases (once, session, persistent, time-limited)
 
+Scenario: Two-layer permission validation
+  Given an extension requesting access
+  When permission is checked
+  Then Rust pre-validation performs basic permission format checks
+  And OFB Python performs authoritative RBAC validation with full user context
+  And permission grants are logged and audited by OFB Python
+  And permission revocation is handled by OFB Python with immediate effect
+
 Scenario: Runtime permission checking
   Given an extension requesting access
   When permission is checked
-  Then check completes in <0.01ms
+  Then check completes in <0.01ms for cached decisions
   And all operations are checked correctly
   And grant/revoke works correctly
 
-Scenario: Policy engine
+Scenario: Policy engine integration
   Given configurable permission policies
-  When policies are evaluated
+  When policies are evaluated by OFB Python
   Then policies are flexible and composable
   And built-in policies cover common needs (strict, permissive, balanced)
-  And policy evaluation is fast
+  And policy evaluation considers full user and extension context
 
 Scenario: Audit logging
   Given permission decisions being made
-  When audit log is written
+  When audit log is written by OFB Python
   Then all permission decisions are logged
   And query returns results quickly
   And export supports common formats
@@ -89,6 +132,8 @@ Scenario: Audit logging
 - Property 1: Permission checks must never allow unauthorized access
 - Property 2: Audit log must capture all permission decisions
 - Property 3: Policy evaluation must be deterministic
+- Property 4: RBAC validation must occur in OFB Python with full context
+- Property 5: Pre-validation must only check permission format, not authorization
 
 ---
 
@@ -188,36 +233,42 @@ Scenario: State machine
 
 ---
 
-### Requirement 5: Registry & Discovery
-**Goal**: Local and remote extension management
+### Requirement 5: Registry & Discovery + Data Integration
+**Goal**: Local and remote extension management with two-layer data architecture
 
 **Acceptance Criteria (Gherkin-style)**:
 ```gherkin
-Scenario: Local registry
+Scenario: Local registry with pre-validation
   Given installed extensions
   When registry operations are performed
-  Then CRUD operations work correctly
-  And lookup is O(1)
-  And database migrations work
+  Then Rust pre-validation checks basic registry data format
+  And OFB Python handles authoritative extension metadata validation
+  And CRUD operations work correctly with two-layer validation
+  And lookup is O(1) for cached data
 
-Scenario: Marketplace client
+Scenario: Marketplace client integration
   Given remote marketplace
   When marketplace is accessed
   Then search returns relevant results
   And downloads work reliably
   And caching reduces API calls
+  And OFB Python validates marketplace extension security before installation
 
-Scenario: Version management
+Scenario: Version management with validation
   Given extension versions
   When version operations are performed
   Then install, update, and rollback work correctly
   And signature verification ensures integrity
+  And OFB Python validates version compatibility and security
+  And dependency resolution considers full system context
 ```
 
 **Correctness Properties**:
 - Property 1: Registry operations must be atomic
 - Property 2: Signature verification must detect tampering
 - Property 3: Version rollback must restore previous state
+- Property 4: Extension security validation must occur in OFB Python
+- Property 5: Marketplace operations must follow two-layer architecture
 
 ---
 

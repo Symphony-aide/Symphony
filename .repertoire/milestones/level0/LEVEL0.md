@@ -26,8 +26,8 @@
 
 ### Implementation Breakdown
 
-#### 1.1 Environment Setup & Port Definitions
-**Priority**: 🔴 Critical - Foundation for H2A2 architecture
+#### 1.1 Environment Setup & Port Definitions + Data Layer
+**Priority**: 🔴 Critical - Foundation for H2A2 architecture + Two-Layer Data Architecture
 **Timeline**: 2-3 weeks
 
 **Crate Structure**:
@@ -36,18 +36,22 @@ apps/backend/crates/symphony-core-ports/
 ├── Cargo.toml
 ├── src/
 │   ├── lib.rs           # Public API exports
-│   ├── ports.rs         # Port trait definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort)
+│   ├── ports.rs         # Port trait definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort, DataAccessPort)
 │   ├── types.rs         # Domain types and data structures
 │   ├── errors.rs        # Error types and handling
-│   └── mocks.rs         # Mock implementations for testing
+│   ├── mocks.rs         # Mock implementations for testing
+│   ├── prevalidation.rs # Pre-validation trait definitions (NEW)
+│   └── data_contracts.rs # Data access contracts (NEW)
 └── tests/
     └── integration_tests.rs
 ```
 
 **Concrete Deliverables**:
-- [ ] Port trait definitions implemented
+- [ ] Port trait definitions implemented (including DataAccessPort)
 - [ ] Domain types defined with comprehensive error handling
 - [ ] Mock adapters created for isolated testing
+- [ ] Pre-validation traits defined for technical validation only
+- [ ] Data access contracts established for OFB Python integration
 - [ ] Architecture documentation updated
 - [ ] Development environment setup guide completed
 
@@ -164,7 +168,54 @@ apps/backend/crates/symphony-python-bridge/
 - [ ] Type conversion layer with comprehensive error handling
 - [ ] Performance monitoring to maintain <0.01ms overhead
 
-#### 1.6 Extension SDK Foundation
+#### 1.6 Data Layer Implementation `(NEW)`
+**Priority**: 🔴 Critical - Two-Layer Data Architecture
+**Timeline**: 3-4 weeks
+
+**Crate Structure**:
+```
+apps/backend/crates/symphony-data-layer/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs
+│   ├── prevalidation/   # Pre-validation implementations
+│   │   ├── mod.rs
+│   │   ├── workflow.rs  # Workflow pre-validation
+│   │   ├── user.rs      # User pre-validation
+│   │   ├── extension.rs # Extension pre-validation
+│   │   └── project.rs   # Project pre-validation
+│   ├── http_client/     # HTTP client for OFB Python
+│   │   ├── mod.rs
+│   │   ├── client.rs    # HTTP client implementation
+│   │   ├── retry.rs     # Retry logic and error handling
+│   │   └── config.rs    # Configuration and timeouts
+│   ├── adapters/        # Data access adapters
+│   │   ├── mod.rs
+│   │   ├── workflow.rs  # Workflow data access
+│   │   ├── user.rs      # User data access
+│   │   ├── extension.rs # Extension data access
+│   │   └── project.rs   # Project data access
+│   └── use_cases/       # Domain use cases
+│       ├── mod.rs
+│       ├── workflow.rs  # Workflow use cases
+│       ├── user.rs      # User use cases
+│       └── extension.rs # Extension use cases
+└── tests/
+    ├── prevalidation_tests.rs
+    ├── http_client_tests.rs
+    └── integration_tests.rs
+```
+
+**Concrete Deliverables**:
+- [ ] Pre-validation traits implemented for all domains (Workflow, User, Extension, Project)
+- [ ] HTTP client for OFB Python with retry logic and error handling
+- [ ] Data access adapters following two-layer architecture
+- [ ] Domain use cases integrating pre-validation + OFB Python calls
+- [ ] Error categorization (pre-validation vs authoritative validation)
+- [ ] Performance benchmarks (<1ms pre-validation, single HTTP calls)
+- [ ] Configuration system for OFB Python API endpoints
+
+#### 1.7 Extension SDK Foundation
 **Priority**: 🟡 High - Extension development prerequisite
 **Timeline**: 2-3 weeks
 
@@ -193,7 +244,7 @@ apps/backend/crates/symphony-extension-sdk/
 - [ ] Actor-based isolation for safe extension execution
 - [ ] Example extensions for each type (Instrument, Operator, Addon)
 
-#### 1.7 Concrete Adapters Implementation `(NEW)`
+#### 1.8 Concrete Adapters Implementation `(NEW)`
 **Priority**: 🔴 Critical - H2A2 architecture completion
 **Timeline**: 3-4 weeks
 
@@ -284,6 +335,12 @@ src-tauri/
 - [ ] JSON-RPC latency <1ms for XI-editor operations
 - [ ] Python Conductor has direct access to The Pit components
 - [ ] Extension system provides safe isolation via Actor model
+- [ ] Two-layer data architecture operational (Pre-validation + OFB Python)
+- [ ] Pre-validation completes in <1ms for all technical checks
+- [ ] HTTP requests to OFB Python are single calls per operation
+- [ ] All RBAC and business rule validation occurs in OFB Python
+- [ ] Error categorization distinguishes pre-validation from authoritative validation
+- [ ] Data access use cases follow clean architecture principles
 - [ ] All tests passing with >80% code coverage
 - [ ] Health monitoring detects and recovers from process failures
 

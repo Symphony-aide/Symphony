@@ -6,6 +6,24 @@
 
 ---
 
+## 📖 Glossary
+
+| Term | Definition |
+|------|------------|
+| **OFB Python** | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
+| **Pre-validation** | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic) |
+| **Authoritative Validation** | Complete validation including RBAC, business rules, and data constraints performed by OFB Python |
+| **Two-Layer Architecture** | Rust (orchestration + pre-validation) + OFB Python (validation + persistence) |
+| **Orchestra Kit** | Extension ecosystem (Instruments, Operators, Addons/Motifs) |
+| **Instruments** | AI/ML model extensions (🎻) |
+| **Operators** | Workflow utility extensions (⚙️) |
+| **Addons/Motifs** | UI enhancement extensions (🧩) |
+| **Manifest** | Extension metadata and capability declaration file |
+| **Sandboxing** | Process isolation for security and stability |
+| **Hot Reload** | Ability to update extensions without system restart |
+
+---
+
 ## 📋 Overview
 
 M4 builds the Orchestra Kit - Symphony's complete extension ecosystem that enables

@@ -4,7 +4,22 @@
 
 **Parent**: Level 1 M3 The Pit  
 **Architecture**: In-process Rust extensions with microsecond-level performance  
-**Integration**: Direct access from Python Conductor via PyO3
+**Integration**: Direct access from Python Conductor via PyO3 + Two-Layer Data Architecture
+
+---
+
+## 📖 Glossary
+
+| Term | Definition |
+|------|------------|
+| **OFB Python** | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
+| **Pre-validation** | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic) |
+| **Authoritative Validation** | Complete validation including RBAC, business rules, and data constraints performed by OFB Python |
+| **Two-Layer Architecture** | Rust (orchestration + pre-validation) + OFB Python (validation + persistence) |
+| **The Pit** | Five infrastructure extensions (Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, Stale Manager) |
+| **Pool Manager** | AI model lifecycle and resource allocation component |
+| **DAG Tracker** | Workflow dependency mapping and execution component |
+| **Artifact Store** | Intelligent data persistence and versioning component |
 
 ---
 

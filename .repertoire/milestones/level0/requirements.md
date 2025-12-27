@@ -5,6 +5,18 @@
 **Current Status**: ✅ Foundation Complete (XI-editor integrated, December 2025)  
 **Target**: 🎯 Full AIDE System with Conductor orchestration, extension ecosystem, and visual workflows
 
+**Architecture Decision**: Two-layer data architecture with Rust pre-validation + Python authoritative validation
+
+---
+
+## 📋 Glossary
+
+**Terms and Definitions**:
+- **OFB Python**: Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary
+- **Pre-validation**: Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic)
+- **Authoritative Validation**: Complete validation including RBAC, business rules, and data constraints performed by OFB Python
+- **Two-Layer Architecture**: Rust (orchestration + pre-validation) + OFB Python (validation + persistence)
+
 ---
 
 ## 🎯 Strategic Milestones
@@ -22,6 +34,21 @@ Scenario: H2A2 Architecture Implementation
   Then port definitions exist for TextEditingPort, PitPort, ExtensionPort, and ConductorPort
   And concrete adapters implement all port interfaces
   And domain core orchestrates components using ports only
+
+Scenario: Two-Layer Data Architecture Implementation
+  Given Symphony needs efficient data handling with single source of truth
+  When the two-layer data architecture is implemented
+  Then Rust performs lightweight pre-validation for efficiency
+  And OFB Python handles all authoritative validation (RBAC, business rules, data constraints)
+  And pre-validation prevents unnecessary HTTP requests without duplicating business logic
+  And all data persistence operations go through OFB Python API
+
+Scenario: Pre-validation Performance
+  Given the system requires efficient request filtering
+  When pre-validation is performed in Rust
+  Then technical checks complete in microseconds (<1ms)
+  And file existence, format validation, and basic structure checks work correctly
+  And business logic validation is never performed in Rust pre-validation layer
 
 Scenario: Two-Binary Architecture Operation
   Given Symphony needs separation between AIDE and text editing
@@ -43,6 +70,9 @@ Scenario: IPC Communication Performance
 - Property 2: Domain core must never directly depend on external systems
 - Property 3: Binary synchronization must maintain data consistency
 - Property 4: Process failures must trigger automatic recovery within 100ms
+- Property 5: Pre-validation must never contain business logic or RBAC checks
+- Property 6: All authoritative validation must occur in OFB Python API
+- Property 7: HTTP requests to OFB Python must be single calls per operation
 
 **Glossary**:
 - H2A2: Harmonic Hexagonal Actor Architecture
@@ -65,6 +95,14 @@ Scenario: Conductor Integration
   And direct access to The Pit components is available
   And RL model integration via Function Quest Game is operational
 
+Scenario: Two-Layer Data Integration
+  Given Conductor needs efficient data operations
+  When Conductor processes workflows and user requests
+  Then Conductor uses Rust pre-validation for immediate feedback
+  And all workflow creation/modification goes through OFB Python API
+  And user permissions and capabilities are validated by OFB Python
+  And workflow business rules are enforced by OFB Python only
+
 Scenario: Workflow Orchestration
   Given users need automated workflow management
   When the Conductor orchestrates workflows
@@ -76,6 +114,8 @@ Scenario: Workflow Orchestration
 - Property 1: Conductor must have direct in-process access to The Pit
 - Property 2: RL model must achieve >80% success rate on FQG puzzles
 - Property 3: Workflow failures must trigger appropriate recovery strategies
+- Property 4: All data validation must be delegated to OFB Python API
+- Property 5: Pre-validation must provide immediate user feedback for obvious errors
 
 **Glossary**:
 - FQG: Function Quest Game
@@ -137,6 +177,14 @@ Scenario: Extension Safety and Isolation
   And extension crashes do not affect Symphony core
   And resource limits prevent system resource exhaustion
 
+Scenario: Extension Data Validation
+  Given extensions need secure data operations
+  When extensions interact with Symphony data
+  Then extension manifests are pre-validated in Rust for basic format
+  And all extension permissions and capabilities are validated by OFB Python
+  And extension installation/updates go through OFB Python security scanning
+  And extension data access is controlled by OFB Python RBAC system
+
 Scenario: Extension Types Support
   Given different types of extensions serve different purposes
   When extension system is operational
@@ -155,6 +203,8 @@ Scenario: Marketplace Functionality
 - Property 1: Extension failures must not crash Symphony core
 - Property 2: All extension types must support the defined API contracts
 - Property 3: Marketplace transactions must be secure and auditable
+- Property 4: Extension validation must follow two-layer architecture (pre-validation + OFB Python)
+- Property 5: Extension permissions must be enforced by OFB Python RBAC system
 
 **Glossary**:
 - Orchestra Kit: Symphony's extension ecosystem

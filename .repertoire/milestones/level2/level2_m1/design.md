@@ -3,8 +3,22 @@
 > **Technical Architecture**: Detailed design and crate structures for M1 Core Infrastructure implementation
 
 **Parent**: Level 1 M1 Core Infrastructure  
-**Architecture**: H2A2 (Harmonic Hexagonal Actor Architecture)  
-**Implementation**: Two-Binary + Port-Adapter + Actor Model
+**Architecture**: H2A2 (Harmonic Hexagonal Actor Architecture) + Two-Layer Data Architecture  
+**Implementation**: Two-Binary + Port-Adapter + Actor Model + Data Layer
+
+---
+
+## 📖 Glossary
+
+| Term | Definition |
+|------|------------|
+| **OFB Python** | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
+| **Pre-validation** | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic) |
+| **Authoritative Validation** | Complete validation including RBAC, business rules, and data constraints performed by OFB Python |
+| **Two-Layer Architecture** | Rust (orchestration + pre-validation) + OFB Python (validation + persistence) |
+| **H2A2** | Harmonic Hexagonal Actor Architecture |
+| **Port** | Interface abstraction in hexagonal architecture |
+| **Adapter** | Concrete implementation of a port interface |
 
 ---
 
