@@ -80,6 +80,7 @@ Scenario: Data Layer Integration
   And data persistence operations go through OFB Python API exclusively
 
 **Correctness Properties**:
+- Property 0: sy-commons must be fully implemented before any other crate development
 - Property 1: All port interfaces must have concrete adapter implementations
 - Property 2: Binary synchronization must maintain data consistency across processes
 - Property 3: IPC communication must meet performance targets under load
@@ -92,20 +93,22 @@ Scenario: Data Layer Integration
 - Property 10: WireMock contract verification must ensure HTTP format matches OFB Python API expectations
 - Property 11: Three-layer testing approach must provide comprehensive coverage (Unit/Integration/Pre-validation)
 - Property 12: Pre-validation tests must complete in <1ms, unit tests in <100ms, integration tests in <5s
+- Property 13: All crates must use sy-commons for shared functionality (errors, logging, config, filesystem)
 
 **Sub-Milestones**:
-- M1.1: Environment Setup & Port Definitions (2 weeks) - includes pre-validation traits + testing framework
-- M1.2: Two-Binary Architecture Implementation (3 weeks) `(NEW)`
-- M1.3: IPC Protocol & Serialization (3 weeks)
+- M1.0: sy-commons Foundation (2 weeks) - PREREQUISITE for all other development
+- M1.1: Environment Setup & Port Definitions (2 weeks) - depends on M1.0
+- M1.2: Two-Binary Architecture Implementation (3 weeks) - depends on M1.0
+- M1.3: IPC Protocol & Serialization (3 weeks) - depends on M1.0
 - M1.4: Transport Layer (3 weeks)
 - M1.5: Message Bus Core (3 weeks)
 - M1.6: Python-Rust Bridge (3 weeks)
 - M1.7: Extension SDK Foundation (3 weeks)
-- M1.8: Data Layer Implementation (4 weeks) `(NEW)` - pre-validation + HTTP adapters + testing
-- M1.9: Concrete Adapters Implementation (4 weeks) `(UPDATED)` - includes data adapters + mock implementations
-- M1.10: Domain Core Orchestration (3 weeks) `(NEW)`
-- M1.11: Tauri Integration Layer (3 weeks) `(NEW)`
-- M1.12: Testing Infrastructure Implementation (2 weeks) `(NEW)` - Three-layer testing setup
+- M1.8: Data Layer Implementation (4 weeks) - pre-validation + HTTP adapters + testing
+- M1.9: Concrete Adapters Implementation (4 weeks) - includes data adapters + mock implementations
+- M1.10: Domain Core Orchestration (3 weeks)
+- M1.11: Tauri Integration Layer (3 weeks)
+- M1.12: Testing Infrastructure Implementation (2 weeks) - Three-layer testing setup
 
 ---
 

@@ -23,64 +23,149 @@
 
 ## 🏗️ M1: Core Infrastructure Architecture
 
+### M1.0: sy-commons Foundation (PREREQUISITE)
+
+**Core Rule**: "Common First" - Any functionality that can be shared across crates MUST be implemented in sy-commons first.
+
+**Crate Structure**:
+```
+apps/backend/crates/utils/sy-commons/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs           # Complete functionality guide + re-exports
+│   ├── error.rs         # SymphonyError - base error for ALL crates
+│   ├── logging.rs       # Professional logging (tracing-based)
+│   ├── config.rs        # Environment configuration (TOML + Figment)
+│   ├── filesystem.rs    # Safe filesystem utilities
+│   ├── prevalidation.rs # Pre-validation rule helpers
+│   └── debug.rs         # Duck debugging utilities
+└── tests/
+    ├── error_tests.rs
+    ├── logging_tests.rs
+    ├── config_tests.rs
+    ├── filesystem_tests.rs
+    ├── prevalidation_tests.rs
+    └── debug_tests.rs
+```
+
+**Core Implementation Requirements**:
+```rust
+// SymphonyError - base error for ALL Symphony crates
+#[derive(Debug, thiserror::Error)]
+pub enum SymphonyError {
+    #[error("Validation error: {message}")]
+    Validation { message: String },
+    
+    #[error("IO error: {source}")]
+    Io { #[from] source: std::io::Error },
+    
+    #[error("Serialization error: {source}")]
+    Serialization { #[from] source: serde_json::Error },
+    
+    #[error("{message}")]
+    Generic { message: String },
+}
+
+// Professional logging system
+pub fn init_logging(config: &LoggingConfig) -> Result<(), SymphonyError> {
+    // tracing + tracing-subscriber implementation
+    // Console, File, JSON outputs
+}
+
+// Environment configuration
+#[derive(Deserialize)]
+pub struct Config {
+    pub database: DatabaseConfig,
+    pub logging: LoggingConfig,
+    pub symphony: SymphonyConfig,
+}
+
+pub fn load_config() -> Result<Config, SymphonyError> {
+    use figment::{Figment, providers::Toml};
+    
+    Figment::new()
+        .merge(Toml::file("default.toml"))
+        .merge(Toml::file("production.toml"))
+        .extract()
+        .map_err(|e| SymphonyError::Generic { message: e.to_string() })
+}
+
+// Pre-validation helpers (NOT logging)
+pub trait PreValidationRule<T> {
+    fn validate(&self, input: &T) -> Result<(), SymphonyError>;
+}
+
+// Duck debugging
+#[macro_export]
+macro_rules! duck {
+    ($($arg:tt)*) => {
+        #[cfg(debug_assertions)]
+        eprintln!("[DUCK DEBUGGING] {}", format!($($arg)*));
+    };
+}
+```
+
 ### M1.1: Environment Setup & Port Definitions
+
+**Dependencies**: M1.0 sy-commons Foundation MUST be complete
 
 **Crate Structure**:
 ```
 apps/backend/crates/symphony-core-ports/
-├── Cargo.toml
+├── Cargo.toml           # MUST depend on sy-commons
 ├── src/
 │   ├── lib.rs           # Public API exports
-│   ├── ports.rs         # Port trait definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort)
-│   ├── types.rs         # Domain types and data structures
-│   ├── errors.rs        # Error types and handling
-│   ├── mocks.rs         # Mock implementations for testing
-│   ├── binary.rs        # Two-binary specific adaptations (NEW)
-│   └── lib.rs
+│   ├── ports.rs         # Port trait definitions using sy-commons::SymphonyError
+│   ├── types.rs         # Domain types using sy-commons error handling
+│   ├── errors.rs        # Port-specific errors extending SymphonyError
+│   ├── mocks.rs         # Mock implementations using sy-commons utilities
+│   └── binary.rs        # Two-binary adaptations using sy-commons logging
 └── tests/
     ├── integration_tests.rs
-    ├── mock_contract_tests.rs      # Mock-based contract testing (NEW)
-    ├── pre_validation_tests.rs     # Pre-validation performance tests (NEW)
-    └── wiremock_contract_tests.rs  # WireMock integration tests (NEW)
+    ├── mock_contract_tests.rs      # Using sy-commons test utilities
+    ├── pre_validation_tests.rs     # Using sy-commons pre-validation helpers
+    └── wiremock_contract_tests.rs  # Using sy-commons error handling
 ```
 
 **Port Interface Design**:
 ```rust
-// Core port trait definitions
+use sy_commons::error::SymphonyError;
+
+// Core port trait definitions - ALL use SymphonyError
 pub trait TextEditingPort: Send + Sync {
-    async fn open_file(&self, path: &Path) -> Result<BufferId>;
-    async fn edit_text(&self, buffer_id: BufferId, edit: TextEdit) -> Result<()>;
-    async fn get_buffer_content(&self, buffer_id: BufferId) -> Result<String>;
+    async fn open_file(&self, path: &Path) -> Result<BufferId, SymphonyError>;
+    async fn edit_text(&self, buffer_id: BufferId, edit: TextEdit) -> Result<(), SymphonyError>;
+    async fn get_buffer_content(&self, buffer_id: BufferId) -> Result<String, SymphonyError>;
 }
 
 pub trait PitPort: Send + Sync {
-    async fn allocate_model(&self, model_id: &str) -> Result<ModelHandle>;
-    async fn execute_workflow(&self, workflow: WorkflowSpec) -> Result<ExecutionId>;
-    async fn store_artifact(&self, content: &[u8]) -> Result<ArtifactId>;
+    async fn allocate_model(&self, model_id: &str) -> Result<ModelHandle, SymphonyError>;
+    async fn execute_workflow(&self, workflow: WorkflowSpec) -> Result<ExecutionId, SymphonyError>;
+    async fn store_artifact(&self, content: &[u8]) -> Result<ArtifactId, SymphonyError>;
 }
 
 pub trait ExtensionPort: Send + Sync {
-    async fn load_extension(&self, manifest: ExtensionManifest) -> Result<ExtensionId>;
-    async fn invoke_extension(&self, id: ExtensionId, input: Value) -> Result<Value>;
+    async fn load_extension(&self, manifest: ExtensionManifest) -> Result<ExtensionId, SymphonyError>;
+    async fn invoke_extension(&self, id: ExtensionId, input: Value) -> Result<Value, SymphonyError>;
 }
 
 pub trait ConductorPort: Send + Sync {
-    async fn orchestrate(&self, request: OrchestrationRequest) -> Result<OrchestrationResult>;
-    async fn get_status(&self) -> Result<ConductorStatus>;
+    async fn orchestrate(&self, request: OrchestrationRequest) -> Result<OrchestrationResult, SymphonyError>;
+    async fn get_status(&self) -> Result<ConductorStatus, SymphonyError>;
 }
 
-// NEW: Two-Layer Data Architecture Ports with Testing Support
+// NEW: Two-Layer Data Architecture Ports - ALL use SymphonyError
 pub trait DataAccessPort: Send + Sync {
-    async fn create_workflow(&self, request: CreateWorkflowRequest) -> Result<Workflow>;
-    async fn get_workflow(&self, id: WorkflowId) -> Result<Option<Workflow>>;
-    async fn create_user(&self, request: CreateUserRequest) -> Result<User>;
-    async fn get_user(&self, id: UserId) -> Result<Option<User>>;
+    async fn create_workflow(&self, request: CreateWorkflowRequest) -> Result<Workflow, SymphonyError>;
+    async fn get_workflow(&self, id: WorkflowId) -> Result<Option<Workflow>, SymphonyError>;
+    async fn create_user(&self, request: CreateUserRequest) -> Result<User, SymphonyError>;
+    async fn get_user(&self, id: UserId) -> Result<Option<User>, SymphonyError>;
 }
 
 pub trait PreValidationPort: Send + Sync {
-    fn validate_workflow_request(&self, request: &CreateWorkflowRequest) -> Result<(), PreValidationError>;
-    fn validate_user_request(&self, request: &CreateUserRequest) -> Result<(), PreValidationError>;
-    fn validate_extension_manifest(&self, path: &Path) -> Result<(), PreValidationError>;
+    fn validate_workflow_request(&self, request: &CreateWorkflowRequest) -> Result<(), SymphonyError>;
+    fn validate_user_request(&self, request: &CreateUserRequest) -> Result<(), SymphonyError>;
+    fn validate_extension_manifest(&self, path: &Path) -> Result<(), SymphonyError>;
 }
 
 // NEW: Testing Support Traits

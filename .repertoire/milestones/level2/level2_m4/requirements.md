@@ -4,7 +4,19 @@
 
 **Parent**: Level 1 M4 Extension Ecosystem  
 **Goal**: Complete extension system for community and commercial extensions with two-layer data architecture  
-**Components**: Manifest System, Permission Framework, Process Isolation, Extension Loader, Registry & Discovery, Extension Types
+**Components**: Manifest System, Permission Framework, Process Isolation, Extension Loader, Registry & Discovery, Extension Types  
+**PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M4 development
+
+---
+
+## 🚨 CRITICAL DEPENDENCY: sy-commons Foundation
+
+**All M4 sub-milestones MUST**:
+- Use sy-commons::SymphonyError for ALL error handling
+- Use sy-commons logging system for ALL logging and security auditing
+- Use sy-commons configuration system for ALL extension configuration
+- Use sy-commons filesystem utilities for ALL extension file operations
+- Use sy-commons pre-validation helpers for ALL manifest and permission validation
 
 ---
 

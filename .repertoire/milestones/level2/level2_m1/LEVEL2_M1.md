@@ -2,7 +2,22 @@
 
 > **Parent**: [MILESTONES_LEVEL1.md](../MILESTONES_LEVEL1.md)
 > **Duration**: 4-5 months (Updated with Data Layer)
-> **Goal**: Build the foundational communication and integration systems with two-layer data architecture
+> **Goal**: Build the foundational communication and integration systems with two-layer data architecture  
+> **PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M1 development
+
+---
+
+## 🚨 CRITICAL DEPENDENCY: sy-commons Foundation
+
+**Core Rule**: "Common First" - Any functionality that can be shared across crates MUST be implemented in sy-commons first.
+
+**All M1 sub-milestones MUST**:
+- Use sy-commons::SymphonyError for ALL error handling
+- Use sy-commons logging system for ALL logging
+- Use sy-commons configuration system for ALL configuration
+- Use sy-commons filesystem utilities for ALL file operations
+- Use sy-commons pre-validation helpers for ALL technical validation
+- Include sy-commons as dependency in ALL Cargo.toml files
 
 ---
 
@@ -30,6 +45,15 @@ M1 establishes the Hexagonal Architecture foundation and communication backbone 
 
 ```
 M1: Core Infrastructure
+├── M1.0: sy-commons Foundation (PREREQUISITE)
+│   ├── M1.0.1: SymphonyError Base Error Type
+│   ├── M1.0.2: Professional Logging System (tracing-based)
+│   ├── M1.0.3: Environment Configuration (TOML + Figment)
+│   ├── M1.0.4: Safe Filesystem Utilities
+│   ├── M1.0.5: Pre-validation Rule Helpers
+│   ├── M1.0.6: Duck Debugging Utilities
+│   ├── M1.0.7: Complete lib.rs Guide
+│   └── M1.0.8: Co-located Tests for All Functions
 ├── M1.1: Environment Setup & Port Definitions
 │   ├── M1.1.1: Port Interface Definitions
 │   ├── M1.1.2: Development Environment Setup
@@ -126,11 +150,100 @@ M1: Core Infrastructure
 
 ---
 
+## 🚨 M1.0: sy-commons Foundation (PREREQUISITE)
+
+**Crate**: `sy-commons`  
+**Priority**: 🔴 Critical - PREREQUISITE for ALL Symphony development  
+**Dependencies**: None
+
+**Core Rule**: "Common First" - Any functionality that can be shared across crates MUST be implemented in sy-commons first.
+
+### Crate Structure
+```
+apps/backend/crates/utils/sy-commons/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs           # Complete functionality guide + re-exports
+│   ├── error.rs         # SymphonyError - base error for ALL crates
+│   ├── logging.rs       # Professional logging (tracing-based)
+│   ├── config.rs        # Environment configuration (TOML + Figment)
+│   ├── filesystem.rs    # Safe filesystem utilities
+│   ├── prevalidation.rs # Pre-validation rule helpers
+│   └── debug.rs         # Duck debugging utilities
+```
+
+### Implementation Tasks
+
+#### M1.0.1: SymphonyError Base Error Type
+- [ ] Define SymphonyError enum with Validation, IO, Serialization, Generic variants
+- [ ] Implement From traits for common error types
+- [ ] Add context support with ResultContext trait
+- [ ] Create error categorization system
+- [ ] Write comprehensive error tests
+
+##### Professional Logging System (tracing-based)
+- [ ] Integrate tracing and tracing-subscriber
+- [ ] Implement Console output formatter
+- [ ] Implement File output with rotation
+- [ ] Implement JSON output for cloud analysis
+- [ ] Create LoggingConfig structure
+- [ ] Add init_logging function
+- [ ] Re-export logging macros (info!, warn!, error!)
+- [ ] Write logging integration tests
+
+##### Environment Configuration (TOML + Figment)
+- [ ] Create Config structure with Deserialize
+- [ ] Implement load_config function using Figment
+- [ ] Support default.toml, test.toml, production.toml
+- [ ] Create type-safe configuration parsing
+- [ ] Write configuration tests for all TOML files
+
+####  Safe Filesystem Utilities [use powerful crate if needed]
+- [ ] Implement safe file reading with error handling
+- [ ] Implement Option for platform dirs `use directories::ProjectDirs;`
+- [ ] Implement safe file writing with atomic operations
+- [ ] Add directory creation utilities
+- [ ] Add file existence checking
+- [ ] Implement path validation utilities
+- [ ] Create filesystem operation tests
+
+#### Pre-validation Rule Helpers
+- [ ] Define PreValidationRule trait
+- [ ] Implement common validation rules (non-empty, format, size)
+- [ ] Create rule composition utilities
+- [ ] Add performance-optimized validation (<1ms)
+- [ ] Write pre-validation performance tests
+
+#### Duck Debugging Utilities
+- [ ] Implement duck! macro for temporary debugging
+- [ ] Add searchable format with [DUCK DEBUGGING] prefix
+- [ ] Write duck debugging tests
+
+#### Complete lib.rs Guide
+- [ ] Document all public APIs with examples
+- [ ] Create comprehensive usage guide
+- [ ] Add re-exports for all public functionality
+- [ ] Write documentation tests
+
+### Success Criteria
+- [ ] All public functions have co-located tests
+- [ ] SymphonyError is the base error for all error types
+- [ ] Logging supports Console, File, and JSON outputs
+- [ ] Configuration parsing works with all three TOML files
+- [ ] Filesystem utilities are safe and convenient
+- [ ] Pre-validation helpers support simple rule validation
+- [ ] duck!() macro is re-exported and functional
+- [ ] lib.rs serves as complete functionality guide
+- [ ] OCP principles are followed (extensible but not modifiable)
+- [ ] ALL other Symphony crates can depend on sy-commons
+
+---
+
 ## 🏗️ M1.1: Environment Setup & Port Definitions
 
 **Crate**: `symphony-core-ports`
 **Duration**: 2 weeks
-**Dependencies**: None (foundational)
+**Dependencies**: M1.0 (sy-commons Foundation)
 
 **Goal**: Establish the Hexagonal Architecture foundation with port definitions and development environment setup according to H2A2 architecture.
 
@@ -394,7 +507,7 @@ pub struct MockPitAdapter {
 ## 🏗️ M1.2: Two-Binary Architecture Implementation `(NEW)`
 
 **Duration**: 3 weeks
-**Dependencies**: M1.1 (Port Definitions)
+**Dependencies**: M1.0 (sy-commons Foundation), M1.1 (Port Definitions)
 
 **Goal**: Implement Symphony and XI-editor as separate executable binaries with proper synchronization and communication.
 
@@ -3343,8 +3456,10 @@ impl CrashDetector {
 | **M1.10.x Tauri Integration** | **21** | **3 weeks** | **📋** |
 | **M1.11.x Actor Layer** | **24** | **3 weeks** | **📋** |
 
-**Total Tasks**: ~338 detailed tasks (89 new H2A2 tasks added)
-**Total Duration**: 34 weeks (with parallelization: ~20 weeks)
+**Total Tasks**: ~350 detailed tasks (including M1.0 sy-commons Foundation)
+**Total Duration**: 36 weeks (with parallelization: ~22 weeks)
+
+**Critical Path**: M1.0 sy-commons Foundation → M1.1-M1.11 (all other M1 sub-milestones depend on M1.0)
 
 **H2A2 Architecture Now Complete**:
 - ✅ **Hexagonal Ports**: Defined in M1.1 (symphony-core-ports)

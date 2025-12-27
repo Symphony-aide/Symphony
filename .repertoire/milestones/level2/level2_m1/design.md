@@ -4,7 +4,20 @@
 
 **Parent**: Level 1 M1 Core Infrastructure  
 **Architecture**: H2A2 (Harmonic Hexagonal Actor Architecture) + Two-Layer Data Architecture  
-**Implementation**: Two-Binary + Port-Adapter + Actor Model + Data Layer
+**Implementation**: Two-Binary + Port-Adapter + Actor Model + Data Layer  
+**PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M1 development
+
+---
+
+## 🚨 CRITICAL DEPENDENCY: sy-commons Foundation
+
+**All M1 crates MUST**:
+- Use sy-commons::SymphonyError for ALL error handling
+- Use sy-commons logging system for ALL logging
+- Use sy-commons configuration system for ALL configuration
+- Use sy-commons filesystem utilities for ALL file operations
+- Use sy-commons pre-validation helpers for ALL technical validation
+- Include sy-commons as dependency in Cargo.toml
 
 ---
 

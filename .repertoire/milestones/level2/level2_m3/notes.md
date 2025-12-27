@@ -3,7 +3,22 @@
 > **Purpose**: Incremental decision and insight tracking for M3 Infrastructure Extensions implementation
 
 **Parent**: Level 1 M3 The Pit  
-**Status**: Empty by default - filled incrementally as decisions, issues, or insights emerge during development
+**Status**: Empty by default - filled incrementally as decisions, issues, or insights emerge during development  
+**PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M3 development
+
+---
+
+## 🚨 CRITICAL ARCHITECTURAL DECISION: sy-commons Foundation First
+
+### December 28, 2025: "Common First" Rule Implementation
+**Decision**: ALL M3 development depends on M1.0 sy-commons Foundation completion
+**Rationale**: The Pit components need shared error handling, logging, configuration, and filesystem utilities
+**Impact**: 
+- Pool Manager must use sy-commons for performance logging and error handling
+- DAG Tracker must use sy-commons for workflow state logging
+- Artifact Store must use sy-commons for filesystem operations and error handling
+- Arbitration Engine must use sy-commons for decision logging
+- Stale Manager must use sy-commons for cleanup operations and logging
 
 ---
 

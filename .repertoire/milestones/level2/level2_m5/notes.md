@@ -1,7 +1,22 @@
 # M5: Visual Orchestration Backend - Notes
 
 > **Parent**: [LEVEL2_M5.md](./LEVEL2_M5.md)
-> **Type**: Decision Log & Incremental Insights
+> **Type**: Decision Log & Incremental Insights  
+> **PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M5 development
+
+---
+
+## 🚨 CRITICAL ARCHITECTURAL DECISION: sy-commons Foundation First
+
+### December 28, 2025: "Common First" Rule Implementation
+**Decision**: ALL M5 development depends on M1.0 sy-commons Foundation completion
+**Rationale**: Visual orchestration backend needs shared error handling, logging, configuration, filesystem utilities, and pre-validation
+**Impact**: 
+- Workflow data model must use sy-commons error handling
+- DAG validation must use sy-commons pre-validation helpers
+- Template system must use sy-commons filesystem utilities
+- Execution state API must use sy-commons logging system
+- Workflow serialization must use sy-commons error handling
 
 ---
 

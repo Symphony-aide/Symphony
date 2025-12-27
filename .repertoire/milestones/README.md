@@ -8,6 +8,21 @@ This directory contains milestone breakdowns and roadmaps for the Symphony Rust 
 
 The goal is to provide a decomposition of the massive scope of work into manageable chunks. You should use these files as a reference to understand the *what* and *why*, but use your own engineering judgment and vision for the *how*.
 
+## 🚨 CRITICAL RULE: "Common First"
+
+**Core Rule**: Any functionality that can be shared across crates MUST be implemented in `sy-commons` first.
+
+**M1.0 sy-commons Foundation is PREREQUISITE for ALL other development**:
+- SymphonyError - base error for ALL Symphony crates (mandatory)
+- Professional logging (tracing-based) - Console, File, JSON outputs
+- Environment configuration (TOML + Figment) - default.toml, test.toml, production.toml
+- Safe filesystem utilities - professional architecture, low complexity
+- Pre-validation helpers - simple rule validation utilities
+- Duck debugging - temporary debugging utilities with duck!() macro
+- Complete lib.rs guide - documentation of all functionality
+- Co-located tests - every public function has tests in same file
+- OCP compliance - open for extension, closed for modification
+
 ## 📖 Glossary
 
 | Term | Definition |
@@ -28,6 +43,17 @@ The roadmap is decomposed into several key phases, designed to build the "Sympho
 
 ### 1. The Foundation (XI-Editor)
 *Status: ✅ Complete*
+
+### 1.0. sy-commons Foundation (PREREQUISITE)
+*Status: 🚧 Next Priority*
+
+**ALL Symphony development depends on sy-commons completion**:
+- Shared error handling (SymphonyError)
+- Professional logging system
+- Environment configuration
+- Safe filesystem utilities
+- Pre-validation helpers
+- Duck debugging utilities
 The text editing core, rope data structures, and JSON-RPC communication are already in place.
 
 ### 2. The Pit (Core AIDE Infrastructure)

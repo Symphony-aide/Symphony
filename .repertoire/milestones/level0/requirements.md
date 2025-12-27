@@ -25,18 +25,31 @@
 ## 🎯 Strategic Milestones
 
 ### M1: Core Infrastructure
-**Goal**: Build the foundational systems that Symphony AIDE layer requires
+**Goal**: Build the foundational systems that Symphony AIDE layer requires, starting with sy-commons shared foundation
 **Priority**: Critical
 **Status**: * [ ]
 
 **Acceptance Criteria (Gherkin-style ATDD)**:
 
+Scenario: sy-commons Foundation Implementation (PREREQUISITE)
+  Given all Symphony crates need shared functionality
+  When sy-commons is fully implemented
+  Then SymphonyError is the base error type for all crates
+  And professional logging system (tracing-based) is operational
+  And environment configuration (TOML + Figment) works correctly
+  And safe filesystem utilities are available
+  And pre-validation rule helpers are implemented
+  And duck debugging utilities are functional
+  And all public functions have co-located tests
+
 Scenario: H2A2 Architecture Implementation
   Given the Symphony system needs clean separation of concerns
+  And sy-commons foundation is complete
   When the H2A2 architecture is implemented
   Then port definitions exist for TextEditingPort, PitPort, ExtensionPort, and ConductorPort
   And concrete adapters implement all port interfaces
   And domain core orchestrates components using ports only
+  And all components use sy-commons for shared functionality
 
 Scenario: Two-Layer Data Architecture Implementation with Testing
   Given Symphony needs efficient data handling with single source of truth
@@ -72,6 +85,7 @@ Scenario: IPC Communication Performance
   And automatic reconnection occurs within 100ms on failure
 
 **Correctness Properties**:
+- Property 0: sy-commons must be fully implemented before any other crate development
 - Property 1: All port interfaces must be implemented by concrete adapters
 - Property 2: Domain core must never directly depend on external systems
 - Property 3: Binary synchronization must maintain data consistency
@@ -82,6 +96,7 @@ Scenario: IPC Communication Performance
 - Property 8: Mock-based contract testing must verify trait compliance without external dependencies
 - Property 9: WireMock contract verification must ensure HTTP format matches OFB Python API expectations
 - Property 10: Pre-validation tests must complete in <1ms, unit tests in <100ms, integration tests in <5s
+- Property 11: All crates must use sy-commons for shared functionality (errors, logging, config, filesystem)
 
 **Glossary**:
 - H2A2: Harmonic Hexagonal Actor Architecture

@@ -3,7 +3,22 @@
 > **Purpose**: Incremental decision and insight tracking for M4 Extension Ecosystem implementation
 
 **Parent**: Level 1 M4 Extension Ecosystem  
-**Status**: Empty by default - filled incrementally as decisions, issues, or insights emerge during development
+**Status**: Empty by default - filled incrementally as decisions, issues, or insights emerge during development  
+**PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M4 development
+
+---
+
+## 🚨 CRITICAL ARCHITECTURAL DECISION: sy-commons Foundation First
+
+### December 28, 2025: "Common First" Rule Implementation
+**Decision**: ALL M4 development depends on M1.0 sy-commons Foundation completion
+**Rationale**: Extension ecosystem needs shared error handling, logging, configuration, filesystem utilities, and pre-validation
+**Impact**: 
+- Extension manifest validation must use sy-commons pre-validation helpers
+- Extension security auditing must use sy-commons logging system
+- Extension sandboxing must use sy-commons filesystem utilities
+- Extension permission system must use sy-commons error handling
+- Extension registry must use sy-commons configuration system
 
 ---
 

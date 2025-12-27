@@ -4,7 +4,32 @@
 
 **Parent**: Level 1 M1 Core Infrastructure  
 **Goal**: Build foundational communication and integration systems for Symphony AIDE layer  
-**Architecture**: H2A2 (Harmonic Hexagonal Actor Architecture) + Two-Layer Data Architecture
+**Architecture**: H2A2 (Harmonic Hexagonal Actor Architecture) + Two-Layer Data Architecture  
+**PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M1 sub-milestone development
+
+---
+
+## 🚨 CRITICAL DEPENDENCY: sy-commons Foundation
+
+**Core Rule**: "Common First" - Any functionality that can be shared across crates MUST be implemented in sy-commons first.
+
+**M1.0 sy-commons Requirements**:
+- [ ] **SymphonyError**: Base error type for ALL Symphony crates (mandatory)
+- [ ] **Professional Logging**: tracing + tracing-subscriber (Console, File, JSON outputs)
+- [ ] **Environment Configuration**: TOML files (default.toml, test.toml, production.toml) + Figment parsing
+- [ ] **Safe Filesystem Utilities**: Professional architecture, low complexity
+- [ ] **Pre-validation Helpers**: Simple rule validation utilities (NOT logging)
+- [ ] **Duck Debugging**: Temporary debugging utilities with duck!() macro
+- [ ] **Complete lib.rs Guide**: Documentation of all functionality provided
+- [ ] **Co-located Tests**: Every public function has tests in same file
+- [ ] **OCP Compliance**: Open for extension, closed for modification
+
+**All M1 sub-milestones MUST**:
+- Use sy-commons::SymphonyError for ALL error handling
+- Use sy-commons logging system for ALL logging
+- Use sy-commons configuration system for ALL config
+- Use sy-commons filesystem utilities for ALL file operations
+- Use sy-commons pre-validation helpers for ALL technical validation
 
 ---
 

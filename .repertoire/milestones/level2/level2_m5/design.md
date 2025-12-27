@@ -1,7 +1,20 @@
 # M5: Visual Orchestration Backend - Design
 
 > **Parent**: [LEVEL2_M5.md](./LEVEL2_M5.md)
-> **Type**: Technical Architecture & Design Specifications
+> **Type**: Technical Architecture & Design Specifications  
+> **PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M5 development
+
+---
+
+## 🚨 CRITICAL DEPENDENCY: sy-commons Foundation
+
+**All M5 crates MUST**:
+- Use sy-commons::SymphonyError for ALL error handling
+- Use sy-commons logging system for ALL workflow monitoring and logging
+- Use sy-commons configuration system for ALL workflow configuration
+- Use sy-commons filesystem utilities for ALL template and workflow file operations
+- Use sy-commons pre-validation helpers for ALL workflow and template validation
+- Include sy-commons as dependency in ALL Cargo.toml files
 
 ---
 

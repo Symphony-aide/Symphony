@@ -2,7 +2,22 @@
 
 > **Parent**: [MILESTONES_LEVEL1.md](../MILESTONES_LEVEL1.md)
 > **Duration**: 3-4 months
-> **Goal**: Build the five core infrastructure extensions that run in-process
+> **Goal**: Build the five core infrastructure extensions that run in-process  
+> **PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M3 development
+
+---
+
+## 🚨 CRITICAL DEPENDENCY: sy-commons Foundation
+
+**Core Rule**: "Common First" - Any functionality that can be shared across crates MUST be implemented in sy-commons first.
+
+**All M3 sub-milestones MUST**:
+- Use sy-commons::SymphonyError for ALL error handling
+- Use sy-commons logging system for ALL performance monitoring and logging
+- Use sy-commons configuration system for ALL configuration
+- Use sy-commons filesystem utilities for ALL file operations (Artifact Store, Stale Manager)
+- Use sy-commons pre-validation helpers for ALL input validation
+- Include sy-commons as dependency in ALL Cargo.toml files
 
 ---
 

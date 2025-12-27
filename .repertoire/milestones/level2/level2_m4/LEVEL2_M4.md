@@ -2,7 +2,22 @@
 
 > **Parent**: [MILESTONES_LEVEL1.md](../MILESTONES_LEVEL1.md)
 > **Duration**: 4-5 months
-> **Goal**: Complete extension system for community and commercial extensions
+> **Goal**: Complete extension system for community and commercial extensions  
+> **PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M4 development
+
+---
+
+## 🚨 CRITICAL DEPENDENCY: sy-commons Foundation
+
+**Core Rule**: "Common First" - Any functionality that can be shared across crates MUST be implemented in sy-commons first.
+
+**All M4 sub-milestones MUST**:
+- Use sy-commons::SymphonyError for ALL error handling
+- Use sy-commons logging system for ALL security auditing and extension monitoring
+- Use sy-commons configuration system for ALL extension configuration
+- Use sy-commons filesystem utilities for ALL extension file operations and sandboxing
+- Use sy-commons pre-validation helpers for ALL manifest and permission validation
+- Include sy-commons as dependency in ALL Cargo.toml files
 
 ---
 

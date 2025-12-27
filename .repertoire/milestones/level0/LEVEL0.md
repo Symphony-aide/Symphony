@@ -41,9 +41,48 @@
 
 ### Implementation Breakdown
 
+#### 1.0 sy-commons Foundation (2 weeks) - PREREQUISITE
+**Priority**: 🔴 Critical - Foundation for ALL Symphony crates
+**Timeline**: 2 weeks
+
+**Core Rule**: "Common First" - Any functionality that can be shared across crates MUST be implemented in sy-commons first.
+
+**Crate Structure**:
+```
+apps/backend/crates/utils/sy-commons/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs           # Complete functionality guide + re-exports
+│   ├── error.rs         # SymphonyError - base error for ALL crates
+│   ├── logging.rs       # Professional logging (tracing-based)
+│   ├── config.rs        # Environment configuration (TOML + Figment)
+│   ├── filesystem.rs    # Safe filesystem utilities
+│   ├── prevalidation.rs # Pre-validation rule helpers
+│   └── debug.rs         # Duck debugging utilities
+└── tests/
+    ├── error_tests.rs
+    ├── logging_tests.rs
+    ├── config_tests.rs
+    ├── filesystem_tests.rs
+    ├── prevalidation_tests.rs
+    └── debug_tests.rs
+```
+
+**Concrete Deliverables**:
+- [ ] **SymphonyError**: Base error type for ALL Symphony crates (mandatory)
+- [ ] **Professional Logging**: tracing + tracing-subscriber (Console, File, JSON outputs)
+- [ ] **Environment Configuration**: TOML files (default.toml, test.toml, production.toml) + Figment parsing
+- [ ] **Safe Filesystem Utilities**: Professional architecture, low complexity
+- [ ] **Pre-validation Helpers**: Simple rule validation utilities
+- [ ] **Duck Debugging**: Temporary debugging utilities with duck!() macro
+- [ ] **Complete lib.rs Guide**: Documentation of all functionality provided
+- [ ] **Co-located Tests**: Every public function has tests in same file
+- [ ] **OCP Compliance**: Open for extension, closed for modification
+
 #### 1.1 Environment Setup & Port Definitions + Data Layer
 **Priority**: 🔴 Critical - Foundation for H2A2 architecture + Two-Layer Data Architecture
 **Timeline**: 2-3 weeks
+**Dependencies**: 1.0 sy-commons Foundation MUST be complete
 
 **Crate Structure**:
 ```
@@ -65,26 +104,21 @@ apps/backend/crates/symphony-core-ports/
 ```
 
 **Concrete Deliverables**:
-- [ ] Port trait definitions implemented (including DataAccessPort)
-- [ ] Domain types defined with comprehensive error handling
-- [ ] Mock adapters created for isolated testing
-- [ ] Pre-validation traits defined for technical validation only
-- [ ] Data access contracts established for OFB Python integration
+- [ ] Port trait definitions implemented (including DataAccessPort) using sy-commons::SymphonyError
+- [ ] Domain types defined with comprehensive error handling via sy-commons
+- [ ] Mock adapters created for isolated testing using sy-commons utilities
+- [ ] Pre-validation traits defined using sy-commons::prevalidation helpers
+- [ ] Data access contracts established for OFB Python integration with sy-commons error handling
 - [ ] Architecture documentation updated
 - [ ] Development environment setup guide completed
-- [ ] Mock-based contract testing framework established
+- [ ] Mock-based contract testing framework established using sy-commons
 - [ ] WireMock integration testing framework prepared for OFB Python API contract verification
-- [ ] Three-layer testing approach documented and implemented
-- [ ] Domain types defined with comprehensive error handling
-- [ ] Mock adapters created for isolated testing
-- [ ] Pre-validation traits defined for technical validation only
-- [ ] Data access contracts established for OFB Python integration
-- [ ] Architecture documentation updated
-- [ ] Development environment setup guide completed
+- [ ] Three-layer testing approach documented and implemented with sy-commons integration
 
-#### 1.2 Two-Binary Architecture Setup `(NEW)`
+#### 1.2 Two-Binary Architecture Setup
 **Priority**: 🔴 Critical - Core architectural decision
 **Timeline**: 3-4 weeks
+**Dependencies**: 1.0 sy-commons Foundation MUST be complete
 
 **Binary Structure Implementation**:
 ```
@@ -352,6 +386,8 @@ src-tauri/
 - [ ] Event streaming from backend to frontend
 
 ### M1 Success Criteria Checklist
+- [ ] **sy-commons Foundation Complete**: All shared functionality implemented (errors, logging, config, filesystem, pre-validation, debugging)
+- [ ] **sy-commons Integration**: All other crates use sy-commons for shared functionality
 - [ ] H2A2 architecture fully implemented (Ports + Adapters + Domain + Actors)
 - [ ] Two-binary architecture operational (Symphony + XI-editor)
 - [ ] All concrete adapters implement their respective port interfaces
@@ -374,6 +410,9 @@ src-tauri/
 - [ ] Mock-based contract testing verifies trait compliance without external dependencies
 - [ ] WireMock contract verification ensures HTTP format matches OFB Python API expectations
 - [ ] Unit tests complete in <100ms, integration tests in <5s, pre-validation tests in <1ms
+- [ ] **All error handling uses SymphonyError from sy-commons**
+- [ ] **All logging uses sy-commons logging system**
+- [ ] **All configuration uses sy-commons TOML + Figment system**
 
 ---
 
@@ -1077,28 +1116,34 @@ Beta Program Implementation:
 | Milestone | Duration | Start After | Key Deliverables | Status |
 |-----------|----------|-------------|------------------|--------|
 | M0: Foundation | ✅ Complete | - | XI-editor integration, workspace setup | ✅ Done |
-| M1: Core Infrastructure | 3-4 months | M0 | H2A2 architecture, two-binary system, IPC | * [ ] |
+| M1.0: sy-commons Foundation | 2 weeks | M0 | Shared utilities, error handling, logging, config | * [ ] |
+| M1: Core Infrastructure | 3-4 months | M1.0 | H2A2 architecture, two-binary system, IPC | * [ ] |
 | M2: The Conductor | 4-5 months | M1 | Python orchestration, RL integration, FQG | * [ ] |
 | M3: The Pit (IaE) | 3-4 months | M1, M2 | 5 infrastructure extensions, performance targets | * [ ] |
 | M4: Extension Ecosystem | 5-6 months | M1, M2, M3 | Orchestra Kit, marketplace, developer tools | * [ ] |
 | M5: Visual Orchestration | 3-4 months | M2, M4 | Harmony Board, monitoring, templates | * [ ] |
 | M6: Production Ready | 2-3 months | All above | Optimization, security, documentation, beta | * [ ] |
 
-**Total Estimated Time**: 20-26 months from M1 start
+**Total Estimated Time**: 20-26 months from M1.0 start
+
+**Critical Path**: M1.0 sy-commons Foundation → M1 Core Infrastructure → All other milestones
 
 **Parallel Work Opportunities**:
-- M2 and M3 can partially overlap (Conductor core while building Pit)
-- M4 and M5 can partially overlap (Extension system while building UI)
-- Documentation and testing ongoing throughout all milestones
+- M2 and M3 can partially overlap (Conductor core while building Pit) - AFTER M1.0 complete
+- M4 and M5 can partially overlap (Extension system while building UI) - AFTER M1.0 complete
+- Documentation and testing ongoing throughout all milestones - using sy-commons foundation
 
 ---
 
 ## 🔄 Implementation Strategy
 
 ### Development Approach
-1. **Incremental Implementation**: Each milestone builds on previous foundations
-2. **Parallel Development**: Utilize team members on independent components
-3. **Continuous Testing**: Maintain >80% test coverage throughout
+1. **sy-commons First**: ALL shared functionality must be implemented in sy-commons before any other crate development
+2. **Incremental Implementation**: Each milestone builds on previous foundations
+3. **Parallel Development**: Utilize team members on independent components (AFTER sy-commons complete)
+4. **Continuous Testing**: Maintain >80% test coverage throughout
+5. **Performance First**: Meet performance targets before adding features
+6. **User Feedback**: Integrate feedback loops at each milestone
 4. **Performance First**: Meet performance targets before adding features
 5. **User Feedback**: Integrate feedback loops at each milestone
 
@@ -1116,4 +1161,4 @@ Beta Program Implementation:
 
 ---
 
-**Next Action**: Begin M1.1 Environment Setup & Port Definitions - create `symphony-core-ports` crate with H2A2 architecture foundation.
+**Next Action**: Begin M1.0 sy-commons Foundation - implement shared error handling, logging, configuration, filesystem utilities, pre-validation helpers, and duck debugging with complete test coverage and OCP compliance.

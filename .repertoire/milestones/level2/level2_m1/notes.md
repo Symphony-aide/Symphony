@@ -3,7 +3,21 @@
 > **Purpose**: Incremental decision and insight tracking for M1 Core Infrastructure implementation
 
 **Parent**: Level 1 M1 Core Infrastructure  
-**Status**: Empty by default - filled incrementally as decisions, issues, or insights emerge during development
+**Status**: Empty by default - filled incrementally as decisions, issues, or insights emerge during development  
+**PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M1 development
+
+---
+
+## 🚨 CRITICAL ARCHITECTURAL DECISION: sy-commons Foundation First
+
+### December 28, 2025: "Common First" Rule Implementation
+**Decision**: ALL M1 development depends on M1.0 sy-commons Foundation completion
+**Rationale**: Shared functionality (errors, logging, config, filesystem, pre-validation, debugging) must be centralized before any other crate development
+**Impact**: 
+- M1.0 sy-commons becomes PREREQUISITE for ALL Symphony development
+- All M1 crates must use sy-commons::SymphonyError for error handling
+- All M1 crates must use sy-commons logging, config, and filesystem utilities
+- OCP compliance ensures sy-commons is extensible but not modifiable
 
 ---
 

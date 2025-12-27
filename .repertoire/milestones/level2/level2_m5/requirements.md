@@ -1,7 +1,19 @@
 # M5: Visual Orchestration Backend - Requirements
 
 > **Parent**: [LEVEL2_M5.md](./LEVEL2_M5.md)
-> **Type**: ATDD Acceptance Criteria & Gherkin Scenarios
+> **Type**: ATDD Acceptance Criteria & Gherkin Scenarios  
+> **PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M5 development
+
+---
+
+## 🚨 CRITICAL DEPENDENCY: sy-commons Foundation
+
+**All M5 sub-milestones MUST**:
+- Use sy-commons::SymphonyError for ALL error handling
+- Use sy-commons logging system for ALL logging and workflow monitoring
+- Use sy-commons configuration system for ALL workflow configuration
+- Use sy-commons filesystem utilities for ALL template and workflow file operations
+- Use sy-commons pre-validation helpers for ALL workflow and template validation
 
 ---
 

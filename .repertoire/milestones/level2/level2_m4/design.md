@@ -4,7 +4,20 @@
 
 **Parent**: Level 1 M4 Extension Ecosystem  
 **Architecture**: Orchestra Kit - Complete extension system with sandboxing + Two-Layer Data Architecture  
-**Integration**: M1 IPC, M3 Pit extensions, M5 Workflow nodes, Data Layer validation
+**Integration**: M1 IPC, M3 Pit extensions, M5 Workflow nodes, Data Layer validation  
+**PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M4 development
+
+---
+
+## 🚨 CRITICAL DEPENDENCY: sy-commons Foundation
+
+**All M4 crates MUST**:
+- Use sy-commons::SymphonyError for ALL error handling
+- Use sy-commons logging system for ALL security auditing and extension monitoring
+- Use sy-commons configuration system for ALL extension configuration
+- Use sy-commons filesystem utilities for ALL extension file operations and sandboxing
+- Use sy-commons pre-validation helpers for ALL manifest and permission validation
+- Include sy-commons as dependency in ALL Cargo.toml files
 
 ---
 

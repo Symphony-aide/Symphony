@@ -32,8 +32,51 @@
 **Status**: * [ ] - Next Priority
 **Dependencies**: M0 Foundation
 
+#### M1.0: sy-commons Foundation (2 weeks) - PREREQUISITE
+**Priority**: 🔴 Critical - Foundation for ALL Symphony crates
+
+**Core Rule**: "Common First" - Any functionality that can be shared across crates MUST be implemented in sy-commons first.
+
+**Crate Structure**:
+```
+apps/backend/crates/utils/sy-commons/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs           # Complete functionality guide + re-exports
+│   ├── error.rs         # SymphonyError - base error for ALL crates
+│   ├── logging.rs       # Professional logging (tracing-based)
+│   ├── config.rs        # Environment configuration (TOML + Figment)
+│   ├── filesystem.rs    # Safe filesystem utilities
+│   ├── prevalidation.rs # Pre-validation rule helpers
+│   └── debug.rs         # Duck debugging utilities
+
+```
+
+**Concrete Deliverables**:
+- [ ] **SymphonyError**: Base error type for ALL Symphony crates (mandatory)
+- [ ] **Professional Logging**: tracing + tracing-subscriber (Console, File, JSON outputs)
+- [ ] **Environment Configuration**: TOML files (default.toml, test.toml, production.toml) + Figment parsing
+- [ ] **Safe Filesystem Utilities**: Professional architecture, low complexity
+- [ ] **Pre-validation Helpers**: Simple rule validation utilities
+- [ ] **Duck Debugging**: Temporary debugging utilities with duck!() macro
+- [ ] **Complete lib.rs Guide**: Documentation of all functionality provided
+- [ ] **Co-located Tests**: Every public function has tests in same file
+- [ ] **OCP Compliance**: Open for extension, closed for modification
+
+**Success Criteria**:
+- [ ] All public functions have co-located tests
+- [ ] SymphonyError is the base error for all error types
+- [ ] Logging supports Console, File, and JSON outputs
+- [ ] Configuration parsing works with all three TOML files
+- [ ] Filesystem utilities are safe and convenient
+- [ ] Pre-validation helpers support simple rule validation
+- [ ] duck!() macro is re-exported and functional
+- [ ] lib.rs serves as complete functionality guide
+- [ ] OCP principles are followed (extensible but not modifiable)
+
 #### M1.1: Environment Setup & Port Definitions + Data Layer (2 weeks)
 **Priority**: 🔴 Critical - Foundation for H2A2 architecture + Two-Layer Data Architecture
+**Dependencies**: M1.0 sy-commons Foundation MUST be complete
 
 **Crate Structure**:
 ```
@@ -58,15 +101,17 @@ apps/backend/crates/symphony-core-ports/
 **Concrete Deliverables**:
 - [ ] Core port trait definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort, DataAccessPort)
 - [ ] Development environment setup for H2A2 architecture
-- [ ] Domain types and error definitions
-- [ ] Mock adapters for testing
-- [ ] Pre-validation traits defined for technical validation only
+- [ ] Domain types and error definitions using sy-commons::SymphonyError
+- [ ] Mock adapters for testing using sy-commons utilities
+- [ ] Pre-validation traits using sy-commons::prevalidation helpers
 - [ ] Data access contracts established for OFB Python integration
 - [ ] Architecture documentation
-- [ ] **Two-Binary Integration**: Port definitions adapted for inter-process communication `(NEW)`
+- [ ] **sy-commons Integration**: All error handling uses SymphonyError, all logging uses sy-commons
+- [ ] **Two-Binary Integration**: Port definitions adapted for inter-process communication
 
-#### M1.2: Two-Binary Architecture Implementation `(NEW)` (3 weeks)
+#### M1.2: Two-Binary Architecture Implementation (3 weeks)
 **Priority**: 🔴 Critical - Core architectural decision
+**Dependencies**: M1.0 sy-commons Foundation MUST be complete
 
 **Binary Structure Implementation**:
 ```
@@ -89,13 +134,14 @@ XI-editor Binary (xi-editor.exe):
 ```
 
 **Concrete Deliverables**:
-- [ ] Symphony binary with Tauri frontend integration
-- [ ] XI-editor binary with JSON-RPC server
-- [ ] Process lifecycle management and health monitoring
-- [ ] Inter-process communication setup via JSON-RPC
-- [ ] Binary synchronization framework for state consistency
+- [ ] Symphony binary with Tauri frontend integration using sy-commons for all errors/logging
+- [ ] XI-editor binary with JSON-RPC server using sy-commons utilities
+- [ ] Process lifecycle management using sy-commons error handling
+- [ ] Inter-process communication setup via JSON-RPC with sy-commons logging
+- [ ] Binary synchronization framework using sy-commons for state consistency
 #### M1.3: IPC Protocol & Serialization (3 weeks)
 **Priority**: 🔴 Critical - Everything depends on this
+**Dependencies**: M1.0 sy-commons Foundation MUST be complete
 
 **Crate Structure**:
 ```
@@ -112,12 +158,12 @@ apps/backend/crates/symphony-ipc-protocol/
 ```
 
 **Concrete Deliverables**:
-- [ ] Message envelope schema (header, payload, metadata)
-- [ ] Binary serialization using MessagePack/Bincode
-- [ ] Schema validation system
-- [ ] Message type registry
-- [ ] **JSON-RPC Implementation**: Specific protocol for Symphony ↔ XI-editor communication `(NEW)`
-- [ ] **XI-editor Message Types**: Buffer ops, file ops, cursor movements `(NEW)`
+- [ ] Message envelope schema (header, payload, metadata) using sy-commons error handling
+- [ ] Binary serialization using MessagePack/Bincode with sy-commons logging
+- [ ] Schema validation system using sy-commons pre-validation helpers
+- [ ] Message type registry with sy-commons error propagation
+- [ ] **JSON-RPC Implementation**: Specific protocol for Symphony ↔ XI-editor communication using sy-commons
+- [ ] **XI-editor Message Types**: Buffer ops, file ops, cursor movements with sy-commons error handling
 
 **Performance Targets**:
 - [ ] Messages serialize/deserialize in <0.01ms

@@ -4,7 +4,19 @@
 
 **Parent**: Level 1 M3 The Pit  
 **Goal**: Build the five core infrastructure extensions that run in-process with microsecond-level performance  
-**Components**: Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, Stale Manager
+**Components**: Pool Manager, DAG Tracker, Artifact Store, Arbitration Engine, Stale Manager  
+**PREREQUISITE**: M1.0 sy-commons Foundation MUST be complete before any M3 development
+
+---
+
+## 🚨 CRITICAL DEPENDENCY: sy-commons Foundation
+
+**All M3 sub-milestones MUST**:
+- Use sy-commons::SymphonyError for ALL error handling
+- Use sy-commons logging system for ALL logging and performance monitoring
+- Use sy-commons configuration system for ALL configuration
+- Use sy-commons filesystem utilities for ALL file operations
+- Use sy-commons pre-validation helpers for ALL input validation
 
 ---
 
