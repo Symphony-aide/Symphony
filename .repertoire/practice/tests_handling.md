@@ -167,17 +167,16 @@ mod tests {
 default = []
 
 # Individual test category features
-test_unit = []
-test_integration = []
-test_e2e = [] # Based on Project and Business [e.g. HTML Generation] Type
-test_slow = []
-test_auth = [] # Based on Project and Business [e.g. Backend Service] Type
-test_users = [] # Based on Project and Business [e.g. Backend Service] Type
-test_services = [] # Based on Project and Business [e.g. Backend Service] Type
-test_repositories = [] # Based on Project and Business [e.g. Backend Service] Type
-test_redis = []
-test_ci_cd_issue = [] # Do not include until explicitly mentioned by the user
-test_fixtures = [] # For rstest-based fixture tests
+unit = []
+integration = []
+e2e = [] # Based on Project and Business [e.g. HTML Generation] Type
+slow = []
+auth = [] # Based on Project and Business [e.g. Backend Service] Type
+users = [] # Based on Project and Business [e.g. Backend Service] Type
+services = [] # Based on Project and Business [e.g. Backend Service] Type
+repositories = [] # Based on Project and Business [e.g. Backend Service] Type
+redis = []
+ci_cd_issue = [] # Do not include until explicitly mentioned by the user
 
 [dev-dependencies]
 # MANDATORY testing tools

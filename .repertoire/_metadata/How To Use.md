@@ -77,18 +77,16 @@ Scenario: Discover available CLI commands
 **Timeline**: 2-3 weeks
 
 **Crate Structure**:
-```
-apps/backend/crates/symphony-core-ports/
-├── Cargo.toml
-├── src/
-│   ├── lib.rs           # Public API exports
-│   ├── ports.rs         # Port trait definitions
-│   ├── types.rs         # Domain types and data structures
-│   ├── errors.rs        # Error types and handling
-│   └── mocks.rs         # Mock implementations for testing
-└── tests/
-    └── integration_tests.rs
-```
+    apps/backend/crates/symphony-core-ports/
+    ├── Cargo.toml
+    ├── src/
+    │   ├── lib.rs           # Public API exports
+    │   ├── ports.rs         # Port trait definitions
+    │   ├── types.rs         # Domain types and data structures
+    │   ├── errors.rs        # Error types and handling
+    │   └── mocks.rs         # Mock implementations for testing
+    └── tests/
+        └── integration_tests.rs
 
 **Concrete Deliverables**:
 - [ ] Port trait definitions implemented
