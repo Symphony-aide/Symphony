@@ -240,6 +240,10 @@ All milestones and features use a stateful checkbox system to track progress:
 
 **Status**: * [ ] | * [ - ] | * [ <number> ]
 
+**Timeline**: <Realistic time estimate (e.g., 3-4 months)>
+
+**Dependencies**: <List of prerequisite milestones>
+
 **Deliverables**:
 * [ ] Deliverable 1: <Concrete output>
 * [ ] Deliverable 2: <Concrete output>
@@ -249,37 +253,60 @@ All milestones and features use a stateful checkbox system to track progress:
 * [ ] Metric 1: <How we measure success>
 * [ ] Metric 2: <How we measure success>
 
-**Dependencies**:
-- M{X}: <Related milestone>
-- M{Y}: <Related milestone>
+**Performance Targets** (if applicable):
+- [ ] <Specific measurable performance requirement>
+- [ ] <Another performance target>
 
 ```
 
-**Example:**
+**Example from LEVEL0.md:**
 
 ```markdown
-## 🚧 M1: Orchestra Kit Foundation
+## 🚧 M1: Core Infrastructure (3-4 months)
+**Status**: * [ ] - Next Priority
+**Dependencies**: M0 Foundation
 
-**Goal**: Establish the complete extension management system with security,
-lifecycle management, and marketplace integration.
+### Implementation Breakdown
 
-**Priority**: Critical
+#### 1.1 Environment Setup & Port Definitions
+**Priority**: 🔴 Critical - Foundation for H2A2 architecture
+**Timeline**: 2-3 weeks
 
-**Status**: * [ - ]
+**Crate Structure**:
+```
+apps/backend/crates/symphony-core-ports/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs           # Public API exports
+│   ├── ports.rs         # Port trait definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort)
+│   ├── types.rs         # Domain types and data structures
+│   ├── errors.rs        # Error types and handling
+│   └── mocks.rs         # Mock implementations for testing
+└── tests/
+    └── integration_tests.rs
+```
 
-**Deliverables**:
-* [ 1 ] Sandboxed execution environment for extensions
-* [ - ] Manifest-based permission system
-* [ ] Extension installation and update pipeline
-* [ ] Basic marketplace infrastructure
+**Concrete Deliverables**:
+- [ ] Port trait definitions implemented
+- [ ] Domain types defined with comprehensive error handling
+- [ ] Mock adapters created for isolated testing
+- [ ] Architecture documentation updated
+- [ ] Development environment setup guide completed
 
-**Success Metrics**:
-* [ 1 ] Extensions can be installed/uninstalled without core restart
-* [ - ] 100% permission requests visible to users
-* [ ] Extension isolation verified (crash doesn't affect core)
+**Performance Targets**:
+- [ ] <0.3ms message latency for standard operations
+- [ ] <1ms for Symphony ↔ XI-editor JSON-RPC operations
+- [ ] 1,000+ operations/second throughput
+- [ ] Automatic reconnection within 100ms on failure
 
-**Dependencies**:
-- None (foundational milestone)
+### M1 Success Criteria Checklist
+- [ ] H2A2 architecture fully implemented (Ports + Adapters + Domain + Actors)
+- [ ] Two-binary architecture operational (Symphony + XI-editor)
+- [ ] All concrete adapters implement their respective port interfaces
+- [ ] Domain core orchestrates all components using ports only
+- [ ] Actor layer provides extension process isolation
+- [ ] All tests passing with >80% code coverage
+- [ ] Health monitoring detects and recovers from process failures
 
 ```
 
@@ -373,10 +400,38 @@ Create isolated execution contexts for extensions with resource limits and permi
 
 ### Step 1: Process Isolation Manager
 **Status**: * [ 1 ]
+**Timeline**: 2 days
+**Priority**: 🔴 Critical
 
 **What**: Build a manager that spawns and monitors isolated processes for extensions
 **Why**: Prevents extension crashes from affecting Symphony core
 **Output**: ProcessSandboxManager class with spawn/monitor/terminate methods
+
+**Crate Structure**:
+```
+apps/backend/crates/symphony-process-sandbox/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs
+│   ├── manager.rs       # ProcessSandboxManager implementation
+│   ├── monitor.rs       # Health monitoring and restart logic
+│   ├── isolation.rs     # Process isolation mechanisms
+│   └── metrics.rs       # Resource usage tracking
+└── tests/
+    └── integration_tests.rs
+```
+
+**Concrete Deliverables**:
+- [ ] ProcessSandboxManager with spawn/monitor/terminate methods
+- [ ] Health monitoring with automatic restart capability
+- [ ] Resource usage tracking (CPU, memory, network)
+- [ ] Process isolation with security boundaries
+- [ ] Comprehensive test coverage
+
+**Performance Targets**:
+- [ ] Process spawn time <100ms
+- [ ] Health check interval <50ms
+- [ ] Resource monitoring overhead <1% CPU
 
 **Sub-tasks**:
 * [ 1 ] Design process spawn interface
@@ -390,10 +445,30 @@ Create isolated execution contexts for extensions with resource limits and permi
 
 ### Step 2: Permission Enforcement Layer
 **Status**: * [ 1 ]
+**Timeline**: 3 days
+**Priority**: 🔴 Critical
 
 **What**: Implement runtime permission checks for sandboxed operations
 **Why**: Prevents unauthorized access to system resources
 **Output**: PermissionEnforcer middleware
+
+**Crate Structure**:
+```
+apps/backend/crates/symphony-permissions/
+├── src/
+│   ├── lib.rs
+│   ├── enforcer.rs      # PermissionEnforcer implementation
+│   ├── policies.rs      # Permission policy definitions
+│   ├── audit.rs         # Audit logging for permission checks
+│   └── validation.rs    # Permission validation logic
+```
+
+**Concrete Deliverables**:
+- [ ] PermissionEnforcer middleware implementation
+- [ ] Permission policy definition system
+- [ ] Runtime permission validation
+- [ ] Audit logging for all permission checks
+- [ ] Integration with process sandbox manager
 
 **Sub-tasks**:
 * [ 1 ] Define permission model
@@ -407,6 +482,11 @@ Create isolated execution contexts for extensions with resource limits and permi
 ## Dependencies
 - Step 2 requires Step 1 (can't enforce permissions without sandbox)
 - External: Node.js child_process or similar
+
+## Integration Points
+- Connects to Extension Registry (M1.2)
+- Used by Extension Loader (M1.3)
+- Monitored by Health System (M1.4)
 
 ```
 

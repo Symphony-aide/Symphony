@@ -55,10 +55,48 @@ Scenario: Discover available CLI commands
 **LEVEL.md**: The actual milestone guidemap - detailed implementation breakdown and guidance
 - **Complete milestone breakdown** - All milestones with detailed deliverables and sub-tasks
 - **Implementation guidance** - Step-by-step breakdown of what needs to be built
-- **Crate/module structure** - Specific code organization and file structure
-- **Success criteria** - Concrete checkboxes for completion tracking
+- **Crate/module structure** - Specific code organization and file structure with full directory trees
+- **Success criteria** - Concrete checkboxes for completion tracking using * [ ] format
 - **Dependencies and integration points** - How components connect and depend on each other
+- **Performance targets** - Specific measurable performance requirements (e.g., <0.3ms latency)
+- **Concrete deliverables** - Bulleted lists of specific outputs with checkboxes
+- **Timeline estimates** - Realistic time estimates for each component (e.g., 2-3 weeks)
+- **Priority indicators** - Clear priority levels (🔴 Critical, 🟡 High, 🟢 Medium, ⚪ Low)
 - **File naming**: LEVEL0.md, LEVEL1_M{X}.md, LEVEL2_M{X}_S{Y}.md
+
+**Example Structure from LEVEL0.md**:
+```markdown
+## 🚧 M1: Core Infrastructure (3-4 months)
+**Status**: * [ ] - Next Priority
+**Dependencies**: M0 Foundation
+
+### Implementation Breakdown
+
+#### 1.1 Environment Setup & Port Definitions
+**Priority**: 🔴 Critical - Foundation for H2A2 architecture
+**Timeline**: 2-3 weeks
+
+**Crate Structure**:
+```
+apps/backend/crates/symphony-core-ports/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs           # Public API exports
+│   ├── ports.rs         # Port trait definitions
+│   ├── types.rs         # Domain types and data structures
+│   ├── errors.rs        # Error types and handling
+│   └── mocks.rs         # Mock implementations for testing
+└── tests/
+    └── integration_tests.rs
+```
+
+**Concrete Deliverables**:
+- [ ] Port trait definitions implemented
+- [ ] Domain types defined with comprehensive error handling
+- [ ] Mock adapters created for isolated testing
+- [ ] Architecture documentation updated
+- [ ] Development environment setup guide completed
+```
 
 **notes.md**: Empty by default, filled incrementally as decisions, issues, or insights appear
 - **Decision log** - Why certain choices were made
