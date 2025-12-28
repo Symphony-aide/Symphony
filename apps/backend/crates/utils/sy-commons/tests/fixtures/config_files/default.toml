@@ -1,0 +1,27 @@
+[logging]
+level = "info"
+
+[logging.console]
+enabled = true
+format = "pretty"
+colors = true
+
+[logging.file]
+enabled = false
+path = "logs/symphony.log"
+max_files = 10
+
+[logging.file.rotation]
+type = "daily"
+
+[logging.json]
+enabled = false
+include_spans = true
+
+[filesystem]
+max_file_size = 104857600  # 100MB
+atomic_writes = true
+
+[debug]
+duck_debugging = true
+performance_logging = false

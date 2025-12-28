@@ -10,7 +10,6 @@ members = [
     "crates/utils/xi-unicode",
     "crates/utils/xi-trace",
     "crates/plugins/xi-syntect-plugin",
-    "crates/core/symphony-core-ports",
     "crates/utils/sy-commons",
 ]
 
@@ -54,13 +53,13 @@ dead_code = "warn"
 
 [workspace.lints.clippy]
 # Pedantic lints
-all = "warn"
-pedantic = "warn"
-nursery = "warn"
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
 # Performance lints
-perf = "warn"
+perf = { level = "warn", priority = -1 }
 # Cargo lints
-cargo = "warn"
+cargo = { level = "warn", priority = -1 }
 # Specific denies
 unwrap_used = "warn"
 expect_used = "warn"

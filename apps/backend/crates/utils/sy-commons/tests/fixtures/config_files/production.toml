@@ -1,0 +1,26 @@
+[logging]
+level = "warn"
+
+[logging.console]
+enabled = false
+
+[logging.file]
+enabled = true
+path = "/var/log/symphony/symphony.log"
+max_files = 30
+
+[logging.file.rotation]
+type = "daily"
+
+[logging.json]
+enabled = true
+path = "/var/log/symphony/symphony.json"
+include_spans = false
+
+[filesystem]
+max_file_size = 1073741824  # 1GB
+atomic_writes = true
+
+[debug]
+duck_debugging = false
+performance_logging = false

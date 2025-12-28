@@ -3,9 +3,10 @@
 //! This module provides the main `SymphonyError` type and context helpers
 //! that should be used across all Symphony crates for consistent error handling.
 
+use std::path::PathBuf;
 use thiserror::Error;
 
-/// Central error type for all Symphony operations
+/// Base error type for all Symphony crates
 ///
 /// This error type provides structured error handling with context information
 /// to help with debugging and error reporting. All Symphony crates should use
@@ -23,78 +24,59 @@ use thiserror::Error;
 /// ```
 #[derive(Debug, Error)]
 pub enum SymphonyError {
-    /// Validation error with details
-    #[error("Validation failed: {message}")]
-    Validation { message: String },
-    
-    /// I/O error with context
-    #[error("I/O error: {context}")]
-    Io { 
-        #[source]
-        source: std::io::Error, 
-        context: String 
+    /// Validation error with field and value details
+    #[error("Validation error: {message}")]
+    Validation { 
+        /// The validation error message
+        message: String,
+        /// The field that failed validation (optional)
+        field: Option<String>,
+        /// The value that failed validation (optional)
+        value: Option<String>,
     },
     
-    /// Serialization/deserialization error with context
-    #[error("Serialization error: {context}")]
+    /// IO error with context
+    #[error("IO error: {source}")]
+    Io { 
+        /// The underlying IO error
+        source: std::io::Error,
+        /// Additional context about the IO operation (optional)
+        context: Option<String>,
+    },
+    
+    /// Serialization error with format information
+    #[error("Serialization error: {message}")]
     Serialization { 
-        #[source]
-        source: serde_json::Error, 
-        context: String 
+        /// The serialization error message
+        message: String,
+        /// The format being serialized (e.g., "JSON", "TOML")
+        format: String,
+    },
+    
+    /// Configuration error with file information
+    #[error("Configuration error: {message}")]
+    Configuration { 
+        /// The configuration error message
+        message: String,
+        /// The configuration file path (optional)
+        file: Option<PathBuf>,
     },
     
     /// Generic error with context for any other error type
-    #[error("Operation failed: {context}")]
+    #[error("Generic error: {message}")]
     Generic { 
-        #[source]
-        source: Box<dyn std::error::Error + Send + Sync>, 
-        context: String 
+        /// The generic error message
+        message: String,
+        /// The underlying error source (optional)
+        source: Option<Box<dyn std::error::Error + Send + Sync>>,
     },
 }
 
-impl SymphonyError {
-    /// Create a validation error
-    pub fn validation(message: impl Into<String>) -> Self {
-        Self::Validation { message: message.into() }
-    }
-    
-    /// Create an error with context from any error type
-    pub fn with_context<E>(error: E, context: impl Into<String>) -> Self 
-    where
-        E: std::error::Error + Send + Sync + 'static,
-    {
-        // Try to downcast to specific error types for better categorization
-        let boxed: Box<dyn std::error::Error + Send + Sync> = Box::new(error);
-        
-        // Check if it's an IO error
-        if let Some(io_err) = boxed.downcast_ref::<std::io::Error>() {
-            return Self::Io { 
-                source: std::io::Error::new(io_err.kind(), io_err.to_string()), 
-                context: context.into() 
-            };
-        }
-        
-        // Check if it's a serde_json error
-        if let Some(serde_err) = boxed.downcast_ref::<serde_json::Error>() {
-            // We can't move out of the box, so create a new error with the same message
-            return Self::Serialization { 
-                source: serde_json::Error::io(std::io::Error::new(
-                    std::io::ErrorKind::InvalidData, 
-                    serde_err.to_string()
-                )), 
-                context: context.into() 
-            };
-        }
-        
-        // Default to generic error
-        Self::Generic { 
-            source: boxed, 
-            context: context.into() 
-        }
+impl From<std::io::Error> for SymphonyError {
+    fn from(source: std::io::Error) -> Self {
+        Self::Io { source, context: None }
     }
 }
-
-/// Extension trait for adding context to Result types
 ///
 /// This trait provides `.context()` and `.with_context()` methods
 /// for any Result type, converting errors to `SymphonyError` with
@@ -117,7 +99,7 @@ impl SymphonyError {
 ///     Ok(processed)
 /// }
 /// ```
-pub trait ResultContext<T, E> {
+pub trait ResultContext<T> {
     /// Add static context to an error
     fn context(self, context: &str) -> Result<T, SymphonyError>;
     
@@ -125,21 +107,49 @@ pub trait ResultContext<T, E> {
     fn with_context<F>(self, f: F) -> Result<T, SymphonyError>
     where
         F: FnOnce() -> String;
+    
+    /// Add field-specific context for validation errors
+    fn with_field_context(self, field: &str, value: &str) -> Result<T, SymphonyError>;
 }
 
-impl<T, E> ResultContext<T, E> for Result<T, E>
+impl<T, E> ResultContext<T> for Result<T, E>
 where
-    E: std::error::Error + Send + Sync + 'static,
+    E: Into<SymphonyError>,
 {
     fn context(self, context: &str) -> Result<T, SymphonyError> {
-        self.map_err(|e| SymphonyError::with_context(e, context.to_string()))
+        self.map_err(|e| {
+            let mut error = e.into();
+            if let SymphonyError::Io { context: ref mut ctx, .. } = &mut error {
+                *ctx = Some(context.to_string());
+            }
+            error
+        })
     }
     
     fn with_context<F>(self, f: F) -> Result<T, SymphonyError>
     where
         F: FnOnce() -> String,
     {
-        self.map_err(|e| SymphonyError::with_context(e, f()))
+        self.map_err(|e| {
+            let mut error = e.into();
+            if let SymphonyError::Io { context: ref mut ctx, .. } = &mut error {
+                *ctx = Some(f());
+            }
+            error
+        })
+    }
+    
+    fn with_field_context(self, field: &str, value: &str) -> Result<T, SymphonyError> {
+        self.map_err(|e| {
+            // Convert the error to SymphonyError first
+            let symphony_error = e.into();
+            // Then transform it to a validation error with field context
+            SymphonyError::Validation {
+                message: format!("Validation failed: {}", symphony_error),
+                field: Some(field.to_string()),
+                value: Some(value.to_string()),
+            }
+        })
     }
 }
 
@@ -148,39 +158,56 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_validation_error() {
-        let error = SymphonyError::validation("Invalid input");
-        assert!(matches!(error, SymphonyError::Validation { .. }));
-        assert_eq!(error.to_string(), "Validation failed: Invalid input");
+    fn test_io_error_conversion() {
+        let io_error = std::io::Error::new(std::io::ErrorKind::NotFound, "File not found");
+        let symphony_error: SymphonyError = io_error.into();
+        
+        match symphony_error {
+            SymphonyError::Io { source, context } => {
+                assert_eq!(source.kind(), std::io::ErrorKind::NotFound);
+                assert!(context.is_none());
+            }
+            _ => panic!("Expected Io error variant"),
+        }
     }
 
     #[test]
-    fn test_context_extension() {
-        let result: Result<String, std::io::Error> = Err(std::io::Error::new(
-            std::io::ErrorKind::NotFound,
-            "File not found"
-        ));
+    fn test_validation_error_with_context() {
+        let result: Result<(), std::io::Error> = Err(std::io::Error::new(std::io::ErrorKind::InvalidInput, "Invalid"));
+        let error = result.with_field_context("username", "").unwrap_err();
         
-        let with_context = result.context("Failed to read config");
-        assert!(with_context.is_err());
-        
-        let error = with_context.unwrap_err();
-        assert!(matches!(error, SymphonyError::Io { .. }));
-        assert!(error.to_string().contains("Failed to read config"));
+        match error {
+            SymphonyError::Validation { message, field, value } => {
+                assert!(message.contains("Invalid"));
+                assert_eq!(field, Some("username".to_string()));
+                assert_eq!(value, Some("".to_string()));
+            }
+            _ => panic!("Expected Validation error variant"),
+        }
     }
 
     #[test]
-    fn test_with_context_closure() {
-        let filename = "test.txt";
-        let result: Result<String, std::io::Error> = Err(std::io::Error::new(
-            std::io::ErrorKind::PermissionDenied,
-            "Permission denied"
-        ));
+    fn test_error_display() {
+        let error = SymphonyError::Validation {
+            message: "Test error".to_string(),
+            field: Some("test_field".to_string()),
+            value: Some("test_value".to_string()),
+        };
         
-        let with_context = result.with_context(|| format!("Failed to access file: {}", filename));
-        assert!(with_context.is_err());
+        let display = format!("{}", error);
+        assert!(display.contains("Validation error"));
+        assert!(display.contains("Test error"));
+    }
+
+    #[test]
+    fn test_error_debug() {
+        let error = SymphonyError::Generic {
+            message: "Test error".to_string(),
+            source: None,
+        };
         
-        let error = with_context.unwrap_err();
-        assert!(error.to_string().contains("Failed to access file: test.txt"));
+        let debug = format!("{:?}", error);
+        assert!(debug.contains("Generic"));
+        assert!(debug.contains("Test error"));
     }
 }

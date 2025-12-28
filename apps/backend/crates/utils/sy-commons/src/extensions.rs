@@ -126,7 +126,7 @@ pub trait OptionExt<T> {
 
 impl<T> OptionExt<T> for Option<T> {
     fn unwrap_or_default(self) -> T where T: Default {
-        self.unwrap_or_else(T::default)
+        Option::unwrap_or_default(self)
     }
 }
 
