@@ -1,0 +1,41 @@
+name: Symphony Doc Tests (sy-*)
+
+on:
+  push:
+    paths:
+      - 'apps/backend/crates/**/sy-*/**'
+      - 'apps/backend/Cargo.toml'
+      - 'apps/backend/Cargo.lock'
+  pull_request:
+    paths:
+      - 'apps/backend/crates/**/sy-*/**'
+      - 'apps/backend/Cargo.toml'
+      - 'apps/backend/Cargo.lock'
+
+jobs:
+  doc-test-sy-crates:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+    
+    - name: Cache cargo registry
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          apps/backend/target
+        key: ${{ runner.os }}-cargo-doc-${{ hashFiles('apps/backend/Cargo.lock') }}
+    
+    - name: Run sy-* doc tests
+      working-directory: apps/backend
+      run: |
+        # Run doc tests for all sy-* crates
+        cargo test --workspace --package 'sy-*' --doc
+        
+        # Generate documentation to check for warnings
+        cargo doc --workspace --package 'sy-*' --no-deps --document-private-items
