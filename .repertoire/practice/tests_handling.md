@@ -2,6 +2,10 @@
 
 **CRITICAL**: ALL implementations MUST follow Test-Driven Development (TDD):
 
+- **CRITICAL** (default, fast):  
+`cargo nextest run` or `cargo test` (fallback) for test runnings
+AND YOU HAVE TO RUN doc-tests too!
+
 1. **RED PHASE**: Write failing tests first
 2. **GREEN PHASE**: Write minimal code to make tests pass  
 3. **REFACTOR PHASE**: Improve code quality while keeping tests green
@@ -81,7 +85,7 @@ mod tests {
 
     // Unit tests - test individual components (fast, isolated)
     // MANDATORY: These must be written FIRST (RED phase)
-    #[cfg(feature = "test_unit")]
+    #[cfg(feature = "unit")]
     #[test]
     fn test_component_behavior() {
         // Arrange
@@ -96,7 +100,7 @@ mod tests {
 
     // Property tests - test invariants across many inputs
     // MANDATORY: Write these for any function with mathematical properties
-    #[cfg(feature = "test_unit")] // or a separate feature if desired
+    #[cfg(feature = "unit")] // or a separate feature if desired
     mod property_tests {
         use proptest::prelude::*;
         use super::*;
@@ -111,7 +115,7 @@ mod tests {
     }
 
     // Integration tests (slower, full stack)
-    #[cfg(feature = "test_integration")]
+    #[cfg(feature = "integration")]
     mod integration_tests {
         use super::*;
 
@@ -122,7 +126,7 @@ mod tests {
     }
 
     // End-to-end tests (browser-based, requires running app)
-    #[cfg(feature = "test_e2e")]
+    #[cfg(feature = "e2e")]
     mod e2e_tests {
         use super::*;
 
@@ -133,7 +137,7 @@ mod tests {
     }
 
     // Slow tests
-    #[cfg(feature = "test_slow")]
+    #[cfg(feature = "slow")]
     mod slow_tests {
         use super::*;
 
@@ -144,7 +148,7 @@ mod tests {
     }
 
     // Authentication tests
-    #[cfg(feature = "test_auth")]
+    #[cfg(feature = "auth")]
     mod auth_tests {
         use super::*;
 
@@ -191,7 +195,7 @@ proptest = "1.4"          # Property-based testing
   `cargo nextest run` or `cargo test` (fallback)
 
 - **Run multiple categories** (e.g., unit + auth + redis) 
-  `cargo nextest run --features "test_unit test_auth test_redis"` or `cargo test --features "test_unit test_auth test_redis"` (fallback)
+  `cargo nextest run --features "unit auth test_redis"` or `cargo test --features "unit auth test_redis"` (fallback)
 
 - **Run all tests** (including slow/e2e/etc.):  
   `cargo nextest run --all-features` or `cargo test --all-features` (fallback)

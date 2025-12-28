@@ -111,7 +111,7 @@ fn process_file(path: &str) -> Result<String, std::io::Error> {
 mod tests {
     use super::*;
 
-    #[cfg(feature = "test_unit")]
+    #[cfg(feature = "unit")]
     #[test]
     fn test_user_creation() {
         // Arrange
