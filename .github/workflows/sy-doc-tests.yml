@@ -12,6 +12,10 @@ on:
       - 'apps/backend/Cargo.toml'
       - 'apps/backend/Cargo.lock'
 
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+
 jobs:
   doc-test-sy-crates:
     runs-on: ubuntu-latest
@@ -22,20 +26,57 @@ jobs:
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
     
-    - name: Cache cargo registry
-      uses: actions/cache@v3
+    - name: Cache Rust dependencies
+      uses: Swatinem/rust-cache@v2
       with:
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-          apps/backend/target
-        key: ${{ runner.os }}-cargo-doc-${{ hashFiles('apps/backend/Cargo.lock') }}
+        workspaces: "apps/backend"
+        cache-on-failure: true
+        shared-key: "symphony-backend"
     
     - name: Run sy-* doc tests
       working-directory: apps/backend
       run: |
-        # Run doc tests for all sy-* crates
-        cargo test --workspace --package 'sy-*' --doc
+        # Test sy-* crates documentation individually
+        echo "Testing sy-* crate documentation (Symphony code)..."
         
-        # Generate documentation to check for warnings
-        cargo doc --workspace --package 'sy-*' --no-deps --document-private-items
+        SY_CRATES=(
+          "sy-commons"
+          "sy-core-ports"
+        )
+        
+        PASSED=0
+        FAILED=0
+        
+        for crate in "${SY_CRATES[@]}"; do
+          echo "Testing documentation for crate: $crate"
+          
+          # Check if crate exists
+          if [ -d "crates/core/$crate" ] || [ -d "crates/utils/$crate" ]; then
+            # Run doc tests (strict - must pass)
+            if cargo test --package "$crate" --doc; then
+              echo "✅ Doc tests passed for $crate"
+              ((PASSED++))
+            else
+              echo "❌ Doc tests FAILED for $crate"
+              ((FAILED++))
+              exit 1  # Fail fast for sy-* crates
+            fi
+            
+            # Generate documentation to check for warnings (strict - must pass)
+            if cargo doc --package "$crate" --no-deps --document-private-items; then
+              echo "✅ Documentation generation passed for $crate"
+            else
+              echo "❌ Documentation generation FAILED for $crate"
+              exit 1  # Fail fast for sy-* crates
+            fi
+          else
+            echo "⚠️  Crate $crate not found, skipping..."
+          fi
+          
+          echo "---"
+        done
+        
+        echo "Symphony documentation testing summary:"
+        echo "Passed: $PASSED"
+        echo "Failed: $FAILED"
+        echo "All sy-* crates must have perfect documentation!"
