@@ -223,3 +223,39 @@ fn unused_function() {}
 #[cfg(test)]
 fn test_helper_function() {}
 ```
+
+---
+
+## QUALITY GATES - MANDATORY CHECKS
+
+**BEFORE FEATURE COMPLETION - ALL MUST PASS**:
+1. ✅ **Unit/Integration Tests**: `cargo nextest run` - ZERO warnings, ZERO failures
+2. ✅ **Benchmarks**: `cargo bench` - Less than 15% outliers (if benchmark exists in crate)
+3. ✅ **Documentation Tests**: `cargo test --doc` - ZERO warnings, ZERO failures
+4. ✅ **Code Quality**: `cargo clippy --all-targets --all-features` - ZERO warnings
+5. ✅ **Documentation Generation**: `cargo doc --no-deps` - Must pass and generate docs
+
+**ON TEST FAILURES - RERUN STRATEGY**:
+- ✅ **First**: Run failed tests only: `cargo nextest run --failed`
+- ✅ **If nextest unavailable**: Use `cargo test` with specific test names
+
+**MANDATORY CARGO.TOML FEATURES - COPY EXACTLY**:
+```toml
+[features]
+# Default runs only fast unit tests
+default = []
+# Individual test category features
+unit = []
+integration = []
+e2e = [] # Based on Project and Business [e.g. HTML Generation] Type
+... // And so
+
+```
+
+**MANDATORY DEBUGGING AND UTILITIES**:
+- ✅ **ALWAYS** use `sy-commons` crate utilities (error handling, logging, config, filesystem, validation)
+- ✅ **ALWAYS** use `duck!("message")` macro for debugging (even in suspicious error-prone locations)
+- ✅ **NEVER** miss documentation warnings like:
+  - `missing documentation for the crate` - Add `//!` crate-level docs
+  - `missing documentation for a struct field` - Add `/// Field description` above each field
+  - `missing documentation for a function` - Add `/// Function description` above functions

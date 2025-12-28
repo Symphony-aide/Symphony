@@ -9,15 +9,18 @@
 
 ## 📖 Glossary
 
-| Term | Definition |
-|------|------------|
-| **OFB Python** | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
-| **Pre-validation** | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic) |
-| **Authoritative Validation** | Complete validation including RBAC, business rules, and data constraints performed by OFB Python |
-| **Two-Layer Architecture** | Rust (orchestration + pre-validation) + OFB Python (validation + persistence) |
-| **Mock-Based Contract Testing** | Testing approach using mocked dependencies to verify component contracts |
-| **WireMock Contract Verification** | HTTP endpoint mocking for testing integration with OFB Python services |
-| **Three-Layer Testing** | Unit tests (<100ms), Integration tests (<5s), Pre-validation tests (<1ms) |
+| Term                               | Definition                                                                                                                                          |
+|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| **OFB Python**                     | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
+| **Pre-validation**                 | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic)                                                  |
+| **Authoritative Validation**       | Complete validation including RBAC, business rules, and data constraints performed by OFB Python                                                    |
+| **Two-Layer Architecture**         | Rust (orchestration + pre-validation) + OFB Python (validation + persistence)                                                                       |
+| **Mock-Based Contract Testing**    | Testing approach using mocked dependencies to verify component contracts                                                                            |
+| **WireMock Contract Verification** | HTTP endpoint mocking for testing integration with OFB Python services                                                                              |
+| **Three-Layer Testing**            | Unit tests (<100ms), Integration tests (<5s), Pre-validation tests (<1ms)                                                                           |
+| **Advanced Testing Requirements**  | Mandatory benchmarks, property tests, and fuzz testing when specified in acceptance criteria                                                        |
+| **Quality Gates**                  | Mandatory checks: tests pass, benchmarks <15% outliers, doc tests pass, clippy clean, docs generate                                                |
+| **sy-commons Integration**         | Mandatory use of sy-commons crate for error handling, logging, and utilities across all Symphony components                                         |
 
 ---
 
@@ -1477,3 +1480,185 @@ All complete? → M1 updated → * [ 1 ]
 ---
 
 ***Now you have a complete, traceable system from strategic vision to production code!** 🎼*
+
+---
+
+## 🧪 Advanced Testing Requirements
+
+### Mandatory Quality Gates
+
+**CRITICAL**: All Symphony components must pass these quality gates before completion:
+
+#### 1. Test Execution Gates
+- **Unit Tests**: All tests pass WITHOUT warnings or failures
+- **Integration Tests**: All tests pass WITHOUT warnings or failures  
+- **Documentation Tests**: All doc tests pass WITHOUT warnings or failures
+- **Failed Test Recovery**: Use `cargo nextest run --failed` to rerun only failed tests
+
+#### 2. Performance Gates
+- **Benchmarks**: When benchmarks exist, must pass with <15% outliers
+- **Performance Targets**: Must meet specific targets defined in acceptance criteria
+- **Stress Testing**: Must handle collapse scenarios identified in BIF evaluation
+
+#### 3. Code Quality Gates
+- **Clippy**: All clippy checks pass (zero warnings tolerance)
+- **Documentation**: All public APIs documented, docs generate successfully
+- **Warnings**: Zero tolerance for any compiler or tool warnings
+
+### Advanced Testing Integration
+
+**When Required by Acceptance Criteria:**
+
+#### Benchmark Testing
+```toml
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+```
+
+**Usage**: Performance-critical components must include criterion benchmarks
+**Threshold**: <15% outliers in benchmark results
+**Command**: `cargo bench` (integrated with quality gates)
+
+#### Property-Based Testing
+```toml
+[dev-dependencies]
+proptest = "1.4"
+```
+
+**Usage**: Algorithm correctness validation with generated test cases
+**Coverage**: Critical algorithms and data structure invariants
+**Integration**: Part of standard test suite execution
+
+#### Fuzz Testing
+```toml
+[dev-dependencies]
+cargo-fuzz = "0.11"
+```
+
+**Usage**: Security-critical components and parsers
+**Duration**: Minimum 10 minutes continuous fuzzing
+**Integration**: CI/CD pipeline for critical paths
+
+### Mandatory Feature Flags Template
+
+**REQUIRED**: All Symphony crates must include these feature flags:
+
+```toml
+[features]
+# Default runs only fast unit tests
+default = []
+
+# Individual test category features
+unit = []
+integration = []
+e2e = []
+
+# Performance and validation features
+slow = []
+benchmarks = []
+property_tests = []
+fuzz_tests = []
+
+# Business domain features (customize per crate)
+auth = []
+users = []
+services = []
+repositories = []
+redis = []
+
+# CI/CD management
+ci_cd_issue = []  # Do not include until explicitly mentioned by user
+```
+
+### sy-commons Integration Requirements
+
+**MANDATORY**: All Symphony components must:
+
+1. **Use sy-commons for error handling**:
+   ```rust
+   use sy_commons::error::SymphonyError;
+   ```
+
+2. **Use duck!() for debugging**:
+   ```rust
+   use sy_commons::debug::duck;
+   duck!("Suspicious operation: {}", operation_details);
+   ```
+
+3. **Follow sy-commons patterns**:
+   - Configuration management via sy_commons::config
+   - Logging via sy_commons::logging
+   - Filesystem operations via sy_commons::filesystem
+   - Pre-validation via sy_commons::prevalidation
+
+### Documentation Standards
+
+**MANDATORY**: Prevent documentation warnings:
+
+1. **Crate-level documentation**:
+   ```rust
+   //! # Crate Name
+   //! 
+   //! Brief description of crate purpose and functionality.
+   ```
+
+2. **Struct field documentation**:
+   ```rust
+   pub struct Config {
+       /// The server port to bind to
+       pub port: u16,
+       /// Maximum number of concurrent connections
+       pub max_connections: usize,
+   }
+   ```
+
+3. **Enum variant documentation**:
+   ```rust
+   pub enum LogLevel {
+       /// Debug level logging
+       Debug,
+       /// Information level logging
+       Info,
+   }
+   ```
+
+### Test Organization Standards
+
+**Directory Structure**:
+```
+crate_name/
+├── src/
+├── tests/
+│   ├── integration_tests.rs
+│   └── fixtures/
+├── benches/
+│   └── performance_bench.rs
+└── fuzz/
+    └── fuzz_targets/
+```
+
+**Test Execution Commands**:
+- `cargo test` - All tests including doc tests
+- `cargo nextest run` - Fast parallel test execution
+- `cargo nextest run --failed` - Rerun only failed tests
+- `cargo bench` - Performance benchmarks
+- `cargo fuzz run target_name` - Fuzz testing
+
+### Quality Assurance Checklist
+
+**Before Feature Completion**:
+- [ ] All unit tests pass (cargo test)
+- [ ] All integration tests pass (cargo nextest run)
+- [ ] All documentation tests pass (cargo test --doc)
+- [ ] All benchmarks pass with <15% outliers (cargo bench)
+- [ ] Zero clippy warnings (cargo clippy)
+- [ ] Documentation generates successfully (cargo doc)
+- [ ] sy-commons integration verified
+- [ ] Feature flags properly configured
+- [ ] duck!() debugging used appropriately
+
+**Performance Validation**:
+- [ ] Benchmark results within acceptable ranges
+- [ ] Property tests validate algorithm correctness
+- [ ] Fuzz testing completed for security-critical components
+- [ ] Stress collapse scenarios tested and documented

@@ -236,3 +236,9 @@ proptest = "1.4"          # Property-based testing
 ### WARNING HANDLING IN TESTS
 
 **ZERO TOLERANCE**: Test warnings are NOT ALLOWED.
+
+**QUALITY GATES - DETAILED COMMANDS**:
+- ✅ **Unit/Integration Tests**: `cargo nextest run` - Must show "0 failed" and no warnings in output
+- ✅ **Documentation Tests**: `cargo test --doc` - Must show "0 failed" and no "warning:" lines
+- ✅ **Benchmarks**: `cargo bench` - If benchmarks exist, outliers must be <15% (e.g., "Found 6 outliers among 100 measurements (6.00%)" is OK, >15% is NOT)
+- ✅ **On Test Failure**: First run `cargo nextest run --failed` to rerun only failed tests, then fix and rerun all

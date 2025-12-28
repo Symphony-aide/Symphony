@@ -308,7 +308,7 @@ The framework supports migration from LEVEL0/LEVEL1/LEVEL2 structure to the new 
 - **Framework Questions**: Review [Development.md](./Development.md)
 - **AI Mode Issues**: Check [How To Use.md](./How%20To%20Use.md)
 - **Quality Problems**: Consult [BIF.md](./BIF.md)
-- **Implementation Patterns**: Reference `practice/technical_pattern.md`
+- **Implementation Patterns**: Reference [technical_pattern.md](../practice/technical_pattern.md)
 
 ---
 

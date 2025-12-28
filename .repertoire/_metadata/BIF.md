@@ -235,10 +235,10 @@ Contains:
 
 ### Enhanced Table Format (with Reasoning):
 
-| Component | Type | Feature | Completeness | Code Quality | Docs | Reliability | Performance | Integration | Maintenance | When Collapse | Reasoning |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Terminal | Component | Auto-complete | Partial (35%) | Basic | None | Medium | Poor | Partial | Low | 1000+ suggestions → UI freeze >500ms | No debouncing, O(n²) search algorithm, missing error handling for API failures |
-| Terminal | Component | PTY | Full (90%) | Excellent | Good | Enterprise | Excellent | Full | Enterprise | 100+ sessions → leak ~500MB | Well-architected with proper cleanup, comprehensive error handling, good separation of concerns |
+| Component | Type      | Feature       | Completeness  | Code Quality | Docs | Reliability | Performance | Integration | Maintenance | When Collapse                        | Reasoning                                                                                       |
+|-----------|-----------|---------------|---------------|--------------|------|-------------|-------------|-------------|-------------|--------------------------------------|-------------------------------------------------------------------------------------------------|
+| Terminal  | Component | Auto-complete | Partial (35%) | Basic        | None | Medium      | Poor        | Partial     | Low         | 1000+ suggestions → UI freeze >500ms | No debouncing, O(n²) search algorithm, missing error handling for API failures                  |
+| Terminal  | Component | PTY           | Full (90%)    | Excellent    | Good | Enterprise  | Excellent   | Full        | Enterprise  | 100+ sessions → leak ~500MB          | Well-architected with proper cleanup, comprehensive error handling, good separation of concerns |
 
 ---
 
