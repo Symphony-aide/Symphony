@@ -11,6 +11,7 @@ members = [
     "crates/utils/xi-trace",
     "crates/plugins/xi-syntect-plugin",
     "crates/utils/sy-commons",
+    "crates/symphony-core-ports",
 ]
 
 [workspace.dependencies]

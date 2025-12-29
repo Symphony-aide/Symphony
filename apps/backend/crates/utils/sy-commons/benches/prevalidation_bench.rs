@@ -1,6 +1,11 @@
+//! Performance benchmarks for sy-commons pre-validation rules
+//! 
+//! These benchmarks verify that validation rules meet the <1ms performance requirement.
+
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use sy_commons::prevalidation::{PreValidationRule, NonEmptyRule, MinLengthRule, MaxLengthRule, CompositeRule, validate_fast};
 
+/// Benchmark for NonEmptyRule validation performance
 fn benchmark_non_empty_rule(c: &mut Criterion) {
     let rule = NonEmptyRule;
     let value = "test value".to_string();
@@ -49,6 +54,7 @@ fn benchmark_validate_fast(c: &mut Criterion) {
     });
 }
 
+/// Benchmark group for all pre-validation performance tests
 criterion_group!(
     benches,
     benchmark_non_empty_rule,
