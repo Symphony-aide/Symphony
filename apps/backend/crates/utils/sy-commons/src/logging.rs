@@ -116,7 +116,7 @@ pub fn init_logging(config: LoggingConfig) -> Result<(), SymphonyError> {
             
         subscriber.try_init()
             .map_err(|e| SymphonyError::Generic {
-                message: format!("Failed to initialize logging: {}", e),
+                message: format!("Failed to initialize logging: {e}"),
                 source: Some(Box::new(e)),
             })?;
     }

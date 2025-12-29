@@ -129,6 +129,7 @@ pub async fn file_exists<P: AsRef<Path>>(path: P) -> bool {
 ///     println!("Config dir: {:?}", dirs.config_dir());
 /// }
 /// ```
+#[must_use] 
 pub fn get_project_dirs() -> Option<ProjectDirs> {
     ProjectDirs::from("com", "Symphony", "Symphony")
 }

@@ -37,7 +37,7 @@ pub trait Config: for<'de> Deserialize<'de> + Sized {
     /// Load configuration with custom figment
     fn load_with_figment(figment: Figment) -> Result<Self, SymphonyError> {
         figment.extract().map_err(|e| SymphonyError::Configuration {
-            message: format!("Failed to parse configuration: {}", e),
+            message: format!("Failed to parse configuration: {e}"),
             file: None,
         })
     }
@@ -66,12 +66,12 @@ where
 {
     let figment = Figment::new()
         .merge(Toml::file("config/default.toml"))
-        .merge(Toml::file(format!("config/{}.toml", environment)))
+        .merge(Toml::file(format!("config/{environment}.toml")))
         .merge(Env::prefixed("SYMPHONY_"));
     
     figment.extract().map_err(|e| SymphonyError::Configuration {
-        message: format!("Failed to load {} configuration: {}", environment, e),
-        file: Some(PathBuf::from(format!("config/{}.toml", environment))),
+        message: format!("Failed to load {environment} configuration: {e}"),
+        file: Some(PathBuf::from(format!("config/{environment}.toml"))),
     })
 }
 

@@ -45,7 +45,7 @@ impl PreValidationRule<String> for NonEmptyRule {
         }
     }
     
-    fn description(&self) -> &str {
+    fn description(&self) -> &'static str {
         "Value must not be empty"
     }
 }
@@ -68,7 +68,7 @@ impl PreValidationRule<String> for MinLengthRule {
         }
     }
     
-    fn description(&self) -> &str {
+    fn description(&self) -> &'static str {
         "Value must meet minimum length requirement"
     }
 }
@@ -91,7 +91,7 @@ impl PreValidationRule<String> for MaxLengthRule {
         }
     }
     
-    fn description(&self) -> &str {
+    fn description(&self) -> &'static str {
         "Value must meet maximum length requirement"
     }
 }
@@ -103,6 +103,7 @@ pub struct CompositeRule<T> {
 
 impl<T> CompositeRule<T> {
     /// Create a new empty composite rule
+    #[must_use] 
     pub fn new() -> Self {
         Self { rules: Vec::new() }
     }
@@ -133,7 +134,7 @@ impl<T> PreValidationRule<T> for CompositeRule<T> {
         Ok(())
     }
     
-    fn description(&self) -> &str {
+    fn description(&self) -> &'static str {
         "Composite validation rule"
     }
 }

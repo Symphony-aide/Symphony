@@ -145,7 +145,7 @@ where
             let symphony_error = e.into();
             // Then transform it to a validation error with field context
             SymphonyError::Validation {
-                message: format!("Validation failed: {}", symphony_error),
+                message: format!("Validation failed: {symphony_error}"),
                 field: Some(field.to_string()),
                 value: Some(value.to_string()),
             }
