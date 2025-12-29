@@ -111,6 +111,7 @@ pub mod logging;
 pub mod config;
 pub mod filesystem;
 pub mod prevalidation;
+pub mod testing;
 
 // Re-export commonly used items
 pub use error::{SymphonyError, ResultContext};
@@ -118,3 +119,4 @@ pub use logging::{LoggingConfig, init_logging, debug, error, info, trace, warn};
 pub use config::{Config, load_config, DefaultConfig};
 pub use filesystem::{read_file, write_file, create_dir_all, file_exists, get_project_dirs};
 pub use prevalidation::{PreValidationRule, NonEmptyRule, MinLengthRule, MaxLengthRule, validate_fast};
+pub use testing::safe_generator;

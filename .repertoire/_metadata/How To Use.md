@@ -544,10 +544,23 @@ TESTING.md must implement Symphony's three-layer testing architecture:
 - **OFB Python Layer**: Mock via WireMock for authoritative validation, RBAC, persistence
 
 **Required Testing Tools**:
+- **sy-commons** for thread-safe factory utilities (MANDATORY)
+- **fake** crate for factory-based test data generation (MANDATORY)
 - rstest (fixtures), tokio::test (async), mockall (mocking)
 - criterion (benchmarks), proptest (property tests)
 - WireMock (integration), cargo nextest (test runner)
 - cargo-fuzz (fuzz testing for security-critical components)
+
+**MANDATORY Factory-Based Test Data Generation**:
+- **ZERO TOLERANCE**: Never hardcode test data in tests
+- **MANDATORY**: Create specific factory structs before writing any tests
+- **MANDATORY**: Use `sy-commons::testing::safe_generator()` for thread-safe data generation
+- **MANDATORY**: Use `fake` crate for realistic data generation
+- **MANDATORY**: Provide both valid and invalid data generators
+- **MANDATORY**: Use builder pattern for complex objects
+- **MANDATORY**: Generate unique values on each call
+- **MANDATORY**: Create invalid data by mutating valid data (not random garbage)
+- **MANDATORY**: Reference `.repertoire/practice/factory_testing_mandatory.md` for complete patterns
 
 **MANDATORY: Use nextest whenever possible**:
 - ✅ **PREFERRED**: `cargo nextest run` - Faster parallel execution, better output
@@ -574,6 +587,9 @@ When acceptance criteria specify performance, security, or algorithm correctness
 
 **Mandatory Quality Gates**:
 - All tests pass WITHOUT warnings or failures
+- **MANDATORY**: All tests use specific factory structs (no hardcoded values)
+- **MANDATORY**: Factory module exists with required patterns using sy-commons SafeGenerator
+- **MANDATORY**: `sy-commons` and `fake` crate dependencies added to Cargo.toml
 - Benchmarks (if exist) pass with <15% outliers
 - Doc tests pass WITHOUT warnings or failures
 - Clippy checks pass (zero warnings tolerance)
@@ -766,13 +782,17 @@ Step 1.5: MANDATORY DOCUMENTATION STATUS UPDATE
 
 Step 2: TEST-FIRST APPROACH
 Before writing implementation:
-1. **MANDATORY**: Write acceptance tests from TESTING.md (Red phase)
-2. **MANDATORY**: Write unit tests (happy path, edge cases, errors) (Red phase)
-3. **MANDATORY**: Implement three-layer testing architecture:
+1. **MANDATORY**: Read and follow `.repertoire/practice/factory_testing_mandatory.md`
+2. **MANDATORY**: Create test factory BEFORE writing any tests
+3. **MANDATORY**: Write acceptance tests from TESTING.md (Red phase) using factories
+4. **MANDATORY**: Write unit tests (happy path, edge cases, errors) (Red phase) using factories
+5. **MANDATORY**: ZERO TOLERANCE for hardcoded test data - use factories for ALL test data
+6. **MANDATORY**: Implement three-layer testing architecture:
    - **Layer 1**: Unit tests with mocked dependencies (<100ms total execution)
    - **Layer 2**: Integration tests with WireMock for OFB Python (<5s total execution)
    - **Layer 3**: Pre-validation tests for fast rejection (<1ms per test)
-4. **MANDATORY**: Use recommended testing tools:
+7. **MANDATORY**: Use recommended testing tools:
+   - **fake** crate for factory-based test data generation (CRITICAL)
    - **rstest** for fixtures and parameterization
    - **tokio::test** for async runtime support
    - **mockall** for mocking external dependencies
@@ -783,7 +803,38 @@ Before writing implementation:
    - **insta** for JSON snapshot testing (when appropriate - see guidelines below)
    - **Quote Escaping**: Always escape quotes: `cargo nextest run \--features "unit,integration"`
 
-4.1. **JSON Snapshot Testing with insta** (use judiciously):
+4.1. **MANDATORY Factory-Based Test Data Generation**:
+   **ZERO TOLERANCE**: Never hardcode test data. Always use factories.
+   
+   ❌ **FORBIDDEN** (will be rejected):
+   ```rust
+   assert!("550e8400-e29b-41d4-a716-446655440000".is_valid_uuid());
+   let user = User::new("john_doe", "john@example.com");
+   ```
+   
+   ✅ **MANDATORY** (use factories):
+   ```rust
+   let valid_uuid = TestFactory::valid_uuid();
+   let invalid_uuid = TestFactory::invalid_uuid();
+   assert!(valid_uuid.is_valid_uuid());
+   assert!(!invalid_uuid.is_valid_uuid());
+   
+   let user = TestFactory::user().build();
+   let specific_user = TestFactory::user()
+       .with_name("specific_name")
+       .with_email("specific@test.com")
+       .build();
+   ```
+   
+   **Required Factory Structure**:
+   - Create `tests/factory.rs` or `tests/factories/mod.rs`
+   - Use `fake` crate for realistic data generation
+   - Provide both valid and invalid data generators
+   - Use builder pattern for complex objects
+   - Generate unique values on each call
+   - Invalid data created by mutating valid data (not random garbage)
+
+4.2. **JSON Snapshot Testing with insta** (use judiciously):
    ✅ **Use insta when**:
    - Structured outputs: JSON, YAML, maps, trees, ASTs
    - Large/deeply nested data hard to test field-by-field
@@ -796,7 +847,7 @@ Before writing implementation:
    - Simple outputs: `assert_eq!(result, 42)` is sufficient
    - Highly volatile data: Frequently changing structures
 
-4.2. **BDD Tests (cucumber-rs)** (rarely needed):
+4.3. **BDD Tests (cucumber-rs)** (rarely needed):
    - Usually NOT needed - unit and integration tests cover most cases
    - Only use when: Business-level behavior must be validated by non-developers
    - If no strong reason exists → do not add BDD tests
@@ -849,6 +900,9 @@ Step 7: QUALITY GATES VALIDATION
 - [ ] All unit tests pass WITHOUT warnings or failures
 - [ ] All integration tests pass WITHOUT warnings or failures
 - [ ] All documentation tests pass WITHOUT warnings or failures
+- [ ] **MANDATORY**: All tests use factory-generated data (no hardcoded values)
+- [ ] **MANDATORY**: Factory module exists and follows required patterns
+- [ ] **MANDATORY**: `fake` crate dependency added to Cargo.toml
 - [ ] Benchmarks (if exist) pass with <15% outliers
 - [ ] All clippy checks pass (zero warnings tolerance)
 - [ ] Documentation generates successfully (cargo doc)
