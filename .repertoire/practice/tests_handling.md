@@ -33,6 +33,17 @@ AND YOU HAVE TO RUN doc-tests too!
    - Fallback to `cargo test` if nextest is not available
    - **Quote Escaping**: Always use `\--features "unit,integration"` not `--features unit,integration`
 
+4. **insta** - JSON snapshot testing (use judiciously)
+   - For structured outputs: JSON, YAML, maps, trees, ASTs
+   - For large/deeply nested data hard to test field-by-field
+   - For stable APIs and config outputs
+   - **Do NOT use for**: dynamic values, core business logic, simple outputs
+
+5. **cucumber-rs** - BDD testing (rarely needed)
+   - Usually NOT needed - unit and integration tests cover most cases
+   - Only use when business-level behavior must be validated by non-developers
+   - If no strong reason exists → do not add BDD tests
+
 **EXAMPLE USAGE**:
 ```rust
 use rstest::*;
@@ -240,6 +251,45 @@ proptest = "1.4"          # Property-based testing
 4. ✅ Extract common patterns to commons crate
 5. ✅ Run tests after each refactor - keep them green
 6. ✅ Commit clean, refactored code
+
+---
+
+## Test Types Overview
+
+| Test Type | Name | Needed (%) | Why this value | Covered somewhere else |
+|-----------|------|------------|----------------|------------------------|
+| Unit Tests | `#[test]` | 80% | Core logic, fast, reliable, easy to maintain | |
+| Integration Tests | `tests/` | 60% | Ensure components work together | Unit tests |
+| Snapshot Tests | `insta` | 30% | Large structured outputs, stable APIs | Integration tests |
+| BDD Tests | `cucumber-rs` | 5% | Business-level behavior only | Unit / Integration |
+| Property Tests | `proptest` | 10% | Edge cases, invariants | Unit tests |
+
+**Notes**: Percentages are guidelines, not strict rules. Avoid duplication if test type is already satisfied elsewhere.
+
+### JSON Snapshot Testing Guidelines
+
+✅ **Use insta when**:
+- Structured outputs: JSON, YAML, maps, trees, ASTs
+- Large/deeply nested data hard to test field-by-field
+- Stable APIs: Public or semi-public API responses
+- Config outputs: Configuration files, logs, GraphQL responses
+
+❌ **Do NOT use insta when**:
+- Dynamic values: timestamps, UUIDs, random IDs
+- Core business logic: money calculations, permissions, rules
+- Simple outputs: `assert_eq!(result, 42)` is sufficient
+- Highly volatile data: Frequently changing structures
+
+### BDD Testing Guidelines
+
+BDD tests are usually NOT needed because unit and integration tests already cover most cases.
+
+Only use BDD if there is a strong reason, such as:
+- Business-level behavior must be validated
+- Features are defined by non-developers
+- Cross-system flows need human-readable scenarios
+
+If no strong reason exists → do not add BDD tests.
 
 ---
 

@@ -12,6 +12,7 @@ members = [
     "crates/plugins/xi-syntect-plugin",
     "crates/utils/sy-commons",
     "crates/symphony-core-ports",
+    "crates/sy-ipc-protocol",
 ]
 
 [workspace.dependencies]

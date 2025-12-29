@@ -98,6 +98,22 @@ fn process_file(path: &str) -> Result<String, std::io::Error> {
 
 **MANDATORY**: READ THE FILE {CWD/tests_handling.md}
 
+**CRITICAL TESTING RULES**:
+1. ✅ **ALWAYS** use TDD approach (Red → Green → Refactor)
+2. ✅ **ALWAYS** use `cargo nextest run` (MANDATORY PREFERRED) over `cargo test`
+3. ✅ **ALWAYS** escape quotes in feature flags: `\--features "unit,integration"`
+4. ✅ **ALWAYS** fix ALL warnings in tests - zero tolerance
+5. ✅ **NEVER** skip writing tests before implementation
+
+**JSON Snapshot Testing with insta**:
+✅ **Use insta when**: Structured outputs (JSON, YAML, ASTs), stable APIs, config outputs
+❌ **Do NOT use insta when**: Dynamic values, core business logic, simple outputs
+
+**BDD Tests (cucumber-rs)**:
+- Usually NOT needed - unit and integration tests cover most cases
+- Only use when business-level behavior must be validated by non-developers
+- If no strong reason exists → do not add BDD tests
+
 **CRITICAL RULES**:
 1. ✅ **ALWAYS** follow TDD (Red-Green-Refactor)
 2. ✅ **ALWAYS** write tests before implementation

@@ -1,0 +1,103 @@
+{
+  "valid_messages": [
+    {
+      "name": "simple_pit_operation",
+      "envelope": {
+        "correlation_id": "550e8400-e29b-41d4-a716-446655440000",
+        "message_type": "PitOperation",
+        "metadata": {
+          "priority": "Normal",
+          "routing_hints": ["pit"],
+          "timeout_ms": 5000,
+          "retry_count": 0,
+          "source_component": "conductor",
+          "target_component": "pit_manager"
+        },
+        "payload": "allocate_model",
+        "timestamp": "2025-12-28T10:00:00Z"
+      }
+    },
+    {
+      "name": "extension_command",
+      "envelope": {
+        "correlation_id": "660e8400-e29b-41d4-a716-446655440001",
+        "message_type": "ExtensionCommand",
+        "metadata": {
+          "priority": "High",
+          "routing_hints": ["extension", "instrument"],
+          "timeout_ms": 10000,
+          "retry_count": 0,
+          "source_component": "orchestrator",
+          "target_component": "gpt4_instrument"
+        },
+        "payload": {
+          "command": "generate_text",
+          "parameters": {
+            "prompt": "Write a function",
+            "max_tokens": 100
+          }
+        },
+        "timestamp": "2025-12-28T10:01:00Z"
+      }
+    },
+    {
+      "name": "xi_request",
+      "envelope": {
+        "correlation_id": "770e8400-e29b-41d4-a716-446655440002",
+        "message_type": "XiRequest",
+        "metadata": {
+          "priority": "Critical",
+          "routing_hints": ["xi_editor"],
+          "timeout_ms": 1000,
+          "retry_count": 0,
+          "source_component": "symphony_core",
+          "target_component": "xi_editor"
+        },
+        "payload": {
+          "method": "new_view",
+          "params": {
+            "file_path": "/path/to/file.rs"
+          }
+        },
+        "timestamp": "2025-12-28T10:02:00Z"
+      }
+    }
+  ],
+  "invalid_messages": [
+    {
+      "name": "missing_correlation_id",
+      "envelope": {
+        "message_type": "PitOperation",
+        "metadata": {
+          "priority": "Normal",
+          "routing_hints": [],
+          "timeout_ms": null,
+          "retry_count": 0,
+          "source_component": "test",
+          "target_component": null
+        },
+        "payload": "test",
+        "timestamp": "2025-12-28T10:00:00Z"
+      },
+      "expected_error": "missing correlation_id field"
+    },
+    {
+      "name": "invalid_message_type",
+      "envelope": {
+        "correlation_id": "550e8400-e29b-41d4-a716-446655440000",
+        "message_type": "InvalidType",
+        "metadata": {
+          "priority": "Normal",
+          "routing_hints": [],
+          "timeout_ms": null,
+          "retry_count": 0,
+          "source_component": "test",
+          "target_component": null
+        },
+        "payload": "test",
+        "timestamp": "2025-12-28T10:00:00Z"
+      },
+      "expected_error": "unknown variant `InvalidType`"
+    }
+  ]
+}
