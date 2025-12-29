@@ -3,7 +3,12 @@
 **CRITICAL**: ALL implementations MUST follow Test-Driven Development (TDD):
 
 - **CRITICAL** (default, fast):  
-`cargo nextest run` or `cargo test` (fallback) for test runnings
+`cargo nextest run` (MANDATORY PREFERRED) or `cargo test` (fallback only) for test runnings
+
+**MANDATORY Quote Escaping**: Always escape quotes in feature flags:
+- ✅ CORRECT: `cargo nextest run \--features "unit,integration"`
+- ❌ WRONG: `cargo nextest run --features unit,integration`
+
 AND YOU HAVE TO RUN doc-tests too!
 
 1. **RED PHASE**: Write failing tests first
@@ -22,10 +27,11 @@ AND YOU HAVE TO RUN doc-tests too!
 
 2. **tokio::test** - For async runtime support
 
-3. **cargo nextest** - Enhanced test runner (with fallback)
+3. **cargo nextest** - Enhanced test runner (MANDATORY PREFERRED with fallback)
    - Faster test execution with better output formatting
    - Improved test discovery and parallel execution
    - Fallback to `cargo test` if nextest is not available
+   - **Quote Escaping**: Always use `\--features "unit,integration"` not `--features unit,integration`
 
 **EXAMPLE USAGE**:
 ```rust
@@ -65,11 +71,15 @@ tokio-test = "*"
 
 **TEST EXECUTION COMMANDS**:
 ```bash
-# Preferred: Use cargo nextest (faster, better output)
+# Preferred: Use cargo nextest (MANDATORY PREFERRED - faster, better output)
 cargo nextest run
 
-# Fallback: Use standard cargo test if nextest unavailable
+# Fallback: Use standard cargo test if nextest unavailable (FALLBACK ONLY)
 cargo test
+
+# With feature flags (MANDATORY quote escaping):
+cargo nextest run \--features "unit,integration"
+cargo test \--features "unit,integration"  # fallback only
 ```
 
 ---
@@ -192,13 +202,13 @@ proptest = "1.4"          # Property-based testing
 ### Running specific categories
 
 - **Run only unit tests** (default, fast):  
-  `cargo nextest run` or `cargo test` (fallback)
+  `cargo nextest run` (MANDATORY PREFERRED) or `cargo test` (fallback only)
 
 - **Run multiple categories** (e.g., unit + auth + redis) 
-  `cargo nextest run --features "unit auth test_redis"` or `cargo test --features "unit auth test_redis"` (fallback)
+  `cargo nextest run \--features "unit auth test_redis"` or `cargo test \--features "unit auth test_redis"` (fallback only)
 
 - **Run all tests** (including slow/e2e/etc.):  
-  `cargo nextest run --all-features` or `cargo test --all-features` (fallback)
+  `cargo nextest run \--all-features` or `cargo test \--all-features` (fallback only)
 
 ---
 
@@ -238,7 +248,11 @@ proptest = "1.4"          # Property-based testing
 **ZERO TOLERANCE**: Test warnings are NOT ALLOWED.
 
 **QUALITY GATES - DETAILED COMMANDS**:
-- ✅ **Unit/Integration Tests**: `cargo nextest run` - Must show "0 failed" and no warnings in output
-- ✅ **Documentation Tests**: `cargo test --doc` - Must show "0 failed" and no "warning:" lines
+- ✅ **Unit/Integration Tests**: `cargo nextest run` (MANDATORY PREFERRED) - Must show "0 failed" and no warnings in output
+- ✅ **Documentation Tests**: `cargo test \--doc` - Must show "0 failed" and no "warning:" lines
 - ✅ **Benchmarks**: `cargo bench` - If benchmarks exist, outliers must be <15% (e.g., "Found 6 outliers among 100 measurements (6.00%)" is OK, >15% is NOT)
-- ✅ **On Test Failure**: First run `cargo nextest run --failed` to rerun only failed tests, then fix and rerun all
+- ✅ **On Test Failure**: First run `cargo nextest run \--failed` to rerun only failed tests, then fix and rerun all
+
+**MANDATORY Quote Escaping Examples**:
+- ✅ CORRECT: `cargo nextest run \--manifest-path apps/backend/crates/sy-ipc-protocol/Cargo.toml \--features "unit,jsonrpc"`
+- ❌ WRONG: `cargo nextest run --manifest-path apps/backend/crates/sy-ipc-protocol/Cargo.toml --features unit,jsonrpc`

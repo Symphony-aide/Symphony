@@ -549,6 +549,11 @@ TESTING.md must implement Symphony's three-layer testing architecture:
 - WireMock (integration), cargo nextest (test runner)
 - cargo-fuzz (fuzz testing for security-critical components)
 
+**MANDATORY: Use nextest whenever possible**:
+- ✅ **PREFERRED**: `cargo nextest run` - Faster parallel execution, better output
+- ⚠️ **FALLBACK**: `cargo test` - Only when nextest is unavailable
+- **Quote Escaping**: Always escape quotes in feature flags: `--features "unit,integration"` not `--features unit,integration`
+
 **Advanced Testing Requirements**:
 When acceptance criteria specify performance, security, or algorithm correctness requirements:
 
@@ -578,6 +583,40 @@ When acceptance criteria specify performance, security, or algorithm correctness
 - MANDATORY use of sy-commons for error handling, logging, utilities
 - Use duck!() macro for debugging (not println!)
 - Follow sy-commons patterns for configuration, filesystem, pre-validation
+
+**JSON Snapshot Testing with insta**:
+Use insta snapshot testing only when it makes sense:
+
+✅ **Use insta when**:
+- **Structured outputs**: JSON, YAML, maps, trees, ASTs
+- **Large/deeply nested data**: Hard to test field-by-field
+- **Stable APIs**: Public or semi-public API responses
+- **Config outputs**: Configuration files, logs, GraphQL responses
+
+❌ **Do NOT use insta when**:
+- **Dynamic values**: timestamps, UUIDs, random IDs
+- **Core business logic**: money calculations, permissions, rules
+- **Simple outputs**: `assert_eq!(result, 42)` is sufficient
+- **Highly volatile data**: Frequently changing structures
+
+**BDD Tests (cucumber-rs)**:
+BDD tests are usually NOT needed - use only when:
+- Business-level behavior must be validated by non-developers
+- Features are defined by business stakeholders
+- Cross-system flows need human-readable scenarios
+- If no strong reason exists → do not add BDD tests
+
+## Test Types Overview
+
+| Test Type | Name | Needed (%) | Why this value | Covered somewhere else |
+|-----------|------|------------|----------------|------------------------|
+| Unit Tests | `#[test]` | 80% | Core logic, fast, reliable, easy to maintain | |
+| Integration Tests | `tests/` | 60% | Ensure components work together | Unit tests |
+| Snapshot Tests | `insta` | 30% | Large structured outputs, stable APIs | Integration tests |
+| BDD Tests | `cucumber-rs` | 5% | Business-level behavior only | Unit / Integration |
+| Property Tests | `proptest` | 10% | Edge cases, invariants | Unit tests |
+
+**Notes**: Percentages are guidelines, not strict rules. Avoid duplication if test type is already satisfied elsewhere.
 
 IMPLEMENTATION.md must include:
 - Template structure with phases
@@ -682,6 +721,7 @@ DO's:
 DON'Ts:
 ❌ NEVER start coding without reading all 7 documents
 ❌ NEVER start coding without reading technical_pattern.md and referenced files
+❌ NEVER start coding without updating documentation status to "in progress"
 ❌ NEVER skip writing tests (ATDD is mandatory)
 ❌ NEVER skip TDD approach (Red-Green-Refactor cycle)
 ❌ NEVER ignore warnings - all warnings must be fixed
@@ -696,6 +736,8 @@ DON'Ts:
 ❌ NEVER rush verification (quality over speed)
 ❌ NEVER use println! or eprintln! for debugging - use duck!() macro
 ❌ NEVER duplicate error handling patterns - use commons [`sy-commons`] crate
+❌ NEVER mark feature as complete without user review and approval
+❌ NEVER update final documentation status without explicit user consent
 
 IMPLEMENTATION PHASE:
 
@@ -707,6 +749,20 @@ Ask user:
 - Estimated Effort: {from DEFINITION.md}
 - Dependencies: {list them}
 - Ready to proceed? Any changes needed?"
+
+Step 1.5: MANDATORY DOCUMENTATION STATUS UPDATE
+**BEFORE STARTING ANY CODE IMPLEMENTATION:**
+1. **MANDATORY**: Update IMPLEMENTATION.md status from * [ ] to * [ - ] (in progress)
+2. **MANDATORY**: Update VERIFICATION.md status to "🚧 IN PROGRESS"
+3. **MANDATORY**: Update parent milestone status in LEVEL2 files from * [ ] to * [ - ] if not already
+4. **MANDATORY**: Add timestamp and start note in IMPLEMENTATION.md:
+   ```markdown
+   ## Implementation Progress
+   **Started:** {YYYY-MM-DD HH:MM}
+   **Status:** * [ - ] In Progress
+   **Phase:** Pre-implementation validation complete, starting TDD cycle
+   ```
+5. **MANDATORY**: Commit these documentation updates before writing any code
 
 Step 2: TEST-FIRST APPROACH
 Before writing implementation:
@@ -723,7 +779,27 @@ Before writing implementation:
    - **WireMock** for OFB Python HTTP endpoint mocking
    - **criterion** for performance benchmarking
    - **proptest** for property-based testing
-   - **cargo nextest run** (preferred) or `cargo test` (fallback)
+   - **cargo nextest run** (MANDATORY PREFERRED) or `cargo test` (fallback only)
+   - **insta** for JSON snapshot testing (when appropriate - see guidelines below)
+   - **Quote Escaping**: Always escape quotes: `cargo nextest run \--features "unit,integration"`
+
+4.1. **JSON Snapshot Testing with insta** (use judiciously):
+   ✅ **Use insta when**:
+   - Structured outputs: JSON, YAML, maps, trees, ASTs
+   - Large/deeply nested data hard to test field-by-field
+   - Stable APIs: Public or semi-public API responses
+   - Config outputs: Configuration files, logs, GraphQL responses
+   
+   ❌ **Do NOT use insta when**:
+   - Dynamic values: timestamps, UUIDs, random IDs
+   - Core business logic: money calculations, permissions, rules
+   - Simple outputs: `assert_eq!(result, 42)` is sufficient
+   - Highly volatile data: Frequently changing structures
+
+4.2. **BDD Tests (cucumber-rs)** (rarely needed):
+   - Usually NOT needed - unit and integration tests cover most cases
+   - Only use when: Business-level behavior must be validated by non-developers
+   - If no strong reason exists → do not add BDD tests
 5. **MANDATORY**: All tests should FAIL initially (Red phase of TDD)
 6. **MANDATORY**: Verify tests fail for the right reasons
 7. **MANDATORY**: Separate testing responsibilities:
@@ -934,7 +1010,28 @@ After feature completion:
 2. Note any learnings or insights
 3. Identify next feature in dependency order
 4. Check if all dependencies are satisfied
-5. Provide handoff message:
+5. **MANDATORY**: Ask user to review and "close" the feature:
+   - "F{XXX} implementation is complete. Please review the following:"
+   - "- All acceptance criteria met: {list with ✅/⚠️/❌}"
+   - "- All tests passing: {percentage}"
+   - "- BIF evaluation complete with {readiness status}"
+   - "- Documentation updated and current"
+   - ""
+   - "Ready to close F{XXX} and mark as * [ 1 ]? (Yes/No/Needs Changes)"
+   - "If Yes, I'll update all documentation status to COMPLETE and move to next feature."
+   - "If No/Needs Changes, please specify what needs attention."
+
+6. **MANDATORY**: Only after user approval, update final documentation status:
+   - IMPLEMENTATION.md: Overall Status → * [ 1 ]
+   - VERIFICATION.md: Status → ✅ COMPLETE
+   - Add completion timestamp in IMPLEMENTATION.md:
+     ```markdown
+     **Completed:** {YYYY-MM-DD HH:MM}
+     **Final Status:** * [ 1 ] Complete
+     **User Approval:** Received on {YYYY-MM-DD}
+     ```
+
+7. Provide handoff message:
 
 "✅ F{XXX} - {name} COMPLETE!
 
@@ -1304,6 +1401,8 @@ DON'Ts:
 ❌ NEVER reset review status (always increment)
 ❌ NEVER mix Phase 1 and Phase 2 work
 ❌ NEVER proceed to Phase 2 without user approval
+❌ NEVER update milestone documentation status without user confirmation
+❌ NEVER mark milestones complete without explicit user consent
 
 PHASE 1 OUTPUT: ENHANCED_SUMMARY_AGREEMENT.md
 
@@ -1616,7 +1715,16 @@ Blockers: {number}
 Recommend addressing critical issues before proceeding to next milestone.
 
 {If all good:}
-Milestone implementation aligns with documented agreements. Ready for next phase."
+Milestone implementation aligns with documented agreements. Ready for next phase.
+
+**MANDATORY DOCUMENTATION UPDATE REQUEST:**
+Please confirm if you want me to update the milestone documentation status:
+- Update LEVEL2 milestone status from * [ - ] to * [ 1 ] (if all features complete)
+- Update LEVEL1 section status (if all LEVEL2 steps complete)  
+- Update LEVEL0 milestone status (if all LEVEL1 sections complete)
+- Add review completion timestamp to milestone files
+
+Proceed with documentation updates? (Yes/No)"
 
 REVIEW STATUS TRACKING:
 

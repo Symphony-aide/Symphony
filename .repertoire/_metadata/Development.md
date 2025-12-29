@@ -1493,7 +1493,8 @@ All complete? → M1 updated → * [ 1 ]
 - **Unit Tests**: All tests pass WITHOUT warnings or failures
 - **Integration Tests**: All tests pass WITHOUT warnings or failures  
 - **Documentation Tests**: All doc tests pass WITHOUT warnings or failures
-- **Failed Test Recovery**: Use `cargo nextest run --failed` to rerun only failed tests
+- **Failed Test Recovery**: Use `cargo nextest run \--failed` to rerun only failed tests
+- **MANDATORY**: Use nextest whenever possible - `cargo nextest run` preferred over `cargo test`
 
 #### 2. Performance Gates
 - **Benchmarks**: When benchmarks exist, must pass with <15% outliers
@@ -1638,17 +1639,21 @@ crate_name/
 ```
 
 **Test Execution Commands**:
-- `cargo test` - All tests including doc tests
-- `cargo nextest run` - Fast parallel test execution
-- `cargo nextest run --failed` - Rerun only failed tests
+- `cargo test` - All tests including doc tests (FALLBACK ONLY)
+- `cargo nextest run` - Fast parallel test execution (MANDATORY PREFERRED)
+- `cargo nextest run \--failed` - Rerun only failed tests
 - `cargo bench` - Performance benchmarks
 - `cargo fuzz run target_name` - Fuzz testing
+
+**MANDATORY Quote Escaping**: Always escape quotes in feature flags:
+- ✅ CORRECT: `cargo nextest run \--features "unit,integration"`
+- ❌ WRONG: `cargo nextest run --features unit,integration`
 
 ### Quality Assurance Checklist
 
 **Before Feature Completion**:
-- [ ] All unit tests pass (cargo test)
-- [ ] All integration tests pass (cargo nextest run)
+- [ ] All unit tests pass (cargo nextest run - PREFERRED)
+- [ ] All integration tests pass (cargo nextest run - PREFERRED)
 - [ ] All documentation tests pass (cargo test --doc)
 - [ ] All benchmarks pass with <15% outliers (cargo bench)
 - [ ] Zero clippy warnings (cargo clippy)
@@ -1656,6 +1661,44 @@ crate_name/
 - [ ] sy-commons integration verified
 - [ ] Feature flags properly configured
 - [ ] duck!() debugging used appropriately
+
+**MANDATORY**: Use `cargo nextest run` instead of `cargo test` whenever possible
+
+## Test Types Overview
+
+| Test Type | Name | Needed (%) | Why this value | Covered somewhere else |
+|-----------|------|------------|----------------|------------------------|
+| Unit Tests | `#[test]` | 80% | Core logic, fast, reliable, easy to maintain | |
+| Integration Tests | `tests/` | 60% | Ensure components work together | Unit tests |
+| Snapshot Tests | `insta` | 30% | Large structured outputs, stable APIs | Integration tests |
+| BDD Tests | `cucumber-rs` | 5% | Business-level behavior only | Unit / Integration |
+| Property Tests | `proptest` | 10% | Edge cases, invariants | Unit tests |
+
+**Notes**: Percentages are guidelines, not strict rules. Avoid duplication if test type is already satisfied elsewhere.
+
+### JSON Snapshot Testing with insta
+
+Use insta snapshot testing only when it makes sense:
+
+✅ **Use insta when**:
+- **Structured outputs**: JSON, YAML, maps, trees, ASTs
+- **Large/deeply nested data**: Hard to test field-by-field
+- **Stable APIs**: Public or semi-public API responses
+- **Config outputs**: Configuration files, logs, GraphQL responses
+
+❌ **Do NOT use insta when**:
+- **Dynamic values**: timestamps, UUIDs, random IDs
+- **Core business logic**: money calculations, permissions, rules
+- **Simple outputs**: `assert_eq!(result, 42)` is sufficient
+- **Highly volatile data**: Frequently changing structures
+
+### BDD Tests (cucumber-rs)
+
+BDD tests are usually NOT needed - use only when:
+- Business-level behavior must be validated by non-developers
+- Features are defined by business stakeholders
+- Cross-system flows need human-readable scenarios
+- If no strong reason exists → do not add BDD tests
 
 **Performance Validation**:
 - [ ] Benchmark results within acceptable ranges

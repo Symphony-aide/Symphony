@@ -1,5 +1,16 @@
 # Rust Best Practices: Quick Reference Guide
 
+## 🚨 MANDATORY: Testing with Nextest
+
+**CRITICAL**: Always use `cargo nextest run` instead of `cargo test` whenever possible.
+
+**Quick Commands**:
+- ✅ `cargo nextest run` (PREFERRED)
+- ✅ `cargo nextest run \--features "unit,integration"` (with quote escaping)
+- ⚠️ `cargo test` (FALLBACK ONLY when nextest unavailable)
+
+---
+
 ## Memory Management
 
 ### ✅ DO

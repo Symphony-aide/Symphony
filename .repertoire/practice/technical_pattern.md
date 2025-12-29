@@ -229,15 +229,19 @@ fn test_helper_function() {}
 ## QUALITY GATES - MANDATORY CHECKS
 
 **BEFORE FEATURE COMPLETION - ALL MUST PASS**:
-1. ✅ **Unit/Integration Tests**: `cargo nextest run` - ZERO warnings, ZERO failures
+1. ✅ **Unit/Integration Tests**: `cargo nextest run` (MANDATORY PREFERRED) - ZERO warnings, ZERO failures
 2. ✅ **Benchmarks**: `cargo bench` - Less than 15% outliers (if benchmark exists in crate)
-3. ✅ **Documentation Tests**: `cargo test --doc` - ZERO warnings, ZERO failures
-4. ✅ **Code Quality**: `cargo clippy --all-targets --all-features` - ZERO warnings
-5. ✅ **Documentation Generation**: `cargo doc --no-deps` - Must pass and generate docs
+3. ✅ **Documentation Tests**: `cargo test \--doc` - ZERO warnings, ZERO failures
+4. ✅ **Code Quality**: `cargo clippy \--all-targets \--all-features` - ZERO warnings
+5. ✅ **Documentation Generation**: `cargo doc \--no-deps` - Must pass and generate docs
 
 **ON TEST FAILURES - RERUN STRATEGY**:
-- ✅ **First**: Run failed tests only: `cargo nextest run --failed`
+- ✅ **First**: Run failed tests only: `cargo nextest run \--failed`
 - ✅ **If nextest unavailable**: Use `cargo test` with specific test names
+
+**MANDATORY Quote Escaping**: Always escape quotes in commands:
+- ✅ CORRECT: `cargo nextest run \--features "unit,integration"`
+- ❌ WRONG: `cargo nextest run --features unit,integration`
 
 **MANDATORY CARGO.TOML FEATURES - COPY EXACTLY**:
 ```toml

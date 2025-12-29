@@ -75,7 +75,7 @@ Use heading level 1 (single `#`) for these standard sections:
 
 ### `# Examples` (Critical)
 
-- Code examples are one of the most effective ways to demonstrate usage and are automatically tested by `cargo test`
+- Code examples are one of the most effective ways to demonstrate usage and are automatically tested by `cargo test --doc` (note: nextest doesn't support doc tests, so `cargo test --doc` is the correct command for documentation tests)
 
 
 ### `# Errors`
