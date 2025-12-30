@@ -12,7 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #![cfg_attr(feature = "benchmarks", feature(test))]
-#![allow(clippy::identity_op, clippy::new_without_default, clippy::trivially_copy_pass_by_ref)]
+#![allow(
+	clippy::identity_op,
+	clippy::new_without_default,
+	clippy::trivially_copy_pass_by_ref
+)]
 
 #[macro_use]
 extern crate lazy_static;
@@ -59,114 +63,114 @@ pub type StrCow = Cow<'static, str>;
 
 #[derive(Clone, Debug)]
 pub enum CategoriesT {
-    StaticArray(&'static [&'static str]),
-    DynamicArray(Vec<String>),
+	StaticArray(&'static [&'static str]),
+	DynamicArray(Vec<String>),
 }
 
 trait StringArrayEq<Rhs: ?Sized = Self> {
-    fn arr_eq(&self, other: &Rhs) -> bool;
+	fn arr_eq(&self, other: &Rhs) -> bool;
 }
 
 impl StringArrayEq<[&'static str]> for Vec<String> {
-    fn arr_eq(&self, other: &[&'static str]) -> bool {
-        if self.len() != other.len() {
-            return false;
-        }
+	fn arr_eq(&self, other: &[&'static str]) -> bool {
+		if self.len() != other.len() {
+			return false;
+		}
 
-        for i in 0..self.len() {
-            if self[i] != other[i] {
-                return false;
-            }
-        }
-        true
-    }
+		for i in 0..self.len() {
+			if self[i] != other[i] {
+				return false;
+			}
+		}
+		true
+	}
 }
 
 impl StringArrayEq<Vec<String>> for &'static [&'static str] {
-    fn arr_eq(&self, other: &Vec<String>) -> bool {
-        if self.len() != other.len() {
-            return false;
-        }
-        for i in 0..self.len() {
-            if self[i] != other[i] {
-                return false;
-            }
-        }
-        true
-    }
+	fn arr_eq(&self, other: &Vec<String>) -> bool {
+		if self.len() != other.len() {
+			return false;
+		}
+		for i in 0..self.len() {
+			if self[i] != other[i] {
+				return false;
+			}
+		}
+		true
+	}
 }
 
 impl PartialEq for CategoriesT {
-    fn eq(&self, other: &CategoriesT) -> bool {
-        match *self {
-            CategoriesT::StaticArray(ref self_arr) => match *other {
-                CategoriesT::StaticArray(ref other_arr) => self_arr.eq(other_arr),
-                CategoriesT::DynamicArray(ref other_arr) => self_arr.arr_eq(other_arr),
-            },
-            CategoriesT::DynamicArray(ref self_arr) => match *other {
-                CategoriesT::StaticArray(other_arr) => self_arr.arr_eq(other_arr),
-                CategoriesT::DynamicArray(ref other_arr) => self_arr.eq(other_arr),
-            },
-        }
-    }
+	fn eq(&self, other: &CategoriesT) -> bool {
+		match *self {
+			CategoriesT::StaticArray(ref self_arr) => match *other {
+				CategoriesT::StaticArray(ref other_arr) => self_arr.eq(other_arr),
+				CategoriesT::DynamicArray(ref other_arr) => self_arr.arr_eq(other_arr),
+			},
+			CategoriesT::DynamicArray(ref self_arr) => match *other {
+				CategoriesT::StaticArray(other_arr) => self_arr.arr_eq(other_arr),
+				CategoriesT::DynamicArray(ref other_arr) => self_arr.eq(other_arr),
+			},
+		}
+	}
 }
 
 impl Eq for CategoriesT {}
 
 impl serde::Serialize for CategoriesT {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        self.join(",").serialize(serializer)
-    }
+	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+	where
+		S: serde::Serializer,
+	{
+		self.join(",").serialize(serializer)
+	}
 }
 
 impl<'de> serde::Deserialize<'de> for CategoriesT {
-    fn deserialize<D>(deserializer: D) -> Result<CategoriesT, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        use serde::de::Visitor;
-        struct CategoriesTVisitor;
+	fn deserialize<D>(deserializer: D) -> Result<CategoriesT, D::Error>
+	where
+		D: serde::Deserializer<'de>,
+	{
+		use serde::de::Visitor;
+		struct CategoriesTVisitor;
 
-        impl<'de> Visitor<'de> for CategoriesTVisitor {
-            type Value = CategoriesT;
+		impl<'de> Visitor<'de> for CategoriesTVisitor {
+			type Value = CategoriesT;
 
-            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                formatter.write_str("comma-separated strings")
-            }
+			fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+				formatter.write_str("comma-separated strings")
+			}
 
-            fn visit_str<E>(self, v: &str) -> Result<CategoriesT, E>
-            where
-                E: serde::de::Error,
-            {
-                let categories = v.split(',').map(ToString::to_string).collect();
-                Ok(CategoriesT::DynamicArray(categories))
-            }
-        }
+			fn visit_str<E>(self, v: &str) -> Result<CategoriesT, E>
+			where
+				E: serde::de::Error,
+			{
+				let categories = v.split(',').map(ToString::to_string).collect();
+				Ok(CategoriesT::DynamicArray(categories))
+			}
+		}
 
-        deserializer.deserialize_str(CategoriesTVisitor)
-    }
+		deserializer.deserialize_str(CategoriesTVisitor)
+	}
 }
 
 impl CategoriesT {
-    pub fn join(&self, sep: &str) -> String {
-        match *self {
-            CategoriesT::StaticArray(arr) => arr.join(sep),
-            CategoriesT::DynamicArray(ref vec) => vec.join(sep),
-        }
-    }
+	pub fn join(&self, sep: &str) -> String {
+		match *self {
+			CategoriesT::StaticArray(arr) => arr.join(sep),
+			CategoriesT::DynamicArray(ref vec) => vec.join(sep),
+		}
+	}
 }
 
 macro_rules! categories_from_constant_array {
-    ($num_args: expr) => {
-        impl From<&'static [&'static str; $num_args]> for CategoriesT {
-            fn from(c: &'static [&'static str; $num_args]) -> CategoriesT {
-                CategoriesT::StaticArray(c)
-            }
-        }
-    };
+	($num_args: expr) => {
+		impl From<&'static [&'static str; $num_args]> for CategoriesT {
+			fn from(c: &'static [&'static str; $num_args]) -> CategoriesT {
+				CategoriesT::StaticArray(c)
+			}
+		}
+	};
 }
 
 categories_from_constant_array!(0);
@@ -182,9 +186,9 @@ categories_from_constant_array!(9);
 categories_from_constant_array!(10);
 
 impl From<Vec<String>> for CategoriesT {
-    fn from(c: Vec<String>) -> CategoriesT {
-        CategoriesT::DynamicArray(c)
-    }
+	fn from(c: Vec<String>) -> CategoriesT {
+		CategoriesT::DynamicArray(c)
+	}
 }
 
 #[cfg(not(feature = "json_payload"))]
@@ -196,187 +200,189 @@ pub type TracePayloadT = serde_json::Value;
 /// How tracing should be configured.
 #[derive(Copy, Clone)]
 pub struct Config {
-    sample_limit_count: usize,
+	sample_limit_count: usize,
 }
 
 impl Config {
-    /// The maximum number of bytes the tracing data should take up.  This limit
-    /// won't be exceeded by the underlying storage itself (i.e. rounds down).
-    pub fn with_limit_bytes(size: usize) -> Self {
-        Self::with_limit_count(size / size_of::<Sample>())
-    }
+	/// The maximum number of bytes the tracing data should take up.  This limit
+	/// won't be exceeded by the underlying storage itself (i.e. rounds down).
+	pub fn with_limit_bytes(size: usize) -> Self {
+		Self::with_limit_count(size / size_of::<Sample>())
+	}
 
-    /// The maximum number of entries the tracing data should allow.  Total
-    /// storage allocated will be limit * size_of<Sample>
-    pub fn with_limit_count(limit: usize) -> Self {
-        Self { sample_limit_count: limit }
-    }
+	/// The maximum number of entries the tracing data should allow.  Total
+	/// storage allocated will be limit * size_of<Sample>
+	pub fn with_limit_count(limit: usize) -> Self {
+		Self {
+			sample_limit_count: limit,
+		}
+	}
 
-    /// The default amount of storage to allocate for tracing.  Currently 1 MB.
-    pub fn default() -> Self {
-        // 1 MB
-        Self::with_limit_bytes(1 * 1024 * 1024)
-    }
+	/// The default amount of storage to allocate for tracing.  Currently 1 MB.
+	pub fn default() -> Self {
+		// 1 MB
+		Self::with_limit_bytes(1 * 1024 * 1024)
+	}
 
-    /// The maximum amount of space the tracing data will take up.  This does
-    /// not account for any overhead of storing the data itself (i.e. pointer to
-    /// the heap, counters, etc); just the data itself.
-    pub fn max_size_in_bytes(self) -> usize {
-        self.sample_limit_count * size_of::<Sample>()
-    }
+	/// The maximum amount of space the tracing data will take up.  This does
+	/// not account for any overhead of storing the data itself (i.e. pointer to
+	/// the heap, counters, etc); just the data itself.
+	pub fn max_size_in_bytes(self) -> usize {
+		self.sample_limit_count * size_of::<Sample>()
+	}
 
-    /// The maximum number of samples that should be stored.
-    pub fn max_samples(self) -> usize {
-        self.sample_limit_count
-    }
+	/// The maximum number of samples that should be stored.
+	pub fn max_samples(self) -> usize {
+		self.sample_limit_count
+	}
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SampleEventType {
-    DurationBegin,
-    DurationEnd,
-    CompleteDuration,
-    Instant,
-    AsyncStart,
-    AsyncInstant,
-    AsyncEnd,
-    FlowStart,
-    FlowInstant,
-    FlowEnd,
-    ObjectCreated,
-    ObjectSnapshot,
-    ObjectDestroyed,
-    Metadata,
+	DurationBegin,
+	DurationEnd,
+	CompleteDuration,
+	Instant,
+	AsyncStart,
+	AsyncInstant,
+	AsyncEnd,
+	FlowStart,
+	FlowInstant,
+	FlowEnd,
+	ObjectCreated,
+	ObjectSnapshot,
+	ObjectDestroyed,
+	Metadata,
 }
 
 impl SampleEventType {
-    // TODO(vlovich): Replace all of this with serde flatten + rename once
-    // https://github.com/serde-rs/serde/issues/1189 is fixed.
-    #[inline]
-    fn into_chrome_id(self) -> char {
-        match self {
-            SampleEventType::DurationBegin => 'B',
-            SampleEventType::DurationEnd => 'E',
-            SampleEventType::CompleteDuration => 'X',
-            SampleEventType::Instant => 'i',
-            SampleEventType::AsyncStart => 'b',
-            SampleEventType::AsyncInstant => 'n',
-            SampleEventType::AsyncEnd => 'e',
-            SampleEventType::FlowStart => 's',
-            SampleEventType::FlowInstant => 't',
-            SampleEventType::FlowEnd => 'f',
-            SampleEventType::ObjectCreated => 'N',
-            SampleEventType::ObjectSnapshot => 'O',
-            SampleEventType::ObjectDestroyed => 'D',
-            SampleEventType::Metadata => 'M',
-        }
-    }
+	// TODO(vlovich): Replace all of this with serde flatten + rename once
+	// https://github.com/serde-rs/serde/issues/1189 is fixed.
+	#[inline]
+	fn into_chrome_id(self) -> char {
+		match self {
+			SampleEventType::DurationBegin => 'B',
+			SampleEventType::DurationEnd => 'E',
+			SampleEventType::CompleteDuration => 'X',
+			SampleEventType::Instant => 'i',
+			SampleEventType::AsyncStart => 'b',
+			SampleEventType::AsyncInstant => 'n',
+			SampleEventType::AsyncEnd => 'e',
+			SampleEventType::FlowStart => 's',
+			SampleEventType::FlowInstant => 't',
+			SampleEventType::FlowEnd => 'f',
+			SampleEventType::ObjectCreated => 'N',
+			SampleEventType::ObjectSnapshot => 'O',
+			SampleEventType::ObjectDestroyed => 'D',
+			SampleEventType::Metadata => 'M',
+		}
+	}
 
-    #[inline]
-    fn from_chrome_id(symbol: char) -> Self {
-        match symbol {
-            'B' => SampleEventType::DurationBegin,
-            'E' => SampleEventType::DurationEnd,
-            'X' => SampleEventType::CompleteDuration,
-            'i' => SampleEventType::Instant,
-            'b' => SampleEventType::AsyncStart,
-            'n' => SampleEventType::AsyncInstant,
-            'e' => SampleEventType::AsyncEnd,
-            's' => SampleEventType::FlowStart,
-            't' => SampleEventType::FlowInstant,
-            'f' => SampleEventType::FlowEnd,
-            'N' => SampleEventType::ObjectCreated,
-            'O' => SampleEventType::ObjectSnapshot,
-            'D' => SampleEventType::ObjectDestroyed,
-            'M' => SampleEventType::Metadata,
-            _ => panic!("Unexpected chrome sample type '{}'", symbol),
-        }
-    }
+	#[inline]
+	fn from_chrome_id(symbol: char) -> Self {
+		match symbol {
+			'B' => SampleEventType::DurationBegin,
+			'E' => SampleEventType::DurationEnd,
+			'X' => SampleEventType::CompleteDuration,
+			'i' => SampleEventType::Instant,
+			'b' => SampleEventType::AsyncStart,
+			'n' => SampleEventType::AsyncInstant,
+			'e' => SampleEventType::AsyncEnd,
+			's' => SampleEventType::FlowStart,
+			't' => SampleEventType::FlowInstant,
+			'f' => SampleEventType::FlowEnd,
+			'N' => SampleEventType::ObjectCreated,
+			'O' => SampleEventType::ObjectSnapshot,
+			'D' => SampleEventType::ObjectDestroyed,
+			'M' => SampleEventType::Metadata,
+			_ => panic!("Unexpected chrome sample type '{}'", symbol),
+		}
+	}
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum MetadataType {
-    ProcessName {
-        name: String,
-    },
-    #[allow(dead_code)]
-    ProcessLabels {
-        labels: String,
-    },
-    #[allow(dead_code)]
-    ProcessSortIndex {
-        sort_index: i32,
-    },
-    ThreadName {
-        name: String,
-    },
-    #[allow(dead_code)]
-    ThreadSortIndex {
-        sort_index: i32,
-    },
+	ProcessName {
+		name: String,
+	},
+	#[allow(dead_code)]
+	ProcessLabels {
+		labels: String,
+	},
+	#[allow(dead_code)]
+	ProcessSortIndex {
+		sort_index: i32,
+	},
+	ThreadName {
+		name: String,
+	},
+	#[allow(dead_code)]
+	ThreadSortIndex {
+		sort_index: i32,
+	},
 }
 
 impl MetadataType {
-    fn sample_name(&self) -> &'static str {
-        match *self {
-            MetadataType::ProcessName { .. } => "process_name",
-            MetadataType::ProcessLabels { .. } => "process_labels",
-            MetadataType::ProcessSortIndex { .. } => "process_sort_index",
-            MetadataType::ThreadName { .. } => "thread_name",
-            MetadataType::ThreadSortIndex { .. } => "thread_sort_index",
-        }
-    }
+	fn sample_name(&self) -> &'static str {
+		match *self {
+			MetadataType::ProcessName { .. } => "process_name",
+			MetadataType::ProcessLabels { .. } => "process_labels",
+			MetadataType::ProcessSortIndex { .. } => "process_sort_index",
+			MetadataType::ThreadName { .. } => "thread_name",
+			MetadataType::ThreadSortIndex { .. } => "thread_sort_index",
+		}
+	}
 
-    fn consume(self) -> (Option<String>, Option<i32>) {
-        match self {
-            MetadataType::ProcessName { name } => (Some(name), None),
-            MetadataType::ThreadName { name } => (Some(name), None),
-            MetadataType::ProcessSortIndex { sort_index } => (None, Some(sort_index)),
-            MetadataType::ThreadSortIndex { sort_index } => (None, Some(sort_index)),
-            MetadataType::ProcessLabels { .. } => (None, None),
-        }
-    }
+	fn consume(self) -> (Option<String>, Option<i32>) {
+		match self {
+			MetadataType::ProcessName { name } => (Some(name), None),
+			MetadataType::ThreadName { name } => (Some(name), None),
+			MetadataType::ProcessSortIndex { sort_index } => (None, Some(sort_index)),
+			MetadataType::ThreadSortIndex { sort_index } => (None, Some(sort_index)),
+			MetadataType::ProcessLabels { .. } => (None, None),
+		}
+	}
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct SampleArgs {
-    /// An arbitrary payload to associate with the sample.  The type is
-    /// controlled by features (default string).
-    #[serde(rename = "xi_payload")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub payload: Option<TracePayloadT>,
+	/// An arbitrary payload to associate with the sample.  The type is
+	/// controlled by features (default string).
+	#[serde(rename = "xi_payload")]
+	#[serde(skip_serializing_if = "Option::is_none")]
+	pub payload: Option<TracePayloadT>,
 
-    /// The name to associate with the pid/tid.  Whether it's associated with
-    /// the pid or the tid depends on the name of the event
-    /// via process_name/thread_name respectively.
-    #[serde(rename = "name")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub metadata_name: Option<StrCow>,
+	/// The name to associate with the pid/tid.  Whether it's associated with
+	/// the pid or the tid depends on the name of the event
+	/// via process_name/thread_name respectively.
+	#[serde(rename = "name")]
+	#[serde(skip_serializing_if = "Option::is_none")]
+	pub metadata_name: Option<StrCow>,
 
-    /// Sorting priority between processes/threads in the view.
-    #[serde(rename = "sort_index")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub metadata_sort_index: Option<i32>,
+	/// Sorting priority between processes/threads in the view.
+	#[serde(rename = "sort_index")]
+	#[serde(skip_serializing_if = "Option::is_none")]
+	pub metadata_sort_index: Option<i32>,
 }
 
 #[inline]
 fn ns_to_us(ns: u64) -> u64 {
-    ns / 1000
+	ns / 1000
 }
 
 //NOTE: serde requires this to take a reference
 fn serialize_event_type<S>(ph: &SampleEventType, s: S) -> Result<S::Ok, S::Error>
 where
-    S: serde::Serializer,
+	S: serde::Serializer,
 {
-    s.serialize_char(ph.into_chrome_id())
+	s.serialize_char(ph.into_chrome_id())
 }
 
 fn deserialize_event_type<'de, D>(d: D) -> Result<SampleEventType, D::Error>
 where
-    D: serde::Deserializer<'de>,
+	D: serde::Deserializer<'de>,
 {
-    serde::Deserialize::deserialize(d).map(SampleEventType::from_chrome_id)
+	serde::Deserialize::deserialize(d).map(SampleEventType::from_chrome_id)
 }
 
 /// Stores the relevant data about a sample for later serialization.
@@ -385,479 +391,499 @@ where
 /// associated performance hit across the board for turning it on).
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Sample {
-    /// The name of the event to be shown.
-    pub name: StrCow,
-    /// List of categories the event applies to.
-    #[serde(rename = "cat")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub categories: Option<CategoriesT>,
-    /// When was the sample started.
-    #[serde(rename = "ts")]
-    pub timestamp_us: u64,
-    /// What kind of sample this is.
-    #[serde(rename = "ph")]
-    #[serde(serialize_with = "serialize_event_type")]
-    #[serde(deserialize_with = "deserialize_event_type")]
-    pub event_type: SampleEventType,
-    #[serde(rename = "dur")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub duration_us: Option<u64>,
-    /// The process the sample was captured in.
-    pub pid: u64,
-    /// The thread the sample was captured on.  Omitted for Metadata events that
-    /// want to set the process name (if provided then sets the thread name).
-    pub tid: u64,
-    #[serde(skip_serializing)]
-    pub thread_name: Option<StrCow>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub args: Option<SampleArgs>,
+	/// The name of the event to be shown.
+	pub name: StrCow,
+	/// List of categories the event applies to.
+	#[serde(rename = "cat")]
+	#[serde(skip_serializing_if = "Option::is_none")]
+	pub categories: Option<CategoriesT>,
+	/// When was the sample started.
+	#[serde(rename = "ts")]
+	pub timestamp_us: u64,
+	/// What kind of sample this is.
+	#[serde(rename = "ph")]
+	#[serde(serialize_with = "serialize_event_type")]
+	#[serde(deserialize_with = "deserialize_event_type")]
+	pub event_type: SampleEventType,
+	#[serde(rename = "dur")]
+	#[serde(skip_serializing_if = "Option::is_none")]
+	pub duration_us: Option<u64>,
+	/// The process the sample was captured in.
+	pub pid: u64,
+	/// The thread the sample was captured on.  Omitted for Metadata events that
+	/// want to set the process name (if provided then sets the thread name).
+	pub tid: u64,
+	#[serde(skip_serializing)]
+	pub thread_name: Option<StrCow>,
+	#[serde(skip_serializing_if = "Option::is_none")]
+	pub args: Option<SampleArgs>,
 }
 
 fn to_cow_str<S>(s: S) -> StrCow
 where
-    S: Into<StrCow>,
+	S: Into<StrCow>,
 {
-    s.into()
+	s.into()
 }
 
 impl Sample {
-    fn thread_name() -> Option<StrCow> {
-        let thread = std::thread::current();
-        thread.name().map(|s| to_cow_str((*s).to_string()))
-    }
+	fn thread_name() -> Option<StrCow> {
+		let thread = std::thread::current();
+		thread.name().map(|s| to_cow_str((*s).to_string()))
+	}
 
-    /// Constructs a Begin or End sample.  Should not be used directly.  Instead
-    /// should be constructed via SampleGuard.
-    pub fn new_duration_marker<S, C>(
-        name: S,
-        categories: C,
-        payload: Option<TracePayloadT>,
-        event_type: SampleEventType,
-    ) -> Self
-    where
-        S: Into<StrCow>,
-        C: Into<CategoriesT>,
-    {
-        Self {
-            name: name.into(),
-            categories: Some(categories.into()),
-            timestamp_us: ns_to_us(time::precise_time_ns()),
-            event_type,
-            duration_us: None,
-            tid: sys_tid::current_tid().unwrap(),
-            thread_name: Sample::thread_name(),
-            pid: sys_pid::current_pid(),
-            args: Some(SampleArgs { payload, metadata_name: None, metadata_sort_index: None }),
-        }
-    }
+	/// Constructs a Begin or End sample.  Should not be used directly.  Instead
+	/// should be constructed via SampleGuard.
+	pub fn new_duration_marker<S, C>(
+		name: S,
+		categories: C,
+		payload: Option<TracePayloadT>,
+		event_type: SampleEventType,
+	) -> Self
+	where
+		S: Into<StrCow>,
+		C: Into<CategoriesT>,
+	{
+		Self {
+			name: name.into(),
+			categories: Some(categories.into()),
+			timestamp_us: ns_to_us(time::precise_time_ns()),
+			event_type,
+			duration_us: None,
+			tid: sys_tid::current_tid().unwrap(),
+			thread_name: Sample::thread_name(),
+			pid: sys_pid::current_pid(),
+			args: Some(SampleArgs {
+				payload,
+				metadata_name: None,
+				metadata_sort_index: None,
+			}),
+		}
+	}
 
-    /// Constructs a Duration sample.  For use via xi_trace::closure.
-    pub fn new_duration<S, C>(
-        name: S,
-        categories: C,
-        payload: Option<TracePayloadT>,
-        start_ns: u64,
-        duration_ns: u64,
-    ) -> Self
-    where
-        S: Into<StrCow>,
-        C: Into<CategoriesT>,
-    {
-        Self {
-            name: name.into(),
-            categories: Some(categories.into()),
-            timestamp_us: ns_to_us(start_ns),
-            event_type: SampleEventType::CompleteDuration,
-            duration_us: Some(ns_to_us(duration_ns)),
-            tid: sys_tid::current_tid().unwrap(),
-            thread_name: Sample::thread_name(),
-            pid: sys_pid::current_pid(),
-            args: Some(SampleArgs { payload, metadata_name: None, metadata_sort_index: None }),
-        }
-    }
+	/// Constructs a Duration sample.  For use via xi_trace::closure.
+	pub fn new_duration<S, C>(
+		name: S,
+		categories: C,
+		payload: Option<TracePayloadT>,
+		start_ns: u64,
+		duration_ns: u64,
+	) -> Self
+	where
+		S: Into<StrCow>,
+		C: Into<CategoriesT>,
+	{
+		Self {
+			name: name.into(),
+			categories: Some(categories.into()),
+			timestamp_us: ns_to_us(start_ns),
+			event_type: SampleEventType::CompleteDuration,
+			duration_us: Some(ns_to_us(duration_ns)),
+			tid: sys_tid::current_tid().unwrap(),
+			thread_name: Sample::thread_name(),
+			pid: sys_pid::current_pid(),
+			args: Some(SampleArgs {
+				payload,
+				metadata_name: None,
+				metadata_sort_index: None,
+			}),
+		}
+	}
 
-    /// Constructs an instantaneous sample.
-    pub fn new_instant<S, C>(name: S, categories: C, payload: Option<TracePayloadT>) -> Self
-    where
-        S: Into<StrCow>,
-        C: Into<CategoriesT>,
-    {
-        Self {
-            name: name.into(),
-            categories: Some(categories.into()),
-            timestamp_us: ns_to_us(time::precise_time_ns()),
-            event_type: SampleEventType::Instant,
-            duration_us: None,
-            tid: sys_tid::current_tid().unwrap(),
-            thread_name: Sample::thread_name(),
-            pid: sys_pid::current_pid(),
-            args: Some(SampleArgs { payload, metadata_name: None, metadata_sort_index: None }),
-        }
-    }
+	/// Constructs an instantaneous sample.
+	pub fn new_instant<S, C>(name: S, categories: C, payload: Option<TracePayloadT>) -> Self
+	where
+		S: Into<StrCow>,
+		C: Into<CategoriesT>,
+	{
+		Self {
+			name: name.into(),
+			categories: Some(categories.into()),
+			timestamp_us: ns_to_us(time::precise_time_ns()),
+			event_type: SampleEventType::Instant,
+			duration_us: None,
+			tid: sys_tid::current_tid().unwrap(),
+			thread_name: Sample::thread_name(),
+			pid: sys_pid::current_pid(),
+			args: Some(SampleArgs {
+				payload,
+				metadata_name: None,
+				metadata_sort_index: None,
+			}),
+		}
+	}
 
-    fn new_metadata(timestamp_ns: u64, meta: MetadataType, tid: u64) -> Self {
-        let sample_name = to_cow_str(meta.sample_name());
-        let (metadata_name, sort_index) = meta.consume();
+	fn new_metadata(timestamp_ns: u64, meta: MetadataType, tid: u64) -> Self {
+		let sample_name = to_cow_str(meta.sample_name());
+		let (metadata_name, sort_index) = meta.consume();
 
-        Self {
-            name: sample_name,
-            categories: None,
-            timestamp_us: ns_to_us(timestamp_ns),
-            event_type: SampleEventType::Metadata,
-            duration_us: None,
-            tid,
-            thread_name: None,
-            pid: sys_pid::current_pid(),
-            args: Some(SampleArgs {
-                payload: None,
-                metadata_name: metadata_name.map(Cow::Owned),
-                metadata_sort_index: sort_index,
-            }),
-        }
-    }
+		Self {
+			name: sample_name,
+			categories: None,
+			timestamp_us: ns_to_us(timestamp_ns),
+			event_type: SampleEventType::Metadata,
+			duration_us: None,
+			tid,
+			thread_name: None,
+			pid: sys_pid::current_pid(),
+			args: Some(SampleArgs {
+				payload: None,
+				metadata_name: metadata_name.map(Cow::Owned),
+				metadata_sort_index: sort_index,
+			}),
+		}
+	}
 }
 
 impl PartialEq for Sample {
-    fn eq(&self, other: &Sample) -> bool {
-        self.timestamp_us == other.timestamp_us
-            && self.name == other.name
-            && self.categories == other.categories
-            && self.pid == other.pid
-            && self.tid == other.tid
-            && self.event_type == other.event_type
-            && self.args == other.args
-    }
+	fn eq(&self, other: &Sample) -> bool {
+		self.timestamp_us == other.timestamp_us
+			&& self.name == other.name
+			&& self.categories == other.categories
+			&& self.pid == other.pid
+			&& self.tid == other.tid
+			&& self.event_type == other.event_type
+			&& self.args == other.args
+	}
 }
 
 impl Eq for Sample {}
 
 impl PartialOrd for Sample {
-    fn partial_cmp(&self, other: &Sample) -> Option<cmp::Ordering> {
-        Some(self.cmp(other))
-    }
+	fn partial_cmp(&self, other: &Sample) -> Option<cmp::Ordering> {
+		Some(self.cmp(other))
+	}
 }
 
 impl Ord for Sample {
-    fn cmp(&self, other: &Sample) -> cmp::Ordering {
-        self.timestamp_us.cmp(&other.timestamp_us)
-    }
+	fn cmp(&self, other: &Sample) -> cmp::Ordering {
+		self.timestamp_us.cmp(&other.timestamp_us)
+	}
 }
 
 impl Hash for Sample {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        (self.pid, self.timestamp_us).hash(state);
-    }
+	fn hash<H: Hasher>(&self, state: &mut H) {
+		(self.pid, self.timestamp_us).hash(state);
+	}
 }
 
 #[must_use]
 pub struct SampleGuard<'a> {
-    sample: Option<Sample>,
-    trace: Option<&'a Trace>,
+	sample: Option<Sample>,
+	trace: Option<&'a Trace>,
 }
 
 impl<'a> SampleGuard<'a> {
-    #[inline]
-    pub fn new_disabled() -> Self {
-        Self { sample: None, trace: None }
-    }
+	#[inline]
+	pub fn new_disabled() -> Self {
+		Self {
+			sample: None,
+			trace: None,
+		}
+	}
 
-    #[inline]
-    fn new<S, C>(trace: &'a Trace, name: S, categories: C, payload: Option<TracePayloadT>) -> Self
-    where
-        S: Into<StrCow>,
-        C: Into<CategoriesT>,
-    {
-        // TODO(vlovich): optimize this path to use the Complete event type
-        // rather than emitting an explicit start/stop to reduce the size of
-        // the generated JSON.
-        let guard = Self {
-            sample: Some(Sample::new_duration_marker(
-                name,
-                categories,
-                payload,
-                SampleEventType::DurationBegin,
-            )),
-            trace: Some(trace),
-        };
-        trace.record(guard.sample.as_ref().unwrap().clone());
-        guard
-    }
+	#[inline]
+	fn new<S, C>(trace: &'a Trace, name: S, categories: C, payload: Option<TracePayloadT>) -> Self
+	where
+		S: Into<StrCow>,
+		C: Into<CategoriesT>,
+	{
+		// TODO(vlovich): optimize this path to use the Complete event type
+		// rather than emitting an explicit start/stop to reduce the size of
+		// the generated JSON.
+		let guard = Self {
+			sample: Some(Sample::new_duration_marker(
+				name,
+				categories,
+				payload,
+				SampleEventType::DurationBegin,
+			)),
+			trace: Some(trace),
+		};
+		trace.record(guard.sample.as_ref().unwrap().clone());
+		guard
+	}
 }
 
 impl<'a> Drop for SampleGuard<'a> {
-    fn drop(&mut self) {
-        if let Some(ref mut trace) = self.trace {
-            let mut sample = self.sample.take().unwrap();
-            sample.timestamp_us = ns_to_us(time::precise_time_ns());
-            sample.event_type = SampleEventType::DurationEnd;
-            trace.record(sample);
-        }
-    }
+	fn drop(&mut self) {
+		if let Some(ref mut trace) = self.trace {
+			let mut sample = self.sample.take().unwrap();
+			sample.timestamp_us = ns_to_us(time::precise_time_ns());
+			sample.event_type = SampleEventType::DurationEnd;
+			trace.record(sample);
+		}
+	}
 }
 
 /// Returns the file name of the EXE if possible, otherwise the full path, or
 /// None if an irrecoverable error occured.
 fn exe_name() -> Option<String> {
-    match std::env::current_exe() {
-        Ok(exe_name) => match exe_name.file_name() {
-            Some(filename) => filename.to_str().map(ToString::to_string),
-            None => {
-                let full_path = exe_name.into_os_string();
-                let full_path_str = full_path.into_string();
-                match full_path_str {
-                    Ok(s) => Some(s),
-                    Err(e) => {
-                        warn!("Failed to get string representation: {:?}", e);
-                        None
-                    }
-                }
-            }
-        },
-        Err(ref e) => {
-            warn!("Failed to get path to current exe: {:?}", e);
-            None
-        }
-    }
+	match std::env::current_exe() {
+		Ok(exe_name) => match exe_name.file_name() {
+			Some(filename) => filename.to_str().map(ToString::to_string),
+			None => {
+				let full_path = exe_name.into_os_string();
+				let full_path_str = full_path.into_string();
+				match full_path_str {
+					Ok(s) => Some(s),
+					Err(e) => {
+						warn!("Failed to get string representation: {:?}", e);
+						None
+					},
+				}
+			},
+		},
+		Err(ref e) => {
+			warn!("Failed to get path to current exe: {:?}", e);
+			None
+		},
+	}
 }
 
 /// Stores the tracing data.
 pub struct Trace {
-    enabled: AtomicBool,
-    samples: Mutex<FixedLifoDeque<Sample>>,
+	enabled: AtomicBool,
+	samples: Mutex<FixedLifoDeque<Sample>>,
 }
 
 impl Trace {
-    pub fn disabled() -> Self {
-        Self { enabled: AtomicBool::new(false), samples: Mutex::new(FixedLifoDeque::new()) }
-    }
+	pub fn disabled() -> Self {
+		Self {
+			enabled: AtomicBool::new(false),
+			samples: Mutex::new(FixedLifoDeque::new()),
+		}
+	}
 
-    pub fn enabled(config: Config) -> Self {
-        Self {
-            enabled: AtomicBool::new(true),
-            samples: Mutex::new(FixedLifoDeque::with_limit(config.max_samples())),
-        }
-    }
+	pub fn enabled(config: Config) -> Self {
+		Self {
+			enabled: AtomicBool::new(true),
+			samples: Mutex::new(FixedLifoDeque::with_limit(config.max_samples())),
+		}
+	}
 
-    pub fn disable(&self) {
-        let mut all_samples = self.samples.lock().unwrap();
-        all_samples.reset_limit(0);
-        self.enabled.store(false, AtomicOrdering::Relaxed);
-    }
+	pub fn disable(&self) {
+		let mut all_samples = self.samples.lock().unwrap();
+		all_samples.reset_limit(0);
+		self.enabled.store(false, AtomicOrdering::Relaxed);
+	}
 
-    #[inline]
-    pub fn enable(&self) {
-        self.enable_config(Config::default());
-    }
+	#[inline]
+	pub fn enable(&self) {
+		self.enable_config(Config::default());
+	}
 
-    pub fn enable_config(&self, config: Config) {
-        let mut all_samples = self.samples.lock().unwrap();
-        all_samples.reset_limit(config.max_samples());
-        self.enabled.store(true, AtomicOrdering::Relaxed);
-    }
+	pub fn enable_config(&self, config: Config) {
+		let mut all_samples = self.samples.lock().unwrap();
+		all_samples.reset_limit(config.max_samples());
+		self.enabled.store(true, AtomicOrdering::Relaxed);
+	}
 
-    /// Generally racy since the underlying storage might be mutated in a separate thread.
-    /// Exposed for unit tests.
-    pub fn get_samples_count(&self) -> usize {
-        self.samples.lock().unwrap().len()
-    }
+	/// Generally racy since the underlying storage might be mutated in a separate thread.
+	/// Exposed for unit tests.
+	pub fn get_samples_count(&self) -> usize {
+		self.samples.lock().unwrap().len()
+	}
 
-    /// Exposed for unit tests only.
-    pub fn get_samples_limit(&self) -> usize {
-        self.samples.lock().unwrap().limit()
-    }
+	/// Exposed for unit tests only.
+	pub fn get_samples_limit(&self) -> usize {
+		self.samples.lock().unwrap().limit()
+	}
 
-    #[inline]
-    pub(crate) fn record(&self, sample: Sample) {
-        let mut all_samples = self.samples.lock().unwrap();
-        all_samples.push_back(sample);
-    }
+	#[inline]
+	pub(crate) fn record(&self, sample: Sample) {
+		let mut all_samples = self.samples.lock().unwrap();
+		all_samples.push_back(sample);
+	}
 
-    pub fn is_enabled(&self) -> bool {
-        self.enabled.load(AtomicOrdering::Relaxed)
-    }
+	pub fn is_enabled(&self) -> bool {
+		self.enabled.load(AtomicOrdering::Relaxed)
+	}
 
-    pub fn instant<S, C>(&self, name: S, categories: C)
-    where
-        S: Into<StrCow>,
-        C: Into<CategoriesT>,
-    {
-        if self.is_enabled() {
-            self.record(Sample::new_instant(name, categories, None));
-        }
-    }
+	pub fn instant<S, C>(&self, name: S, categories: C)
+	where
+		S: Into<StrCow>,
+		C: Into<CategoriesT>,
+	{
+		if self.is_enabled() {
+			self.record(Sample::new_instant(name, categories, None));
+		}
+	}
 
-    pub fn instant_payload<S, C, P>(&self, name: S, categories: C, payload: P)
-    where
-        S: Into<StrCow>,
-        C: Into<CategoriesT>,
-        P: Into<TracePayloadT>,
-    {
-        if self.is_enabled() {
-            self.record(Sample::new_instant(name, categories, Some(payload.into())));
-        }
-    }
+	pub fn instant_payload<S, C, P>(&self, name: S, categories: C, payload: P)
+	where
+		S: Into<StrCow>,
+		C: Into<CategoriesT>,
+		P: Into<TracePayloadT>,
+	{
+		if self.is_enabled() {
+			self.record(Sample::new_instant(name, categories, Some(payload.into())));
+		}
+	}
 
-    pub fn block<S, C>(&self, name: S, categories: C) -> SampleGuard
-    where
-        S: Into<StrCow>,
-        C: Into<CategoriesT>,
-    {
-        if !self.is_enabled() {
-            SampleGuard::new_disabled()
-        } else {
-            SampleGuard::new(self, name, categories, None)
-        }
-    }
+	pub fn block<S, C>(&self, name: S, categories: C) -> SampleGuard
+	where
+		S: Into<StrCow>,
+		C: Into<CategoriesT>,
+	{
+		if !self.is_enabled() {
+			SampleGuard::new_disabled()
+		} else {
+			SampleGuard::new(self, name, categories, None)
+		}
+	}
 
-    pub fn block_payload<S, C, P>(&self, name: S, categories: C, payload: P) -> SampleGuard
-    where
-        S: Into<StrCow>,
-        C: Into<CategoriesT>,
-        P: Into<TracePayloadT>,
-    {
-        if !self.is_enabled() {
-            SampleGuard::new_disabled()
-        } else {
-            SampleGuard::new(self, name, categories, Some(payload.into()))
-        }
-    }
+	pub fn block_payload<S, C, P>(&self, name: S, categories: C, payload: P) -> SampleGuard
+	where
+		S: Into<StrCow>,
+		C: Into<CategoriesT>,
+		P: Into<TracePayloadT>,
+	{
+		if !self.is_enabled() {
+			SampleGuard::new_disabled()
+		} else {
+			SampleGuard::new(self, name, categories, Some(payload.into()))
+		}
+	}
 
-    pub fn closure<S, C, F, R>(&self, name: S, categories: C, closure: F) -> R
-    where
-        S: Into<StrCow>,
-        C: Into<CategoriesT>,
-        F: FnOnce() -> R,
-    {
-        // TODO: simplify this through the use of scopeguard crate
-        let start = time::precise_time_ns();
-        let result = closure();
-        let end = time::precise_time_ns();
-        if self.is_enabled() {
-            self.record(Sample::new_duration(name, categories, None, start, end - start));
-        }
-        result
-    }
+	pub fn closure<S, C, F, R>(&self, name: S, categories: C, closure: F) -> R
+	where
+		S: Into<StrCow>,
+		C: Into<CategoriesT>,
+		F: FnOnce() -> R,
+	{
+		// TODO: simplify this through the use of scopeguard crate
+		let start = time::precise_time_ns();
+		let result = closure();
+		let end = time::precise_time_ns();
+		if self.is_enabled() {
+			self.record(Sample::new_duration(name, categories, None, start, end - start));
+		}
+		result
+	}
 
-    pub fn closure_payload<S, C, P, F, R>(
-        &self,
-        name: S,
-        categories: C,
-        closure: F,
-        payload: P,
-    ) -> R
-    where
-        S: Into<StrCow>,
-        C: Into<CategoriesT>,
-        P: Into<TracePayloadT>,
-        F: FnOnce() -> R,
-    {
-        // TODO: simplify this through the use of scopeguard crate
-        let start = time::precise_time_ns();
-        let result = closure();
-        let end = time::precise_time_ns();
-        if self.is_enabled() {
-            self.record(Sample::new_duration(
-                name,
-                categories,
-                Some(payload.into()),
-                start,
-                end - start,
-            ));
-        }
-        result
-    }
+	pub fn closure_payload<S, C, P, F, R>(
+		&self,
+		name: S,
+		categories: C,
+		closure: F,
+		payload: P,
+	) -> R
+	where
+		S: Into<StrCow>,
+		C: Into<CategoriesT>,
+		P: Into<TracePayloadT>,
+		F: FnOnce() -> R,
+	{
+		// TODO: simplify this through the use of scopeguard crate
+		let start = time::precise_time_ns();
+		let result = closure();
+		let end = time::precise_time_ns();
+		if self.is_enabled() {
+			self.record(Sample::new_duration(
+				name,
+				categories,
+				Some(payload.into()),
+				start,
+				end - start,
+			));
+		}
+		result
+	}
 
-    pub fn samples_cloned_unsorted(&self) -> Vec<Sample> {
-        let all_samples = self.samples.lock().unwrap();
-        if all_samples.is_empty() {
-            return Vec::with_capacity(0);
-        }
+	pub fn samples_cloned_unsorted(&self) -> Vec<Sample> {
+		let all_samples = self.samples.lock().unwrap();
+		if all_samples.is_empty() {
+			return Vec::with_capacity(0);
+		}
 
-        let mut as_vec = Vec::with_capacity(all_samples.len() + 10);
-        let first_sample_timestamp = all_samples.front().map_or(0, |s| s.timestamp_us);
-        let tid = all_samples.front().map_or_else(|| sys_tid::current_tid().unwrap(), |s| s.tid);
+		let mut as_vec = Vec::with_capacity(all_samples.len() + 10);
+		let first_sample_timestamp = all_samples.front().map_or(0, |s| s.timestamp_us);
+		let tid = all_samples.front().map_or_else(|| sys_tid::current_tid().unwrap(), |s| s.tid);
 
-        if let Some(exe_name) = exe_name() {
-            as_vec.push(Sample::new_metadata(
-                first_sample_timestamp,
-                MetadataType::ProcessName { name: exe_name },
-                tid,
-            ));
-        }
+		if let Some(exe_name) = exe_name() {
+			as_vec.push(Sample::new_metadata(
+				first_sample_timestamp,
+				MetadataType::ProcessName { name: exe_name },
+				tid,
+			));
+		}
 
-        let mut thread_names: HashMap<u64, StrCow> = HashMap::new();
+		let mut thread_names: HashMap<u64, StrCow> = HashMap::new();
 
-        for sample in all_samples.iter() {
-            if let Some(ref thread_name) = sample.thread_name {
-                let previous_name = thread_names.insert(sample.tid, thread_name.clone());
-                if previous_name.is_none() || previous_name.unwrap() != *thread_name {
-                    as_vec.push(Sample::new_metadata(
-                        first_sample_timestamp,
-                        MetadataType::ThreadName { name: thread_name.to_string() },
-                        sample.tid,
-                    ));
-                }
-            }
-        }
+		for sample in all_samples.iter() {
+			if let Some(ref thread_name) = sample.thread_name {
+				let previous_name = thread_names.insert(sample.tid, thread_name.clone());
+				if previous_name.is_none() || previous_name.unwrap() != *thread_name {
+					as_vec.push(Sample::new_metadata(
+						first_sample_timestamp,
+						MetadataType::ThreadName {
+							name: thread_name.to_string(),
+						},
+						sample.tid,
+					));
+				}
+			}
+		}
 
-        as_vec.extend(all_samples.iter().cloned());
-        as_vec
-    }
+		as_vec.extend(all_samples.iter().cloned());
+		as_vec
+	}
 
-    #[inline]
-    pub fn samples_cloned_sorted(&self) -> Vec<Sample> {
-        let mut samples = self.samples_cloned_unsorted();
-        samples.sort_unstable();
-        samples
-    }
+	#[inline]
+	pub fn samples_cloned_sorted(&self) -> Vec<Sample> {
+		let mut samples = self.samples_cloned_unsorted();
+		samples.sort_unstable();
+		samples
+	}
 
-    pub fn save<P: AsRef<Path>>(
-        &self,
-        path: P,
-        sort: bool,
-    ) -> Result<(), chrome_trace_dump::Error> {
-        let traces = if sort { samples_cloned_sorted() } else { samples_cloned_unsorted() };
-        let path: &Path = path.as_ref();
+	pub fn save<P: AsRef<Path>>(
+		&self,
+		path: P,
+		sort: bool,
+	) -> Result<(), chrome_trace_dump::Error> {
+		let traces = if sort { samples_cloned_sorted() } else { samples_cloned_unsorted() };
+		let path: &Path = path.as_ref();
 
-        if path.exists() {
-            return Err(chrome_trace_dump::Error::already_exists());
-        }
+		if path.exists() {
+			return Err(chrome_trace_dump::Error::already_exists());
+		}
 
-        let mut trace_file = fs::File::create(&path)?;
+		let mut trace_file = fs::File::create(&path)?;
 
-        chrome_trace_dump::serialize(&traces, &mut trace_file)
-    }
+		chrome_trace_dump::serialize(&traces, &mut trace_file)
+	}
 }
 
 lazy_static! {
-    static ref TRACE: Trace = Trace::disabled();
+	static ref TRACE: Trace = Trace::disabled();
 }
 
 /// Enable tracing with the default configuration.  See Config::default.
 /// Tracing is disabled initially on program launch.
 #[inline]
 pub fn enable_tracing() {
-    TRACE.enable();
+	TRACE.enable();
 }
 
 /// Enable tracing with a specific configuration. Tracing is disabled initially
 /// on program launch.
 #[inline]
 pub fn enable_tracing_with_config(config: Config) {
-    TRACE.enable_config(config);
+	TRACE.enable_config(config);
 }
 
 /// Disable tracing.  This clears all trace data (& frees the memory).
 #[inline]
 pub fn disable_tracing() {
-    TRACE.disable();
+	TRACE.disable();
 }
 
 /// Is tracing enabled.  Technically doesn't guarantee any samples will be
 /// stored as tracing could still be enabled but set with a limit of 0.
 #[inline]
 pub fn is_enabled() -> bool {
-    TRACE.is_enabled()
+	TRACE.is_enabled()
 }
 
 /// Create an instantaneous sample without any payload.  This is the lowest
@@ -885,10 +911,10 @@ pub fn is_enabled() -> bool {
 #[inline]
 pub fn trace<S, C>(name: S, categories: C)
 where
-    S: Into<StrCow>,
-    C: Into<CategoriesT>,
+	S: Into<StrCow>,
+	C: Into<CategoriesT>,
 {
-    TRACE.instant(name, categories);
+	TRACE.instant(name, categories);
 }
 
 /// Create an instantaneous sample with a payload.  The type the payload
@@ -929,11 +955,11 @@ where
 #[inline]
 pub fn trace_payload<S, C, P>(name: S, categories: C, payload: P)
 where
-    S: Into<StrCow>,
-    C: Into<CategoriesT>,
-    P: Into<TracePayloadT>,
+	S: Into<StrCow>,
+	C: Into<CategoriesT>,
+	P: Into<TracePayloadT>,
 {
-    TRACE.instant_payload(name, categories, payload);
+	TRACE.instant_payload(name, categories, payload);
 }
 
 /// Creates a duration sample.  The sample is finalized (end_ns set) when the
@@ -977,10 +1003,10 @@ where
 #[inline]
 pub fn trace_block<'a, S, C>(name: S, categories: C) -> SampleGuard<'a>
 where
-    S: Into<StrCow>,
-    C: Into<CategoriesT>,
+	S: Into<StrCow>,
+	C: Into<CategoriesT>,
 {
-    TRACE.block(name, categories)
+	TRACE.block(name, categories)
 }
 
 /// See `trace_block` for how the block works and `trace_payload` for a
@@ -988,11 +1014,11 @@ where
 #[inline]
 pub fn trace_block_payload<'a, S, C, P>(name: S, categories: C, payload: P) -> SampleGuard<'a>
 where
-    S: Into<StrCow>,
-    C: Into<CategoriesT>,
-    P: Into<TracePayloadT>,
+	S: Into<StrCow>,
+	C: Into<CategoriesT>,
+	P: Into<TracePayloadT>,
 {
-    TRACE.block_payload(name, categories, payload)
+	TRACE.block_payload(name, categories, payload)
 }
 
 /// Creates a duration sample that measures how long the closure took to execute.
@@ -1033,11 +1059,11 @@ where
 #[inline]
 pub fn trace_closure<S, C, F, R>(name: S, categories: C, closure: F) -> R
 where
-    S: Into<StrCow>,
-    C: Into<CategoriesT>,
-    F: FnOnce() -> R,
+	S: Into<StrCow>,
+	C: Into<CategoriesT>,
+	F: FnOnce() -> R,
 {
-    TRACE.closure(name, categories, closure)
+	TRACE.closure(name, categories, closure)
 }
 
 /// See `trace_closure` for how the closure works and `trace_payload` for a
@@ -1045,17 +1071,17 @@ where
 #[inline]
 pub fn trace_closure_payload<S, C, P, F, R>(name: S, categories: C, closure: F, payload: P) -> R
 where
-    S: Into<StrCow>,
-    C: Into<CategoriesT>,
-    P: Into<TracePayloadT>,
-    F: FnOnce() -> R,
+	S: Into<StrCow>,
+	C: Into<CategoriesT>,
+	P: Into<TracePayloadT>,
+	F: FnOnce() -> R,
 {
-    TRACE.closure_payload(name, categories, closure, payload)
+	TRACE.closure_payload(name, categories, closure, payload)
 }
 
 #[inline]
 pub fn samples_len() -> usize {
-    TRACE.get_samples_count()
+	TRACE.get_samples_count()
 }
 
 /// Returns all the samples collected so far.  There is no guarantee that the
@@ -1070,7 +1096,7 @@ pub fn samples_len() -> usize {
 /// rather than just this processe's samples).
 #[inline]
 pub fn samples_cloned_unsorted() -> Vec<Sample> {
-    TRACE.samples_cloned_unsorted()
+	TRACE.samples_cloned_unsorted()
 }
 
 /// Returns all the samples collected so far ordered chronologically by
@@ -1079,7 +1105,7 @@ pub fn samples_cloned_unsorted() -> Vec<Sample> {
 /// of Sample that determines order.
 #[inline]
 pub fn samples_cloned_sorted() -> Vec<Sample> {
-    TRACE.samples_cloned_sorted()
+	TRACE.samples_cloned_sorted()
 }
 
 /// Save tracing data to to supplied path, using the Trace Viewer format. Trace file can be opened
@@ -1087,7 +1113,7 @@ pub fn samples_cloned_sorted() -> Vec<Sample> {
 /// true then sort output traces chronologically by each trace's time of creation.
 #[inline]
 pub fn save<P: AsRef<Path>>(path: P, sort: bool) -> Result<(), chrome_trace_dump::Error> {
-    TRACE.save(path, sort)
+	TRACE.save(path, sort)
 }
 
 #[cfg(test)]

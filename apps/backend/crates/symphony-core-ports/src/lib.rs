@@ -1,6 +1,6 @@
 //! # Symphony Core Ports
 //!
-//! This crate provides the foundational port trait definitions for Symphony's H2A2 
+//! This crate provides the foundational port trait definitions for Symphony's H2A2
 //! (Harmonic Hexagonal Actor Architecture). These ports serve as clean abstractions
 //! that separate domain logic from infrastructure concerns, enabling testability,
 //! maintainability, and the ability to swap implementations.
@@ -63,16 +63,16 @@
 //! let mock_data_access = MockDataAccessAdapter::new();
 //! ```
 
-pub mod ports;
-pub mod types;
+pub mod binary;
 pub mod errors;
 pub mod mocks;
-pub mod binary;
+pub mod ports;
+pub mod types;
 
 // Re-export all public types for convenience
+pub use errors::*;
 pub use ports::*;
 pub use types::*;
-pub use errors::*;
 
 // Re-export sy-commons types that are commonly used
 pub use sy_commons::SymphonyError;

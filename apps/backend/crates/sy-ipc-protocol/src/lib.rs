@@ -19,17 +19,17 @@
 //! assert!(!envelope.correlation_id.to_string().is_empty());
 //! ```
 
-pub mod message;
-pub mod serialize;
 pub mod jsonrpc;
-pub mod xi_protocol;
-pub mod schema;
+pub mod message;
 pub mod registry;
+pub mod schema;
+pub mod serialize;
+pub mod xi_protocol;
 
 // Re-export main types
-pub use message::{MessageEnvelope, MessageType, MessageMetadata, MessagePriority, CorrelationId};
-pub use serialize::{SerializationFormat, MessageSerializer, SerializationError};
-pub use jsonrpc::{JsonRpcMessage, JsonRpcRequest, JsonRpcResponse, JsonRpcError, JsonRpcClient};
-pub use xi_protocol::{XiOperation, XiEvent, TextDelta, ViewUpdate};
-pub use schema::{MessageSchema, SchemaValidator, ValidationError, JsonRpcSchema};
+pub use jsonrpc::{JsonRpcClient, JsonRpcError, JsonRpcMessage, JsonRpcRequest, JsonRpcResponse};
+pub use message::{CorrelationId, MessageEnvelope, MessageMetadata, MessagePriority, MessageType};
 pub use registry::MessageRegistry;
+pub use schema::{JsonRpcSchema, MessageSchema, SchemaValidator, ValidationError};
+pub use serialize::{MessageSerializer, SerializationError, SerializationFormat};
+pub use xi_protocol::{TextDelta, ViewUpdate, XiEvent, XiOperation};

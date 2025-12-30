@@ -1,21 +1,21 @@
 //! # sy-commons: Symphony Common Utilities
 //!
 //! This crate provides foundational utilities for all Symphony Rust crates.
-//! 
+//!
 //! ## Features
-//! 
+//!
 //! - **Error Handling**: Standardized error types with context
 //! - **Logging**: Professional logging with multiple output formats
 //! - **Configuration**: Type-safe configuration management
 //! - **Filesystem**: Safe filesystem operations
 //! - **Pre-validation**: Performance-optimized validation rules
 //! - **Debugging**: Temporary debugging utilities
-//! 
+//!
 //! ## Quick Start
-//! 
+//!
 //! ```rust
 //! use sy_commons::{SymphonyError, init_logging, load_config};
-//! 
+//!
 //! fn example() -> Result<(), Box<dyn std::error::Error>> {
 //!     // This example shows the API structure
 //!     // In practice, you'd need proper config files
@@ -104,19 +104,21 @@
 //! }
 //! ```
 
-pub mod error;
-pub mod debug;
-pub mod extensions;
-pub mod logging;
 pub mod config;
+pub mod debug;
+pub mod error;
+pub mod extensions;
 pub mod filesystem;
+pub mod logging;
 pub mod prevalidation;
 pub mod testing;
 
 // Re-export commonly used items
-pub use error::{SymphonyError, ResultContext};
-pub use logging::{LoggingConfig, init_logging, debug, error, info, trace, warn};
-pub use config::{Config, load_config, DefaultConfig};
-pub use filesystem::{read_file, write_file, create_dir_all, file_exists, get_project_dirs};
-pub use prevalidation::{PreValidationRule, NonEmptyRule, MinLengthRule, MaxLengthRule, validate_fast};
+pub use config::{load_config, Config, DefaultConfig};
+pub use error::{ResultContext, SymphonyError};
+pub use filesystem::{create_dir_all, file_exists, get_project_dirs, read_file, write_file};
+pub use logging::{debug, error, info, init_logging, trace, warn, LoggingConfig};
+pub use prevalidation::{
+	validate_fast, MaxLengthRule, MinLengthRule, NonEmptyRule, PreValidationRule,
+};
 pub use testing::safe_generator;

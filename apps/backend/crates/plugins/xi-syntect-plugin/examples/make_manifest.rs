@@ -31,71 +31,71 @@ const OUT_FILE_NAME: &str = "manifest.toml";
 
 /// Extracts the name and version from Cargo.toml
 fn parse_name_and_version() -> Result<(String, String), io::Error> {
-    eprintln!("exe: {:?}", ::std::env::current_exe());
-    let path = PathBuf::from("./Cargo.toml");
-    let toml_str = fs::read_to_string(path)?;
-    let value = toml_str.parse::<Value>().unwrap();
-    let package_table = value["package"].as_table().unwrap();
-    let name = package_table["name"].as_str().unwrap().to_string();
-    let version = package_table["version"].as_str().unwrap().to_string();
-    Ok((name, version))
+	eprintln!("exe: {:?}", ::std::env::current_exe());
+	let path = PathBuf::from("./Cargo.toml");
+	let toml_str = fs::read_to_string(path)?;
+	let value = toml_str.parse::<Value>().unwrap();
+	let package_table = value["package"].as_table().unwrap();
+	let name = package_table["name"].as_str().unwrap().to_string();
+	let version = package_table["version"].as_str().unwrap().to_string();
+	Ok((name, version))
 }
 
 fn main() -> Result<(), io::Error> {
-    let package_dir = "syntect-resources/Packages";
-    let packpath = "assets/default.packdump";
-    let metasource = "syntect-resources/DefaultPackage";
-    let metapath = "assets/default_meta.packdump";
+	let package_dir = "syntect-resources/Packages";
+	let packpath = "assets/default.packdump";
+	let metasource = "syntect-resources/DefaultPackage";
+	let metapath = "assets/default_meta.packdump";
 
-    let mut builder = SyntaxSetBuilder::new();
-    builder.add_plain_text_syntax();
-    builder.add_from_folder(package_dir, true).unwrap();
-    builder.add_from_folder(metasource, false).unwrap();
-    let syntax_set = builder.build();
+	let mut builder = SyntaxSetBuilder::new();
+	builder.add_plain_text_syntax();
+	builder.add_from_folder(package_dir, true).unwrap();
+	builder.add_from_folder(metasource, false).unwrap();
+	let syntax_set = builder.build();
 
-    dump_to_file(&syntax_set, packpath).unwrap();
-    dump_to_file(&syntax_set.metadata(), metapath).unwrap();
+	dump_to_file(&syntax_set, packpath).unwrap();
+	dump_to_file(&syntax_set.metadata(), metapath).unwrap();
 
-    let lang_defs = syntax_set
-        .syntaxes()
-        .iter()
-        .filter(|syntax| !syntax.file_extensions.is_empty())
-        .map(lang_from_syn)
-        .collect::<Vec<_>>();
+	let lang_defs = syntax_set
+		.syntaxes()
+		.iter()
+		.filter(|syntax| !syntax.file_extensions.is_empty())
+		.map(lang_from_syn)
+		.collect::<Vec<_>>();
 
-    let (name, version) = parse_name_and_version()?;
-    let exec_path = PathBuf::from(format!("./bin/{}", &name));
+	let (name, version) = parse_name_and_version()?;
+	let exec_path = PathBuf::from(format!("./bin/{}", &name));
 
-    let mani = PluginDescription {
-        name,
-        version,
-        scope: PluginScope::Global,
-        exec_path,
-        activations: vec![PluginActivation::Autorun],
-        commands: vec![],
-        languages: lang_defs,
-    };
+	let mani = PluginDescription {
+		name,
+		version,
+		scope: PluginScope::Global,
+		exec_path,
+		activations: vec![PluginActivation::Autorun],
+		commands: vec![],
+		languages: lang_defs,
+	};
 
-    let toml_str = toml::to_string(&mani).unwrap();
-    let file_path = Path::new(OUT_FILE_NAME);
-    let mut f = File::create(file_path)?;
+	let toml_str = toml::to_string(&mani).unwrap();
+	let file_path = Path::new(OUT_FILE_NAME);
+	let mut f = File::create(file_path)?;
 
-    f.write_all(toml_str.as_ref())
+	f.write_all(toml_str.as_ref())
 }
 
 fn lang_from_syn(src: &SyntaxReference) -> LanguageDefinition {
-    let mut extensions = src.file_extensions.clone();
+	let mut extensions = src.file_extensions.clone();
 
-    // add support for .xiconfig
-    if extensions.contains(&String::from("toml")) {
-        extensions.push(String::from("xiconfig"));
-    }
+	// add support for .xiconfig
+	if extensions.contains(&String::from("toml")) {
+		extensions.push(String::from("xiconfig"));
+	}
 
-    LanguageDefinition {
-        name: src.name.as_str().into(),
-        extensions,
-        first_line_match: src.first_line_match.clone(),
-        scope: src.scope.to_string(),
-        default_config: None,
-    }
+	LanguageDefinition {
+		name: src.name.as_str().into(),
+		extensions,
+		first_line_match: src.first_line_match.clone(),
+		scope: src.scope.to_string(),
+		default_config: None,
+	}
 }

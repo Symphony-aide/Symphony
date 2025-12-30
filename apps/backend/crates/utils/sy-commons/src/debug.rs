@@ -60,21 +60,21 @@ pub use crate::duck;
 
 #[cfg(test)]
 mod tests {
-    #[test]
-    fn test_duck_macro_compiles() {
-        // This test just ensures the macro compiles correctly
-        duck!("Test message");
-        duck!("Test with format: {}", 42);
-        duck!("Test with multiple args: {} and {}", "hello", "world");
-    }
+	#[test]
+	fn test_duck_macro_compiles() {
+		// This test just ensures the macro compiles correctly
+		duck!("Test message");
+		duck!("Test with format: {}", 42);
+		duck!("Test with multiple args: {} and {}", "hello", "world");
+	}
 
-    #[test]
-    fn test_duck_macro_debug_only() {
-        // In debug builds, this should compile and potentially output
-        // In release builds, this should compile but do nothing
-        duck!("This should only appear in debug builds");
-        
-        // The macro should not cause compilation errors in either case
-        assert!(true);
-    }
+	#[test]
+	fn test_duck_macro_debug_only() {
+		// In debug builds, this should compile and potentially output
+		// In release builds, this should compile but do nothing
+		duck!("This should only appear in debug builds");
+
+		// The macro should not cause compilation errors in either case
+		assert!(true);
+	}
 }
