@@ -1,0 +1,1984 @@
+# TODO Implementation
+
+> Complete task list for refactoring Symphony’s frontend to use the primitive-based extensibility system
+> 
+
+**Timeline**: 18 weeks (~4.5 months)
+
+**Status**: Not Started
+
+**Last Updated**: 2025-01-16
+
+---
+
+## Phase 1: Foundation (Weeks 1-2)
+
+### Task 1.1: Create Primitive System Base
+
+**Priority**: Critical
+
+**Estimated Time**: 3 days
+
+**Dependencies**: None
+
+**Description**:
+Create the foundational `BasePrimitive` class that all UI elements will inherit from. This is the core of the entire extensibility system.
+
+**Implementation Steps**:
+1. Create `packages/shared/primitives/` directory structure
+2. Implement `BasePrimitive.ts` with:
+- Core properties (id, type, props, children, parent)
+- Rendering strategy flags (renderStrategy, isLeafNode, renderDirect)
+- Tree navigation methods (getPath, findChild, etc.)
+- Tree manipulation methods (appendChild, removeChild, insertChild)
+- Serialization method (toTree) for IPC
+3. Create `ComponentTree` TypeScript interface
+4. Add ID generation utility function
+5. Write comprehensive unit tests (>90% coverage)
+
+**Acceptance Criteria**:
+- [ ] BasePrimitive class implemented with all methods
+- [ ] Tree navigation works correctly
+- [ ] Tree manipulation updates parent/child relationships
+- [ ] toTree() serializes correctly for IPC
+- [ ] All tests passing
+- [ ] TypeScript types are strict and complete
+
+**Files to Create**:
+- `packages/shared/primitives/BasePrimitive.ts`
+- `packages/shared/primitives/types.ts`
+- `packages/shared/primitives/utils.ts`
+- `packages/shared/primitives/__tests__/BasePrimitive.test.ts`
+
+---
+
+### Task 1.2: Implement Component Registry
+
+**Priority**: Critical
+
+**Estimated Time**: 4 days
+
+**Dependencies**: Task 1.1
+
+**Description**:
+Build the central registry that stores all component trees, handles modifications, and notifies React of changes. This is the bridge between Motif extensions and the UI.
+
+**Implementation Steps**:
+1. Create `packages/shared/registry/` directory
+2. Implement `ComponentRegistry` class with:
+- Component storage (Map of name → root primitive)
+- Node indexing (Map of id → primitive)
+- WASM instance registry
+- Event handler registry
+3. Implement registration methods:
+- `registerComponent(name, root)`
+- `getComponent(name)`
+- `getComponentNames()`
+- `getComponentTree(name)` - for IPC
+4. Implement tree navigation:
+- `findByPath(componentName, path)` - with array index support
+5. Implement tree modification:
+- `modifyComponent(name, path, modifications)`
+- `insertPrimitive(name, parentPath, primitive, index?)`
+- `removePrimitive(name, path)`
+6. Implement event system:
+- `registerEventHandler(id, handler)`
+- `invokeEventHandler(id, ...args)`
+- `notifyChange(componentName)` - triggers React re-render
+7. Add debouncing for frequent updates
+8. Write comprehensive tests
+
+**Acceptance Criteria**:
+- [ ] Registry stores and retrieves components correctly
+- [ ] Path navigation handles array indices (e.g., “Button[0]”)
+- [ ] Modifications trigger React re-renders
+- [ ] Event handlers work across IPC boundary
+- [ ] Debouncing prevents excessive re-renders
+- [ ] All edge cases handled (invalid paths, missing components)
+- [ ] Tests cover all methods
+
+**Files to Create**:
+- `packages/shared/registry/ComponentRegistry.ts`
+- `packages/shared/registry/index.ts`
+- `packages/shared/registry/__tests__/ComponentRegistry.test.ts`
+
+---
+
+### Task 1.3: Create Layout Primitives
+
+**Priority**: High
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Task 1.1
+
+**Description**:
+Implement the basic layout primitives that will be used to structure all components. These are the building blocks for component composition.
+
+**Implementation Steps**:
+1. Create `packages/shared/primitives/layout.ts`
+2. Implement primitives:
+- `Container` - Flex container with direction and gap
+- `Flex` - Flexbox with justify, align, wrap
+- `Grid` - CSS Grid with columns, rows, gap
+- `Panel` - Collapsible panel with title
+- `Divider` - Horizontal/vertical separator
+3. Each primitive should:
+- Extend BasePrimitive
+- Set renderStrategy = ‘react’
+- Define TypeScript props interface
+- Set isLeafNode appropriately
+4. Write tests for each primitive
+5. Create Storybook stories for visual testing
+
+**Acceptance Criteria**:
+- [ ] All 5 layout primitives implemented
+- [ ] Props are type-safe with TypeScript
+- [ ] Primitives render correctly in Storybook
+- [ ] Tests verify tree structure
+- [ ] Documentation includes usage examples
+
+**Files to Create**:
+- `packages/shared/primitives/layout.ts`
+- `packages/shared/primitives/__tests__/layout.test.ts`
+- `packages/shared/primitives/layout.stories.tsx`
+
+---
+
+### Task 1.4: Create Interactive Primitives
+
+**Priority**: High
+
+**Estimated Time**: 3 days
+
+**Dependencies**: Task 1.1
+
+**Description**:
+Implement interactive UI primitives (buttons, inputs, etc.) that users can interact with. These will be used in all components.
+
+**Implementation Steps**:
+1. Create `packages/shared/primitives/interactive.ts`
+2. Implement primitives:
+- `Button` - Button with variants and sizes
+- `Input` - Text input with types
+- `Icon` - Lucide icon wrapper
+- `Text` - Text with variants and sizes
+- `Checkbox` - Checkbox with label
+- `Select` - Dropdown select
+3. Each primitive should:
+- Extend BasePrimitive
+- Set renderStrategy = ‘react’
+- Support event handlers via string IDs
+- Set isLeafNode = true for leaf elements (Icon, Input)
+4. Write tests for each primitive
+5. Create Storybook stories
+
+**Acceptance Criteria**:
+- [ ] All 6 interactive primitives implemented
+- [ ] Event handlers work via string IDs
+- [ ] Props match existing UI library (Shadcn)
+- [ ] Primitives render correctly in Storybook
+- [ ] Tests verify props and event handling
+- [ ] Documentation complete
+
+**Files to Create**:
+- `packages/shared/primitives/interactive.ts`
+- `packages/shared/primitives/__tests__/interactive.test.ts`
+- `packages/shared/primitives/interactive.stories.tsx`
+
+---
+
+### Task 1.5: Create Complex Primitives
+
+**Priority**: Medium
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Task 1.1
+
+**Description**:
+Implement complex UI primitives that compose multiple elements (lists, tabs, modals, etc.).
+
+**Implementation Steps**:
+1. Create `packages/shared/primitives/complex.ts`
+2. Implement primitives:
+- `List` - List with optional virtualization
+- `Tabs` - Tab container with panels
+- `Dropdown` - Dropdown menu
+- `Modal` - Modal dialog
+- `Tooltip` - Tooltip wrapper
+3. Each primitive should handle complex state and composition
+4. Write tests for each primitive
+5. Create Storybook stories
+
+**Acceptance Criteria**:
+- [ ] All 5 complex primitives implemented
+- [ ] Primitives handle internal state correctly
+- [ ] Composition works with child primitives
+- [ ] Tests verify complex interactions
+- [ ] Storybook stories show all variants
+
+**Files to Create**:
+- `packages/shared/primitives/complex.ts`
+- `packages/shared/primitives/__tests__/complex.test.ts`
+- `packages/shared/primitives/complex.stories.tsx`
+
+---
+
+### Task 1.6: Implement React Renderer
+
+**Priority**: Critical
+
+**Estimated Time**: 4 days
+
+**Dependencies**: Tasks 1.1, 1.3, 1.4, 1.5
+
+**Description**:
+Build the React bridge that renders primitives as actual React components. This is how primitives become visible UI.
+
+**Implementation Steps**:
+1. Create `packages/shared/primitives/PrimitiveRenderer.tsx`
+2. Implement component mapping:
+- Map primitive types to React components
+- Handle layout primitives (Container, Flex, Grid, etc.)
+- Handle interactive primitives (Button, Input, etc.)
+- Handle complex primitives (List, Tabs, etc.)
+3. Implement event handler conversion:
+- Convert string IDs to actual functions
+- Call componentRegistry.invokeEventHandler()
+4. Implement recursive rendering:
+- Render children unless isLeafNode = true
+- Pass props to React components
+5. Add error boundaries:
+- Catch rendering errors
+- Show fallback UI
+- Log errors for debugging
+6. Optimize with React.memo
+7. Write comprehensive tests
+
+**Acceptance Criteria**:
+- [ ] All primitive types render correctly
+- [ ] Event handlers work via registry
+- [ ] Children render recursively
+- [ ] isLeafNode optimization works
+- [ ] Error boundaries catch failures
+- [ ] Performance is acceptable (<5ms per component)
+- [ ] Tests cover all primitive types
+
+**Files to Create**:
+- `packages/shared/primitives/PrimitiveRenderer.tsx`
+- `packages/shared/primitives/ErrorBoundary.tsx`
+- `packages/shared/primitives/__tests__/PrimitiveRenderer.test.tsx`
+
+---
+
+### Task 1.7: Create useRegisteredComponent Hook
+
+**Priority**: High
+
+**Estimated Time**: 1 day
+
+**Dependencies**: Task 1.2
+
+**Description**:
+Build the React hook that connects components to the registry and triggers re-renders when the tree changes.
+
+**Implementation Steps**:
+1. Create `packages/shared/primitives/useRegisteredComponent.ts`
+2. Implement hook:
+- Get component from registry on mount
+- Listen for ‘component-tree-changed’ events
+- Update state when component changes
+- Clean up event listener on unmount
+3. Optimize to prevent unnecessary re-renders
+4. Write tests
+
+**Acceptance Criteria**:
+- [ ] Hook returns current component tree
+- [ ] Hook updates when tree changes
+- [ ] Hook cleans up properly
+- [ ] No memory leaks
+- [ ] Tests verify all functionality
+
+**Files to Create**:
+- `packages/shared/primitives/useRegisteredComponent.ts`
+- `packages/shared/primitives/__tests__/useRegisteredComponent.test.ts`
+
+---
+
+### Task 1.8: Export Primitive System
+
+**Priority**: Medium
+
+**Estimated Time**: 1 day
+
+**Dependencies**: All Phase 1 tasks
+
+**Description**:
+Create clean exports and documentation for the primitive system so other packages can use it.
+
+**Implementation Steps**:
+1. Create `packages/shared/primitives/index.ts` with all exports
+2. Create `packages/shared/registry/index.ts` with registry exports
+3. Update `packages/shared/index.ts` to export everything
+4. Write README.md with usage examples
+5. Generate TypeScript documentation
+6. Update package.json with correct exports
+
+**Acceptance Criteria**:
+- [ ] All primitives exported cleanly
+- [ ] Registry exported and documented
+- [ ] README has clear examples
+- [ ] TypeScript types work in consuming packages
+- [ ] No circular dependencies
+
+**Files to Create/Update**:
+- `packages/shared/primitives/index.ts`
+- `packages/shared/registry/index.ts`
+- `packages/shared/index.ts`
+- `packages/shared/README.md`
+
+---
+
+## Phase 2: Simple Components (Weeks 3-4)
+
+### Task 2.1: Refactor ActivityBar Component
+
+**Priority**: High
+
+**Estimated Time**: 3 days
+
+**Dependencies**: Phase 1 complete
+
+**Description**:
+Refactor the ActivityBar component to use primitives. This is our first real component migration and will serve as a template for others.
+
+**Implementation Steps**:
+1. Analyze current ActivityBar implementation in `packages/components/activity-bar/`
+2. Create `ActivityBar.builder.ts`:
+- Define `ActivityBarConfig` interface
+- Implement `buildActivityBar(config)` function
+- Build tree using Container, Flex, Button, Icon primitives
+- Register with componentRegistry
+3. Create `ActivityBar.tsx`:
+- Use `useRegisteredComponent('activityBar')` hook
+- Render with `PrimitiveRenderer`
+- Register event handlers on mount
+4. Update tests to verify:
+- Tree structure is correct
+- Modifications work
+- Event handlers fire
+5. Create documentation:
+- Document tree structure
+- Show extension examples
+- Add to component catalog
+6. Test with a simple Motif extension
+
+**Acceptance Criteria**:
+- [ ] ActivityBar renders identically to original
+- [ ] All buttons work correctly
+- [ ] Tree is inspectable via registry
+- [ ] Motif can modify buttons
+- [ ] Motif can insert new buttons
+- [ ] Tests pass with >80% coverage
+- [ ] Documentation complete
+
+**Files to Create/Update**:
+- `packages/components/activity-bar/src/ActivityBar.builder.ts`
+- `packages/components/activity-bar/src/ActivityBar.tsx`
+- `packages/components/activity-bar/src/__tests__/ActivityBar.test.tsx`
+- `packages/components/activity-bar/README.md`
+
+---
+
+### Task 2.2: Refactor StatusBar Component
+
+**Priority**: High
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Task 2.1
+
+**Description**:
+Refactor the StatusBar component to use primitives. This component is simpler than ActivityBar and will validate our approach.
+
+**Implementation Steps**:
+1. Analyze current StatusBar in `packages/components/statusbar/`
+2. Create `StatusBar.builder.ts`:
+- Build tree with Container, Flex, Text, Icon primitives
+- Include sections for: file info, cursor position, language, git status
+3. Create `StatusBar.tsx` wrapper
+4. Update tests
+5. Document tree structure
+6. Test extensibility
+
+**Acceptance Criteria**:
+- [ ] StatusBar renders correctly
+- [ ] All status information displays
+- [ ] Tree is inspectable
+- [ ] Motif can add status items
+- [ ] Tests pass
+- [ ] Documentation complete
+
+**Files to Create/Update**:
+- `packages/components/statusbar/src/StatusBar.builder.ts`
+- `packages/components/statusbar/src/StatusBar.tsx`
+- `packages/components/statusbar/src/__tests__/StatusBar.test.tsx`
+- `packages/components/statusbar/README.md`
+
+---
+
+### Task 2.3: Refactor TabBar Component
+
+**Priority**: High
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Task 2.1
+
+**Description**:
+Refactor the TabBar component (editor tabs) to use primitives.
+
+**Implementation Steps**:
+1. Analyze current TabBar in `packages/components/tab-bar/`
+2. Create `TabBar.builder.ts`:
+- Build tree with Flex, Button, Icon, Text primitives
+- Support tab list with close buttons
+- Support modified indicators
+3. Create `TabBar.tsx` wrapper
+4. Update tests
+5. Document tree structure
+
+**Acceptance Criteria**:
+- [ ] TabBar renders all tabs
+- [ ] Tab switching works
+- [ ] Close buttons work
+- [ ] Modified indicators show
+- [ ] Motif can customize tab appearance
+- [ ] Tests pass
+- [ ] Documentation complete
+
+**Files to Create/Update**:
+- `packages/components/tab-bar/src/TabBar.builder.ts`
+- `packages/components/tab-bar/src/TabBar.tsx`
+- `packages/components/tab-bar/src/__tests__/TabBar.test.tsx`
+- `packages/components/tab-bar/README.md`
+
+---
+
+### Task 2.4: Refactor Header Component
+
+**Priority**: Medium
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Task 2.1
+
+**Description**:
+Refactor the application Header component to use primitives.
+
+**Implementation Steps**:
+1. Analyze current Header in `packages/components/header/`
+2. Create `Header.builder.ts`:
+- Build tree with Container, Flex, Text, Button primitives
+- Include logo, title, menu buttons
+3. Create `Header.tsx` wrapper
+4. Update tests
+5. Document tree structure
+
+**Acceptance Criteria**:
+- [ ] Header renders correctly
+- [ ] All buttons work
+- [ ] Motif can add menu items
+- [ ] Tests pass
+- [ ] Documentation complete
+
+**Files to Create/Update**:
+- `packages/components/header/src/Header.builder.ts`
+- `packages/components/header/src/Header.tsx`
+- `packages/components/header/src/__tests__/Header.test.tsx`
+- `packages/components/header/README.md`
+
+---
+
+### Task 2.5: Refactor WelcomeScreen Component
+
+**Priority**: Low
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Task 2.1
+
+**Description**:
+Refactor the WelcomeScreen component to use primitives.
+
+**Implementation Steps**:
+1. Analyze current WelcomeScreen in `packages/components/welcome-screen/`
+2. Create `WelcomeScreen.builder.ts`:
+- Build tree with Container, Text, Button, Icon primitives
+- Include welcome message, quick actions, recent projects
+3. Create `WelcomeScreen.tsx` wrapper
+4. Update tests
+5. Document tree structure
+
+**Acceptance Criteria**:
+- [ ] WelcomeScreen renders correctly
+- [ ] Quick actions work
+- [ ] Recent projects display
+- [ ] Motif can customize welcome content
+- [ ] Tests pass
+- [ ] Documentation complete
+
+**Files to Create/Update**:
+- `packages/components/welcome-screen/src/WelcomeScreen.builder.ts`
+- `packages/components/welcome-screen/src/WelcomeScreen.tsx`
+- `packages/components/welcome-screen/src/__tests__/WelcomeScreen.test.tsx`
+- `packages/components/welcome-screen/README.md`
+
+---
+
+### Task 2.6: Create Component Migration Template
+
+**Priority**: Medium
+
+**Estimated Time**: 1 day
+
+**Dependencies**: Tasks 2.1-2.5
+
+**Description**:
+Create a template and guide for migrating remaining components based on lessons learned from the first 5 components.
+
+**Implementation Steps**:
+1. Document common patterns from first 5 migrations
+2. Create template files:
+- `ComponentName.builder.ts` template
+- `ComponentName.tsx` template
+- Test template
+- README template
+3. Write step-by-step migration guide
+4. Include checklist for each component
+5. Add troubleshooting section
+
+**Acceptance Criteria**:
+- [ ] Template files created
+- [ ] Migration guide is clear and complete
+- [ ] Checklist covers all steps
+- [ ] Examples from actual migrations included
+
+**Files to Create**:
+- `docs/COMPONENT_MIGRATION_TEMPLATE.md`
+- `templates/ComponentName.builder.ts`
+- `templates/ComponentName.tsx`
+- `templates/ComponentName.test.tsx`
+- `templates/README.md`
+
+---
+
+## Phase 3: WASM Infrastructure (Weeks 5-6)
+
+### Task 3.1: Setup WASM Build System
+
+**Priority**: Critical
+
+**Estimated Time**: 3 days
+
+**Dependencies**: Phase 1 complete
+
+**Description**:
+Set up the complete WASM build infrastructure including Rust workspace, wasm-pack, and build scripts.
+
+**Implementation Steps**:
+1. Create `apps/backend/wasm_components/` directory structure
+2. Create shared WASM library:
+- Create `apps/backend/wasm_components/shared/`
+- Implement `WasmComponent` trait
+- Implement `ComponentTree` struct
+- Implement `ExtensionPoint` trait
+- Add DOM helper utilities
+3. Configure Cargo workspace:
+- Create root `Cargo.toml` for workspace
+- Configure build profiles (release optimized for size)
+- Add common dependencies
+4. Create build scripts:
+- `build-all.sh` - Build all WASM components
+- `watch.sh` - Watch mode for development
+- `clean.sh` - Clean build artifacts
+5. Integrate with pnpm:
+- Add `build:wasm` script to root package.json
+- Add `dev:wasm` script for watch mode
+6. Create output directory structure:
+- `packages/wasm/` for built WASM modules
+7. Test build system with a simple “hello world” WASM component
+
+**Acceptance Criteria**:
+- [ ] WASM workspace builds successfully
+- [ ] Build scripts work on all platforms (Windows, macOS, Linux)
+- [ ] Output WASM files are optimized (<100KB for simple components)
+- [ ] Watch mode works for development
+- [ ] Integration with pnpm works
+- [ ] Documentation for build system complete
+
+**Files to Create**:
+- `apps/backend/wasm_components/Cargo.toml`
+- `apps/backend/wasm_components/shared/Cargo.toml`
+- `apps/backend/wasm_components/shared/src/lib.rs`
+- `apps/backend/wasm_components/build-all.sh`
+- `apps/backend/wasm_components/watch.sh`
+- `apps/backend/wasm_components/clean.sh`
+- `apps/backend/wasm_components/README.md`
+
+---
+
+### Task 3.2: Implement WasmRenderer Component
+
+**Priority**: Critical
+
+**Estimated Time**: 3 days
+
+**Dependencies**: Task 3.1
+
+**Description**:
+Build the React component that loads and renders WASM components, bridging WASM and React.
+
+**Implementation Steps**:
+1. Create `packages/shared/primitives/WasmRenderer.tsx`
+2. Implement WASM module loading:
+- Dynamic import of WASM modules
+- Handle loading states
+- Handle errors gracefully
+3. Implement WASM instance management:
+- Create WASM instance with container ID
+- Pass props to WASM constructor
+- Update props when they change
+- Cleanup on unmount
+4. Implement tree inspection integration:
+- Call `get_tree()` from WASM
+- Register with componentRegistry
+- Expose `modify()` method
+5. Add error boundaries
+6. Optimize with React.memo
+7. Write comprehensive tests
+
+**Acceptance Criteria**:
+- [ ] WASM modules load correctly
+- [ ] Loading states display properly
+- [ ] Errors are caught and displayed
+- [ ] Props update WASM instance
+- [ ] Tree inspection works
+- [ ] Cleanup prevents memory leaks
+- [ ] Tests cover all scenarios
+
+**Files to Create**:
+- `packages/shared/primitives/WasmRenderer.tsx`
+- `packages/shared/primitives/__tests__/WasmRenderer.test.tsx`
+
+---
+
+### Task 3.3: Create Direct Renderer (Escape Hatch)
+
+**Priority**: Medium
+
+**Estimated Time**: 1 day
+
+**Dependencies**: Task 1.6
+
+**Description**:
+Build the direct renderer that bypasses the primitive system for maximum performance when needed.
+
+**Implementation Steps**:
+1. Create `packages/shared/primitives/DirectRenderer.tsx`
+2. Implement direct rendering for:
+- MonacoEditor (existing Monaco)
+- XTermTerminal (existing xterm.js)
+3. Add type checking for supported types
+4. Add fallback for unknown types
+5. Write tests
+
+**Acceptance Criteria**:
+- [ ] Direct rendering works for Monaco
+- [ ] Direct rendering works for xterm
+- [ ] Unknown types show warning
+- [ ] Performance is optimal (no overhead)
+- [ ] Tests verify functionality
+
+**Files to Create**:
+- `packages/shared/primitives/DirectRenderer.tsx`
+- `packages/shared/primitives/__tests__/DirectRenderer.test.tsx`
+
+---
+
+### Task 3.4: Create First WASM Component (SyntaxHighlighter)
+
+**Priority**: High
+
+**Estimated Time**: 4 days
+
+**Dependencies**: Tasks 3.1, 3.2
+
+**Description**:
+Build the first production WASM component - a syntax highlighter using tree-sitter. This validates the entire WASM pipeline.
+
+**Implementation Steps**:
+1. Create `apps/backend/wasm_components/highlighter/` directory
+2. Configure Cargo.toml:
+- Add wasm-bindgen dependencies
+- Add tree-sitter dependencies
+- Configure for WASM target
+3. Implement WasmHighlighter struct:
+- Store code, language, theme
+- Implement tree-sitter parsing
+- Implement syntax highlighting
+- Implement rendering to DOM
+4. Implement WasmComponent trait:
+- `get_tree()` - return component structure
+- `modify_tree()` - handle modifications
+- `render()` - render highlighted code
+- `destroy()` - cleanup
+5. Add property setters:
+- `set_code()`
+- `set_language()`
+- `set_theme()`
+6. Create TypeScript primitive wrapper:
+- `SyntaxHighlighter` primitive class
+- Set renderStrategy = ‘wasm’
+- Set wasmModule path
+7. Build and test:
+- Build WASM module
+- Test in Storybook
+- Benchmark performance
+8. Write documentation
+
+**Acceptance Criteria**:
+- [ ] WASM module builds successfully
+- [ ] Syntax highlighting works correctly
+- [ ] Performance is excellent (<5ms for 1000 lines)
+- [ ] Tree inspection works
+- [ ] Modifications work
+- [ ] Memory cleanup works
+- [ ] Tests pass
+- [ ] Documentation complete
+
+**Files to Create**:
+- `apps/backend/wasm_components/highlighter/Cargo.toml`
+- `apps/backend/wasm_components/highlighter/src/lib.rs`
+- `packages/shared/primitives/heavy.ts` (add SyntaxHighlighter)
+- `packages/shared/primitives/__tests__/SyntaxHighlighter.test.tsx`
+- `apps/backend/wasm_components/highlighter/README.md`
+
+---
+
+### Task 3.5: Performance Benchmarking Suite
+
+**Priority**: Medium
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Task 3.4
+
+**Description**:
+Create a comprehensive performance benchmarking suite to measure and track performance of primitives, React rendering, and WASM components.
+
+**Implementation Steps**:
+1. Create `packages/shared/monitoring/` directory
+2. Implement `PerformanceMonitor` class:
+- Track render times per component
+- Calculate averages, min, max
+- Generate performance reports
+3. Create benchmark tests:
+- Benchmark primitive rendering
+- Benchmark WASM vs React
+- Benchmark tree modifications
+- Benchmark large component trees
+4. Create performance dashboard:
+- Visualize metrics
+- Compare before/after
+- Track over time
+5. Set performance budgets:
+- Light components: <5ms
+- Heavy WASM: <10ms
+- Tree modifications: <2ms
+6. Integrate with CI/CD
+
+**Acceptance Criteria**:
+- [ ] Performance monitor tracks all metrics
+- [ ] Benchmarks run automatically
+- [ ] Dashboard shows results clearly
+- [ ] Performance budgets enforced
+- [ ] CI fails if budgets exceeded
+- [ ] Documentation complete
+
+**Files to Create**:
+- `packages/shared/monitoring/PerformanceMonitor.ts`
+- `packages/shared/monitoring/benchmarks.test.ts`
+- `packages/shared/monitoring/dashboard.tsx`
+- `packages/shared/monitoring/README.md`
+
+---
+
+### Task 3.6: WASM Development Documentation
+
+**Priority**: Medium
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Tasks 3.1-3.4
+
+**Description**:
+Create comprehensive documentation for developing WASM components, including guides, examples, and best practices.
+
+**Implementation Steps**:
+1. Write WASM development guide:
+- Setup instructions
+- Component structure
+- Build process
+- Testing strategies
+2. Create example WASM components:
+- Simple counter
+- Data visualization
+- Custom widget
+3. Document best practices:
+- Memory management
+- Performance optimization
+- Error handling
+- Tree inspection
+4. Create troubleshooting guide
+5. Add API reference
+
+**Acceptance Criteria**:
+- [ ] Guide is clear and complete
+- [ ] Examples work and are well-documented
+- [ ] Best practices are actionable
+- [ ] Troubleshooting covers common issues
+- [ ] API reference is comprehensive
+
+**Files to Create**:
+- `docs/WASM_DEVELOPMENT_GUIDE.md`
+- `apps/backend/wasm_components/examples/counter/`
+- `apps/backend/wasm_components/examples/visualization/`
+- `docs/WASM_BEST_PRACTICES.md`
+- `docs/WASM_API_REFERENCE.md`
+
+---
+
+## Phase 4: Heavy WASM Components (Weeks 7-9)
+
+### Task 4.1: Build WASM Code Editor
+
+**Priority**: Critical
+
+**Estimated Time**: 7 days
+
+**Dependencies**: Phase 3 complete
+
+**Description**:
+Build a high-performance code editor in Rust/WASM as a replacement for Monaco Editor. This is the most complex WASM component.
+
+**Implementation Steps**:
+1. Create `apps/backend/wasm_components/editor/` directory
+2. Design editor architecture:
+- Text buffer management
+- Cursor and selection handling
+- Syntax highlighting integration
+- Line number rendering
+- Minimap rendering
+- Gutter widgets
+3. Implement core editor:
+- Text buffer with rope data structure
+- Efficient text insertion/deletion
+- Cursor movement and selection
+- Undo/redo stack
+4. Implement rendering:
+- Direct DOM manipulation for performance
+- Virtual scrolling for large files
+- Syntax highlighting with tree-sitter
+- Line numbers and gutter
+- Minimap
+5. Implement extension points:
+- Gutter slot for widgets
+- Toolbar slot
+- Statusbar slot
+6. Implement WasmComponent trait:
+- Expose full tree structure
+- Support modifications
+- Handle prop updates
+7. Add property setters:
+- `set_content()`, `set_language()`, `set_theme()`
+- `set_font_size()`, `set_line_numbers()`, `set_minimap()`
+8. Create TypeScript primitive:
+- `CodeEditor` primitive class
+9. Performance optimization:
+- Target <5ms render for 10,000 lines
+- Optimize memory usage
+- Profile and optimize hot paths
+10. Write comprehensive tests
+11. Create documentation
+
+**Acceptance Criteria**:
+- [ ] Editor renders and edits text correctly
+- [ ] Syntax highlighting works
+- [ ] Performance meets targets (<5ms for 10k lines)
+- [ ] All features work (undo/redo, selection, etc.)
+- [ ] Tree inspection works
+- [ ] Extension points work
+- [ ] Memory usage is reasonable
+- [ ] Tests pass with >80% coverage
+- [ ] Documentation complete
+
+**Files to Create**:
+- `apps/backend/wasm_components/editor/Cargo.toml`
+- `apps/backend/wasm_components/editor/src/lib.rs`
+- `apps/backend/wasm_components/editor/src/buffer.rs`
+- `apps/backend/wasm_components/editor/src/cursor.rs`
+- `apps/backend/wasm_components/editor/src/renderer.rs`
+- `apps/backend/wasm_components/editor/src/syntax.rs`
+- `packages/shared/primitives/heavy.ts` (add CodeEditor)
+- `apps/backend/wasm_components/editor/README.md`
+
+---
+
+### Task 4.2: Build WASM Terminal
+
+**Priority**: High
+
+**Estimated Time**: 5 days
+
+**Dependencies**: Phase 3 complete
+
+**Description**:
+Build a high-performance terminal emulator in Rust/WASM as a replacement for xterm.js.
+
+**Implementation Steps**:
+1. Create `apps/backend/wasm_components/terminal/` directory
+2. Design terminal architecture:
+- Terminal buffer (scrollback)
+- ANSI escape sequence parsing
+- Cursor positioning
+- Text styling (colors, bold, etc.)
+- Input handling
+3. Implement core terminal:
+- Circular buffer for scrollback
+- ANSI parser
+- Cursor management
+- Text rendering with styles
+4. Implement rendering:
+- Direct DOM manipulation
+- Canvas rendering for performance
+- Virtual scrolling
+5. Implement IPC integration:
+- Connect to shell via backend
+- Send input to shell
+- Receive output from shell
+6. Implement extension points:
+- Toolbar slot
+- Context menu slot
+- Prompt customization
+7. Implement WasmComponent trait
+8. Add property setters
+9. Create TypeScript primitive
+10. Performance optimization:
+- Target <2ms for 1000 line output
+11. Write tests
+12. Create documentation
+
+**Acceptance Criteria**:
+- [ ] Terminal displays output correctly
+- [ ] ANSI colors and styles work
+- [ ] Input works correctly
+- [ ] Scrollback works
+- [ ] Performance meets targets
+- [ ] Tree inspection works
+- [ ] Extension points work
+- [ ] Tests pass
+- [ ] Documentation complete
+
+**Files to Create**:
+- `apps/backend/wasm_components/terminal/Cargo.toml`
+- `apps/backend/wasm_components/terminal/src/lib.rs`
+- `apps/backend/wasm_components/terminal/src/buffer.rs`
+- `apps/backend/wasm_components/terminal/src/ansi.rs`
+- `apps/backend/wasm_components/terminal/src/renderer.rs`
+- `packages/shared/primitives/heavy.ts` (add Terminal)
+- `apps/backend/wasm_components/terminal/README.md`
+
+---
+
+### Task 4.3: Build WASM File Tree
+
+**Priority**: High
+
+**Estimated Time**: 4 days
+
+**Dependencies**: Phase 3 complete
+
+**Description**:
+Build a high-performance virtualized file tree in Rust/WASM for handling large directory structures.
+
+**Implementation Steps**:
+1. Create `apps/backend/wasm_components/file-tree/` directory
+2. Design file tree architecture:
+- Tree data structure
+- Virtualization for large trees
+- Expand/collapse state
+- Selection state
+- Filtering/search
+3. Implement core file tree:
+- Efficient tree structure
+- Virtual scrolling
+- Lazy loading of directories
+- Expand/collapse animation
+4. Implement rendering:
+- Direct DOM manipulation
+- Icon rendering
+- Indentation
+- Selection highlighting
+5. Implement extension points:
+- Context menu slot
+- File icon customization
+- File action buttons
+6. Implement WasmComponent trait
+7. Add property setters
+8. Create TypeScript primitive
+9. Performance optimization:
+- Target <10ms for 50,000 files
+10. Write tests
+11. Create documentation
+
+**Acceptance Criteria**:
+- [ ] File tree renders correctly
+- [ ] Virtualization works for large trees
+- [ ] Expand/collapse works smoothly
+- [ ] Selection works
+- [ ] Performance meets targets
+- [ ] Tree inspection works
+- [ ] Extension points work
+- [ ] Tests pass
+- [ ] Documentation complete
+
+**Files to Create**:
+- `apps/backend/wasm_components/file-tree/Cargo.toml`
+- `apps/backend/wasm_components/file-tree/src/lib.rs`
+- `apps/backend/wasm_components/file-tree/src/tree.rs`
+- `apps/backend/wasm_components/file-tree/src/renderer.rs`
+- `packages/shared/primitives/heavy.ts` (add FileTree)
+- `apps/backend/wasm_components/file-tree/README.md`
+
+---
+
+### Task 4.4: WASM Component Integration Testing
+
+**Priority**: High
+
+**Estimated Time**: 3 days
+
+**Dependencies**: Tasks 4.1, 4.2, 4.3
+
+**Description**:
+Create comprehensive integration tests for all WASM components to ensure they work correctly together and with the rest of the system.
+
+**Implementation Steps**:
+1. Create integration test suite:
+- Test WASM component loading
+- Test prop updates
+- Test tree inspection
+- Test modifications
+- Test event handling
+2. Test component interactions:
+- Editor + Terminal
+- Editor + FileTree
+- All components together
+3. Test performance under load:
+- Large files in editor
+- Rapid terminal output
+- Large file trees
+4. Test memory management:
+- No memory leaks
+- Proper cleanup
+5. Test error scenarios:
+- WASM load failures
+- Invalid props
+- Runtime errors
+6. Create test documentation
+
+**Acceptance Criteria**:
+- [ ] All integration tests pass
+- [ ] Performance tests pass
+- [ ] Memory tests pass
+- [ ] Error scenarios handled
+- [ ] Tests are automated in CI
+- [ ] Documentation complete
+
+**Files to Create**:
+- `packages/shared/primitives/__tests__/wasm-integration.test.tsx`
+- `packages/shared/primitives/__tests__/wasm-performance.test.tsx`
+- `packages/shared/primitives/__tests__/wasm-memory.test.tsx`
+- `docs/WASM_TESTING_GUIDE.md`
+
+---
+
+### Task 4.5: WASM Component Optimization
+
+**Priority**: Medium
+
+**Estimated Time**: 3 days
+
+**Dependencies**: Tasks 4.1, 4.2, 4.3
+
+**Description**:
+Optimize WASM components for size, performance, and memory usage based on profiling and benchmarks.
+
+**Implementation Steps**:
+1. Profile each WASM component:
+- Identify hot paths
+- Measure memory usage
+- Measure bundle size
+2. Optimize for size:
+- Enable LTO and size optimizations
+- Remove unused code
+- Compress WASM modules
+3. Optimize for performance:
+- Optimize hot paths
+- Reduce allocations
+- Use efficient data structures
+4. Optimize for memory:
+- Reduce memory footprint
+- Implement proper cleanup
+- Pool allocations
+5. Benchmark improvements:
+- Compare before/after
+- Verify targets met
+6. Document optimizations
+
+**Acceptance Criteria**:
+- [ ] Bundle sizes reduced by >30%
+- [ ] Performance improved by >20%
+- [ ] Memory usage reduced by >20%
+- [ ] All performance targets met
+- [ ] Optimizations documented
+
+**Files to Update**:
+- All WASM component Cargo.toml files
+- All WASM component source files
+- `docs/WASM_OPTIMIZATION_GUIDE.md`
+
+---
+
+## Phase 5: IPC Bridge (Weeks 10-11)
+
+### Task 5.1: Extend Client Interface
+
+**Priority**: Critical
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Phase 4 complete
+
+**Description**:
+Extend the IPC client interface to support component tree inspection and modification from Motif extensions.
+
+**Implementation Steps**:
+1. Update `apps/web/src/services/clients/client.types.ts`:
+- Add `get_component_tree(componentName)` method
+- Add `get_component_list()` method
+- Add `modify_component(name, path, modifications)` method
+- Add `insert_component(name, parentPath, primitive, index?)` method
+- Add `remove_component(name, path)` method
+- Add `register_event_handler(handlerId, handler)` method
+- Add `invoke_motif_handler(handlerId, args)` method
+2. Update HTTP client implementation
+3. Update Tauri client implementation
+4. Add TypeScript types for all new methods
+5. Write tests for client methods
+
+**Acceptance Criteria**:
+- [ ] All new methods defined in interface
+- [ ] HTTP client implements all methods
+- [ ] Tauri client implements all methods
+- [ ] Types are correct and complete
+- [ ] Tests pass for both clients
+- [ ] Documentation updated
+
+**Files to Update**:
+- `apps/web/src/services/clients/client.types.ts`
+- `apps/web/src/services/clients/http.ts`
+- `apps/web/src/services/clients/tauri.ts`
+- `apps/web/src/services/clients/__tests__/client.test.ts`
+
+---
+
+### Task 5.2: Implement Backend Handlers
+
+**Priority**: Critical
+
+**Estimated Time**: 4 days
+
+**Dependencies**: Task 5.1
+
+**Description**:
+Implement the backend Rust handlers that process component tree requests from Motif extensions.
+
+**Implementation Steps**:
+1. Create `apps/backend/kit/motifs/src/api.rs`:
+- Define `ComponentTree` struct
+- Define `RenderStrategy` enum
+- Define `MotifExtension` trait
+- Define `MotifError` enum
+2. Create `apps/backend/kit/motifs/src/handlers.rs`:
+- Implement `get_component_tree` handler
+- Implement `get_component_list` handler
+- Implement `modify_component` handler
+- Implement `insert_component` handler
+- Implement `remove_component` handler
+- Implement `register_event_handler` handler
+- Implement `invoke_motif_handler` handler
+3. Integrate with IPC bus:
+- Register handlers with IPC
+- Handle serialization/deserialization
+- Handle errors gracefully
+4. Implement component tree synchronization:
+- Sync frontend registry with backend
+- Handle concurrent modifications
+- Notify frontend of changes
+5. Write comprehensive tests
+6. Add logging and debugging
+
+**Acceptance Criteria**:
+- [ ] All handlers implemented
+- [ ] Handlers integrated with IPC
+- [ ] Component tree syncs correctly
+- [ ] Concurrent modifications handled
+- [ ] Errors handled gracefully
+- [ ] Tests pass with >80% coverage
+- [ ] Logging is comprehensive
+
+**Files to Create**:
+- `apps/backend/kit/motifs/src/api.rs`
+- `apps/backend/kit/motifs/src/handlers.rs`
+- `apps/backend/kit/motifs/src/sync.rs`
+- `apps/backend/kit/motifs/src/tests.rs`
+
+---
+
+### Task 5.3: Create Python Motif SDK
+
+**Priority**: High
+
+**Estimated Time**: 3 days
+
+**Dependencies**: Task 5.2
+
+**Description**:
+Create a Python SDK that makes it easy for Motif developers to interact with the component tree.
+
+**Implementation Steps**:
+1. Create `apps/backend/conductor/motif_sdk/` directory
+2. Implement `MotifExtension` base class:
+- `get_component(name)` method
+- `get_component_list()` method
+- `modify_component(name, path, modifications)` method
+- `insert_primitive(name, parentPath, primitive, index?)` method
+- `remove_primitive(name, path)` method
+- `register_event_handler(handlerId, handler)` method
+3. Implement helper classes:
+- `ComponentTree` class for tree navigation
+- `Primitive` class for creating primitives
+4. Add convenience methods:
+- `find_by_path(tree, path)`
+- `create_button(props)`
+- `create_container(props)`
+- etc.
+5. Add type hints for IDE support
+6. Write comprehensive documentation
+7. Create example Motifs
+8. Write tests
+
+**Acceptance Criteria**:
+- [ ] SDK is easy to use
+- [ ] All methods work correctly
+- [ ] Type hints work in IDEs
+- [ ] Examples are clear and complete
+- [ ] Tests pass
+- [ ] Documentation is comprehensive
+
+**Files to Create**:
+- `apps/backend/conductor/motif_sdk/__init__.py`
+- `apps/backend/conductor/motif_sdk/extension.py`
+- `apps/backend/conductor/motif_sdk/tree.py`
+- `apps/backend/conductor/motif_sdk/primitives.py`
+- `apps/backend/conductor/motif_sdk/examples/simple_motif.py`
+- `apps/backend/conductor/motif_sdk/examples/complex_motif.py`
+- `apps/backend/conductor/motif_sdk/tests/test_sdk.py`
+- `apps/backend/conductor/motif_sdk/README.md`
+
+---
+
+### Task 5.4: Create TypeScript Motif SDK
+
+**Priority**: High
+
+**Estimated Time**: 3 days
+
+**Dependencies**: Task 5.2
+
+**Description**:
+Create a TypeScript SDK for building Motif extensions in TypeScript/JavaScript.
+
+**Implementation Steps**:
+1. Create `packages/motif-sdk/` directory
+2. Implement `MotifExtension` base class:
+- All component tree methods
+- Event handler registration
+- Helper methods
+3. Implement helper classes:
+- `ComponentTree` class
+- `Primitive` builders
+4. Add full TypeScript types
+5. Write comprehensive documentation
+6. Create example Motifs
+7. Write tests
+
+**Acceptance Criteria**:
+- [ ] SDK is easy to use
+- [ ] All methods work correctly
+- [ ] TypeScript types are complete
+- [ ] Examples are clear
+- [ ] Tests pass
+- [ ] Documentation is comprehensive
+
+**Files to Create**:
+- `packages/motif-sdk/src/MotifExtension.ts`
+- `packages/motif-sdk/src/ComponentTree.ts`
+- `packages/motif-sdk/src/primitives.ts`
+- `packages/motif-sdk/src/types.ts`
+- `packages/motif-sdk/examples/simple-motif.ts`
+- `packages/motif-sdk/examples/complex-motif.ts`
+- `packages/motif-sdk/__tests__/sdk.test.ts`
+- `packages/motif-sdk/README.md`
+
+---
+
+### Task 5.5: End-to-End IPC Testing
+
+**Priority**: High
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Tasks 5.1, 5.2, 5.3, 5.4
+
+**Description**:
+Create comprehensive end-to-end tests that verify the entire IPC pipeline from Motif extension to UI update.
+
+**Implementation Steps**:
+1. Create test Motif extensions:
+- Python Motif that modifies ActivityBar
+- TypeScript Motif that adds custom toolbar
+- Motif that inserts new components
+2. Create E2E test suite:
+- Test component tree inspection
+- Test component modification
+- Test component insertion
+- Test component removal
+- Test event handler registration
+- Test event handler invocation
+3. Test error scenarios:
+- Invalid component names
+- Invalid paths
+- Invalid modifications
+- Handler errors
+4. Test performance:
+- Measure IPC latency
+- Measure modification time
+- Ensure <50ms end-to-end
+5. Create test documentation
+
+**Acceptance Criteria**:
+- [ ] All E2E tests pass
+- [ ] Error scenarios handled correctly
+- [ ] Performance meets targets (<50ms)
+- [ ] Tests are automated in CI
+- [ ] Documentation complete
+
+**Files to Create**:
+- `e2e/motif-ipc.spec.ts`
+- `e2e/fixtures/test-motif-python/`
+- `e2e/fixtures/test-motif-typescript/`
+- `docs/IPC_TESTING_GUIDE.md`
+
+---
+
+### Task 5.6: IPC Documentation
+
+**Priority**: Medium
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Tasks 5.1-5.5
+
+**Description**:
+Create comprehensive documentation for the IPC bridge and Motif development.
+
+**Implementation Steps**:
+1. Write IPC architecture guide:
+- How IPC works
+- Message flow
+- Error handling
+- Performance considerations
+2. Write Motif development guide:
+- Getting started
+- SDK usage
+- Best practices
+- Common patterns
+3. Create API reference:
+- All client methods
+- All SDK methods
+- All types
+4. Create troubleshooting guide
+5. Add examples and tutorials
+
+**Acceptance Criteria**:
+- [ ] Architecture guide is clear
+- [ ] Development guide is complete
+- [ ] API reference is comprehensive
+- [ ] Troubleshooting covers common issues
+- [ ] Examples work and are well-documented
+
+**Files to Create**:
+- `docs/IPC_ARCHITECTURE.md`
+- `docs/MOTIF_DEVELOPMENT_GUIDE.md`
+- `docs/MOTIF_API_REFERENCE.md`
+- `docs/MOTIF_TROUBLESHOOTING.md`
+- `docs/MOTIF_EXAMPLES.md`
+
+---
+
+## Phase 6: Medium Complexity Components (Weeks 12-14)
+
+### Task 6.1: Refactor FileExplorer Component
+
+**Priority**: High
+
+**Estimated Time**: 4 days
+
+**Dependencies**: Phase 5 complete
+
+**Description**:
+Refactor the FileExplorer component to use primitives. This is a complex component with tree structure and interactions.
+
+**Implementation Steps**:
+1. Analyze current FileExplorer in `packages/components/file-explorer/`
+2. Create `FileExplorer.builder.ts`:
+- Build tree with Container, FileTree (WASM), Button primitives
+- Include toolbar with actions
+- Include context menu support
+3. Integrate with WASM FileTree component
+4. Create `FileExplorer.tsx` wrapper
+5. Update tests
+6. Document tree structure and extension points
+
+**Acceptance Criteria**:
+- [ ] FileExplorer renders correctly
+- [ ] File navigation works
+- [ ] Context menu works
+- [ ] Toolbar actions work
+- [ ] Motif can customize file icons
+- [ ] Motif can add context menu items
+- [ ] Tests pass
+- [ ] Documentation complete
+
+**Files to Create/Update**:
+- `packages/components/file-explorer/src/FileExplorer.builder.ts`
+- `packages/components/file-explorer/src/FileExplorer.tsx`
+- `packages/components/file-explorer/src/__tests__/FileExplorer.test.tsx`
+- `packages/components/file-explorer/README.md`
+
+---
+
+### Task 6.2: Refactor OutlineView Component
+
+**Priority**: High
+
+**Estimated Time**: 3 days
+
+**Dependencies**: Phase 5 complete
+
+**Description**:
+Refactor the OutlineView component (code structure navigation) to use primitives.
+
+**Implementation Steps**:
+1. Analyze current OutlineView in `packages/components/outlineview/`
+2. Create `OutlineView.builder.ts`:
+- Build tree with Container, List, Icon, Text primitives
+- Support hierarchical structure
+- Support filtering/search
+3. Create `OutlineView.tsx` wrapper
+4. Update tests
+5. Document tree structure
+
+**Acceptance Criteria**:
+- [ ] OutlineView renders correctly
+- [ ] Navigation works
+- [ ] Filtering works
+- [ ] Motif can customize outline items
+- [ ] Tests pass
+- [ ] Documentation complete
+
+**Files to Create/Update**:
+- `packages/components/outlineview/src/OutlineView.builder.ts`
+- `packages/components/outlineview/src/OutlineView.tsx`
+- `packages/components/outlineview/src/__tests__/OutlineView.test.tsx`
+- `packages/components/outlineview/README.md`
+
+---
+
+### Task 6.3: Refactor CommandPalette Component
+
+**Priority**: High
+
+**Estimated Time**: 3 days
+
+**Dependencies**: Phase 5 complete
+
+**Description**:
+Refactor the CommandPalette component (command search and execution) to use primitives.
+
+**Implementation Steps**:
+1. Analyze current CommandPalette in `packages/components/command-palette/`
+2. Create `CommandPalette.builder.ts`:
+- Build tree with Modal, Input, List primitives
+- Support fuzzy search
+- Support command categories
+3. Create `CommandPalette.tsx` wrapper
+4. Update tests
+5. Document tree structure
+
+**Acceptance Criteria**:
+- [ ] CommandPalette renders correctly
+- [ ] Search works
+- [ ] Command execution works
+- [ ] Motif can add custom commands
+- [ ] Tests pass
+- [ ] Documentation complete
+
+**Files to Create/Update**:
+- `packages/components/command-palette/src/CommandPalette.builder.ts`
+- `packages/components/command-palette/src/CommandPalette.tsx`
+- `packages/components/command-palette/src/__tests__/CommandPalette.test.tsx`
+- `packages/components/command-palette/README.md`
+
+---
+
+### Task 6.4: Refactor NotificationCenter Component
+
+**Priority**: Medium
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Phase 5 complete
+
+**Description**:
+Refactor the NotificationCenter component to use primitives.
+
+**Implementation Steps**:
+1. Analyze current NotificationCenter in `packages/components/notification-center/`
+2. Create `NotificationCenter.builder.ts`:
+- Build tree with Container, List, Button, Icon, Text primitives
+- Support different notification types
+- Support actions
+3. Create `NotificationCenter.tsx` wrapper
+4. Update tests
+5. Document tree structure
+
+**Acceptance Criteria**:
+- [ ] NotificationCenter renders correctly
+- [ ] Notifications display correctly
+- [ ] Actions work
+- [ ] Motif can customize notifications
+- [ ] Tests pass
+- [ ] Documentation complete
+
+**Files to Create/Update**:
+- `packages/components/notification-center/src/NotificationCenter.builder.ts`
+- `packages/components/notification-center/src/NotificationCenter.tsx`
+- `packages/components/notification-center/src/__tests__/NotificationCenter.test.tsx`
+- `packages/components/notification-center/README.md`
+
+---
+
+### Task 6.5: Refactor Settings Component
+
+**Priority**: Medium
+
+**Estimated Time**: 3 days
+
+**Dependencies**: Phase 5 complete
+
+**Description**:
+Refactor the Settings component (configuration UI) to use primitives.
+
+**Implementation Steps**:
+1. Analyze current Settings in `packages/components/settings/`
+2. Create `Settings.builder.ts`:
+- Build tree with Modal, Tabs, Container, Input, Select primitives
+- Support multiple settings categories
+- Support validation
+3. Create `Settings.tsx` wrapper
+4. Update tests
+5. Document tree structure
+
+**Acceptance Criteria**:
+- [ ] Settings renders correctly
+- [ ] All settings work
+- [ ] Validation works
+- [ ] Motif can add custom settings
+- [ ] Tests pass
+- [ ] Documentation complete
+
+**Files to Create/Update**:
+- `packages/components/settings/src/Settings.builder.ts`
+- `packages/components/settings/src/Settings.tsx`
+- `packages/components/settings/src/__tests__/Settings.test.tsx`
+- `packages/components/settings/README.md`
+
+---
+
+### Task 6.6: Refactor ModeSwitcher Component
+
+**Priority**: Low
+
+**Estimated Time**: 1 day
+
+**Dependencies**: Phase 5 complete
+
+**Description**:
+Refactor the ModeSwitcher component (view mode toggle) to use primitives.
+
+**Implementation Steps**:
+1. Analyze current ModeSwitcher in `packages/components/mode-switcher/`
+2. Create `ModeSwitcher.builder.ts`:
+- Build tree with Container, Button, Icon primitives
+- Support multiple modes
+3. Create `ModeSwitcher.tsx` wrapper
+4. Update tests
+5. Document tree structure
+
+**Acceptance Criteria**:
+- [ ] ModeSwitcher renders correctly
+- [ ] Mode switching works
+- [ ] Motif can add custom modes
+- [ ] Tests pass
+- [ ] Documentation complete
+
+**Files to Create/Update**:
+- `packages/components/mode-switcher/src/ModeSwitcher.builder.ts`
+- `packages/components/mode-switcher/src/ModeSwitcher.tsx`
+- `packages/components/mode-switcher/src/__tests__/ModeSwitcher.test.tsx`
+- `packages/components/mode-switcher/README.md`
+
+---
+
+### Task 6.7: Refactor Remaining Components
+
+**Priority**: Medium
+
+**Estimated Time**: 3 days
+
+**Dependencies**: Phase 5 complete
+
+**Description**:
+Refactor the remaining smaller components to use primitives.
+
+**Components to Refactor**:
+- QuickActionCard
+- MusicalBackground
+
+**Implementation Steps**:
+For each component:
+1. Analyze current implementation
+2. Create builder function
+3. Create React wrapper
+4. Update tests
+5. Document tree structure
+
+**Acceptance Criteria**:
+- [ ] All components refactored
+- [ ] All components work correctly
+- [ ] Tests pass for all
+- [ ] Documentation complete for all
+
+**Files to Create/Update**:
+- `packages/components/quick-action-card/src/QuickActionCard.builder.ts`
+- `packages/components/quick-action-card/src/QuickActionCard.tsx`
+- `packages/components/musical-background/src/MusicalBackground.builder.ts`
+- `packages/components/musical-background/src/MusicalBackground.tsx`
+- Tests and documentation for each
+
+---
+
+## Phase 7: Developer Tools (Weeks 15-16)
+
+### Task 7.1: Build Component Inspector DevTools Extension
+
+**Priority**: High
+
+**Estimated Time**: 5 days
+
+**Dependencies**: Phase 6 complete
+
+**Description**:
+Build a Chrome DevTools extension that allows developers to inspect and modify component trees in real-time.
+
+**Implementation Steps**:
+1. Create `tools/component-inspector/` directory
+2. Set up Chrome extension structure:
+- manifest.json
+- Background script
+- DevTools panel
+- Content script
+3. Implement inspector panel:
+- Tree view of all components
+- Property inspector
+- Live editing of props
+- Path navigator
+- Search functionality
+4. Implement live preview:
+- Highlight component on hover
+- Show component bounds
+- Show component path
+5. Implement modification tools:
+- Edit props inline
+- Add/remove children
+- Test modifications
+6. Add debugging features:
+- Performance metrics
+- Render count
+- Event log
+7. Create user guide
+8. Publish to Chrome Web Store
+
+**Acceptance Criteria**:
+- [ ] Extension installs correctly
+- [ ] Tree view shows all components
+- [ ] Property editing works
+- [ ] Live preview works
+- [ ] Modifications apply correctly
+- [ ] Performance metrics accurate
+- [ ] User guide is clear
+- [ ] Published to Chrome Web Store
+
+**Files to Create**:
+- `tools/component-inspector/manifest.json`
+- `tools/component-inspector/src/panel.tsx`
+- `tools/component-inspector/src/content-script.ts`
+- `tools/component-inspector/src/background.ts`
+- `tools/component-inspector/src/components/TreeView.tsx`
+- `tools/component-inspector/src/components/PropertyEditor.tsx`
+- `tools/component-inspector/README.md`
+
+---
+
+### Task 7.2: Build Motif Playground
+
+**Priority**: High
+
+**Estimated Time**: 5 days
+
+**Dependencies**: Phase 6 complete
+
+**Description**:
+Build a web-based IDE for developing and testing Motif extensions without needing a full Symphony installation.
+
+**Implementation Steps**:
+1. Create `tools/motif-playground/` directory
+2. Set up web application:
+- React + TypeScript
+- Monaco Editor for code editing
+- Split pane layout
+3. Implement code editor:
+- Syntax highlighting for Python/TypeScript
+- Auto-completion
+- Error checking
+4. Implement preview pane:
+- Embedded Symphony instance
+- Live reload on code change
+- Component tree visualization
+5. Implement examples:
+- Gallery of example Motifs
+- Load and edit examples
+- Save custom Motifs
+6. Implement sharing:
+- Share Motifs via URL
+- Export Motifs
+- Import Motifs
+7. Add documentation:
+- Inline help
+- API reference
+- Tutorials
+8. Deploy to web
+
+**Acceptance Criteria**:
+- [ ] Playground loads and works
+- [ ] Code editing works smoothly
+- [ ] Preview updates in real-time
+- [ ] Examples work correctly
+- [ ] Sharing works
+- [ ] Documentation is helpful
+- [ ] Deployed and accessible
+
+**Files to Create**:
+- `tools/motif-playground/src/App.tsx`
+- `tools/motif-playground/src/components/CodeEditor.tsx`
+- `tools/motif-playground/src/components/Preview.tsx`
+- `tools/motif-playground/src/components/Examples.tsx`
+- `tools/motif-playground/src/examples/`
+- `tools/motif-playground/README.md`
+
+---
+
+### Task 7.3: Build Motif CLI Tools
+
+**Priority**: Medium
+
+**Estimated Time**: 3 days
+
+**Dependencies**: Phase 6 complete
+
+**Description**:
+Build command-line tools for creating, testing, and publishing Motif extensions.
+
+**Implementation Steps**:
+1. Create `tools/motif-cli/` directory
+2. Implement `symphony-motif` CLI:
+- `create` - Scaffold new Motif
+- `dev` - Run Motif in development mode
+- `test` - Run Motif tests
+- `build` - Build Motif for production
+- `publish` - Publish to marketplace
+3. Implement templates:
+- Python Motif template
+- TypeScript Motif template
+- Minimal template
+- Full-featured template
+4. Implement dev server:
+- Hot reload
+- Error reporting
+- Logging
+5. Implement testing framework:
+- Unit test runner
+- Integration test runner
+- Mock Symphony environment
+6. Implement publishing:
+- Validate Motif
+- Package Motif
+- Upload to marketplace
+7. Write comprehensive documentation
+8. Publish to npm
+
+**Acceptance Criteria**:
+- [ ] CLI installs correctly
+- [ ] All commands work
+- [ ] Templates are useful
+- [ ] Dev server works well
+- [ ] Testing framework works
+- [ ] Publishing works
+- [ ] Documentation is complete
+- [ ] Published to npm
+
+**Files to Create**:
+- `tools/motif-cli/src/index.ts`
+- `tools/motif-cli/src/commands/create.ts`
+- `tools/motif-cli/src/commands/dev.ts`
+- `tools/motif-cli/src/commands/test.ts`
+- `tools/motif-cli/src/commands/build.ts`
+- `tools/motif-cli/src/commands/publish.ts`
+- `tools/motif-cli/templates/python/`
+- `tools/motif-cli/templates/typescript/`
+- `tools/motif-cli/README.md`
+
+---
+
+### Task 7.4: Create Visual Component Catalog
+
+**Priority**: Medium
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Phase 6 complete
+
+**Description**:
+Create a visual catalog of all Symphony components showing their structure and extension points.
+
+**Implementation Steps**:
+1. Create `docs/component-catalog/` directory
+2. For each component:
+- Create visual diagram of tree structure
+- Document all props
+- Document extension points
+- Show example modifications
+3. Create interactive catalog:
+- Web-based viewer
+- Search functionality
+- Filter by category
+- Live examples
+4. Generate from code:
+- Auto-generate from builder functions
+- Keep in sync with code
+5. Deploy catalog website
+
+**Acceptance Criteria**:
+- [ ] All components documented
+- [ ] Diagrams are clear
+- [ ] Extension points documented
+- [ ] Examples work
+- [ ] Catalog is searchable
+- [ ] Website deployed
+
+**Files to Create**:
+- `docs/component-catalog/index.html`
+- `docs/component-catalog/components/ActivityBar.md`
+- `docs/component-catalog/components/StatusBar.md`
+- (etc. for all components)
+- `tools/catalog-generator/` (auto-generation tool)
+
+---
+
+### Task 7.5: Create Performance Dashboard
+
+**Priority**: Low
+
+**Estimated Time**: 2 days
+
+**Dependencies**: Phase 6 complete
+
+**Description**:
+Create a dashboard for monitoring and visualizing component performance metrics.
+
+**Implementation Steps**:
+1. Create `tools/performance-dashboard/` directory
+2. Implement dashboard:
+- Real-time performance metrics
+- Historical data
+- Component comparison
+- Performance budgets
+3. Implement visualizations:
+- Render time charts
+- Memory usage graphs
+- Bundle size tracking
+4. Implement alerts:
+- Budget exceeded warnings
+- Performance regression detection
+5. Integrate with CI/CD:
+- Automatic performance testing
+- Report generation
+6. Deploy dashboard
+
+**Acceptance Criteria**:
+- [ ] Dashboard shows metrics
+- [ ] Visualizations are clear
+- [ ] Alerts work
+- [ ] CI integration works
+- [ ] Dashboard deployed
+
+**Files to Create**:
+- `tools/performance-dashboard/src/Dashboard.tsx`
+- `tools/performance-dashboard/src/components/Charts.tsx`
+- `tools/performance-dashboard/src/components/Alerts.tsx`
+- `tools/performance-dashboard/README.md`

@@ -6,6 +6,7 @@ export { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 export { AspectRatio } from './aspect-ratio';
 export { Avatar, AvatarFallback, AvatarImage } from './avatar';
 export { Badge, badgeVariants } from './badge';
+export { Box, boxVariants } from './box';
 export { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './breadcrumb';
 export { Button, buttonVariants } from './button';
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card';
@@ -16,6 +17,10 @@ export { ContextMenu, ContextMenuCheckboxItem, ContextMenuContent, ContextMenuGr
 export { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './dialog';
 export { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from './drawer';
 export { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from './dropdown-menu';
+export { Code, codeVariants } from './code';
+export { Flex, flexVariants } from './flex';
+export { Grid, gridVariants } from './grid';
+export { Heading, headingVariants } from './heading';
 export { HoverCard, HoverCardContent, HoverCardTrigger } from './hover-card';
 export { Input } from './input';
 export { Label } from './label';
@@ -33,6 +38,7 @@ export { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSepa
 export { Separator } from './separator';
 export { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
 export { Skeleton } from './skeleton';
+export { Spinner, spinnerVariants } from './spinner';
 export { Slider } from './slider';
 export { Switch } from './switch';
 export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from './table';
@@ -43,4 +49,8 @@ export { Toaster } from './toaster';
 export { Toggle, toggleVariants } from './toggle';
 export { ToggleGroup, ToggleGroupItem } from './toggle-group';
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
-export { useToast } from './use-toast'; 
+export { Text, textVariants } from './text';
+export { useToast } from './use-toast';
+
+// Progressive Feedback System
+export * from '../feedback';

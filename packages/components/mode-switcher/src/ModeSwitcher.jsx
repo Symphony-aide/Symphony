@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ToggleGroup, ToggleGroupItem } from 'ui';
+import { ToggleGroup, ToggleGroupItem, Flex } from 'ui';
 
 export default function ModeSwitcher({ 
   mode = 'normal',
@@ -16,7 +16,7 @@ export default function ModeSwitcher({
   };
 
   return (
-    <div className={`flex items-center ${className}`}>
+    <Flex align="center" className={className}>
       <ToggleGroup 
         type="single" 
         value={currentMode} 
@@ -39,6 +39,6 @@ export default function ModeSwitcher({
           🎩 Maestro
         </ToggleGroupItem>
       </ToggleGroup>
-    </div>
+    </Flex>
   );
 }

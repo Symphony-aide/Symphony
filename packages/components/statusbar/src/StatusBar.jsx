@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Terminal, GitBranch, Clock, Users, Zap } from "lucide-react";
-import { Button } from "ui";
+import { Button, Flex, Text, Badge, Separator } from "ui";
 
 export default function StatusBar({ 
   activeFileName, 
@@ -46,36 +46,41 @@ export default function StatusBar({
 	};
 
   return (
-    <div className='bg-symphony-primary text-white px-4 py-1 flex items-center justify-between text-sm border-t border-symphony-primary/20'>
+    <Flex 
+      as="footer"
+      align="center" 
+      justify="between" 
+      className='bg-symphony-primary text-white px-4 py-1 text-sm border-t border-symphony-primary/20'
+    >
       {/* Left side */}
-      <div className='flex items-center space-x-4'>
-        <span className='flex items-center space-x-1'>
+      <Flex align="center" gap={4}>
+        <Flex align="center" gap={1}>
           <GitBranch className='w-3 h-3' />
-          <span>{gitBranch}</span>
-        </span>
+          <Text>{gitBranch}</Text>
+        </Flex>
 
         {activeFileName && (
-          <span className='text-symphony-light/80'>
+          <Text className='text-symphony-light/80'>
             {activeFileName} • {lineCount} lines
-          </span>
+          </Text>
         )}
 
-        <span className='flex items-center space-x-1 text-symphony-light/80'>
-          <span>Ln {cursorPosition.line}, Col {cursorPosition.column}</span>
-        </span>
+        <Flex align="center" gap={1} className='text-symphony-light/80'>
+          <Text>Ln {cursorPosition.line}, Col {cursorPosition.column}</Text>
+        </Flex>
 
-        <span className='text-symphony-light/80'>{language}</span>
+        <Text className='text-symphony-light/80'>{language}</Text>
 
         {lastSaved && (
-          <span className='flex items-center space-x-1 text-symphony-light/80'>
+          <Flex align="center" gap={1} className='text-symphony-light/80'>
             <Clock className='w-3 h-3' />
-            <span>{formatLastSaved(lastSaved)}</span>
-          </span>
+            <Text>{formatLastSaved(lastSaved)}</Text>
+          </Flex>
         )}
-      </div>
+      </Flex>
 
       {/* Right side */}
-      <div className='flex items-center space-x-4'>
+      <Flex align="center" gap={4}>
         <Button 
           onClick={onToggleTerminal} 
           variant="ghost"
@@ -83,25 +88,25 @@ export default function StatusBar({
           className='flex items-center space-x-1 hover:text-white text-symphony-light/80 hover:bg-symphony-primary/20'
         >
           <Terminal className='w-3 h-3' />
-          <span>{terminalVisible ? "Hide Terminal" : "Show Terminal"}</span>
+          <Text>{terminalVisible ? "Hide Terminal" : "Show Terminal"}</Text>
         </Button>
 
         {collaborators.length > 0 && (
-          <span className='flex items-center space-x-1 text-symphony-light/80'>
+          <Flex align="center" gap={1} className='text-symphony-light/80'>
             <Users className='w-3 h-3' />
-            <span>{collaborators.length}</span>
-          </span>
+            <Text>{collaborators.length}</Text>
+          </Flex>
         )}
 
-        <span className={`flex items-center space-x-1 ${isOnline ? "text-symphony-emerald" : "text-symphony-rose"}`}>
+        <Flex align="center" gap={1} className={isOnline ? "text-symphony-emerald" : "text-symphony-rose"}>
           <Zap className='w-3 h-3' />
-          <span>{isOnline ? "Online" : "Offline"}</span>
-        </span>
+          <Text>{isOnline ? "Online" : "Offline"}</Text>
+        </Flex>
 
-        <span className='text-symphony-light/60 text-xs'>
+        <Text className='text-symphony-light/60 text-xs'>
           {time}
-        </span>
-      </div>
-    </div>
+        </Text>
+      </Flex>
+    </Flex>
   );
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Flex, Box } from 'ui';
 
 export default function AnimatedLogo({ 
   logoSrc = '../../assets/logo.png',
@@ -7,8 +8,8 @@ export default function AnimatedLogo({
   className = ''
 }) {
   return (
-    <div className={`flex justify-center mb-8 ${className}`}>
-      <div className="relative animate-float">
+    <Flex justify="center" className={`mb-8 ${className}`}>
+      <Box className="relative animate-float">
         <img 
           src={logoSrc} 
           alt={alt}
@@ -19,8 +20,8 @@ export default function AnimatedLogo({
           }}
         />
         {/* Glow effect */}
-        <div className="absolute inset-0 bg-symphony-primary/20 blur-3xl rounded-full animate-pulse-slow" />
-      </div>
-    </div>
+        <Box className="absolute inset-0 bg-symphony-primary/20 blur-3xl rounded-full animate-pulse-slow" />
+      </Box>
+    </Flex>
   );
 }

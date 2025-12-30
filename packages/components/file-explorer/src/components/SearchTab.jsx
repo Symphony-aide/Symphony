@@ -1,7 +1,6 @@
 // SearchTab.jsx
 import React from "react";
-import { Input } from "ui";
-import { Button } from "ui";
+import { Input, Button, Flex, Box, Text } from "ui";
 
 const SearchTab = ({
 	searchTerm,
@@ -11,8 +10,8 @@ const SearchTab = ({
 	setActiveTab,
 }) => {
 	return (
-		<div className='space-y-3'>
-			<div className='flex items-center space-x-2'>
+		<Flex direction="column" gap={3}>
+			<Flex align="center" gap={2}>
 				<Input
 					type='text'
 					value={searchTerm}
@@ -31,8 +30,8 @@ const SearchTab = ({
 						✖
 					</Button>
 				)}
-			</div>
-			<div className='flex flex-col space-y-1 mt-2'>
+			</Flex>
+			<Flex direction="column" gap={1} className='mt-2'>
 				{visibleFilesFlat.length ? (
 					visibleFilesFlat.map((file, index) => (
 						<Button
@@ -44,19 +43,19 @@ const SearchTab = ({
 							variant="ghost"
 							className='justify-start p-2 h-auto text-left hover:bg-gray-700'
 						>
-							<div>
-								<div className='font-medium text-sm'>{file.name}</div>
-								<div className='text-xs text-gray-400'>{file.path}</div>
-							</div>
+							<Box>
+								<Text className='font-medium text-sm'>{file.name}</Text>
+								<Text className='text-xs text-gray-400'>{file.path}</Text>
+							</Box>
 						</Button>
 					))
 				) : (
-					<p className='text-sm text-gray-400 p-2'>
+					<Text className='text-sm text-gray-400 p-2'>
 						{searchTerm ? "No files found" : "Enter search term"}
-					</p>
+					</Text>
 				)}
-			</div>
-		</div>
+			</Flex>
+		</Flex>
 	);
 };
 

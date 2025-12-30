@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Layout, Model } from "flexlayout-react";
 import "flexlayout-react/style/light.css";
 import { storageService } from "../utils/storageService.js";
+import { Flex, Box, Text, Button, Heading } from "ui";
 
 const defaultLayoutModel = {
 	global: {},
@@ -75,22 +76,24 @@ export default function LayoutManager({ factory }) {
 
 	return (
 		<>
-			<div className='flex items-center justify-between px-4 py-2 bg-[#2a2a2a] border-b border-gray-600 text-sm z-10 relative'>
-				<h1 className='text-base font-semibold'>Symphony Editor</h1>
-				<div className='flex items-center space-x-2'>
-					<button
-						className='bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs'
+			<Flex align="center" justify="between" className='px-4 py-2 bg-[#2a2a2a] border-b border-gray-600 text-sm z-10 relative'>
+				<Heading as="h6" className='text-base font-semibold'>Symphony Editor</Heading>
+				<Flex align="center" gap={2}>
+					<Button
+						variant="destructive"
+						size="sm"
+						className='px-3 py-1 text-xs'
 						onClick={resetLayout}
 					>
 						Reset Layout
-					</button>
-				</div>
-			</div>
-			<div className='flex-1 overflow-hidden relative'>
-				<div className='absolute inset-0'>
+					</Button>
+				</Flex>
+			</Flex>
+			<Box className='flex-1 overflow-hidden relative'>
+				<Box className='absolute inset-0'>
 					<Layout ref={layoutRef} model={model} factory={factory} />
-				</div>
-			</div>
+				</Box>
+			</Box>
 		</>
 	);
 }

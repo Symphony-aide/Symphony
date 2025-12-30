@@ -1,6 +1,6 @@
 //TerminalSettings.jsx
 import React from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Input, Label } from "ui";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Input, Label, Flex, Box } from "ui";
 
 export default function TerminalSettings({ terminalSettings, setTerminalSettings }) {
 	const handleChange = (key, value) => {
@@ -11,9 +11,9 @@ export default function TerminalSettings({ terminalSettings, setTerminalSettings
 	};
 
 	return (
-		<div className='space-y-4'>
+		<Flex direction="column" gap={4}>
 			{/* Font Family */}
-			<div>
+			<Box>
 				<Label className='block text-sm mb-1'>Font Family</Label>
 				<Select value={terminalSettings.fontFamily} onValueChange={(value) => handleChange("fontFamily", value)}>
 					<SelectTrigger className='bg-slate-800 border-slate-600'>
@@ -27,10 +27,10 @@ export default function TerminalSettings({ terminalSettings, setTerminalSettings
 						<SelectItem value='Courier New'>Courier New</SelectItem>
 					</SelectContent>
 				</Select>
-			</div>
+			</Box>
 
 			{/* Font Size */}
-			<div>
+			<Box>
 				<Label className='block text-sm mb-1'>Font Size (px)</Label>
 				<Input
 					type='number'
@@ -40,10 +40,10 @@ export default function TerminalSettings({ terminalSettings, setTerminalSettings
 					onChange={e => handleChange("fontSize", Number(e.target.value))}
 					className='bg-slate-800 border-slate-600 text-black w-20'
 				/>
-			</div>
+			</Box>
 
 			{/* Font Weight */}
-			<div>
+			<Box>
 				<Label className='block text-sm mb-1'>Font Weight</Label>
 				<Select value={terminalSettings.fontWeight} onValueChange={(value) => handleChange("fontWeight", value)}>
 					<SelectTrigger className='bg-slate-800 border-slate-600'>
@@ -55,10 +55,10 @@ export default function TerminalSettings({ terminalSettings, setTerminalSettings
 						<SelectItem value='lighter'>Lighter</SelectItem>
 					</SelectContent>
 				</Select>
-			</div>
+			</Box>
 
 			{/* Line Height */}
-			<div>
+			<Box>
 				<Label className='block text-sm mb-1'>Line Height</Label>
 				<Input
 					type='number'
@@ -69,10 +69,10 @@ export default function TerminalSettings({ terminalSettings, setTerminalSettings
 					onChange={e => handleChange("lineHeight", Number(e.target.value))}
 					className='bg-slate-800 border-slate-600 text-black w-20'
 				/>
-			</div>
+			</Box>
 
 			{/* Cursor Style */}
-			<div>
+			<Box>
 				<Label className='block text-sm mb-1'>Cursor Style</Label>
 				<Select value={terminalSettings.cursorStyle} onValueChange={(value) => handleChange("cursorStyle", value)}>
 					<SelectTrigger className='bg-slate-800 border-slate-600'>
@@ -84,7 +84,7 @@ export default function TerminalSettings({ terminalSettings, setTerminalSettings
 						<SelectItem value='bar'>Bar</SelectItem>
 					</SelectContent>
 				</Select>
-			</div>
-		</div>
+			</Box>
+		</Flex>
 	);
 }

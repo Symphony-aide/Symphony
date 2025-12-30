@@ -2,6 +2,7 @@
 import React from "react";
 import { ChevronRight, ChevronDown, Folder as FolderIcon, FolderOpen, File as FileIcon } from "lucide-react";
 import { getIconForFile } from "vscode-icons-js";
+import { Flex, Box, Text, Button, Input } from "ui";
 
 const FileTreeNode = ({
 	node,
@@ -35,7 +36,7 @@ const FileTreeNode = ({
 
 		if (iconPath) {
 			return (
-				<img
+				<Box as="img"
 					src={`https://raw.githubusercontent.com/vscode-icons/vscode-icons/master/icons/${iconPath}`}
 					alt={name}
 					className='w-4 h-4 inline-block'
@@ -53,9 +54,11 @@ const FileTreeNode = ({
 		const isRenaming = renamingPath === node.path;
 
 		return (
-			<div
+			<Flex
 				key={node.path}
-				className={`flex items-center justify-between px-2 py-1 rounded cursor-pointer ${isActive ? "bg-gray-700" : "hover:bg-gray-700"}`}
+				align="center"
+				justify="between"
+				className={`px-2 py-1 rounded cursor-pointer ${isActive ? "bg-gray-700" : "hover:bg-gray-700"}`}
 				style={{ paddingLeft: 8 + depth * 14 }}
 				title={`${sizeKB} KB • ${stat}`}
 				onClick={() => onSelectFile(node.path)}
@@ -63,11 +66,11 @@ const FileTreeNode = ({
 				draggable
 				onDragStart={e => onFileDragStart(e, node.path)}
 			>
-				<div className='flex items-center gap-2 overflow-hidden'>
-					<span>{fileIcon(node.name)}</span>
+				<Flex align="center" gap={2} className='overflow-hidden'>
+					<Box as="span">{fileIcon(node.name)}</Box>
 
 					{isRenaming ? (
-						<input
+						<Input
 							autoFocus
 							value={renameValue}
 							onChange={e => onRenameValueChange(e.target.value)}
@@ -76,38 +79,44 @@ const FileTreeNode = ({
 							className='bg-gray-800 text-white px-1 rounded text-sm w-[120px]'
 						/>
 					) : (
-						<span className='truncate'>{node.name}</span>
+						<Text className='truncate'>{node.name}</Text>
 					)}
 
 					{statusBadge(stat)}
-				</div>
+				</Flex>
 
-				<div className='flex items-center gap-1 text-xs'>
-					<span className='text-[10px] text-gray-400 mr-1'>{sizeKB}KB</span>
+				<Flex align="center" gap={1} className='text-xs'>
+					<Text className='text-[10px] text-gray-400 mr-1'>{sizeKB}KB</Text>
 					{stat !== "staged" && (
-						<button
+						<Button
+							variant="ghost"
+							size="sm"
 							onClick={e => {
 								e.stopPropagation();
 								onGitStage && onGitStage(node.path);
 							}}
 							title='Stage'
+							className="p-0 h-auto min-w-0"
 						>
 							S
-						</button>
+						</Button>
 					)}
 					{stat === "staged" && (
-						<button
+						<Button
+							variant="ghost"
+							size="sm"
 							onClick={e => {
 								e.stopPropagation();
 								onGitCommit && onGitCommit(node.path);
 							}}
 							title='Commit'
+							className="p-0 h-auto min-w-0"
 						>
 							✓
-						</button>
+						</Button>
 					)}
-				</div>
-			</div>
+				</Flex>
+			</Flex>
 		);
 	}
 
@@ -116,10 +125,11 @@ const FileTreeNode = ({
 	const childrenArr = sortChildren(node.children);
 	
 	return (
-		<div key={node.path || "__root__"}>
+		<Box key={node.path || "__root__"}>
 			{node.path !== "" && (
-				<div
-					className='flex items-center px-2 py-1 rounded cursor-pointer hover:bg-gray-700 select-none'
+				<Flex
+					align="center"
+					className='px-2 py-1 rounded cursor-pointer hover:bg-gray-700 select-none'
 					style={{ paddingLeft: 4 + depth * 14 }}
 					onClick={() => onToggleExpand(node.path)}
 					onContextMenu={e => onContextMenu(e, { type: "folder", folderPath: node.path })}
@@ -139,7 +149,7 @@ const FileTreeNode = ({
 						<FolderIcon className='w-3.5 h-3.5 mr-1' />
 					)}
 					{renamingPath === node.path ? (
-						<input
+						<Input
 							autoFocus
 							value={renameValue}
 							onChange={e => onRenameValueChange(e.target.value)}
@@ -148,12 +158,12 @@ const FileTreeNode = ({
 							className='bg-gray-800 text-white px-1 rounded text-sm w-[120px]'
 						/>
 					) : (
-						<span className='truncate'>{node.name || "root"}</span>
+						<Text className='truncate'>{node.name || "root"}</Text>
 					)}
-				</div>
+				</Flex>
 			)}
 			{isOpen || node.path === "" ? (
-				<div>
+				<Box>
 					{childrenArr.map(child => 
 						<FileTreeNode
 							key={child.path || child.name}
@@ -182,9 +192,9 @@ const FileTreeNode = ({
 							sortChildren={sortChildren}
 						/>
 					)}
-				</div>
+				</Box>
 			) : null}
-		</div>
+		</Box>
 	);
 };
 

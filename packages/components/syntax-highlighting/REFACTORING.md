@@ -507,6 +507,50 @@ import { SyntaxHighlighter } from '@symphony/syntax-highlighting';
 import { SyntaxHighlighterRefactored as SyntaxHighlighter } from '@symphony/syntax-highlighting';
 ```
 
+## UI Component Migration (December 2024)
+
+The `SyntaxHighlighter.jsx` component has been updated to use `@symphony/ui` components instead of raw HTML elements, following Symphony's component migration initiative.
+
+### Changes Made
+
+| Before | After | Purpose |
+|--------|-------|---------|
+| `<div>` (outer container) | `<Box>` | Consistent layout primitive |
+| `<div>` (line container) | `<Flex align="start">` | Flexbox layout for lines |
+| `<span>` (line numbers) | `<Text as="span">` | Typography component |
+| `<span>` (tokens) | `<Text as="span">` | Typography component |
+
+### Benefits
+
+- **Consistency**: Uses Symphony's design system primitives
+- **Accessibility**: UI components include proper ARIA attributes
+- **Maintainability**: Centralized styling through UI package
+- **Type Safety**: Better TypeScript support through UI component props
+
+### Example: Line Rendering
+
+```jsx
+// Before
+<div className="flex items-start min-h-[1.4em] relative hover:bg-white/5">
+  <span className="inline-block min-w-[2.5rem] pr-4 text-right select-none">
+    {lineNumber}
+  </span>
+  <span className="flex-1 whitespace-pre break-words">
+    {tokenContent}
+  </span>
+</div>
+
+// After
+<Flex align="start" className="min-h-[1.4em] relative hover:bg-white/5">
+  <Text as="span" className="inline-block min-w-[2.5rem] pr-4 text-right select-none">
+    {lineNumber}
+  </Text>
+  <Text as="span" className="flex-1 whitespace-pre break-words">
+    {tokenContent}
+  </Text>
+</Flex>
+```
+
 ## Future Enhancements
 
 ### Potential Features
@@ -537,9 +581,10 @@ The SyntaxHighlighting refactoring successfully demonstrates the [Page, Feature,
 - ✅ **Backward Compatible**: Original component preserved
 - ✅ **Highly Reusable**: Features can be used independently
 - ✅ **Well Tested**: Independent testing of features and UI
+- ✅ **UI Component Migration**: Uses @symphony/ui primitives (Box, Flex, Text)
 
 ---
 
-**Last Updated**: January 13, 2025  
+**Last Updated**: December 24, 2024  
 **Author**: Symphony Development Team  
 **Status**: Complete

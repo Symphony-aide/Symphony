@@ -580,6 +580,57 @@ import { StatusInfoFeature, TimeTrackingFeature, GitStatusFeature } from '@symph
 </StatusInfoFeature>
 ```
 
+## UI Component Migration (December 2025)
+
+As part of the component-packages-migration initiative, the StatusBar has been updated to use UI components from `@symphony/ui` instead of raw HTML elements.
+
+### Changes Made
+
+| Before | After |
+|--------|-------|
+| `<div>` (outer container) | `<Flex as="footer">` |
+| `<div>` (section containers) | `<Flex>` with `align` and `gap` props |
+| `<span>` (text content) | `<Text>` |
+| Raw HTML structure | Semantic UI components |
+
+### Benefits
+
+1. **Consistency**: Uses the same UI primitives as other Symphony components
+2. **Accessibility**: UI components include proper ARIA attributes
+3. **Maintainability**: Centralized styling through the UI package
+4. **Semantic HTML**: `<Flex as="footer">` renders as `<footer>` element
+5. **Type Safety**: UI components provide TypeScript support
+
+### Example Migration
+
+```jsx
+// Before
+<div className='flex items-center space-x-4'>
+  <span className='flex items-center space-x-1'>
+    <GitBranch className='w-3 h-3' />
+    <span>{gitBranch}</span>
+  </span>
+</div>
+
+// After
+<Flex align="center" gap={4}>
+  <Flex align="center" gap={1}>
+    <GitBranch className='w-3 h-3' />
+    <Text>{gitBranch}</Text>
+  </Flex>
+</Flex>
+```
+
+### UI Components Used
+
+- **Flex**: Layout container with flexbox properties (`align`, `justify`, `gap`)
+- **Text**: Typography component for consistent text rendering
+- **Button**: Interactive button component (already in use)
+- **Badge**: Status indicators (planned)
+- **Separator**: Visual dividers between sections (planned)
+
+---
+
 ## Backward Compatibility
 
 The original `StatusBar.jsx` is preserved for backward compatibility. To use the refactored version:
@@ -604,9 +655,10 @@ The StatusBar refactoring successfully demonstrates the [Page, Feature, Componen
 - ✅ **Reusability**: Features can be used in other components
 - ✅ **Testability**: Clear separation enables comprehensive testing
 - ✅ **Maintainability**: Changes are isolated and easy to implement
+- ✅ **UI Components**: Uses `@symphony/ui` primitives (Flex, Text, Button) for consistency
 
 ---
 
-**Last Updated**: January 13, 2025  
+**Last Updated**: December 23, 2025  
 **Author**: Symphony Development Team  
-**Status**: Complete
+**Status**: Complete (UI component migration in progress)

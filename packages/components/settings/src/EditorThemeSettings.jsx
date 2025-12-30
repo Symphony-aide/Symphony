@@ -1,6 +1,6 @@
 //EditorThemeSettings.jsx
 import React from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Input, Label } from "ui";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Input, Label, Flex, Box } from "ui";
 
 export default function EditorThemeSettings({ themeSettings, setThemeSettings }) {
 	const handleChangeTheme = e => {
@@ -16,9 +16,9 @@ export default function EditorThemeSettings({ themeSettings, setThemeSettings })
 	};
 
 	return (
-		<div className='space-y-3'>
+		<Flex direction="column" gap={3}>
 			{/* Editor Theme */}
-			<div>
+			<Box>
 				<Label className='block text-sm mb-1'>Editor Theme</Label>
 				<Select value={themeSettings.theme} onValueChange={(value) => setThemeSettings(prev => ({ ...prev, theme: value }))}>
 					<SelectTrigger className='bg-slate-800 border-slate-600'>
@@ -30,10 +30,10 @@ export default function EditorThemeSettings({ themeSettings, setThemeSettings })
 						<SelectItem value='hc-black'>High Contrast</SelectItem>
 					</SelectContent>
 				</Select>
-			</div>
+			</Box>
 
 			{/* Font Size */}
-			<div>
+			<Box>
 				<Label className='block text-sm mb-1'>Font Size</Label>
 				<Input
 					type='number'
@@ -43,10 +43,10 @@ export default function EditorThemeSettings({ themeSettings, setThemeSettings })
 					onChange={handleChangeFontSize}
 					className='bg-slate-800 border-slate-600 text-black w-20'
 				/>
-			</div>
+			</Box>
 
 			{/* Font Type */}
-			<div>
+			<Box>
 				<Label className='block text-sm mb-1'>Font Type</Label>
 				<Select value={themeSettings.fontFamily} onValueChange={(value) => setThemeSettings(prev => ({ ...prev, fontFamily: value }))}>
 					<SelectTrigger className='bg-slate-800 border-slate-600'>
@@ -64,7 +64,7 @@ export default function EditorThemeSettings({ themeSettings, setThemeSettings })
 						<SelectItem value='monospace'>System Default</SelectItem>
 					</SelectContent>
 				</Select>
-			</div>
-		</div>
+			</Box>
+		</Flex>
 	);
 }

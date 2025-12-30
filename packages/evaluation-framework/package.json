@@ -1,0 +1,43 @@
+{
+  "name": "@symphony/evaluation-framework",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./types/index.ts",
+  "bin": {
+    "evaluation-framework": "./src/cli/bin.ts"
+  },
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts",
+      "types": "./types/index.ts"
+    },
+    "./cli": {
+      "import": "./src/cli/index.ts",
+      "types": "./src/cli/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src --ext .ts,.tsx",
+    "type-check": "tsc --noEmit",
+    "build": "tsc",
+    "evaluate": "npx tsx src/cli/bin.ts",
+    "evaluate:all": "npx tsx src/cli/bin.ts evaluate-all",
+    "summary": "npx tsx src/cli/bin.ts summary"
+  },
+  "dependencies": {
+    "@symphony/tsconfig": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "fast-check": "^3.23.2",
+    "typescript": "^5.8.3",
+    "vitest": "latest"
+  }
+}

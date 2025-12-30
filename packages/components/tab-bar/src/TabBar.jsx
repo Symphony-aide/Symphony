@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MoreHorizontal } from 'lucide-react';
 import Tab from './components/Tab.jsx';
-import { Button } from 'ui';
+import { Button, Flex, Box } from 'ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,9 +35,9 @@ export default function TabBar({
   };
 
   return (
-    <div className={`bg-bg-secondary/30 border-b border-border-subtle flex items-center justify-between h-10 ${className}`}>
+    <Flex align="center" justify="between" className={`bg-bg-secondary/30 border-b border-border-subtle h-10 ${className}`}>
       {/* Tab List */}
-      <div className="flex items-center h-full overflow-x-auto scrollbar-thin">
+      <Flex align="center" className="h-full overflow-x-auto scrollbar-thin">
         {tabs.map((tab) => (
           <Tab
             key={tab.id}
@@ -50,7 +50,7 @@ export default function TabBar({
             onClose={handleTabClose}
           />
         ))}
-      </div>
+      </Flex>
 
       {/* More Options */}
       {tabs.length > 0 && (
@@ -74,6 +74,6 @@ export default function TabBar({
           </DropdownMenuContent>
         </DropdownMenu>
       )}
-    </div>
+    </Flex>
   );
 }

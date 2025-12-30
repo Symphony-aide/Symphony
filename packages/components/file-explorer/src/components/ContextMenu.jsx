@@ -1,5 +1,6 @@
 // ContextMenu.jsx
 import React from "react";
+import { Box, Flex, Button, Separator } from "ui";
 
 const ContextMenu = ({
 	contextMenu,
@@ -19,85 +20,93 @@ const ContextMenu = ({
 	if (!contextMenu) return null;
 
 	return (
-		<div
+		<Box
 			onMouseLeave={onClose}
 			style={{ left: contextMenu.x, top: contextMenu.y }}
 			className='absolute z-50 bg-gray-900 border border-gray-700 rounded shadow p-2'
 		>
-			<div className='flex flex-col space-y-1 text-sm'>
+			<Flex direction="column" gap={1} className='text-sm'>
 				{contextMenu.type === "file" ? (
 					<>
-						<button
+						<Button
+							variant="ghost"
 							onClick={() => {
 								onSelectFile(contextMenu.fileNode.path);
 								onClose();
 							}}
-							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+							className='justify-start text-left px-2 py-1 hover:bg-gray-800 rounded'
 						>
 							Open
-						</button>
-						<button
+						</Button>
+						<Button
+							variant="ghost"
 							onClick={() => {
 								onSetRenamingPath(contextMenu.fileNode.path);
 								onSetRenameValue(contextMenu.fileNode.name);
 								onClose();
 							}}
-							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+							className='justify-start text-left px-2 py-1 hover:bg-gray-800 rounded'
 						>
 							Rename
-						</button>
-						<button
+						</Button>
+						<Button
+							variant="ghost"
 							onClick={() => {
 								onDeleteFile(contextMenu.fileNode.path);
 								onClose();
 							}}
-							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+							className='justify-start text-left px-2 py-1 hover:bg-gray-800 rounded'
 						>
 							Delete
-						</button>
-						<div className='border-t border-gray-700 my-1' />
-						<button
+						</Button>
+						<Separator className='my-1' />
+						<Button
+							variant="ghost"
 							onClick={() => {
 								onDownloadFile(contextMenu.fileNode.path);
 								onClose();
 							}}
-							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+							className='justify-start text-left px-2 py-1 hover:bg-gray-800 rounded'
 						>
 							Download
-						</button>
-						<div className='border-t border-gray-700 my-1' />
-						<button
+						</Button>
+						<Separator className='my-1' />
+						<Button
+							variant="ghost"
 							onClick={() => {
 								if (onGitStage) onGitStage(contextMenu.fileNode.path);
 								onClose();
 							}}
-							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+							className='justify-start text-left px-2 py-1 hover:bg-gray-800 rounded'
 						>
 							Stage (Git)
-						</button>
-						<button
+						</Button>
+						<Button
+							variant="ghost"
 							onClick={() => {
 								if (onGitCommit) onGitCommit(contextMenu.fileNode.path);
 								onClose();
 							}}
-							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+							className='justify-start text-left px-2 py-1 hover:bg-gray-800 rounded'
 						>
 							Commit (Git)
-						</button>
-						<button
+						</Button>
+						<Button
+							variant="ghost"
 							onClick={() => {
 								if (onGitRevert) onGitRevert(contextMenu.fileNode.path);
 								onClose();
 							}}
-							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+							className='justify-start text-left px-2 py-1 hover:bg-gray-800 rounded'
 						>
 							Revert Git
-						</button>
+						</Button>
 					</>
 				) : (
 					// Folder menu
 					<>
-						<button
+						<Button
+							variant="ghost"
 							onClick={() => {
 								if (onNewFileInFolder) {
 									onNewFileInFolder(contextMenu.folderPath);
@@ -112,30 +121,33 @@ const ContextMenu = ({
 								}
 								onClose();
 							}}
-							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+							className='justify-start text-left px-2 py-1 hover:bg-gray-800 rounded'
 						>
 							New File
-						</button>
-						<button
+						</Button>
+						<Button
+							variant="ghost"
 							onClick={() => {
 								onCreateFolder(contextMenu.folderPath);
 								onClose();
 							}}
-							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+							className='justify-start text-left px-2 py-1 hover:bg-gray-800 rounded'
 						>
 							New Folder
-						</button>
-						<button
+						</Button>
+						<Button
+							variant="ghost"
 							onClick={() => {
 								onSetRenamingPath(contextMenu.folderPath);
 								onSetRenameValue(contextMenu.folderPath.split("/").pop());
 								onClose();
 							}}
-							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+							className='justify-start text-left px-2 py-1 hover:bg-gray-800 rounded'
 						>
 							Rename Folder
-						</button>
-						<button
+						</Button>
+						<Button
+							variant="ghost"
 							onClick={() => {
 								// onDeleteFolder will be passed as a prop
 								if (onDeleteFolder) {
@@ -143,14 +155,14 @@ const ContextMenu = ({
 								}
 								onClose();
 							}}
-							className='text-left px-2 py-1 hover:bg-gray-800 rounded'
+							className='justify-start text-left px-2 py-1 hover:bg-gray-800 rounded'
 						>
 							Delete Folder
-						</button>
+						</Button>
 					</>
 				)}
-			</div>
-		</div>
+			</Flex>
+		</Box>
 	);
 };
 

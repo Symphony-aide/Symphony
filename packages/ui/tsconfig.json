@@ -4,6 +4,7 @@
   "exclude": ["dist", "build", "node_modules"],
   "compilerOptions": {
     "moduleResolution": "nodenext",
-    "module": "nodenext"
+    "module": "nodenext",
+    "lib": ["ES2015", "DOM"]
   }
 }

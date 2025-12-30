@@ -349,18 +349,34 @@ export { SettingsPage as default } from './pages/SettingsPage';
 - Feature hooks use useMemo/useCallback
 - Prevent unnecessary re-renders
 
+## UI Component Migration Status
+
+As part of the broader component-packages-migration effort, settings components are being updated to use Symphony UI components from `@symphony/ui` instead of raw HTML elements:
+
+| Component | Status | UI Components Used |
+|-----------|--------|-------------------|
+| `AutoSaveSettings.jsx` | ✅ Migrated | `Flex`, `Heading`, `Text`, `Card`, `Checkbox`, `Input`, `Label` |
+| `SettingsModal.jsx` | ✅ Migrated | Various UI components |
+| `EditorThemeSettings.jsx` | ⏳ Pending | - |
+| `TerminalSettings.jsx` | ⏳ Pending | - |
+| `GlyphMarginSettings.jsx` | ⏳ Pending | - |
+| `TabCompletionSettings.jsx` | ⏳ Pending | - |
+| `ShortcutSettingsModal.jsx` | ⏳ Pending | - |
+
 ## Next Steps
 
 1. ✅ Create documentation
-2. ⏳ Extract SettingsValidation feature
-3. ⏳ Extract SettingsImportExport feature
-4. ⏳ Extract ProjectSettings feature
-5. ⏳ Refactor components layer
-6. ⏳ Create SettingsPage
-7. ⏳ Update workspace configuration
-8. ⏳ Test and verify refactoring
+2. ✅ Migrate AutoSaveSettings to UI components
+3. ⏳ Complete UI component migration for remaining settings components
+4. ⏳ Extract SettingsValidation feature
+5. ⏳ Extract SettingsImportExport feature
+6. ⏳ Extract ProjectSettings feature
+7. ⏳ Refactor components layer
+8. ⏳ Create SettingsPage
+9. ⏳ Update workspace configuration
+10. ⏳ Test and verify refactoring
 
 ---
 
-**Last Updated**: October 13, 2025
+**Last Updated**: December 23, 2025
 **Author**: Symphony Development Team

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Flex, Box, Heading, Text } from 'ui';
 
 export default function Logo({ 
   logoSrc = '../../assets/rounded.png',
@@ -7,10 +8,11 @@ export default function Logo({
   className = ''
 }) {
   return (
-    <div className={`flex items-center space-x-3 ${className}`}>
+    <Flex align="center" gap={3} className={className}>
       {/* Symphony Logo */}
-      <div className="relative">
-        <img 
+      <Box className="relative">
+        <Box 
+          as="img"
           src={logoSrc} 
           alt={title}
           className="h-7 w-7" 
@@ -19,17 +21,17 @@ export default function Logo({
             e.target.style.display = 'none';
           }}
         />
-      </div>
+      </Box>
       
       {/* Title and Subtitle */}
-      <div>
-        <h1 className="text-base font-semibold tracking-tight text-text-primary">
+      <Box>
+        <Heading level={1} className="text-base font-semibold tracking-tight text-text-primary">
           {title}
-        </h1>
-        <p className="text-[10px] text-text-tertiary font-medium tracking-wide">
+        </Heading>
+        <Text className="text-[10px] text-text-tertiary font-medium tracking-wide">
           {subtitle}
-        </p>
-      </div>
-    </div>
+        </Text>
+      </Box>
+    </Flex>
   );
 }

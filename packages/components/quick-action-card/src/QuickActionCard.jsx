@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from 'ui';
+import { Card, Button, Flex, Box, Heading, Text } from 'ui';
 
 export default function QuickActionCard({ 
   icon: Icon,
@@ -39,10 +39,11 @@ export default function QuickActionCard({
   const colors = variantColors[variant] || variantColors.primary;
 
   return (
-    <button
+    <Button
+      variant="ghost"
       onClick={onClick}
       className={`
-        group w-full
+        group w-full h-auto
         bg-bg-primary/70 backdrop-blur-md
         border border-border-default
         rounded-xl p-6
@@ -52,25 +53,25 @@ export default function QuickActionCard({
         ${className}
       `}
     >
-      <div className="flex flex-col items-center space-y-3">
+      <Flex direction="column" align="center" gap={3}>
         {/* Icon Container */}
-        <div className={`
+        <Box className={`
           p-3 rounded-lg transition-all
           ${colors.bg} ${colors.hoverBg}
         `}>
           <Icon className={`w-6 h-6 ${colors.text}`} />
-        </div>
+        </Box>
 
         {/* Text Content */}
-        <div className="text-center">
-          <h3 className="font-semibold text-text-primary mb-1">
+        <Flex direction="column" align="center">
+          <Heading as="h6" className="font-semibold text-text-primary mb-1">
             {title}
-          </h3>
-          <p className="text-sm text-text-tertiary">
+          </Heading>
+          <Text size="sm" className="text-text-tertiary">
             {description}
-          </p>
-        </div>
-      </div>
-    </button>
+          </Text>
+        </Flex>
+      </Flex>
+    </Button>
   );
 }

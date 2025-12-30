@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Settings, BrainCircuit } from 'lucide-react';
-import { Button, Badge } from 'ui';
+import { Button, Badge, Flex, Box } from 'ui';
 import Logo from './components/Logo.jsx';
 import { ModeSwitcher } from '@symphony/mode-switcher';
 import { NotificationCenter } from '@symphony/notification-center';
@@ -27,14 +27,19 @@ export default function Header({
 
   return (
     <>
-      <header className={`
-        flex items-center justify-between px-6 py-3 
-        border-b border-border-subtle 
-        bg-bg-secondary/50 backdrop-blur-sm
-        ${className}
-      `}>
+      <Flex 
+        as="header"
+        align="center" 
+        justify="between" 
+        className={`
+          px-6 py-3 
+          border-b border-border-subtle 
+          bg-bg-secondary/50 backdrop-blur-sm
+          ${className}
+        `}
+      >
         {/* Left Section: Logo + Mode Switcher */}
-        <div className="flex items-center space-x-3">
+        <Flex align="center" gap={3}>
           <Logo 
             logoSrc={logoSrc}
             title={title}
@@ -47,7 +52,7 @@ export default function Header({
             onModeChange={onModeChange}
             className="ml-24"
           />
-        </div>
+        </Flex>
 
         {/* Center: Command Search */}
         <CommandSearch 
@@ -55,7 +60,7 @@ export default function Header({
         />
 
         {/* Right Section: Actions */}
-        <div className="flex items-center space-x-2 relative">
+        <Flex align="center" gap={2} className="relative">
           {/* AI Chat Button */}
           <Button
             variant="ghost"
@@ -67,7 +72,7 @@ export default function Header({
             <BrainCircuit className="w-5 h-5" />
             {/* Online Status */}
             {aiOnline && (
-              <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-bg-secondary" />
+              <Box className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-bg-secondary" />
             )}
           </Button>
 
@@ -89,8 +94,8 @@ export default function Header({
           >
             <Settings className="w-5 h-5" />
           </Button>
-        </div>
-      </header>
+        </Flex>
+      </Flex>
 
       {/* Command Palette */}
       <CommandPalette

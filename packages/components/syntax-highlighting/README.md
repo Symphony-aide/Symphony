@@ -12,6 +12,7 @@ A powerful, extensible syntax highlighting component for Symphony IDE with TextM
 - ♿ **Accessibility** - ARIA labels and keyboard navigation
 - 🎯 **Performance Optimized** - Memoized rendering and lazy loading
 - 🎨 **Tailwind Styled** - Uses Tailwind CSS classes for styling
+- 🧩 **UI Component Integration** - Built with `@symphony/ui` components (Box, Flex, Text)
 
 ## Supported Languages
 
@@ -113,8 +114,30 @@ const detectedLang = detectLanguageFromContent('def hello(): pass'); // 'python'
 
 Following Symphony's refactored component patterns, the syntax highlighter is built with:
 
+### UI Component Integration
+
+The component uses `@symphony/ui` primitives for consistent styling and accessibility:
+
+- **Box** - Container elements for layout structure
+- **Flex** - Flexbox layout for line rendering with `align="start"`
+- **Text** - Typography for line numbers and token content with `as="span"` prop
+
+```jsx
+// Example: Line rendering with UI components
+<Flex align="start" className="min-h-[1.4em] relative hover:bg-white/5">
+  {showLineNumbers && (
+    <Text as="span" className="inline-block min-w-[2.5rem] pr-4 text-right select-none">
+      {lineNumber}
+    </Text>
+  )}
+  <Text as="span" className="flex-1 whitespace-pre break-words">
+    {/* Token content */}
+  </Text>
+</Flex>
+```
+
 ### Main Component
-- `SyntaxHighlighter.jsx` - Main component (~96 lines)
+- `SyntaxHighlighter.jsx` - Main component (~120 lines)
 
 ### Custom Hooks
 - `useLanguageDetection.js` - Language detection logic

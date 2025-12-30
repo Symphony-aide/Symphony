@@ -7,7 +7,7 @@ import ContextMenu from "./components/ContextMenu";
 import ActionButtons from "./components/ActionButtons";
 import { useFolderOperations } from "./hooks/useFolderOperations";
 import { useFileTree } from "./hooks/useFileTree.jsx";
-import { Button } from "ui";
+import { Button, Flex, Heading, Text, ScrollArea } from "ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "ui";
 
 export default function FileExplorer({
@@ -173,10 +173,10 @@ export default function FileExplorer({
 	};
 
 	return (
-		<div className='bg-gray-800 text-white w-64 p-3 border-r border-gray-700 flex flex-col relative'>
+		<Flex direction="column" className='bg-gray-800 text-white w-64 p-3 border-r border-gray-700 relative'>
 			{/* Header */}
-			<div className='flex items-center justify-between mb-4 relative'>
-				<h2 className='text-xs tracking-widest text-gray-300'>EXPLORER</h2>
+			<Flex align="center" justify="between" className='mb-4 relative'>
+				<Heading level={6} className='text-xs tracking-widest text-gray-300'>EXPLORER</Heading>
 				<Button 
 					variant="ghost" 
 					size="sm"
@@ -186,7 +186,7 @@ export default function FileExplorer({
 				>
 					⚙️
 				</Button>
-			</div>
+			</Flex>
 
 			{/* Tabs */}
 			<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-3">
@@ -200,7 +200,7 @@ export default function FileExplorer({
 				</TabsList>
 
 				{/* Content */}
-				<div className='flex-grow overflow-y-auto'>
+				<ScrollArea className='flex-grow overflow-y-auto'>
 					<TabsContent value="files">
 						{/* Filters */}
 						<FilterControls
@@ -217,9 +217,9 @@ export default function FileExplorer({
 						/>
 
 						{/* Tree */}
-						<div className='flex flex-col space-y-1 mb-4'>
+						<Flex direction="column" gap={1} className='mb-4'>
 							{Array.from(filteredTree.children.values()).length === 0 ? (
-								<p className='text-sm text-gray-400 p-2'>No files match current filters</p>
+								<Text className='text-sm text-gray-400 p-2'>No files match current filters</Text>
 							) : (
 								<FileTreeNode
 									node={filteredTree}
@@ -247,7 +247,7 @@ export default function FileExplorer({
 									sortChildren={(childrenMap) => sortChildren(childrenMap, sortBy)}
 								/>
 							)}
-						</div>
+						</Flex>
 
 						{/* Actions */}
 						<ActionButtons
@@ -266,7 +266,7 @@ export default function FileExplorer({
 							setActiveTab={setActiveTab}
 						/>
 					</TabsContent>
-				</div>
+				</ScrollArea>
 			</Tabs>
 
 			{/* Context menu */}
@@ -285,6 +285,6 @@ export default function FileExplorer({
 				onCreateFolder={createFolder}
 				onDeleteFolder={deleteFolder}
 			/>
-		</div>
+		</Flex>
 	);
 }

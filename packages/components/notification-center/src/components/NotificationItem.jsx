@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckCircle2, Puzzle, Bot, AlertCircle, Info } from 'lucide-react';
+import { Box, Flex, Text, Button } from 'ui';
 
 const iconMap = {
   success: CheckCircle2,
@@ -65,7 +66,8 @@ export default function NotificationItem({
   };
 
   return (
-    <button
+    <Button
+      variant="ghost"
       onClick={() => onClick?.(id)}
       className={`
         w-full px-4 py-3 
@@ -74,33 +76,42 @@ export default function NotificationItem({
         cursor-pointer 
         transition-colors
         text-left
+        h-auto
+        rounded-none
         ${!isRead ? 'bg-symphony-primary/5' : ''}
       `}
     >
-      <div className="flex items-start space-x-3">
+      <Flex align="start" gap={3} className="w-full">
         {/* Icon */}
-        <div className={`flex-shrink-0 w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center`}>
+        <Flex 
+          align="center" 
+          justify="center" 
+          className={`flex-shrink-0 w-8 h-8 rounded-lg ${colors.bg}`}
+        >
           <Icon className={`w-4 h-4 ${colors.text}`} />
-        </div>
+        </Flex>
 
         {/* Content */}
-        <div className="flex-1 min-w-0">
-          <p className={`text-sm font-medium ${isRead ? 'text-text-secondary' : 'text-text-primary'}`}>
+        <Box className="flex-1 min-w-0">
+          <Text 
+            size="sm" 
+            className={`font-medium ${isRead ? 'text-text-secondary' : 'text-text-primary'}`}
+          >
             {title}
-          </p>
-          <p className="text-xs text-text-tertiary mt-1 line-clamp-2">
+          </Text>
+          <Text size="xs" className="text-text-tertiary mt-1 line-clamp-2">
             {message}
-          </p>
-          <p className="text-xs text-text-tertiary mt-1">
+          </Text>
+          <Text size="xs" className="text-text-tertiary mt-1">
             {formatTimestamp(timestamp)}
-          </p>
-        </div>
+          </Text>
+        </Box>
 
         {/* Unread indicator */}
         {!isRead && (
-          <div className="flex-shrink-0 w-2 h-2 rounded-full bg-symphony-primary mt-1" />
+          <Box className="flex-shrink-0 w-2 h-2 rounded-full bg-symphony-primary mt-1" />
         )}
-      </div>
-    </button>
+      </Flex>
+    </Button>
   );
 }

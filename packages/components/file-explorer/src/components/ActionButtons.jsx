@@ -1,7 +1,6 @@
 // ActionButtons.jsx
 import React from "react";
-import { Button } from "ui";
-import { Input } from "ui";
+import { Button, Flex, Box, Input, Label, Text } from "ui";
 
 const ActionButtons = ({
 	onNewFile,
@@ -15,8 +14,8 @@ const ActionButtons = ({
 	};
 
 	return (
-		<>
-			<div className='flex items-center gap-2'>
+		<Box>
+			<Flex align="center" gap={2}>
 				<Button
 					onClick={onNewFile}
 					variant="default"
@@ -33,24 +32,24 @@ const ActionButtons = ({
 				>
 					New Folder
 				</Button>
-			</div>
+			</Flex>
 			<Button
 				variant="secondary"
 				size="sm"
 				className='bg-gray-700 hover:bg-gray-600 relative overflow-hidden'
 				asChild
 			>
-				<label className='cursor-pointer'>
-					Upload File
+				<Label className='cursor-pointer'>
+					<Text>Upload File</Text>
 					<Input
 						type='file'
 						onChange={handleUploadInput}
 						accept='.js,.ts,.txt,.json,.jsx,.tsx,.md,.html,.css'
 						className='absolute inset-0 opacity-0 cursor-pointer'
 					/>
-				</label>
+				</Label>
 			</Button>
-		</>
+		</Box>
 	);
 };
 

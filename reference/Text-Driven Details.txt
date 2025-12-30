@@ -1,0 +1,1154 @@
+# Text-Driven Details
+
+> Making Every UI Element Extensible by Motifs
+> 
+> 
+> A comprehensive architecture for building fully inspectable and modifiable UI components
+> 
+
+---
+
+## Table of Contents
+
+1. [Vision & Philosophy](about:blank#vision--philosophy)
+2. [Core Architecture](about:blank#core-architecture)
+3. [Primitive System](about:blank#primitive-system)
+4. [Component Registry](about:blank#component-registry)
+5. [Rendering Strategies](about:blank#rendering-strategies)
+6. [WASM Integration](about:blank#wasm-integration)
+7. [Extension API](about:blank#extension-api)
+8. [Performance Optimization](about:blank#performance-optimization)
+9. [Developer Guide](about:blank#developer-guide)
+
+---
+
+## Vision & Philosophy
+
+### The Problem
+
+Traditional IDEs treat UI components as “black boxes” - extensions can only interact with predefined extension points. This severely limits what’s possible for customization. You can’t inspect a button’s internal structure, modify a tree view’s layout, or add custom elements to the editor gutter without explicit support from the IDE.
+
+### The Symphony Solution
+
+Symphony takes a radically different approach: **every single UI element is a primitive that can be inspected, modified, extended, or replaced by Motif extensions**. There are no black boxes. Everything is transparent.
+
+Imagine being able to:
+- Inspect the exact component tree of any UI element
+- Modify properties of nested components programmatically
+- Insert new elements anywhere in the UI hierarchy
+- Replace entire components with custom implementations
+
+This is what Motif extensions can do in Symphony:
+
+```python
+# Get any component in the IDEactivity_bar = symphonyide.get_component("activityBar")
+# See its complete internal structuretree = activity_bar.tree  # Returns full component tree# Modify deeply nested elementsactivity_bar.modify(
+    path=["Container", "Flex", "Button[0]"],
+    props={"className": "custom-style", "variant": "destructive"}
+)
+# Insert new elements anywhereactivity_bar.insert(
+    parent_path=["Container", "Flex"],
+    primitive={"type": "Button", "props": {...}}
+)
+```
+
+### Core Principle
+
+**No black boxes. Complete transparency. Infinite extensibility.**
+
+This means Motif developers have the same power over the UI that the core Symphony team has. Nothing is hidden. Nothing is off-limits. Every pixel can be customized.
+
+---
+
+## Core Architecture
+
+### Three-Layer System
+
+The architecture consists of three interconnected layers:
+
+**Layer 1: Motif Extensions** (Top Layer)
+- Python, Rust, or TypeScript extensions running in the backend
+- Can inspect any component through IPC bridge
+- Can modify, insert, or remove UI elements
+- Access to complete component trees and properties
+
+**Layer 2: Component Registry** (Middle Layer)
+- Central registry storing all component trees
+- Provides inspection and modification APIs
+- Handles tree traversal and path resolution
+- Notifies React layer of changes
+- Manages event handlers and WASM instances
+
+**Layer 3: Renderers** (Bottom Layer)
+Two specialized renderers handle different types of components:
+
+- **React Renderer**: Handles lightweight UI (buttons, containers, inputs, dropdowns)
+- **WASM Renderer**: Handles heavy components (code editor, terminal, syntax highlighter)
+
+The flow is unidirectional: Motifs modify the registry, which notifies renderers, which update the UI.
+
+```
+Motif Extension ──IPC──> Component Registry ──> React/WASM Renderers ──> DOM
+```
+
+### Key Components
+
+**BasePrimitive**: The foundation class for all UI elements. Every component in Symphony, from a simple button to a complex code editor, inherits from BasePrimitive. This provides a uniform interface for inspection and modification.
+
+**ComponentRegistry**: The central nervous system of the architecture. It maintains the current state of all component trees, handles modifications from Motifs, and coordinates between the backend and frontend.
+
+**PrimitiveRenderer**: A React component that knows how to render any primitive. It maps primitive types to React components and handles the rendering lifecycle.
+
+**WasmRenderer**: A specialized renderer for WASM components. It loads WASM modules dynamically, manages their lifecycle, and exposes their internal structure to the registry.
+
+---
+
+## Primitive System
+
+### BasePrimitive Class
+
+Every UI element in Symphony is a primitive. The BasePrimitive class defines the contract:
+
+**Identity Properties**
+- `id`: Unique identifier for this primitive instance
+- `type`: String identifier for the primitive type (e.g., “Button”, “Container”)
+
+**Tree Structure**
+- `props`: Key-value pairs defining the component’s properties
+- `children`: Array of child primitives
+- `parent`: Reference to parent primitive (null for root)
+
+**Rendering Configuration**
+- `renderStrategy`: How this primitive should be rendered (‘react’, ‘wasm’, or ‘direct’)
+- `wasmModule`: Path to WASM module (if using WASM rendering)
+
+**Performance Flags**
+- `isLeafNode`: If true, skip traversing children (performance optimization)
+- `renderDirect`: If true, bypass primitive renderer (maximum performance)
+
+The key insight is that **every component, no matter how complex, can be represented as a tree of primitives**. This tree structure is what enables complete extensibility.
+
+```tsx
+// Example: A button is just a primitive with propsconst button = new Button({
+  variant: 'default',  size: 'sm',  onClick: 'handler_id'});// Its tree structure is fully accessibleconsole.log(button.type);      // "Button"console.log(button.props);     // {variant: 'default', size: 'sm', ...}console.log(button.children);  // []
+```
+
+### Tree Navigation
+
+Primitives provide methods for navigating the tree:
+
+- `getPath()`: Returns the path from root to this node
+- `appendChild(child)`: Adds a child primitive
+- `removeChild(child)`: Removes a child primitive
+- `insertChild(child, index)`: Inserts a child at specific position
+
+These operations automatically update parent references, maintaining tree consistency.
+
+### Serialization
+
+For IPC communication, primitives can be serialized to a simple JSON structure:
+
+```tsx
+// Serialized format{
+  id: "button-123",  type: "Button",  props: {variant: "default", size: "sm"},  renderStrategy: "react",  children: []
+}
+```
+
+This enables efficient transmission between backend Motifs and frontend renderers.
+
+---
+
+### Primitive Categories
+
+Primitives are organized into five categories based on complexity and rendering requirements:
+
+### 1. Layout Primitives (React)
+
+These primitives define structure and spacing:
+
+- **Container**: Basic flex container with configurable direction and gap
+- **Flex**: Advanced flexbox layout with justify, align, and wrap options
+- **Grid**: CSS Grid layout with configurable columns and rows
+- **Panel**: Collapsible panel with title and content sections
+- **Divider**: Visual separator line (horizontal or vertical)
+
+Layout primitives are lightweight and render efficiently in React. They form the structural skeleton of the UI.
+
+### 2. Interactive Primitives (React)
+
+These primitives handle user interaction:
+
+- **Button**: Clickable button with variants (default, destructive, outline, ghost, link)
+- **Input**: Text input field with support for various types (text, password, email, number)
+- **Icon**: Icon component using Lucide icon set
+- **Text**: Styled text component with variants (body, heading, caption, code)
+- **Checkbox**: Boolean checkbox with label
+- **Select**: Dropdown select with options
+
+Interactive primitives are marked as leaf nodes when they don’t contain children, optimizing traversal performance.
+
+### 3. Complex Primitives (React)
+
+These primitives combine multiple elements:
+
+- **List**: Virtualized list with custom item renderers
+- **Tabs**: Tab navigation with multiple panels
+- **Dropdown**: Dropdown menu with trigger and items
+- **Modal**: Dialog modal with overlay
+- **Tooltip**: Contextual tooltip on hover
+
+Complex primitives orchestrate multiple child primitives to create sophisticated interactions.
+
+### 4. Heavy Primitives (WASM)
+
+These primitives require maximum performance:
+
+- **CodeEditor**: Full-featured code editor with syntax highlighting, IntelliSense, and extensions
+- **Terminal**: Interactive terminal emulator with shell integration
+- **SyntaxHighlighter**: High-performance syntax highlighting for code blocks
+- **FileTree**: Virtualized file tree with thousands of nodes
+
+Heavy primitives use WASM rendering for near-native performance. They can optionally expose internal structure for extensibility.
+
+### 5. Direct Render Primitives (Performance Escape Hatch)
+
+For maximum performance when extensibility isn’t needed:
+
+- **MonacoEditor**: Direct wrapper around Monaco Editor
+- **XTermTerminal**: Direct wrapper around xterm.js
+
+Direct render primitives bypass the primitive renderer entirely, providing a path for integrating existing high-performance components without modification.
+
+### Primitive Type Summary
+
+| Category | Rendering | Performance | Extensibility | Use Case |
+| --- | --- | --- | --- | --- |
+| Layout | React | Good | Full | Structure and spacing |
+| Interactive | React | Good | Full | User interactions |
+| Complex | React | Good | Full | Multi-component widgets |
+| Heavy | WASM | Excellent | Full | Performance-critical |
+| Direct | Native | Maximum | Limited | Legacy integration |
+
+The choice of category depends on the component’s complexity and performance requirements. Most components use React rendering for simplicity. WASM is reserved for truly performance-critical components. Direct rendering is a last resort when wrapping is prohibitively expensive.
+
+---
+
+## Component Registry
+
+### Registry Implementation
+
+The ComponentRegistry is the heart of the extensibility system. It maintains the authoritative state of all component trees and provides the API for inspection and modification.
+
+**Core Responsibilities:**
+
+1. **Component Storage**: Maintains a map of component names to root primitives
+2. **Tree Indexing**: Indexes all primitives by ID for fast lookup
+3. **Path Resolution**: Converts path strings to primitive references
+4. **Modification Handling**: Applies changes and notifies renderers
+5. **Event Management**: Registers and invokes event handlers
+6. **WASM Coordination**: Manages WASM component instances
+
+### Registration
+
+Components are registered by name. This creates a named handle that Motifs can use to reference the component:
+
+```tsx
+// Core registers componentscomponentRegistry.registerComponent('activityBar', activityBarTree);componentRegistry.registerComponent('codeEditor', editorTree);// Motifs reference by nameconst activityBar = await symphonyide.get_component('activityBar');
+```
+
+Registration triggers tree indexing, where every primitive in the tree is added to the ID index for fast lookup.
+
+### Tree Traversal
+
+The registry provides sophisticated path resolution for finding nested primitives:
+
+**Path Format**: `["RootType", "ChildType", "GrandchildType[index]"]`
+
+**Examples:**
+- `["Container", "Flex", "Button[0]"]` - First button in Flex container
+- `["Panel", "List", "Text"]` - Text inside List inside Panel
+- `["Grid", "Container[2]", "Icon"]` - Icon in third Grid cell
+
+The path resolver handles:
+- Type matching (finding children by type)
+- Array indexing (selecting among multiple children of same type)
+- Deep nesting (arbitrary depth traversal)
+
+### Modification Operations
+
+The registry exposes several modification operations:
+
+**modifyComponent**: Update properties of an existing primitive
+
+```tsx
+// Change button variant and sizeregistry.modifyComponent('activityBar', ['Container', 'Button[0]'], {
+  props: {variant: 'destructive', size: 'lg'}
+});
+```
+
+**insertPrimitive**: Add a new primitive to the tree
+
+```tsx
+// Insert new button at specific positionregistry.insertPrimitive('activityBar', ['Container', 'Flex'], newButton, 2);
+```
+
+**removePrimitive**: Remove a primitive from the tree
+
+```tsx
+// Remove third buttonregistry.removePrimitive('activityBar', ['Container', 'Button[2]']);
+```
+
+All modifications trigger a change notification, causing affected components to re-render.
+
+### Event Handler Registry
+
+Event handlers can’t be serialized for IPC, so we use an ID-based registry:
+
+**Registration Flow:**
+1. Motif defines handler function
+2. Handler registered with unique ID
+3. Primitive references handler by ID in props
+4. On invocation, registry looks up handler and calls it
+
+This enables Motifs to define event handlers that work seamlessly across the IPC boundary.
+
+### WASM Component Management
+
+For WASM components, the registry maintains references to WASM instances:
+
+- Stores WASM instance with component ID
+- Provides access to WASM-specific methods (getTree, modify, destroy)
+- Coordinates between WASM components and React renderer
+
+This allows WASM components to participate in the extensibility system while maintaining their performance advantages.
+
+### Change Notification
+
+When any modification occurs, the registry dispatches a custom DOM event:
+
+```tsx
+window.dispatchEvent(new CustomEvent('component-tree-changed', {
+  detail: {componentName: 'activityBar'}
+}));
+```
+
+React components listening to this event can re-render with the updated tree, ensuring the UI stays synchronized with the registry state.
+
+---
+
+## Rendering Strategies
+
+Symphony supports three rendering strategies, each optimized for different use cases:
+
+### 1. React Renderer
+
+The React renderer handles lightweight primitives (layout, interactive, complex). It’s the default rendering strategy and provides the best balance of performance and simplicity.
+
+**How It Works:**
+
+1. **Component Mapping**: Each primitive type maps to a React component
+2. **Props Conversion**: Primitive props are converted to React props
+3. **Event Handler Binding**: Handler IDs are converted to actual functions
+4. **Recursive Rendering**: Children are recursively rendered with PrimitiveRenderer
+
+**Example Flow:**
+
+```
+Button primitive → componentMap['Button'] → React Button → DOM <button>
+```
+
+**Direct Render Escape Hatch**: If a primitive sets `renderDirect = true`, it bypasses the primitive renderer entirely and uses a direct React component. This is useful for integrating existing components without wrapping overhead.
+
+**Performance Considerations:**
+
+- Most React primitives render in <5ms
+- Leaf nodes (isLeafNode = true) skip child traversal
+- Memoization prevents unnecessary re-renders
+- Virtualization for large lists
+
+### 2. WASM Renderer
+
+The WASM renderer handles performance-critical components like code editors and terminals. It provides near-native performance while maintaining extensibility.
+
+**How It Works:**
+
+1. **Module Loading**: WASM module loaded dynamically on first use
+2. **Instance Creation**: WASM constructor called with container ID and props
+3. **DOM Mounting**: WASM component renders directly to DOM
+4. **Tree Exposure**: WASM can expose internal structure via getTree()
+5. **Lifecycle Management**: Component destroyed on unmount
+
+**Key Features:**
+
+- **Lazy Loading**: WASM modules loaded only when needed
+- **Error Handling**: Graceful fallback if WASM fails to load
+- **Props Updates**: Reactive updates when props change
+- **Tree Inspection**: Optional tree exposure for extensibility
+
+**Performance Benefits:**
+
+- 10-50x faster than equivalent React components
+- Direct DOM manipulation (no virtual DOM overhead)
+- Memory efficient (compiled code, no JS overhead)
+- Optimal for heavy rendering (syntax highlighting, terminal output)
+
+**Example Components:**
+
+- CodeEditor: Full Monaco-like editor in WASM
+- Terminal: xterm.js equivalent in WASM
+- SyntaxHighlighter: Optimized syntax highlighting
+- FileTree: Virtualized tree with thousands of nodes
+
+### 3. Direct Renderer (Escape Hatch)
+
+For maximum performance when extensibility isn’t required, components can use direct rendering:
+
+**When to Use:**
+- Component is already highly optimized
+- Internal structure doesn’t need to be extensible
+- Wrapping would add prohibitive overhead
+- Maximum performance is critical
+
+**Trade-offs:**
+- ✅ Maximum performance (no wrapper overhead)
+- ✅ Direct integration with existing components
+- ❌ Limited extensibility (internal structure hidden)
+- ❌ Can’t be modified by Motifs
+
+**Example:**
+
+If Monaco Editor is already optimal and we don’t need to extend its internals, we can wrap it in a direct render primitive rather than reimplementing in WASM.
+
+### React Hook for Component Rendering
+
+The `useRegisteredComponent` hook provides React integration:
+
+```tsx
+// In any React componentconst activityBar = useRegisteredComponent('activityBar');if (!activityBar) return <Loading />;return <PrimitiveRenderer primitive={activityBar} />;
+```
+
+This hook:
+- Fetches the component from the registry
+- Subscribes to change notifications
+- Re-renders when the component tree changes
+- Handles loading and error states
+
+---
+
+## WASM Integration
+
+### WASM Component Base Trait
+
+WASM components implement a standard trait/interface for consistency:
+
+**Required Methods:**
+
+1. **get_tree()**: Returns the component’s structure as a serializable tree
+2. **modify_tree(path, props)**: Applies modifications to the component
+3. **render()**: Renders the component to the DOM
+4. **destroy()**: Cleans up resources on unmount
+
+**Optional Methods:**
+
+1. **register_slot(slot_id)**: Registers an extension slot
+2. **get_slot_components(slot_id)**: Gets components in a slot
+3. **render_slot(slot_id)**: Renders a specific extension slot
+
+### Extension Point System
+
+WASM components can define extension points (slots) where Motifs can insert custom UI:
+
+```rust
+// In WASM componentimpl ExtensionPoint for CodeEditor {    fn register_slot(&mut self, slot_id: &str) {        // Register slot for extensions (e.g., "gutter", "statusbar")    }    fn render_slot(&self, slot_id: &str) {        // Render all components in this slot    }}
+```
+
+This enables Motifs to extend WASM components just like React components.
+
+### DOM Helper Utilities
+
+WASM components use helper utilities for DOM manipulation:
+
+- `window()`: Get browser window
+- `document()`: Get document object
+- `get_element_by_id(id)`: Find element by ID
+- `create_element(tag)`: Create new element
+
+These utilities abstract away web_sys complexity and provide a cleaner API.
+
+### Tree Inspection in WASM
+
+WASM components can expose their internal structure:
+
+```rust
+// Expose gutter, scrollbar, minimap as separate componentspub fn get_tree(&self) -> ComponentTree {    ComponentTree {        id: "editor".to_string(),        type_: "WasmEditor".to_string(),        children: vec![
+            self.gutter.to_tree(),            self.viewport.to_tree(),            self.minimap.to_tree(),            self.scrollbar.to_tree(),        ],    }}
+```
+
+This enables Motifs to inspect and modify WASM component internals, maintaining full extensibility even for performance-critical components.
+
+---
+
+## Extension API
+
+### TypeScript Motif Extension
+
+Motifs written in TypeScript have access to a rich SDK:
+
+**Core API Methods:**
+
+1. **getComponentList()**: Get names of all registered components
+2. **getComponent(name)**: Get a specific component tree
+3. **modifyComponent(name, props)**: Modify component properties
+4. **insertPrimitive(name, parentPath, primitive, index?)**: Insert new element
+5. **removePrimitive(name, path)**: Remove element
+6. **registerEventHandler(id, handler)**: Register event handler
+
+**Example Extension:**
+
+A theme customizer Motif might:
+
+1. Get the code editor component
+2. Modify its theme and font size
+3. Insert a custom widget in the gutter
+4. Add a toolbar with custom actions
+5. Register handlers for the toolbar buttons
+
+**Type Safety:**
+
+The SDK provides full TypeScript types for:
+- Primitive types and their props
+- Component tree structure
+- Event handler signatures
+- Modification payloads
+
+This enables IDE autocomplete and compile-time type checking.
+
+### Python Motif Extension
+
+Python Motifs use a similar API through the symphony-sdk package:
+
+```python
+from symphony import MotifExtension
+class MyExtension(MotifExtension):
+    async def on_load(self):
+        # Get component        editor = await self.get_component('codeEditor')
+        # Modify properties        await self.modify_component('codeEditor', {
+            'theme': 'custom-dark',
+            'fontSize': 16        })
+        # Insert custom element        await self.insert_primitive('codeEditor', ['Container'], {
+            'type': 'Button',
+            'props': {'label': 'Custom Action'}
+        })
+```
+
+The Python API mirrors the TypeScript API, making it easy to write Motifs in your preferred language.
+
+### Rust Motif Extension
+
+For maximum performance, Motifs can be written in Rust:
+
+```rust
+use symphony_sdk::{MotifExtension, ComponentTree};impl MotifExtension for MyExtension {    async fn on_load(&self) -> Result<()> {        // Get component        let editor = self.get_component("codeEditor").await?;        // Modify with strongly-typed API        self.modify_component("codeEditor", EditorProps {            theme: "custom-dark".into(),            font_size: 16,            ..Default::default()
+        }).await?;        Ok(())
+    }}
+```
+
+Rust Motifs compile to native code and run with minimal overhead.
+
+---
+
+## Performance Optimization
+
+### Performance Monitoring
+
+Symphony includes built-in performance monitoring:
+
+**Metrics Tracked:**
+- Render time per component
+- Average, min, max render times
+- Number of renders
+- Slow render warnings (>16ms)
+
+**Usage:**
+
+```tsx
+// Automatic trackingperformanceMonitor.measureRender('activityBar', () => {
+  // Render logic});// Get reportconst report = performanceMonitor.getReport();// {activityBar: {average: 4.2ms, min: 3.1ms, max: 8.7ms}}
+```
+
+### Optimization Techniques
+
+**1. Leaf Node Optimization**
+
+Mark primitives with no children as leaf nodes to skip traversal:
+
+```tsx
+this.isLeafNode = true;  // Skip checking children
+```
+
+**2. Direct Render for Critical Paths**
+
+Use direct rendering to bypass the primitive renderer:
+
+```tsx
+this.renderDirect = true;  // Skip wrapper, render directly
+```
+
+**3. WASM for Heavy Components**
+
+Move performance-critical components to WASM for 10-50x speedup.
+
+**4. Virtualization**
+
+Use virtual scrolling for large lists to render only visible items.
+
+**5. Memoization**
+
+Cache rendered components to avoid unnecessary re-renders:
+
+```tsx
+const MemoizedRenderer = React.memo(PrimitiveRenderer);
+```
+
+**6. Debouncing**
+
+Debounce rapid modifications to batch updates:
+
+```tsx
+// Batch multiple modifications into single renderdebouncedModify(modifications);
+```
+
+### Performance Budget
+
+Target metrics for different component types:
+
+- **Layout primitives**: <2ms render time
+- **Interactive primitives**: <5ms render time
+- **Complex primitives**: <10ms render time
+- **WASM components**: <1ms render time (after initialization)
+- **Overall frame budget**: <16ms (60 FPS)
+
+---
+
+## Developer Guide
+
+### Best Practices
+
+### 1. Component Design
+
+**Use Semantic Primitives**
+Choose primitive types that clearly communicate intent:
+
+```tsx
+// ✅ Good: Semantic structureconst header = new Container({direction: 'row', className: 'header'});const title = new Text({content: 'Title', variant: 'heading'});const actions = new Flex({gap: 8, justify: 'end'});// ❌ Bad: Generic containersconst div1 = new Container({});const div2 = new Container({});
+```
+
+**Avoid Deep Nesting**
+Keep component trees shallow when possible:
+
+```tsx
+// ✅ Good: Flat structureconst container = new Flex({gap: 8, children: [button1, button2, button3]});// ❌ Bad: Unnecessary nestingconst wrapper1 = new Container({});const wrapper2 = new Container({});const wrapper3 = new Container({});
+```
+
+### 2. Performance
+
+**Use Leaf Nodes for Static Content**
+
+```tsx
+// ✅ Good: Mark as leafexport class Icon extends BasePrimitive {
+  constructor(props) {
+    super('Icon', props);    this.isLeafNode = true;  // No children, skip traversal  }
+}
+```
+
+**Use Direct Render for Heavy Components**
+
+When extensibility isn’t needed and performance is critical, use direct rendering.
+
+### 3. Extensibility
+
+**Provide Clear Extension Points**
+
+Document where Motifs can extend your component:
+
+```tsx
+/** * Editor Structure: * - Container (root) *   - Container (toolbar) ← Extension point *   - Flex (main) *     - Container (gutter) ← Extension point *     - WasmEditor (editor) *   - Container (statusbar) ← Extension point */
+```
+
+**Keep State in Props**
+
+Don’t use private state that Motifs can’t inspect:
+
+```tsx
+// ✅ Good: State in propsexport class Counter extends BasePrimitive {
+  constructor(count: number) {
+    super('Counter', {count});  // Accessible to Motifs  }
+}
+// ❌ Bad: Private stateexport class Counter extends BasePrimitive {
+  private count: number = 0;  // Hidden from Motifs}
+```
+
+### 4. Event Handling
+
+**Use Event Handler Registry**
+
+Don’t pass functions directly; use the registry:
+
+```tsx
+// ✅ Good: Register handlercomponentRegistry.registerEventHandler('my_handler', (event) => {
+  console.log('Handler called', event);});const button = new Button({onClick: 'my_handler'});// ❌ Bad: Direct function (won't work across IPC)const button = new Button({onClick: () => console.log('clicked')});
+```
+
+### 5. Error Handling
+
+**Provide Fallbacks**
+
+Always handle errors gracefully:
+
+```tsx
+// ✅ Good: Graceful degradationtry {
+  const Component = componentMap[primitive.type];  if (!Component) return <FallbackComponent />;  return <Component {...props} />;} catch (error) {
+  return <ErrorBoundary error={error} />;}
+```
+
+**Validate Modifications**
+
+Check paths and props before applying modifications:
+
+```tsx
+// ✅ Good: Validate before modifyingmodifyComponent(name, path, mods) {
+  const node = this.findByPath(name, path);  if (!node) throw new Error(`Node not found: ${path}`);  this.validateProps(node.type, mods.props);  Object.assign(node.props, mods.props);}
+```
+
+### 6. WASM Components
+
+**Expose Internal Structure**
+
+Make WASM components extensible by exposing their structure:
+
+```rust
+// ✅ Good: Expose tree for Motifspub fn get_tree(&self) -> ComponentTree {    // Return internal component structure}
+```
+
+**Support Modifications**
+
+Implement modify_tree to allow Motifs to change WASM components:
+
+```rust
+// ✅ Good: Allow modificationspub fn modify_tree(&mut self, path: Vec<String>, props: JsValue) {    // Apply modifications to internal state    self.render();}
+```
+
+**Clean Up Resources**
+
+Always implement proper cleanup:
+
+```rust
+// ✅ Good: Explicit cleanuppub fn destroy(&mut self) {    self.container.set_inner_html("");    self.data.clear();    self.data.shrink_to_fit();}
+```
+
+### 7. Documentation
+
+**Document Every Component**
+
+Provide comprehensive documentation:
+
+```tsx
+/** * ActivityBar Component * * Vertical bar on the left with action buttons. * * Structure: * - Container (root) *   - Flex (top) - Main actions *     - Button[] - Action buttons *   - Flex (bottom) - System buttons * * Extension Points: * - Top section: Add custom actions * - Bottom section: Add system buttons * * Example: * ```python * bar = symphonyide.get_component("activityBar") * bar.insert(["Container", "Flex[0]"], new_button) * ``` */
+```
+
+---
+
+## FAQ
+
+### General Questions
+
+**Q: Won’t this add performance overhead?**
+
+A: Yes, there’s some overhead, but we mitigate it through multiple strategies:
+
+- WASM rendering for heavy components (10-50x faster than React)
+- Direct render escape hatch for critical paths
+- Leaf node optimization (skip child traversal)
+- Memoization and debouncing for updates
+- Virtual scrolling for large lists
+
+In practice, the overhead is minimal (<5ms) for most components. The benefits of complete extensibility far outweigh the small performance cost.
+
+**Q: Can I still use regular React components?**
+
+A: Absolutely! You have several options:
+
+1. Use the `renderDirect` flag to render React components directly
+2. Wrap React components in primitives for extensibility
+3. Mix primitive and non-primitive components in the same tree
+
+The system is designed for gradual adoption. You can start with primitives for new components while keeping existing React components as-is.
+
+**Q: How does this compare to VS Code’s extension system?**
+
+A: VS Code provides specific extension points (menus, commands, views) but you can’t modify the internal structure of built-in components. Symphony goes much further - you can inspect and modify ANY component, at ANY level of nesting. This is fundamentally more powerful.
+
+### Technical Questions
+
+**Q: How does WASM tree inspection work?**
+
+A: WASM components expose a `get_tree()` method that returns their internal structure as JSON. The structure is serialized and sent to the frontend, where it’s merged into the component tree. This allows Motifs to inspect WASM component internals just like React components.
+
+**Q: What happens if a Motif modifies a component that doesn’t exist?**
+
+A: The modification is rejected with a clear error message. The ComponentRegistry validates all paths before applying modifications:
+
+```tsx
+// Path validationconst node = this.findByPath(name, path);if (!node) {
+  throw new Error(`Component not found: ${name} at ${path.join('/')}`);}
+```
+
+This prevents invalid modifications from corrupting the component tree.
+
+**Q: Can multiple Motifs modify the same component?**
+
+A: Yes! Modifications are applied in order. Each Motif sees the current state of the component tree, including modifications from previously-loaded Motifs. This enables composition of extensions.
+
+For example:
+- Motif A adds a button to the toolbar
+- Motif B (loaded later) can see and modify that button
+- Motif C can add additional buttons alongside both
+
+**Q: How do I debug component tree issues?**
+
+A: Symphony includes comprehensive debugging tools:
+
+```jsx
+// In browser consolewindow.__SYMPHONY_DEVTOOLS__.inspectComponent('activityBar')
+// Returns full component tree with IDs and propswindow.__SYMPHONY_DEVTOOLS__.visualizeTree('activityBar')
+// Shows ASCII tree diagramwindow.__SYMPHONY_DEVTOOLS__.watchComponent('activityBar')
+// Logs all modifications to this component
+```
+
+The Component Inspector extension provides a visual tree explorer in the UI.
+
+**Q: What’s the bundle size impact?**
+
+A: The core primitive system is lightweight:
+
+- Primitive system: ~15KB gzipped
+- Component registry: ~8KB gzipped
+- React renderer: ~5KB gzipped
+- Total core overhead: ~30KB
+
+WASM components are loaded on-demand:
+- Each WASM component: 50-200KB (loaded only when used)
+
+This is negligible compared to typical web application bundles (2-5MB).
+
+**Q: Can I use TypeScript for type safety?**
+
+A: Yes! All primitives have full TypeScript definitions:
+
+```tsx
+const button = new Button({
+  variant: 'default',  // ✅ Type-checked  size: 'lg',          // ✅ Type-checked  onClick: 'handler',  // ✅ Type-checked  invalid: 'prop'      // ❌ Compile error});
+```
+
+The SDK provides complete type coverage, enabling IDE autocomplete and compile-time validation.
+
+**Q: How do I handle component state?**
+
+A: State should live in props and be managed through the registry:
+
+```tsx
+// Update statecomponentRegistry.modifyComponent('counter', ['Counter'], {
+  props: {count: 5}
+});// React automatically re-renders with new state
+```
+
+For complex state management, use React hooks in the wrapper component, but keep the state synchronized with props so Motifs can inspect and modify it.
+
+**Q: Can Motifs add CSS styles?**
+
+A: Yes, through the className prop:
+
+```python
+# Motif adds custom stylesactivity_bar.modify(
+    path=["Button[0]"],
+    props={"className": "bg-purple-500 hover:bg-purple-600 text-white"}
+)
+```
+
+Motifs can use Tailwind classes or custom CSS classes defined in their stylesheets.
+
+**Q: What about accessibility?**
+
+A: All primitives are built on accessible components (Radix UI, Shadcn). Motifs should preserve and enhance accessibility:
+
+```python
+# ✅ Good: Preserve ARIA attributesbutton.modify(props={
+    "aria-label": "Custom action",
+    "role": "button",
+    "aria-pressed": "false"})
+# ❌ Bad: Remove accessibilitybutton.modify(props={"aria-label": None})
+```
+
+The primitive system enforces accessibility best practices through TypeScript types and runtime validation.
+
+**Q: How do I test Motif extensions?**
+
+A: Use the Motif test framework:
+
+```python
+from symphony.testing import MotifTestCase
+class TestMyMotif(MotifTestCase):
+    async def test_adds_button(self):
+        # Load Motif        await self.load_motif('my-motif')
+        # Verify modification        activity_bar = await self.get_component('activityBar')
+        buttons = activity_bar.find_children_by_type('Button')
+        self.assertEqual(len(buttons), 4)
+        # Verify properties        custom_button = buttons[3]
+        self.assertEqual(custom_button.props['label'], 'Custom Action')
+```
+
+The test framework provides a sandbox environment for testing Motif behavior without affecting the real IDE.
+
+**Q: Can I use this with existing Monaco Editor?**
+
+A: Yes! You have two options:
+
+1. **Wrap Monaco directly** (quick integration):
+
+```tsx
+export class MonacoEditorPrimitive extends BasePrimitive {
+  constructor(props) {
+    super('MonacoEditor', props);    this.renderDirect = true;  // Use existing Monaco    this.isLeafNode = true;  }
+}
+```
+
+1. **Migrate to WASM editor** (better performance and extensibility):
+This provides 10-50x better performance and allows Motifs to extend the editor’s internal structure.
+
+The choice depends on your priorities: quick integration vs. maximum extensibility.
+
+**Q: How do WASM modules communicate with React?**
+
+A: Through the ComponentRegistry:
+
+1. WASM component registers itself with unique ID
+2. Registry stores reference to WASM instance
+3. Registry can call WASM methods (getTree, modify, destroy)
+4. WASM can invoke registry methods (registerEventHandler, notifyChange)
+
+This bidirectional communication enables seamless integration between WASM and React layers.
+
+**Q: What happens if a WASM module fails to load?**
+
+A: The WasmRenderer includes error handling:
+
+```tsx
+// Error boundary for WASM componentsif (error) {
+  return (
+    <div className="wasm-error">      <p>Failed to load: {primitive.type}</p>      <p>{error.message}</p>      <Button onClick={retry}>Retry</Button>    </div>  );}
+```
+
+Users see a clear error message with options to retry or report the issue.
+
+**Q: Can Motifs conflict with each other?**
+
+A: Yes, conflicts are possible but manageable:
+
+**Conflict Scenarios:**
+- Two Motifs modify the same component property
+- Two Motifs insert elements at the same position
+- Two Motifs register the same event handler ID
+
+**Resolution Strategies:**
+1. **Load order**: Later Motifs override earlier ones
+2. **Namespacing**: Use unique IDs for handlers and components
+3. **Conflict detection**: Registry can warn about conflicts
+4. **User control**: Users can disable conflicting Motifs
+
+**Example:**
+
+```python
+# Motif Abutton.modify(props={"className": "red"})
+# Motif B (later)button.modify(props={"className": "blue"})  # Wins# Better: Append classesbutton.modify(props={"className": "red blue"})  # Both active
+```
+
+**Q: How do I migrate existing components to primitives?**
+
+A: Follow these steps:
+
+1. **Identify the component**: Determine current structure
+2. **Map to primitives**: Choose appropriate primitive types
+3. **Create tree**: Build primitive tree matching structure
+4. **Register component**: Add to ComponentRegistry
+5. **Test extensibility**: Verify Motifs can modify it
+6. **Optimize**: Add leaf node flags, consider WASM for heavy components
+
+**Example migration:**
+
+```tsx
+// Before: Regular React componentfunction ActivityBar() {
+  return (
+    <div className="activity-bar">      <div className="top">        <button>File</button>        <button>Search</button>      </div>      <div className="bottom">        <button>Settings</button>      </div>    </div>  );}
+// After: Primitive treefunction buildActivityBar() {
+  const root = new Container({className: 'activity-bar'});  const top = new Flex({direction: 'column', className: 'top'});  top.appendChild(new Button({children: 'File'}));  top.appendChild(new Button({children: 'Search'}));  const bottom = new Flex({direction: 'column', className: 'bottom'});  bottom.appendChild(new Button({children: 'Settings'}));  root.appendChild(top);  root.appendChild(bottom);  return root;}
+// Register for Motif accesscomponentRegistry.registerComponent('activityBar', buildActivityBar());
+```
+
+---
+
+## Conclusion
+
+### Summary
+
+Symphony’s UI Extensibility Architecture provides an unprecedented level of customization through a principled approach to component design:
+
+**Core Benefits:**
+
+✅ **Complete Transparency** - Every UI element is fully inspectable
+✅ **Full Extensibility** - Motifs can modify any component at any level
+✅ **High Performance** - WASM for heavy components, React for lightweight UI
+✅ **Type Safety** - Full TypeScript support across the stack
+✅ **Developer Experience** - Clear APIs, excellent tooling, comprehensive docs
+✅ **Future-Proof** - Easy to add new primitives and rendering strategies
+
+### Key Benefits by Stakeholder
+
+**For Users:**
+- Unlimited customization through Motif extensions
+- Consistent UI behavior across all components
+- Performance optimizations benefit all components
+- No “black box” components they can’t modify
+
+**For Motif Developers:**
+- Simple, powerful API to modify any UI element
+- Full access to component structure and properties
+- Multiple language options (TypeScript, Python, Rust)
+- Comprehensive SDK and documentation
+- Testing framework for validation
+
+**For Symphony Core Team:**
+- Clean, maintainable architecture
+- Easy to add new components and primitives
+- Clear separation between core and extensions
+- Performance monitoring and optimization built-in
+- Gradual migration path from existing code
+
+**For Performance:**
+- WASM components provide near-native speed
+- Direct render escape hatch for maximum performance
+- Optimization flags (leaf nodes, memoization)
+- Virtual scrolling and lazy loading
+- Sub-16ms frame times for 60 FPS
+
+### Architecture Principles
+
+The architecture embodies five core principles:
+
+**1. Everything is a Primitive**
+No black boxes. Every component, from a simple button to a complex code editor, is built from inspectable primitives.
+
+**2. Inspect and Modify**
+Complete tree access. Motifs can traverse, inspect, and modify any part of any component.
+
+**3. Performance First**
+WASM for heavy components, React for light components, direct rendering for maximum speed. Never sacrifice performance for extensibility.
+
+**4. Developer Friendly**
+Clear APIs, comprehensive documentation, excellent tooling. Make it easy to build powerful extensions.
+
+**5. Gradual Adoption**
+Mix old and new approaches. Migrate incrementally. Don’t force wholesale rewrites.
+
+### Technical Achievements
+
+This architecture achieves something previously thought impossible:
+
+**The Extensibility Trilemma:**
+- ✅ Complete extensibility (inspect and modify everything)
+- ✅ High performance (WASM + optimizations)
+- ✅ Simple API (clear primitives, easy to use)
+
+Traditional systems force you to choose two. Symphony achieves all three.
+
+### Impact on Symphony’s Vision
+
+This architecture is the foundation for Symphony’s **“Minimal Core, Infinite Intelligence”** vision:
+
+**Minimal Core:**
+- Core IDE provides primitives and registry
+- Rendering strategies (React, WASM, Direct)
+- Component infrastructure
+
+**Infinite Intelligence:**
+- Motifs extend every aspect of the UI
+- AI agents can modify UI programmatically
+- Community creates unlimited variations
+- Users compose their perfect IDE
+
+**The Result:**
+An IDE that’s simultaneously:
+- **Minimal** - Small core, fast startup, low memory
+- **Powerful** - Unlimited extensibility through Motifs
+- **Fast** - WASM performance where it matters
+- **Flexible** - Every user gets exactly what they need
+
+### Final Thoughts
+
+This architecture represents a fundamental shift in how we think about IDE extensibility. Instead of predefined extension points, we provide complete transparency. Instead of limiting what extensions can do, we enable them to do anything.
+
+**This is not just a better extension system. This is a new paradigm for building extensible applications.**
+
+By treating every UI element as an inspectable, modifiable primitive, we enable a level of customization that was previously impossible. Motifs aren’t just plugins that add features—they’re first-class participants in defining the entire UI experience.
+
+**This is the foundation for Symphony’s “Minimal Core, Infinite Intelligence” vision.** 🎼
+
+The core is minimal. The possibilities are infinite. Every pixel can be customized. No black boxes. Complete transparency. Infinite extensibility.
+
+Welcome to the future of extensible IDEs.
+
+---
+
+## Appendix
+
+### A. Complete Primitive Reference
+
+See [PRIMITIVE_REFERENCE.md](./PRIMITIVE_REFERENCE.md) for detailed documentation of all primitive types, their properties, and usage examples.
+
+### B. Component Catalog
+
+See [COMPONENT_CATALOG.md](./COMPONENT_CATALOG.md) for documentation of all built-in Symphony components, their structure, and extension points.
+
+### C. Motif Development Guide
+
+See [MOTIF_DEVELOPMENT_GUIDE.md](./MOTIF_DEVELOPMENT_GUIDE.md) for step-by-step guides on building Motif extensions, including examples, best practices, and common patterns.
+
+### D. Performance Benchmarks
+
+See [PERFORMANCE_BENCHMARKS.md](./PERFORMANCE_BENCHMARKS.md) for detailed performance analysis, including comparisons between React, WASM, and Direct rendering strategies.
+
+### E. Migration Examples
+
+See [MIGRATION_EXAMPLES.md](./MIGRATION_EXAMPLES.md) for step-by-step guides on migrating existing components to the primitive system, with real-world examples from Symphony’s codebase.
+
+### F. API Reference
+
+See [API_REFERENCE.md](./API_REFERENCE.md) for complete API documentation covering:
+- ComponentRegistry methods
+- BasePrimitive methods
+- Motif SDK functions
+- Event system
+- WASM integration APIs
+
+### G. TypeScript Types
+
+See [TYPES.md](./TYPES.md) for complete TypeScript type definitions for all primitives, props, and APIs.
+
+### H. Troubleshooting Guide
+
+See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) for solutions to common issues, debugging techniques, and performance optimization tips.
+
+---
+
+*“Making every UI element extensible, one primitive at a time.”* 🎨
+
+*Symphony UI Extensibility Architecture v1.0© 2024 Symphony IDE Team

@@ -239,19 +239,34 @@ import { StatusBarRefactored as StatusBar } from "@symphony/statusbar";
 
 ## Styling
 
-The component uses Tailwind CSS classes and is designed to work with dark themes:
+The component uses Tailwind CSS classes combined with UI components from `@symphony/ui` and is designed to work with dark themes:
 
 - Dark background (`bg-symphony-primary`)
 - Light text (`text-white`)
 - Hover effects for interactive elements
 - Responsive spacing and typography
+- **Flex** component for layout structure with `align` and `justify` props
+- **Text** component for consistent typography
+- Semantic HTML via `as` prop (e.g., `<Flex as="footer">`)
+
+### UI Component Usage
+
+The StatusBar uses the following UI components from `@symphony/ui`:
+
+| Component | Usage |
+|-----------|-------|
+| `Flex` | Main container layout, section groupings, inline items |
+| `Text` | All text content (file info, status, labels) |
+| `Button` | Terminal toggle button |
+| `Badge` | Status indicators (planned) |
+| `Separator` | Section dividers (planned) |
 
 ## Dependencies
 
 - React
 - Lucide React (icons)
 - @symphony/features (StatusInfo, TimeTracking)
-- ui (Button component)
+- @symphony/ui (Flex, Text, Badge, Separator, Button components)
 
 ## Examples
 
@@ -342,5 +357,5 @@ describe('StatusBar', () => {
 
 **Package**: @symphony/statusbar  
 **Version**: 0.1.0  
-**Last Updated**: January 13, 2025  
+**Last Updated**: December 23, 2025  
 **Architecture**: [Page, Feature, Component]
