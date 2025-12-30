@@ -98,6 +98,22 @@ fn process_file(path: &str) -> Result<String, std::io::Error> {
 
 **MANDATORY**: READ THE FILE {CWD/tests_handling.md}
 
+**CRITICAL TESTING RULES**:
+1. ✅ **ALWAYS** use TDD approach (Red → Green → Refactor)
+2. ✅ **ALWAYS** use `cargo nextest run` (MANDATORY PREFERRED) over `cargo test`
+3. ✅ **ALWAYS** escape quotes in feature flags: `\--features "unit,integration"`
+4. ✅ **ALWAYS** fix ALL warnings in tests - zero tolerance
+5. ✅ **NEVER** skip writing tests before implementation
+
+**JSON Snapshot Testing with insta**:
+✅ **Use insta when**: Structured outputs (JSON, YAML, ASTs), stable APIs, config outputs
+❌ **Do NOT use insta when**: Dynamic values, core business logic, simple outputs
+
+**BDD Tests (cucumber-rs)**:
+- Usually NOT needed - unit and integration tests cover most cases
+- Only use when business-level behavior must be validated by non-developers
+- If no strong reason exists → do not add BDD tests
+
 **CRITICAL RULES**:
 1. ✅ **ALWAYS** follow TDD (Red-Green-Refactor)
 2. ✅ **ALWAYS** write tests before implementation
@@ -111,7 +127,7 @@ fn process_file(path: &str) -> Result<String, std::io::Error> {
 mod tests {
     use super::*;
 
-    #[cfg(feature = "test_unit")]
+    #[cfg(feature = "unit")]
     #[test]
     fn test_user_creation() {
         // Arrange
@@ -223,3 +239,43 @@ fn unused_function() {}
 #[cfg(test)]
 fn test_helper_function() {}
 ```
+
+---
+
+## QUALITY GATES - MANDATORY CHECKS
+
+**BEFORE FEATURE COMPLETION - ALL MUST PASS**:
+1. ✅ **Unit/Integration Tests**: `cargo nextest run` (MANDATORY PREFERRED) - ZERO warnings, ZERO failures
+2. ✅ **Benchmarks**: `cargo bench` - Less than 15% outliers (if benchmark exists in crate)
+3. ✅ **Documentation Tests**: `cargo test \--doc` - ZERO warnings, ZERO failures
+4. ✅ **Code Quality**: `cargo clippy \--all-targets \--all-features` - ZERO warnings
+5. ✅ **Documentation Generation**: `cargo doc \--no-deps` - Must pass and generate docs
+
+**ON TEST FAILURES - RERUN STRATEGY**:
+- ✅ **First**: Run failed tests only: `cargo nextest run \--failed`
+- ✅ **If nextest unavailable**: Use `cargo test` with specific test names
+
+**MANDATORY Quote Escaping**: Always escape quotes in commands:
+- ✅ CORRECT: `cargo nextest run \--features "unit,integration"`
+- ❌ WRONG: `cargo nextest run --features unit,integration`
+
+**MANDATORY CARGO.TOML FEATURES - COPY EXACTLY**:
+```toml
+[features]
+# Default runs only fast unit tests
+default = []
+# Individual test category features
+unit = []
+integration = []
+e2e = [] # Based on Project and Business [e.g. HTML Generation] Type
+... // And so
+
+```
+
+**MANDATORY DEBUGGING AND UTILITIES**:
+- ✅ **ALWAYS** use `sy-commons` crate utilities (error handling, logging, config, filesystem, validation)
+- ✅ **ALWAYS** use `duck!("message")` macro for debugging (even in suspicious error-prone locations)
+- ✅ **NEVER** miss documentation warnings like:
+  - `missing documentation for the crate` - Add `//!` crate-level docs
+  - `missing documentation for a struct field` - Add `/// Field description` above each field
+  - `missing documentation for a function` - Add `/// Function description` above functions

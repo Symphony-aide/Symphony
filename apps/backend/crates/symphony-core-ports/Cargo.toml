@@ -1,0 +1,62 @@
+[package]
+name = "symphony-core-ports"
+version = "0.1.0"
+edition = "2021"
+description = "Core port trait definitions for Symphony's H2A2 architecture"
+authors = ["Symphony Team"]
+license = "MIT"
+repository = "https://github.com/symphony/symphony"
+
+[dependencies]
+# Async trait support
+async-trait = "0.1"
+
+# Serialization framework
+serde = { version = "1.0", features = ["derive"] }
+
+# Unique identifier generation
+uuid = { version = "1.6", features = ["v4", "serde"] }
+
+# Error handling
+thiserror = "1.0"
+
+# Symphony commons foundation
+sy-commons = { path = "../utils/sy-commons" }
+
+# Async runtime for streams
+tokio = { version = "1.0", features = ["sync"] }
+
+# Path handling
+camino = "1.1"
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# JSON handling
+serde_json = "1.0"
+
+[dev-dependencies]
+# MANDATORY for factory-based testing
+fake = { version = "2.9", features = ["derive", "uuid", "chrono"] }
+
+# Testing framework
+rstest = "0.18"
+tokio-test = "0.4"
+proptest = "1.4"
+serde_json = "1.0"
+
+[features]
+# Default runs only fast unit tests
+default = []
+
+# Individual test category features
+unit = []
+integration = []
+mock = []
+performance = []
+serialization = []
+error_handling = []
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]

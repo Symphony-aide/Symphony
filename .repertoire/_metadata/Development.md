@@ -7,6 +7,23 @@
 
 ---
 
+## 📖 Glossary
+
+| Term                               | Definition                                                                                                                                          |
+|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| **OFB Python**                     | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
+| **Pre-validation**                 | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic)                                                  |
+| **Authoritative Validation**       | Complete validation including RBAC, business rules, and data constraints performed by OFB Python                                                    |
+| **Two-Layer Architecture**         | Rust (orchestration + pre-validation) + OFB Python (validation + persistence)                                                                       |
+| **Mock-Based Contract Testing**    | Testing approach using mocked dependencies to verify component contracts                                                                            |
+| **WireMock Contract Verification** | HTTP endpoint mocking for testing integration with OFB Python services                                                                              |
+| **Three-Layer Testing**            | Unit tests (<100ms), Integration tests (<5s), Pre-validation tests (<1ms)                                                                           |
+| **Advanced Testing Requirements**  | Mandatory benchmarks, property tests, and fuzz testing when specified in acceptance criteria                                                        |
+| **Quality Gates**                  | Mandatory checks: tests pass, benchmarks <15% outliers, doc tests pass, clippy clean, docs generate                                                |
+| **sy-commons Integration**         | Mandatory use of sy-commons crate for error handling, logging, and utilities across all Symphony components                                         |
+
+---
+
 ## 🎯 Overview
 
 This framework bridges **strategic planning** (milestones) with **tactical execution** (features) using a structured, bottom-up approach that ensures rapid delivery without sacrificing quality.
@@ -22,13 +39,22 @@ This framework bridges **strategic planning** (milestones) with **tactical execu
 
 ```
 repertoire/
-├── milestones/
-│   ├── LEVEL0.md              # Strategic objectives (highest level)
-│   ├── level1/
-│   │   ├── LEVEL1.md          # Intermediate breakdown of all milestones
-│   └── level2/
-│       ├── LEVEL2_M1.md       # Concrete steps for M1
-│       ├── LEVEL2_M2.md       # Concrete steps for M2
+├── milestones/                 # Level-based milestone organization
+│   ├── level0/                # Strategic architecture
+│   │   ├── requirements.md    # High-level goals and properties
+│   │   ├── design.md         # Main architecture diagram
+│   │   └── notes.md          # Decisions and insights
+│   ├── level1/                # Component breakdown
+│   │   ├── requirements.md    # Component responsibilities
+│   │   ├── design.md         # Component diagrams
+│   │   └── notes.md          # Implementation notes
+│   └── level2/                # Implementation details
+│       ├── level2_m1/         # M1 specific requirements
+│       │   ├── requirements.md # M1 specific requirements
+│       │   ├── design.md      # M1 implementation diagrams
+│       │   └── notes.md       # M1 decisions
+│       ├── level2_m2/         # M2 specific requirements
+│       │   └── ...
 │       └── ...
 ├── features/                   # Hierarchical feature organization
 │   ├── m1.1/                  # Features for milestone M1.1 (IPC Protocol)
@@ -53,6 +79,120 @@ repertoire/
 - **Dependency Management**: Related features are co-located
 - **Progress Tracking**: Easy to see milestone completion status
 - **Scalability**: Structure supports hundreds of features without confusion
+- **Level-Based Architecture**: Three-level milestone structure (level0, level1, level2) with dedicated files for requirements, design, and notes
+
+**New Milestone Structure:**
+- **Level 0**: Highest-level architecture, one main diagram, describes system as whole
+- **Level 1**: Breaks down Level 0, more details, multiple diagrams allowed  
+- **Level 2**: Breaks down Level 1, concrete implementation details, one diagram per sub-milestone
+
+**File Organization per Level:**
+
+### requirements.md
+**Purpose**: What this level is responsible for
+**Content**:
+- **High-level goals only** - Strategic objectives without implementation details
+- **Acceptance criteria** - Measurable conditions that define completion using Gherkin-style ATDD format
+- **Correctness properties** - Formal statements about what the system should do (characteristics or behaviors that should hold true across all valid executions)
+- **Glossary keywords** - Domain-specific terminology and definitions
+- **ATDD approach compatibility** - Requirements structured to be super applicable for Test-Driven Development
+
+**Example Structure (Gherkin-style ATDD)**:
+```markdown
+### Requirement 1: Enhanced CLI Management System
+**Goal**: Provide comprehensive command-line interface management
+
+**Acceptance Criteria (Gherkin-style)**:
+Scenario: Discover available CLI commands
+  Given the CLI tool is installed
+  When the user runs `tool --help`
+  Then a list of available commands is shown
+
+Scenario: Execute CLI command with fast response
+  Given the CLI tool is ready
+  When the user runs any valid command
+  Then the command executes within 100ms response time
+
+Scenario: Handle invalid commands gracefully
+  Given the CLI tool is running
+  When the user runs an invalid command
+  Then an error message with actionable guidance is displayed
+
+**Correctness Properties**:
+- Property 1: All valid commands must return exit code 0
+- Property 2: Invalid commands must return non-zero exit codes
+- Property 3: Help flag (--help) must be supported by all commands
+
+**Glossary**:
+- CLI: Command Line Interface
+- ATDD: Acceptance Test-Driven Development
+```
+
+### design.md  
+**Purpose**: Architecture and structure representation
+**Content**:
+- **High-level ASCII diagrams** (recommended) - Simple, readable visual representations
+- **Mermaid diagrams** (alternative) - When ASCII is insufficient
+- **Architectural patterns** - How components interact and relate
+- **Keep it simple and readable** - Avoid over-complexity
+
+**Guidelines**:
+- Use ASCII art for maximum compatibility and simplicity
+- One main diagram per level (Level 0), multiple allowed for Level 1/2
+- Focus on relationships and data flow, not implementation details
+
+### LEVEL.md
+**Purpose**: The actual milestone guidemap - detailed implementation breakdown and guidance
+**Content**:
+- **Complete milestone breakdown** - All milestones with detailed deliverables and sub-tasks
+- **Implementation guidance** - Step-by-step breakdown of what needs to be built
+- **Crate/module structure** - Specific code organization and file structure
+- **Success criteria** - Concrete checkboxes for completion tracking
+- **Dependencies and integration points** - How components connect and depend on each other
+
+**File Naming Convention**:
+- **LEVEL0.md** - Strategic milestones (M1, M2, M3, etc.) with complete implementation roadmap
+- **LEVEL1_M{X}.md** - Tactical breakdown for specific milestone M{X}
+- **LEVEL2_M{X}_S{Y}.md** - Concrete implementation steps for milestone M{X}, section S{Y}
+
+**Example Structure**:
+```markdown
+## 🚧 M1: Core Infrastructure (3-4 months)
+
+**Goal**: Build the foundational systems that Symphony AIDE layer requires
+
+### 1.1 Environment Setup & Port Definitions
+**Priority**: 🔴 Critical - Foundation for H2A2 architecture
+
+**Deliverables**:
+- Hexagonal Architecture port definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort)
+- Development environment setup and tooling
+- Domain types and comprehensive error handling
+
+**Crates to Create**:
+```
+apps/backend/crates/symphony-core-ports/
+├── src/
+│   ├── ports.rs         # Port trait definitions
+│   ├── types.rs         # Domain types
+│   ├── errors.rs        # Error types
+│   └── lib.rs
+```
+
+**Success Criteria**:
+- ✅ H2A2 architecture fully implemented
+- ✅ All port interfaces defined and documented
+- ✅ Mock adapters available for testing
+```
+
+### notes.md
+**Purpose**: Incremental decision and insight tracking  
+**Content**:
+- **Empty by default** - No pre-populated content
+- **Filled incrementally** - Added as decisions, issues, or insights emerge during development
+- **Decision log** - Why certain choices were made
+- **Issue tracking** - Problems encountered and their resolutions
+- **Insights** - Lessons learned and important discoveries
 
 ---
 
@@ -97,11 +237,16 @@ All milestones and features use a stateful checkbox system to track progress:
 
 ### Level 0: Strategic Vision
 
-**File:** `LEVEL0.md`
+**Files:** `level0/requirements.md`, `level0/design.md`, `level0/notes.md`
 
 **Purpose:** Define the "what" and "why" at the highest level.
 
-**Format:**
+**File Structure:**
+- **requirements.md**: High-level goals and properties, acceptance criteria, correctness properties, glossary keywords
+- **design.md**: Main architecture diagram describing system as whole
+- **notes.md**: Strategic decisions and insights (filled incrementally)
+
+**Format in requirements.md:**
 
 ```markdown
 ## 🚧 M{NUMBER}: <NAME>
@@ -112,6 +257,10 @@ All milestones and features use a stateful checkbox system to track progress:
 
 **Status**: * [ ] | * [ - ] | * [ <number> ]
 
+**Timeline**: <Realistic time estimate (e.g., 3-4 months)>
+
+**Dependencies**: <List of prerequisite milestones>
+
 **Deliverables**:
 * [ ] Deliverable 1: <Concrete output>
 * [ ] Deliverable 2: <Concrete output>
@@ -121,37 +270,60 @@ All milestones and features use a stateful checkbox system to track progress:
 * [ ] Metric 1: <How we measure success>
 * [ ] Metric 2: <How we measure success>
 
-**Dependencies**:
-- M{X}: <Related milestone>
-- M{Y}: <Related milestone>
+**Performance Targets** (if applicable):
+- [ ] <Specific measurable performance requirement>
+- [ ] <Another performance target>
 
 ```
 
-**Example:**
+**Example from LEVEL0.md:**
 
 ```markdown
-## 🚧 M1: Orchestra Kit Foundation
+## 🚧 M1: Core Infrastructure (3-4 months)
+**Status**: * [ ] - Next Priority
+**Dependencies**: M0 Foundation
 
-**Goal**: Establish the complete extension management system with security,
-lifecycle management, and marketplace integration.
+### Implementation Breakdown
 
-**Priority**: Critical
+#### 1.1 Environment Setup & Port Definitions
+**Priority**: 🔴 Critical - Foundation for H2A2 architecture
+**Timeline**: 2-3 weeks
 
-**Status**: * [ - ]
+**Crate Structure**:
+```
+apps/backend/crates/symphony-core-ports/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs           # Public API exports
+│   ├── ports.rs         # Port trait definitions (TextEditingPort, PitPort, ExtensionPort, ConductorPort)
+│   ├── types.rs         # Domain types and data structures
+│   ├── errors.rs        # Error types and handling
+│   └── mocks.rs         # Mock implementations for testing
+└── tests/
+    └── integration_tests.rs
+```
 
-**Deliverables**:
-* [ 1 ] Sandboxed execution environment for extensions
-* [ - ] Manifest-based permission system
-* [ ] Extension installation and update pipeline
-* [ ] Basic marketplace infrastructure
+**Concrete Deliverables**:
+- [ ] Port trait definitions implemented
+- [ ] Domain types defined with comprehensive error handling
+- [ ] Mock adapters created for isolated testing
+- [ ] Architecture documentation updated
+- [ ] Development environment setup guide completed
 
-**Success Metrics**:
-* [ 1 ] Extensions can be installed/uninstalled without core restart
-* [ - ] 100% permission requests visible to users
-* [ ] Extension isolation verified (crash doesn't affect core)
+**Performance Targets**:
+- [ ] <0.3ms message latency for standard operations
+- [ ] <1ms for Symphony ↔ XI-editor JSON-RPC operations
+- [ ] 1,000+ operations/second throughput
+- [ ] Automatic reconnection within 100ms on failure
 
-**Dependencies**:
-- None (foundational milestone)
+### M1 Success Criteria Checklist
+- [ ] H2A2 architecture fully implemented (Ports + Adapters + Domain + Actors)
+- [ ] Two-binary architecture operational (Symphony + XI-editor)
+- [ ] All concrete adapters implement their respective port interfaces
+- [ ] Domain core orchestrates all components using ports only
+- [ ] Actor layer provides extension process isolation
+- [ ] All tests passing with >80% code coverage
+- [ ] Health monitoring detects and recovers from process failures
 
 ```
 
@@ -159,11 +331,16 @@ lifecycle management, and marketplace integration.
 
 ### Level 1: Tactical Breakdown
 
-**Files:** `LEVEL1/LEVEL1_M{X}.md`
+**Files:** `level1/requirements.md`, `level1/design.md`, `level1/notes.md`
 
-**Purpose:** Break strategic goals into implementable phases.
+**Purpose:** Break strategic goals into implementable phases with component responsibilities.
 
-**Format:**
+**File Structure:**
+- **requirements.md**: Component responsibilities and breakdown of Level 0 milestones
+- **design.md**: Component diagrams (multiple diagrams allowed)
+- **notes.md**: Implementation notes and decisions (filled incrementally)
+
+**Format in requirements.md:**
 
 ```markdown
 # Level 1 Breakdown: M{X} - <NAME>
@@ -217,11 +394,16 @@ lifecycle management, and marketplace integration.
 
 ### Level 2: Concrete Implementation Steps
 
-**Files:** `LEVEL2/LEVEL2_M{X}_S{Y}.md`
+**Files:** `level2/level2_m{N}/requirements.md`, `level2/level2_m{N}/design.md`, `level2/level2_m{N}/notes.md`
 
 **Purpose:** The lowest planning level before features. Each step here becomes one or more features.
 
-**Example:**
+**File Structure:**
+- **requirements.md**: M{N} specific requirements and concrete implementation steps
+- **design.md**: M{N} implementation diagrams (one diagram per sub-milestone)
+- **notes.md**: M{N} specific decisions and insights (filled incrementally)
+
+**Example in requirements.md:**
 
 ```markdown
 # Level 2 Steps: M1_S1 - Sandboxed Execution Environment
@@ -235,10 +417,38 @@ Create isolated execution contexts for extensions with resource limits and permi
 
 ### Step 1: Process Isolation Manager
 **Status**: * [ 1 ]
+**Timeline**: 2 days
+**Priority**: 🔴 Critical
 
 **What**: Build a manager that spawns and monitors isolated processes for extensions
 **Why**: Prevents extension crashes from affecting Symphony core
 **Output**: ProcessSandboxManager class with spawn/monitor/terminate methods
+
+**Crate Structure**:
+```
+apps/backend/crates/symphony-process-sandbox/
+├── Cargo.toml
+├── src/
+│   ├── lib.rs
+│   ├── manager.rs       # ProcessSandboxManager implementation
+│   ├── monitor.rs       # Health monitoring and restart logic
+│   ├── isolation.rs     # Process isolation mechanisms
+│   └── metrics.rs       # Resource usage tracking
+└── tests/
+    └── integration_tests.rs
+```
+
+**Concrete Deliverables**:
+- [ ] ProcessSandboxManager with spawn/monitor/terminate methods
+- [ ] Health monitoring with automatic restart capability
+- [ ] Resource usage tracking (CPU, memory, network)
+- [ ] Process isolation with security boundaries
+- [ ] Comprehensive test coverage
+
+**Performance Targets**:
+- [ ] Process spawn time <100ms
+- [ ] Health check interval <50ms
+- [ ] Resource monitoring overhead <1% CPU
 
 **Sub-tasks**:
 * [ 1 ] Design process spawn interface
@@ -252,10 +462,30 @@ Create isolated execution contexts for extensions with resource limits and permi
 
 ### Step 2: Permission Enforcement Layer
 **Status**: * [ 1 ]
+**Timeline**: 3 days
+**Priority**: 🔴 Critical
 
 **What**: Implement runtime permission checks for sandboxed operations
 **Why**: Prevents unauthorized access to system resources
 **Output**: PermissionEnforcer middleware
+
+**Crate Structure**:
+```
+apps/backend/crates/symphony-permissions/
+├── src/
+│   ├── lib.rs
+│   ├── enforcer.rs      # PermissionEnforcer implementation
+│   ├── policies.rs      # Permission policy definitions
+│   ├── audit.rs         # Audit logging for permission checks
+│   └── validation.rs    # Permission validation logic
+```
+
+**Concrete Deliverables**:
+- [ ] PermissionEnforcer middleware implementation
+- [ ] Permission policy definition system
+- [ ] Runtime permission validation
+- [ ] Audit logging for all permission checks
+- [ ] Integration with process sandbox manager
 
 **Sub-tasks**:
 * [ 1 ] Define permission model
@@ -269,6 +499,11 @@ Create isolated execution contexts for extensions with resource limits and permi
 ## Dependencies
 - Step 2 requires Step 1 (can't enforce permissions without sandbox)
 - External: Node.js child_process or similar
+
+## Integration Points
+- Connects to Extension Registry (M1.2)
+- Used by Extension Loader (M1.3)
+- Monitored by Health System (M1.4)
 
 ```
 
@@ -991,13 +1226,13 @@ class ImportantClass:
 ### Phase 1: Strategic Planning (Top-Down)
 
 ```
-1. Define LEVEL0.md milestones with checkboxes
+1. Define level0/requirements.md milestones with checkboxes
    * [ ] for each deliverable/metric
    ↓
-2. Break each milestone into LEVEL1/{milestone}.md sections
+2. Break each milestone into level1/requirements.md sections
    * [ ] for each step/output
    ↓
-3. Break each section into LEVEL2/{milestone}_{section}.md steps
+3. Break each section into level2/level2_m{N}/requirements.md steps
    * [ ] for each sub-task
    ↓
 4. Validate that Level 2 steps are implementable
@@ -1015,6 +1250,7 @@ class ImportantClass:
 
 ```
 6. Start at Level 2 (lowest planning level)
+   - Read requirements.md from level2/level2_m{N}/ directories
    ↓
 7. For each Level 2 step:
    - Identify atomic features
@@ -1224,9 +1460,9 @@ All complete? → M1 updated → * [ 1 ]
 
 ### File Locations:
 
-- `LEVEL0.md` → Contains all `M{N}`
-- `LEVEL1/M{N}.md` → Contains all `M{N.X}`
-- `LEVEL2/M{N.X}.md` → Contains all `M{N.X.Y}`
+- `level0/requirements.md` → Contains all `M{N}` strategic milestones
+- `level1/requirements.md` → Contains all `M{N.X}` tactical sections  
+- `level2/level2_m{N}/requirements.md` → Contains all `M{N.X.Y}` implementation steps
 
 ### Status Checkboxes:
 
@@ -1244,3 +1480,228 @@ All complete? → M1 updated → * [ 1 ]
 ---
 
 ***Now you have a complete, traceable system from strategic vision to production code!** 🎼*
+
+---
+
+## 🧪 Advanced Testing Requirements
+
+### Mandatory Quality Gates
+
+**CRITICAL**: All Symphony components must pass these quality gates before completion:
+
+#### 1. Test Execution Gates
+- **Unit Tests**: All tests pass WITHOUT warnings or failures
+- **Integration Tests**: All tests pass WITHOUT warnings or failures  
+- **Documentation Tests**: All doc tests pass WITHOUT warnings or failures
+- **Failed Test Recovery**: Use `cargo nextest run \--failed` to rerun only failed tests
+- **MANDATORY**: Use nextest whenever possible - `cargo nextest run` preferred over `cargo test`
+
+#### 2. Performance Gates
+- **Benchmarks**: When benchmarks exist, must pass with <15% outliers
+- **Performance Targets**: Must meet specific targets defined in acceptance criteria
+- **Stress Testing**: Must handle collapse scenarios identified in BIF evaluation
+
+#### 3. Code Quality Gates
+- **Clippy**: All clippy checks pass (zero warnings tolerance)
+- **Documentation**: All public APIs documented, docs generate successfully
+- **Warnings**: Zero tolerance for any compiler or tool warnings
+
+### Advanced Testing Integration
+
+**When Required by Acceptance Criteria:**
+
+#### Benchmark Testing
+```toml
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+```
+
+**Usage**: Performance-critical components must include criterion benchmarks
+**Threshold**: <15% outliers in benchmark results
+**Command**: `cargo bench` (integrated with quality gates)
+
+#### Property-Based Testing
+```toml
+[dev-dependencies]
+proptest = "1.4"
+```
+
+**Usage**: Algorithm correctness validation with generated test cases
+**Coverage**: Critical algorithms and data structure invariants
+**Integration**: Part of standard test suite execution
+
+#### Fuzz Testing
+```toml
+[dev-dependencies]
+cargo-fuzz = "0.11"
+```
+
+**Usage**: Security-critical components and parsers
+**Duration**: Minimum 10 minutes continuous fuzzing
+**Integration**: CI/CD pipeline for critical paths
+
+### Mandatory Feature Flags Template
+
+**REQUIRED**: All Symphony crates must include these feature flags:
+
+```toml
+[features]
+# Default runs only fast unit tests
+default = []
+
+# Individual test category features
+unit = []
+integration = []
+e2e = []
+
+# Performance and validation features
+slow = []
+benchmarks = []
+property_tests = []
+fuzz_tests = []
+
+# Business domain features (customize per crate)
+auth = []
+users = []
+services = []
+repositories = []
+redis = []
+
+# CI/CD management
+ci_cd_issue = []  # Do not include until explicitly mentioned by user
+```
+
+### sy-commons Integration Requirements
+
+**MANDATORY**: All Symphony components must:
+
+1. **Use sy-commons for error handling**:
+   ```rust
+   use sy_commons::error::SymphonyError;
+   ```
+
+2. **Use duck!() for debugging**:
+   ```rust
+   use sy_commons::debug::duck;
+   duck!("Suspicious operation: {}", operation_details);
+   ```
+
+3. **Follow sy-commons patterns**:
+   - Configuration management via sy_commons::config
+   - Logging via sy_commons::logging
+   - Filesystem operations via sy_commons::filesystem
+   - Pre-validation via sy_commons::prevalidation
+
+### Documentation Standards
+
+**MANDATORY**: Prevent documentation warnings:
+
+1. **Crate-level documentation**:
+   ```rust
+   //! # Crate Name
+   //! 
+   //! Brief description of crate purpose and functionality.
+   ```
+
+2. **Struct field documentation**:
+   ```rust
+   pub struct Config {
+       /// The server port to bind to
+       pub port: u16,
+       /// Maximum number of concurrent connections
+       pub max_connections: usize,
+   }
+   ```
+
+3. **Enum variant documentation**:
+   ```rust
+   pub enum LogLevel {
+       /// Debug level logging
+       Debug,
+       /// Information level logging
+       Info,
+   }
+   ```
+
+### Test Organization Standards
+
+**Directory Structure**:
+```
+crate_name/
+├── src/
+├── tests/
+│   ├── integration_tests.rs
+│   └── fixtures/
+├── benches/
+│   └── performance_bench.rs
+└── fuzz/
+    └── fuzz_targets/
+```
+
+**Test Execution Commands**:
+- `cargo test` - All tests including doc tests (FALLBACK ONLY)
+- `cargo nextest run` - Fast parallel test execution (MANDATORY PREFERRED)
+- `cargo nextest run \--failed` - Rerun only failed tests
+- `cargo bench` - Performance benchmarks
+- `cargo fuzz run target_name` - Fuzz testing
+
+**MANDATORY Quote Escaping**: Always escape quotes in feature flags:
+- ✅ CORRECT: `cargo nextest run \--features "unit,integration"`
+- ❌ WRONG: `cargo nextest run --features unit,integration`
+
+### Quality Assurance Checklist
+
+**Before Feature Completion**:
+- [ ] All unit tests pass (cargo nextest run - PREFERRED)
+- [ ] All integration tests pass (cargo nextest run - PREFERRED)
+- [ ] All documentation tests pass (cargo test --doc)
+- [ ] All benchmarks pass with <15% outliers (cargo bench)
+- [ ] Zero clippy warnings (cargo clippy)
+- [ ] Documentation generates successfully (cargo doc)
+- [ ] sy-commons integration verified
+- [ ] Feature flags properly configured
+- [ ] duck!() debugging used appropriately
+
+**MANDATORY**: Use `cargo nextest run` instead of `cargo test` whenever possible
+
+## Test Types Overview
+
+| Test Type | Name | Needed (%) | Why this value | Covered somewhere else |
+|-----------|------|------------|----------------|------------------------|
+| Unit Tests | `#[test]` | 80% | Core logic, fast, reliable, easy to maintain | |
+| Integration Tests | `tests/` | 60% | Ensure components work together | Unit tests |
+| Snapshot Tests | `insta` | 30% | Large structured outputs, stable APIs | Integration tests |
+| BDD Tests | `cucumber-rs` | 5% | Business-level behavior only | Unit / Integration |
+| Property Tests | `proptest` | 10% | Edge cases, invariants | Unit tests |
+
+**Notes**: Percentages are guidelines, not strict rules. Avoid duplication if test type is already satisfied elsewhere.
+
+### JSON Snapshot Testing with insta
+
+Use insta snapshot testing only when it makes sense:
+
+✅ **Use insta when**:
+- **Structured outputs**: JSON, YAML, maps, trees, ASTs
+- **Large/deeply nested data**: Hard to test field-by-field
+- **Stable APIs**: Public or semi-public API responses
+- **Config outputs**: Configuration files, logs, GraphQL responses
+
+❌ **Do NOT use insta when**:
+- **Dynamic values**: timestamps, UUIDs, random IDs
+- **Core business logic**: money calculations, permissions, rules
+- **Simple outputs**: `assert_eq!(result, 42)` is sufficient
+- **Highly volatile data**: Frequently changing structures
+
+### BDD Tests (cucumber-rs)
+
+BDD tests are usually NOT needed - use only when:
+- Business-level behavior must be validated by non-developers
+- Features are defined by business stakeholders
+- Cross-system flows need human-readable scenarios
+- If no strong reason exists → do not add BDD tests
+
+**Performance Validation**:
+- [ ] Benchmark results within acceptable ranges
+- [ ] Property tests validate algorithm correctness
+- [ ] Fuzz testing completed for security-critical components
+- [ ] Stress collapse scenarios tested and documented

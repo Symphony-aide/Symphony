@@ -8,12 +8,52 @@ This directory contains milestone breakdowns and roadmaps for the Symphony Rust 
 
 The goal is to provide a decomposition of the massive scope of work into manageable chunks. You should use these files as a reference to understand the *what* and *why*, but use your own engineering judgment and vision for the *how*.
 
+## 🚨 CRITICAL RULE: "Common First"
+
+**Core Rule**: Any functionality that can be shared across crates MUST be implemented in `sy-commons` first.
+
+**M1.0 sy-commons Foundation is PREREQUISITE for ALL other development**:
+- SymphonyError - base error for ALL Symphony crates (mandatory)
+- Professional logging (tracing-based) - Console, File, JSON outputs
+- Environment configuration (TOML + Figment) - default.toml, test.toml, production.toml
+- Safe filesystem utilities - professional architecture, low complexity
+- Pre-validation helpers - simple rule validation utilities
+- Duck debugging - temporary debugging utilities with duck!() macro
+- Complete lib.rs guide - documentation of all functionality
+- Co-located tests - every public function has tests in same file
+- OCP compliance - open for extension, closed for modification
+
+## 📖 Glossary
+
+| Term                               | Definition                                                                                                                                          |
+|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| **OFB Python**                     | Out of Boundary Python - refers to Python API components that handle authoritative validation, RBAC, and data persistence outside the Rust boundary |
+| **Pre-validation**                 | Lightweight technical validation in Rust to prevent unnecessary HTTP requests (NOT business logic)                                                  |
+| **Authoritative Validation**       | Complete validation including RBAC, business rules, and data constraints performed by OFB Python                                                    |
+| **Two-Layer Architecture**         | Rust (orchestration + pre-validation) + OFB Python (validation + persistence)                                                                       |
+| **Mock-Based Contract Testing**    | Testing approach using mocked dependencies to verify component contracts                                                                            |
+| **WireMock Contract Verification** | HTTP endpoint mocking for testing integration with OFB Python services                                                                              |
+| **Three-Layer Testing**            | Unit tests (<100ms), Integration tests (<5s), Pre-validation tests (<1ms)                                                                           |
+
+---
+
 ## 🗺️ High-Level Vision
 
 The roadmap is decomposed into several key phases, designed to build the "Symphony AIDE" (AI-First Development Environment) layer on top of the existing XI-editor foundation.
 
 ### 1. The Foundation (XI-Editor)
 *Status: ✅ Complete*
+
+### 1.0. sy-commons Foundation (PREREQUISITE)
+*Status: 🚧 Next Priority*
+
+**ALL Symphony development depends on sy-commons completion**:
+- Shared error handling (SymphonyError)
+- Professional logging system
+- Environment configuration
+- Safe filesystem utilities
+- Pre-validation helpers
+- Duck debugging utilities
 The text editing core, rope data structures, and JSON-RPC communication are already in place.
 
 ### 2. The Pit (Core AIDE Infrastructure)

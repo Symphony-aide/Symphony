@@ -2,11 +2,26 @@
 
 **CRITICAL**: ALL implementations MUST follow Test-Driven Development (TDD):
 
-1. **RED PHASE**: Write failing tests first
+- **CRITICAL** (default, fast):  
+`cargo nextest run` (MANDATORY PREFERRED) or `cargo test` (fallback only) for test runnings
+
+**MANDATORY Quote Escaping**: Always escape quotes in feature flags:
+- ✅ CORRECT: `cargo nextest run \--features "unit,integration"`
+- ❌ WRONG: `cargo nextest run --features unit,integration`
+
+**MANDATORY Factory-Based Test Data**: 
+- **ZERO TOLERANCE**: Never hardcode test data. Always use specific factory structs.
+- **MANDATORY**: Read and follow `.repertoire/practice/factory_testing_mandatory.md`
+- **MANDATORY**: Create specific factory structs BEFORE writing any tests
+- **MANDATORY**: Use `sy-commons::testing::safe_generator()` for thread-safe data generation
+
+AND YOU HAVE TO RUN doc-tests too!
+
+1. **RED PHASE**: Write failing tests first (using factories)
 2. **GREEN PHASE**: Write minimal code to make tests pass  
 3. **REFACTOR PHASE**: Improve code quality while keeping tests green
 
-**ZERO TOLERANCE**: Skipping TDD or writing implementation before tests is NOT ALLOWED.
+**ZERO TOLERANCE**: Skipping TDD, writing implementation before tests, or using hardcoded test data is NOT ALLOWED.
 
 ---
 
@@ -14,58 +29,112 @@
 
 **MANDATORY TOOLS FOR RUST TESTING**:
 
-1. **rstest** - For fixtures and parameterization
+1. **sy-commons** - Thread-safe testing utilities (MANDATORY)
+   - **SafeGenerator**: Thread-safe, deterministic test data generation
+   - **ZERO TOLERANCE**: Never hardcode test data
+   - Use `sy-commons::testing::safe_generator()` for unique, thread-safe values
+   - Reference `.repertoire/practice/factory_testing_mandatory.md`
 
-2. **tokio::test** - For async runtime support
+2. **fake** - For factory-based test data generation (MANDATORY)
+   - **ZERO TOLERANCE**: Never hardcode test data
+   - Use for generating realistic UUIDs, names, emails, etc.
+   - Create both valid and invalid data generators
+   - Reference `.repertoire/practice/factory_testing_mandatory.md`
 
-3. **cargo nextest** - Enhanced test runner (with fallback)
+3. **rstest** - For fixtures and parameterization
+
+4. **tokio::test** - For async runtime support
+
+5. **cargo nextest** - Enhanced test runner (MANDATORY PREFERRED with fallback)
    - Faster test execution with better output formatting
    - Improved test discovery and parallel execution
    - Fallback to `cargo test` if nextest is not available
+   - **Quote Escaping**: Always use `\--features "unit,integration"` not `--features unit,integration`
+
+6. **insta** - JSON snapshot testing (use judiciously)
+   - For structured outputs: JSON, YAML, maps, trees, ASTs
+   - For large/deeply nested data hard to test field-by-field
+   - For stable APIs and config outputs
+   - **Do NOT use for**: dynamic values, core business logic, simple outputs
+
+7. **cucumber-rs** - BDD testing (rarely needed)
+   - Usually NOT needed - unit and integration tests cover most cases
+   - Only use when business-level behavior must be validated by non-developers
+   - If no strong reason exists → do not add BDD tests
 
 **EXAMPLE USAGE**:
 ```rust
 use rstest::*;
 use tokio_test;
+use crate::tests::factory::{UUIDTestFactory, EmailTestFactory}; // MANDATORY: Use specific factories
 
-// Fixture-based testing with rstest
+// ❌ FORBIDDEN - Hardcoded test data
 #[fixture]
 fn sample_user() -> User {
-    User::new("test_user", "test@example.com")
+    User::new("test_user", "test@example.com") // NEVER DO THIS
 }
 
-// Parameterized testing
+// ✅ MANDATORY - Specific factory-based testing
+#[fixture]
+fn sample_user() -> User {
+    UserTestFactory::valid() // ALWAYS DO THIS
+}
+
+// ✅ MANDATORY - Specific factory-based parameterized testing
 #[rstest]
-#[case("valid@email.com", true)]
-#[case("invalid-email", false)]
-#[case("", false)]
-fn test_email_validation(#[case] email: &str, #[case] expected: bool) {
-    assert_eq!(validate_email(email), expected);
+#[case(EmailTestFactory::valid(), true)]
+#[case(EmailTestFactory::invalid(), false)]
+#[case(StringTestFactory::empty(), false)]
+fn test_email_validation(#[case] email: String, #[case] expected: bool) {
+    assert_eq!(validate_email(&email), expected);
 }
 
-// Async testing with tokio::test
+// ✅ MANDATORY - Specific factory-based async testing
 #[tokio::test]
 async fn test_async_operation() {
-    let result = async_function().await;
+    let input = AsyncInputTestFactory::valid();
+    let result = async_function(input).await;
     assert!(result.is_ok());
 }
 
+// ✅ MANDATORY - Specific factory-based UUID testing
+#[test]
+fn test_uuid_validation() {
+    let valid_uuid = UUIDTestFactory::valid();
+    let invalid_uuid = UUIDTestFactory::invalid();
+    
+    assert!(valid_uuid.is_valid_uuid());
+    assert!(!invalid_uuid.is_valid_uuid());
+}
 ```
 
 **CARGO.TOML DEPENDENCIES**:
 ```toml
+[dependencies]
+sy-commons = { path = "../utils/sy-commons" }
+
 [dev-dependencies]
-rstest = "*"
-tokio-test = "*"
+# MANDATORY for factory-based testing
+fake = { version = "2.9", features = ["derive", "uuid", "chrono"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
+
+# Existing mandatory testing tools
+rstest = "0.18"
+tokio-test = "0.4"
+proptest = "1.4"
 ```
 
 **TEST EXECUTION COMMANDS**:
 ```bash
-# Preferred: Use cargo nextest (faster, better output)
+# Preferred: Use cargo nextest (MANDATORY PREFERRED - faster, better output)
 cargo nextest run
 
-# Fallback: Use standard cargo test if nextest unavailable
+# Fallback: Use standard cargo test if nextest unavailable (FALLBACK ONLY)
 cargo test
+
+# With feature flags (MANDATORY quote escaping):
+cargo nextest run \--features "unit,integration"
+cargo test \--features "unit,integration"  # fallback only
 ```
 
 ---
@@ -81,7 +150,7 @@ mod tests {
 
     // Unit tests - test individual components (fast, isolated)
     // MANDATORY: These must be written FIRST (RED phase)
-    #[cfg(feature = "test_unit")]
+    #[cfg(feature = "unit")]
     #[test]
     fn test_component_behavior() {
         // Arrange
@@ -96,7 +165,7 @@ mod tests {
 
     // Property tests - test invariants across many inputs
     // MANDATORY: Write these for any function with mathematical properties
-    #[cfg(feature = "test_unit")] // or a separate feature if desired
+    #[cfg(feature = "unit")] // or a separate feature if desired
     mod property_tests {
         use proptest::prelude::*;
         use super::*;
@@ -111,7 +180,7 @@ mod tests {
     }
 
     // Integration tests (slower, full stack)
-    #[cfg(feature = "test_integration")]
+    #[cfg(feature = "integration")]
     mod integration_tests {
         use super::*;
 
@@ -122,7 +191,7 @@ mod tests {
     }
 
     // End-to-end tests (browser-based, requires running app)
-    #[cfg(feature = "test_e2e")]
+    #[cfg(feature = "e2e")]
     mod e2e_tests {
         use super::*;
 
@@ -133,7 +202,7 @@ mod tests {
     }
 
     // Slow tests
-    #[cfg(feature = "test_slow")]
+    #[cfg(feature = "slow")]
     mod slow_tests {
         use super::*;
 
@@ -144,7 +213,7 @@ mod tests {
     }
 
     // Authentication tests
-    #[cfg(feature = "test_auth")]
+    #[cfg(feature = "auth")]
     mod auth_tests {
         use super::*;
 
@@ -167,17 +236,16 @@ mod tests {
 default = []
 
 # Individual test category features
-test_unit = []
-test_integration = []
-test_e2e = [] # Based on Project and Business [e.g. HTML Generation] Type
-test_slow = []
-test_auth = [] # Based on Project and Business [e.g. Backend Service] Type
-test_users = [] # Based on Project and Business [e.g. Backend Service] Type
-test_services = [] # Based on Project and Business [e.g. Backend Service] Type
-test_repositories = [] # Based on Project and Business [e.g. Backend Service] Type
-test_redis = []
-test_ci_cd_issue = [] # Do not include until explicitly mentioned by the user
-test_fixtures = [] # For rstest-based fixture tests
+unit = []
+integration = []
+e2e = [] # Based on Project and Business [e.g. HTML Generation] Type
+slow = []
+auth = [] # Based on Project and Business [e.g. Backend Service] Type
+users = [] # Based on Project and Business [e.g. Backend Service] Type
+services = [] # Based on Project and Business [e.g. Backend Service] Type
+repositories = [] # Based on Project and Business [e.g. Backend Service] Type
+redis = []
+ci_cd_issue = [] # Do not include until explicitly mentioned by the user
 
 [dev-dependencies]
 # MANDATORY testing tools
@@ -189,13 +257,13 @@ proptest = "1.4"          # Property-based testing
 ### Running specific categories
 
 - **Run only unit tests** (default, fast):  
-  `cargo nextest run` or `cargo test` (fallback)
+  `cargo nextest run` (MANDATORY PREFERRED) or `cargo test` (fallback only)
 
 - **Run multiple categories** (e.g., unit + auth + redis) 
-  `cargo nextest run --features "test_unit test_auth test_redis"` or `cargo test --features "test_unit test_auth test_redis"` (fallback)
+  `cargo nextest run \--features "unit auth test_redis"` or `cargo test \--features "unit auth test_redis"` (fallback only)
 
 - **Run all tests** (including slow/e2e/etc.):  
-  `cargo nextest run --all-features` or `cargo test --all-features` (fallback)
+  `cargo nextest run \--all-features` or `cargo test \--all-features` (fallback only)
 
 ---
 
@@ -204,11 +272,14 @@ proptest = "1.4"          # Property-based testing
 **PHASE 1: RED (Write Failing Tests)**
 
 1. ✅ Read feature requirements completely
-2. ✅ Write acceptance tests that FAIL (no implementation exists)
-3. ✅ Write unit tests for each function that FAIL
-4. ✅ Write property tests for mathematical functions that FAIL
-5. ✅ Verify tests fail for the RIGHT REASONS (not compilation errors)
-6. ✅ Commit failing tests
+2. ✅ **MANDATORY**: Create test factory following `.repertoire/practice/factory_testing_mandatory.md`
+3. ✅ **MANDATORY**: Add `fake` crate dependency to Cargo.toml
+4. ✅ Write acceptance tests that FAIL using factory-generated data (no implementation exists)
+5. ✅ Write unit tests for each function that FAIL using factory-generated data
+6. ✅ Write property tests for mathematical functions that FAIL using factory-generated data
+7. ✅ **ZERO TOLERANCE**: Verify no hardcoded test data exists anywhere
+8. ✅ Verify tests fail for the RIGHT REASONS (not compilation errors)
+9. ✅ Commit failing tests with factory
 
 **PHASE 2: GREEN (Make Tests Pass)**
 
@@ -230,6 +301,58 @@ proptest = "1.4"          # Property-based testing
 
 ---
 
+## Test Types Overview
+
+| Test Type | Name | Needed (%) | Why this value | Covered somewhere else |
+|-----------|------|------------|----------------|------------------------|
+| Unit Tests | `#[test]` | 80% | Core logic, fast, reliable, easy to maintain | |
+| Integration Tests | `tests/` | 60% | Ensure components work together | Unit tests |
+| Snapshot Tests | `insta` | 30% | Large structured outputs, stable APIs | Integration tests |
+| BDD Tests | `cucumber-rs` | 5% | Business-level behavior only | Unit / Integration |
+| Property Tests | `proptest` | 10% | Edge cases, invariants | Unit tests |
+
+**Notes**: Percentages are guidelines, not strict rules. Avoid duplication if test type is already satisfied elsewhere.
+
+### JSON Snapshot Testing Guidelines
+
+✅ **Use insta when**:
+- Structured outputs: JSON, YAML, maps, trees, ASTs
+- Large/deeply nested data hard to test field-by-field
+- Stable APIs: Public or semi-public API responses
+- Config outputs: Configuration files, logs, GraphQL responses
+
+❌ **Do NOT use insta when**:
+- Dynamic values: timestamps, UUIDs, random IDs
+- Core business logic: money calculations, permissions, rules
+- Simple outputs: `assert_eq!(result, 42)` is sufficient
+- Highly volatile data: Frequently changing structures
+
+### BDD Testing Guidelines
+
+BDD tests are usually NOT needed because unit and integration tests already cover most cases.
+
+Only use BDD if there is a strong reason, such as:
+- Business-level behavior must be validated
+- Features are defined by non-developers
+- Cross-system flows need human-readable scenarios
+
+If no strong reason exists → do not add BDD tests.
+
+---
+
 ### WARNING HANDLING IN TESTS
 
 **ZERO TOLERANCE**: Test warnings are NOT ALLOWED.
+
+**QUALITY GATES - DETAILED COMMANDS**:
+- ✅ **Unit/Integration Tests**: `cargo nextest run` (MANDATORY PREFERRED) - Must show "0 failed" and no warnings in output
+- ✅ **Documentation Tests**: `cargo test \--doc` - Must show "0 failed" and no "warning:" lines
+- ✅ **Factory Validation**: All tests must use factory-generated data (no hardcoded values)
+- ✅ **Factory Structure**: Factory module must exist with required patterns
+- ✅ **Dependencies**: `fake` crate dependency must be added to Cargo.toml
+- ✅ **Benchmarks**: `cargo bench` - If benchmarks exist, outliers must be <15% (e.g., "Found 6 outliers among 100 measurements (6.00%)" is OK, >15% is NOT)
+- ✅ **On Test Failure**: First run `cargo nextest run \--failed` to rerun only failed tests, then fix and rerun all
+
+**MANDATORY Quote Escaping Examples**:
+- ✅ CORRECT: `cargo nextest run \--manifest-path apps/backend/crates/sy-ipc-protocol/Cargo.toml \--features "unit,jsonrpc"`
+- ❌ WRONG: `cargo nextest run --manifest-path apps/backend/crates/sy-ipc-protocol/Cargo.toml --features unit,jsonrpc`

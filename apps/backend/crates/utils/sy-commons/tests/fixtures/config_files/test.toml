@@ -1,0 +1,20 @@
+[logging]
+level = "debug"
+
+[logging.console]
+enabled = true
+format = "compact"
+colors = false
+
+[logging.file]
+enabled = true
+path = "test_logs/symphony_test.log"
+max_files = 5
+
+[filesystem]
+max_file_size = 10485760  # 10MB
+atomic_writes = true
+
+[debug]
+duck_debugging = true
+performance_logging = true

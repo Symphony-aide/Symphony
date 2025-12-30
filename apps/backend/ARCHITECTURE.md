@@ -2,7 +2,34 @@
 
 ## Overview
 
-Symphony's backend is built on a **two-layer architecture** that combines the battle-tested XI-editor foundation with Symphony's custom AIDE (AI-First Development Environment) features.
+Symphony's backend is built on a **two-binary architecture** that separates the AI orchestration system (Symphony) from the text editing engine (XI-editor) while maintaining clean communication between them.
+
+### Binary Separation Strategy
+
+```
+┌─────────────────────────────────────────┐    ┌─────────────────────────────────────────┐
+│              Symphony Binary             │    │             XI-editor Binary             │
+│        (AI-First Development)            │    │          (Text Editing Core)             │
+│                                         │    │                                         │
+│  • The Conductor (orchestration)        │◄──►│  • Rope data structure                  │
+│  • The Pit (5 infrastructure modules)   │    │  • JSON-RPC server                      │
+│  • Extension Ecosystem                  │    │  • LSP integration                      │
+│  • Tauri Frontend                       │    │  • Syntax highlighting                  │
+│  • Python Bridge (PyO3)                │    │  • Plugin system                        │
+└─────────────────────────────────────────┘    └─────────────────────────────────────────┘
+                    ▲                                              ▲
+                    │                                              │
+              JSON-RPC over                                 Standalone
+              Unix Sockets/                                 Process
+              Named Pipes                                   
+```
+
+This separation provides:
+- **Process Isolation**: XI-editor crashes don't affect Symphony
+- **Independent Updates**: Can update either binary independently  
+- **Resource Management**: Separate memory spaces and CPU allocation
+- **Security**: Better sandboxing between components
+- **Scalability**: Can distribute across machines if needed
 
 ### Architecture Layers
 
@@ -304,12 +331,13 @@ cargo fix
   - [x] BIF evaluation completed (✅ Production Ready)
 
 🚧 **In Progress**:
-- [ ] MessagePack/Bincode serialization (F002, F003)
-- [ ] Schema validation system (F004)
-- [ ] Message registry (F005)
-- [ ] Transport layer implementation (F006)
-- [ ] Python Conductor integration
-- [ ] Frontend-backend JSON-RPC integration
+- [ ] Two-binary architecture implementation (F006-F010)
+- [ ] JSON-RPC protocol for inter-process communication (F016)
+- [ ] MessagePack/Bincode serialization (F012, F013)
+- [ ] Schema validation system (F014)
+- [ ] Transport layer implementation (F020-F024)
+- [ ] Python Conductor integration (F038-F047)
+- [ ] Extension ecosystem (F048-F057)
 
 📋 **Planned**:
 - [ ] Extension ecosystem
@@ -319,48 +347,99 @@ cargo fix
 
 ## Performance Targets
 
-### XI-editor Layer (Achieved)
+### XI-editor Binary (Achieved)
 - ✅ Text operations: <16ms (60 FPS)
 - ✅ Large file handling: Efficient for files >100MB
 - ✅ Memory usage: Optimized rope structure
+- ✅ JSON-RPC server: <1ms response time target
 
-### Symphony AIDE Layer (Targets)
-- Pool Manager: 50-100ns allocation (cache hit)
-- DAG Tracker: 10,000-node workflows
-- Artifact Store: 1-5ms store, 0.5-2ms retrieve
-- IPC Bus: 0.1-0.3ms message latency
+### Symphony Binary (Targets)
+- **Inter-Process Communication**: <1ms latency to XI-editor
+- **The Pit Components**: 50-100ns allocation (cache hit)
+- **DAG Tracker**: 10,000-node workflows
+- **Artifact Store**: 1-5ms store, 0.5-2ms retrieve
+- **Extension Communication**: 0.1-0.3ms message latency
+- **Python Conductor**: ~0.01ms FFI overhead
+- **Process Startup**: Symphony <2s, XI-editor <1s
+- **Memory Overhead**: <100MB additional for process separation
 
 ## Communication Patterns
 
-### Frontend ↔ Backend
+### Symphony ↔ XI-editor (Inter-Process)
 ```
-Frontend (React/TS)
-    ↕ JSON-RPC (via XI-editor)
-Backend (Rust)
+Symphony Binary                    XI-editor Binary
+     │                                    │
+     │ JSON-RPC Request (insert text)     │
+     ├────────────────────────────────────►
+     │                                    │
+     │ JSON-RPC Response (revision)       │
+     ◄────────────────────────────────────┤
+     │                                    │
+     │ Event Stream (buffer changes)      │
+     ◄────────────────────────────────────┤
 ```
+**Transport**: Unix sockets (Linux/macOS) / Named pipes (Windows)
+**Latency Target**: <1ms per operation
+**Protocol**: JSON-RPC 2.0 with custom message envelope
 
-### Backend ↔ Python Conductor
+### Symphony ↔ Python Conductor (In-Process)
 ```
-Rust Backend
-    ↕ PyO3 FFI (~0.01ms overhead)
-Python Conductor (RL/AI)
+Symphony Rust Core
+     │
+     │ PyO3 FFI Call
+     ├─────────────────►  Python Conductor
+     │                        │
+     │ Direct Pit Access      │
+     │ (50-100ns latency)     │
+     │                        │
+     │ FFI Response           │
+     ◄─────────────────────────┤
 ```
+**Transport**: PyO3 FFI bindings (~0.01ms overhead)
+**Integration**: Python subprocess with direct memory access to Pit
+**Performance**: Maintains 50-100ns targets for Pit operations
 
-### Backend ↔ Extensions
+### Symphony ↔ Extensions (Out-of-Process)
 ```
-Symphony Core
-    ↕ IPC Bus (0.1-0.3ms)
-Extensions (In-process or Out-of-process)
+Symphony Core                    Extension Process
+     │                                │
+     │ Actor Message (invoke)         │
+     ├────────────────────────────────►
+     │                                │
+     │ Actor Response (result)        │
+     ◄────────────────────────────────┤
 ```
+**Transport**: Actor-based messaging (0.1-0.3ms latency)
+**Isolation**: Process boundaries for crash protection
+**Types**: Instruments (AI), Operators (utilities), Motifs (UI)
+
+### Frontend ↔ Symphony (In-Process)
+```
+React Frontend                   Symphony Backend
+     │                                │
+     │ Tauri Command                  │
+     ├────────────────────────────────►
+     │                                │
+     │ Tauri Response                 │
+     ◄────────────────────────────────┤
+     │                                │
+     │ Event Stream                   │
+     ◄────────────────────────────────┤
+```
+**Transport**: Tauri IPC (native performance)
+**Integration**: Direct Rust function calls from frontend
+**State**: Synchronized via event streaming
 
 ## Design Principles
 
-1. **Build on Proven Foundations**: Use XI-editor for text editing instead of reinventing
-2. **Layer Separation**: Clear boundary between XI and Symphony layers
-3. **Performance First**: Maintain XI's sub-16ms operation targets
-4. **Extensibility**: Plugin system for community contributions
-5. **Type Safety**: Leverage Rust's type system for correctness
-6. **Async-First**: Non-blocking operations throughout
+1. **Process Isolation First**: Separate Symphony and XI-editor for crash resilience and independent updates
+2. **Build on Proven Foundations**: Use XI-editor for text editing instead of reinventing
+3. **Performance with Safety**: Maintain XI's sub-16ms targets while adding process boundaries
+4. **Clean Communication**: JSON-RPC protocol for inter-process communication with <1ms latency
+5. **Extensibility**: Actor-based extension system for community contributions
+6. **Type Safety**: Leverage Rust's type system for correctness across process boundaries
+7. **Async-First**: Non-blocking operations throughout both binaries
+8. **Graceful Degradation**: System continues functioning when one process fails
 
 ## References
 

@@ -4,30 +4,54 @@
 
 ---
 
-## 📁 Files Overview
+## 🚨 CRITICAL PREREQUISITE: sy-commons Foundation
 
-| File | Milestone | Duration | Tasks | Focus |
-|------|-----------|----------|-------|-------|
-| [MILESTONE_LEVEL2_M1.md](./MILESTONE_LEVEL2_M1.md) | Core Infrastructure | 15 weeks | ~78 | IPC, Python Bridge, Extension SDK |
-| [MILESTONE_LEVEL2_M5.md](./MILESTONE_LEVEL2_M5.md) | Visual Orchestration | 11 weeks | ~175 | Workflow data model, DAG ops, Templates |
-| [MILESTONE_LEVEL2_M4.md](./MILESTONE_LEVEL2_M4.md) | Extension Ecosystem | 20 weeks | ~220 | Permissions, sandboxing, extension types |
-| [MILESTONE_LEVEL2_M3.md](./MILESTONE_LEVEL2_M3.md) | The Pit | 18 weeks | ~170 | Pool Manager, DAG Tracker, Artifact Store |
+**ALL Level 2 milestone development depends on M1.0 sy-commons Foundation completion**:
+- SymphonyError - base error for ALL Symphony crates (mandatory)
+- Professional logging (tracing-based) - Console, File, JSON outputs
+- Environment configuration (TOML + Figment) - default.toml, test.toml, production.toml
+- Safe filesystem utilities - professional architecture, low complexity
+- Pre-validation helpers - simple rule validation utilities
+- Duck debugging - temporary debugging utilities with duck!() macro
 
-**Total**: ~643 detailed tasks across 64 weeks (with parallelization: ~40 weeks)
+**Core Rule**: "Common First" - Any functionality that can be shared across crates MUST be implemented in sy-commons first.
 
 ---
 
-## 🎯 Execution Order: M1 → M5 → M4 → M3
+## 📁 Files Overview
 
-### Phase 1: M1 - Core Infrastructure (Weeks 1-15)
-**Foundation for everything else**
+| File | Milestone | Duration | Tasks | Focus | Dependencies |
+|------|-----------|----------|-------|-------|--------------|
+| **M1.0** | **sy-commons Foundation** | **2 weeks** | **~20** | **Shared utilities** | **None** |
+| [MILESTONE_LEVEL2_M1.md](./MILESTONE_LEVEL2_M1.md) | Core Infrastructure | 15 weeks | ~78 | IPC, Python Bridge, Extension SDK | **M1.0** |
+| [MILESTONE_LEVEL2_M5.md](./MILESTONE_LEVEL2_M5.md) | Visual Orchestration | 11 weeks | ~175 | Workflow data model, DAG ops, Templates | **M1.0** |
+| [MILESTONE_LEVEL2_M4.md](./MILESTONE_LEVEL2_M4.md) | Extension Ecosystem | 20 weeks | ~220 | Permissions, sandboxing, extension types | **M1.0** |
+| [MILESTONE_LEVEL2_M3.md](./MILESTONE_LEVEL2_M3.md) | The Pit | 18 weeks | ~170 | Pool Manager, DAG Tracker, Artifact Store | **M1.0** |
+
+**Total**: ~663 detailed tasks across 66 weeks (with parallelization: ~42 weeks)
+
+---
+
+## 🎯 Execution Order: M1.0 → M1 → M5 → M4 → M3
+
+### Phase 0: M1.0 - sy-commons Foundation (Weeks 1-2) - PREREQUISITE
+**Foundation for ALL Symphony development**
+- Error handling (SymphonyError)
+- Professional logging system
+- Environment configuration
+- Safe filesystem utilities
+- Pre-validation helpers
+- Duck debugging utilities
+
+### Phase 1: M1 - Core Infrastructure (Weeks 3-17)
+**Foundation for everything else** - DEPENDS ON M1.0
 - M1.1: IPC Protocol & Serialization
 - M1.2: Transport Layer (Unix sockets, Named pipes)
 - M1.3: Message Bus Core
 - M1.4: Python-Rust Bridge (PyO3)
 - M1.5: Extension SDK Foundation
 
-### Phase 2: M5 - Visual Orchestration Backend (Weeks 16-26)
+### Phase 2: M5 - Visual Orchestration Backend (Weeks 18-28) - DEPENDS ON M1.0
 **Data structures for workflows**
 - M5.1: Workflow Data Model (nodes, edges)
 - M5.2: DAG Validation & Operations
@@ -113,7 +137,19 @@ graph TD
 - **Windows**: Named pipes, Job Objects
 
 ### Testing Strategy
-- **Unit Tests**: Every public function
+
+**Three-Layer Testing Architecture**:
+- **Layer 1**: Unit tests with mocked dependencies (<100ms)
+- **Layer 2**: Integration tests with WireMock for OFB Python (<5s)  
+- **Layer 3**: Pre-validation tests for fast rejection (<1ms)
+
+**Testing Boundary Separation**:
+- **Rust Layer**: Orchestration logic, algorithms, data structures, performance-critical operations
+- **OFB Python Layer**: Authoritative validation, RBAC, data persistence, business rules
+
+**Key Testing Approaches**:
+- **Mock-Based Contract Testing**: All external dependencies mocked using mockall
+- **WireMock Contract Verification**: HTTP endpoints mocked for OFB Python integration
 - **Property Tests**: Serialization round-trips, state machines
 - **Integration Tests**: Cross-crate functionality
 - **Benchmarks**: Performance regression detection

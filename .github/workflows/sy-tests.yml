@@ -1,0 +1,121 @@
+name: Symphony Tests (sy-*)
+
+on:
+  push:
+    paths:
+      - 'apps/backend/crates/**/sy-*/**'
+      - 'apps/backend/Cargo.toml'
+      - 'apps/backend/Cargo.lock'
+  pull_request:
+    paths:
+      - 'apps/backend/crates/**/sy-*/**'
+      - 'apps/backend/Cargo.toml'
+      - 'apps/backend/Cargo.lock'
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+
+jobs:
+  test-sy-crates:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: clippy, rustfmt
+    
+    - name: Cache Rust dependencies
+      uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: "apps/backend"
+        cache-on-failure: true
+        shared-key: "symphony-backend"
+    
+    - name: Cache cargo tools
+      uses: actions/cache@v4
+      id: cache-tools
+      with:
+        path: ~/.cargo/bin
+        key: cargo-tools-${{ runner.os }}-nextest-fuzz-tauri
+    
+    - name: Install required tools
+      if: steps.cache-tools.outputs.cache-hit != 'true'
+      run: |
+        cargo install cargo-nextest --locked
+        cargo install cargo-fuzz --locked
+        cargo install tauri-cli --locked
+    
+    - name: Run sy-* crate tests
+      working-directory: apps/backend
+      run: |
+        # Test sy-* crates individually for better error reporting
+        echo "Testing sy-* crates (Symphony code - strict quality standards)..."
+        
+        SY_CRATES=(
+          "sy-commons"
+          "sy-core-ports"
+        )
+        
+        PASSED=0
+        FAILED=0
+        
+        for crate in "${SY_CRATES[@]}"; do
+          echo "Testing crate: $crate"
+          
+          # Check if crate exists
+          if [ -d "crates/core/$crate" ] || [ -d "crates/utils/$crate" ]; then
+            # Run tests (strict - must pass)
+            if cargo nextest run --package "$crate"; then
+              echo "✅ Tests passed for $crate"
+              ((PASSED++))
+            else
+              echo "❌ Tests FAILED for $crate"
+              ((FAILED++))
+              exit 1  # Fail fast for sy-* crates
+            fi
+            
+            # Run doc tests (strict - must pass)
+            if cargo test --package "$crate" --doc; then
+              echo "✅ Doc tests passed for $crate"
+            else
+              echo "❌ Doc tests FAILED for $crate"
+              exit 1  # Fail fast for sy-* crates
+            fi
+            
+            # Run benchmarks if they exist (criterion is a dev-dependency)
+            if cargo bench --package "$crate" 2>/dev/null; then
+              echo "✅ Benchmarks passed for $crate"
+            else
+              echo "ℹ️  No benchmarks found for $crate"
+            fi
+            
+            # Run clippy (strict - zero warnings)
+            if cargo clippy --package "$crate" -- -D warnings; then
+              echo "✅ Clippy passed for $crate"
+            else
+              echo "❌ Clippy FAILED for $crate"
+              exit 1  # Fail fast for sy-* crates
+            fi
+          else
+            echo "⚠️  Crate $crate not found, skipping..."
+          fi
+          
+          echo "---"
+        done
+        
+        # Check formatting (applies to all code)
+        if cargo fmt --all --check; then
+          echo "✅ Formatting check passed"
+        else
+          echo "❌ Formatting check FAILED"
+          exit 1
+        fi
+        
+        echo "Symphony crate testing summary:"
+        echo "Passed: $PASSED"
+        echo "Failed: $FAILED"
+        echo "All sy-* crates must pass strict quality standards!"

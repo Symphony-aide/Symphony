@@ -1,7 +1,7 @@
 # Repertoire Framework Metadata
 
-> **Updated**: December 25, 2025  
-> **Version**: 2.0 - Enhanced with Technical Patterns and Hierarchical Organization
+> **Updated**: December 27, 2025  
+> **Version**: 3.0 - New Level-Based Milestone Structure
 
 This directory contains the complete documentation for Symphony's Repertoire development framework - a systematic approach to building complex software systems through structured milestone decomposition and feature-driven development.
 
@@ -9,11 +9,58 @@ This directory contains the complete documentation for Symphony's Repertoire dev
 
 ## 📋 Framework Overview
 
-The Repertoire framework addresses three critical weaknesses in traditional development approaches:
+The Repertoire framework addresses critical weaknesses in traditional development approaches:
 
-1. **Lack of Technical Consistency** → Solved with `technical_pattern.md`
-2. **Flat Feature Organization** → Solved with hierarchical milestone-based structure
-3. **Incomplete Quality Evaluation** → Solved with enhanced BIF reasoning requirements
+1. **Unclear Requirements** → Solved with level-based requirements.md files
+2. **Poor Architecture Documentation** → Solved with design.md ASCII diagrams
+3. **Lost Implementation Knowledge** → Solved with incremental notes.md files
+4. **Inconsistent Quality** → Solved with BIF evaluation framework
+
+---
+
+## 🏗️ NEW: Level-Based Milestone Structure
+
+### Improved Organization
+
+```
+milestones/
+├── level0/                    # System-wide architecture
+│   ├── requirements.md        # High-level goals and properties
+│   ├── design.md             # Main architecture diagram
+│   └── notes.md              # Decisions and insights
+├── level1/                    # Component breakdown
+│   ├── requirements.md        # Component responsibilities
+│   ├── design.md             # Component diagrams
+│   └── notes.md              # Implementation notes
+└── level2/                    # Detailed implementation
+    ├── level2_m1/            # Milestone group M1
+    │   ├── requirements.md    # M1 specific requirements
+    │   ├── design.md         # M1 implementation diagrams
+    │   └── notes.md          # M1 decisions
+    └── level2_m2/            # Milestone group M2
+        └── ...
+```
+
+### File Purposes
+
+**requirements.md**:
+- What this level is responsible for
+- High-level goals and acceptance criteria
+- **Correctness Properties**: Formal behavioral guarantees
+- Glossary of key terms
+- ATDD-compatible requirements
+
+**design.md**:
+- Architecture and structure
+- **ASCII diagrams** (recommended) or Mermaid
+- Component relationships
+- Simple and readable designs
+
+**notes.md**:
+- Empty by default
+- Filled incrementally with decisions, issues, insights
+- Implementation discoveries
+- Performance observations
 
 ---
 
@@ -36,52 +83,68 @@ The Repertoire framework addresses three critical weaknesses in traditional deve
 
 ---
 
-## 🏗️ Framework Architecture
+## 🎯 Level Meanings
 
-### Three-Level Milestone Hierarchy
+### Level 0: System Architecture
+- **The highest-level architecture**
+- **One main architecture diagram**
+- **Describes the system as a whole**
 
+Example: Symphony AIDE system overview showing Symphony Binary ↔ XI-editor Binary
+
+### Level 1: Component Breakdown
+- **Breaks down Level 0 into major components**
+- **Multiple diagrams allowed**
+- **Component responsibilities and interfaces**
+
+Example: Break down Symphony Binary into Domain Core, Ports, Adapters, The Pit, etc.
+
+### Level 2: Implementation Details
+- **Breaks down Level 1 components into specific implementations**
+- **One diagram per sub-milestone**
+- **Concrete implementation strategies**
+
+Example: Break down each Level 1 component into specific features and implementations
+
+---
+
+## 🔄 Migration Benefits
+
+### From Old Structure
 ```
-LEVEL 0 (Strategic)     → M1, M2, M3, ...
-    ↓
-LEVEL 1 (Tactical)      → M1.1, M1.2, M1.3, ...
-    ↓
-LEVEL 2 (Concrete)      → M1.1.1, M1.1.2, M1.1.3, ...
-    ↓
-FEATURES (Implementation) → F001, F002, F003, ...
+.repertoire/milestones/
+├── LEVEL0.md              # Monolithic file
+├── LEVEL1/LEVEL1.md       # Single large file
+└── LEVEL2/LEVEL2_M*.md    # Multiple files
 ```
 
-### Hierarchical Feature Organization
-
-**NEW**: Features are organized by parent milestone for better scalability:
-
+### To New Structure
 ```
-.repertoire/features/
-├── m1.1/          # IPC Protocol & Serialization
-│   ├── F001_message_envelope_design/
-│   ├── F002_messagepack_serialization/
-│   └── F003_bincode_serialization/
-├── m1.2/          # Transport Layer
-│   ├── F006_transport_trait/
-│   └── F007_unix_socket_transport/
-└── m5.1/          # Workflow Data Model
-    └── F050_workflow_struct/
+milestones/
+├── level0/                # Separated concerns
+│   ├── requirements.md    # What we're building
+│   ├── design.md         # How it's structured
+│   └── notes.md          # Why decisions were made
+├── level1/               # Component focus
+└── level2/               # Implementation focus
 ```
 
-**Benefits**:
-- Clear milestone-to-feature mapping
-- Logical grouping of related features
-- Scalable to hundreds of features
-- Easy dependency management
+### Improvements
+- **Better Separation of Concerns**: What vs How vs Why
+- **Clearer Documentation Purpose**: Each file has specific role
+- **Improved Navigation**: Easier to find relevant information
+- **Systematic Knowledge Evolution**: Incremental notes capture learning
 
 ---
 
 ## 🎯 AI Mode System
 
-### Three Specialized AI Modes
+### Four Specialized AI Modes
 
 1. **CONSTRUCTOR** → Strategic planning and milestone creation
 2. **TRANSFORMER** → Feature extraction and specification
 3. **IMPLEMENTER** → Code implementation and verification
+4. **ANALYZER** → Technical consultation and system analysis
 
 Each mode has specific responsibilities and handoff protocols documented in [How To Use.md](./How%20To%20Use.md).
 
@@ -89,9 +152,9 @@ Each mode has specific responsibilities and handoff protocols documented in [How
 
 ## 📊 Quality Assurance: Enhanced BIF Framework
 
-### NEW: Reasoning-Based Evaluation
+### Reasoning-Based Evaluation
 
-All BIF evaluations now require **reasoning** for every rating:
+All BIF evaluations require **reasoning** for every rating:
 
 | Dimension | Rating | **Reasoning Required** |
 |-----------|--------|----------------------|
@@ -115,7 +178,7 @@ All BIF evaluations now require **reasoning** for every rating:
 
 ## 🔧 Technical Implementation Standards
 
-### NEW: Technical Pattern Requirements
+### Technical Pattern Requirements
 
 All implementations must follow patterns defined in `technical_pattern.md`:
 
@@ -161,14 +224,14 @@ F001 [1] → M1.1.1 [1] → M1.1 [1] → M1 [1]
 
 ### For New Projects
 
-1. **Use CONSTRUCTOR mode** to create milestone hierarchy
-2. **Use TRANSFORMER mode** to extract features
-3. **Use IMPLEMENTER mode** to build features
+1. **Use CONSTRUCTOR mode** to create level-based milestone hierarchy
+2. **Use TRANSFORMER mode** to extract features from Level 2 steps
+3. **Use IMPLEMENTER mode** to build features with quality assurance
 
 ### For Existing Projects
 
-1. **Assess current state** against framework requirements
-2. **Reorganize features** into hierarchical structure if needed
+1. **Use ANALYZER mode** to assess current state
+2. **Migrate to new structure** using provided migration steps
 3. **Apply technical patterns** to existing code
 4. **Run BIF evaluation** with enhanced reasoning requirements
 
@@ -179,7 +242,7 @@ F001 [1] → M1.1.1 [1] → M1.1 [1] → M1 [1]
 ### Essential Commands
 
 ```bash
-# Start new project
+# Start new project with new structure
 "Switch to CONSTRUCTOR mode and help me plan [project description]"
 
 # Convert milestones to features  
@@ -187,18 +250,23 @@ F001 [1] → M1.1.1 [1] → M1.1 [1] → M1 [1]
 
 # Implement features
 "Switch to IMPLEMENTER mode and start with F001"
+
+# Analyze existing system
+"Switch to ANALYZER mode and review my project"
 ```
 
 ### Key Files to Create
 
-1. **Milestones**: `LEVEL0.md`, `level1/LEVEL1.md`, `level2/LEVEL2_M*.md`
+1. **Milestones**: Level-based structure with requirements.md, design.md, notes.md
 2. **Features**: 7 lifecycle documents per feature
 3. **Technical Standards**: `practice/technical_pattern.md`
 
 ### Quality Checklist
 
-- [ ] Technical patterns followed
-- [ ] Features hierarchically organized
+- [ ] Level-based milestone structure implemented
+- [ ] Requirements include correctness properties
+- [ ] Design uses ASCII diagrams
+- [ ] Notes capture incremental learning
 - [ ] BIF evaluation includes reasoning
 - [ ] All tests passing
 - [ ] Documentation complete
@@ -208,19 +276,21 @@ F001 [1] → M1.1.1 [1] → M1.1 [1] → M1 [1]
 
 ## 🔄 Framework Evolution
 
-### Version 2.0 Improvements (December 2025)
+### Version 3.0 Improvements (December 2025)
 
-1. **Technical Pattern Definition** → Consistent implementation standards
-2. **Hierarchical Feature Organization** → Better scalability and organization
-3. **Enhanced BIF Reasoning** → More thorough quality evaluation
-4. **Improved Documentation** → Clearer guidance and examples
+1. **Level-Based Milestone Structure** → Better separation of concerns
+2. **Requirements with Properties** → Formal correctness guarantees
+3. **ASCII Diagram Standards** → Readable, maintainable architecture docs
+4. **Incremental Notes System** → Capture learning and decisions
 
-### Future Enhancements
+### Migration Path
 
-- Automated quality metrics collection
-- Integration with CI/CD pipelines
-- Template generation tools
-- Cross-project pattern sharing
+The framework supports migration from LEVEL0/LEVEL1/LEVEL2 structure to the new level-based organization. This provides:
+
+- Better separation of concerns (what vs how vs why)
+- Clearer documentation purpose
+- Improved navigation and maintenance
+- Systematic knowledge evolution
 
 ---
 
@@ -228,18 +298,18 @@ F001 [1] → M1.1.1 [1] → M1.1 [1] → M1 [1]
 
 ### Common Issues
 
-1. **Features too large** → Break into smaller, atomic features
-2. **Unclear dependencies** → Map dependencies explicitly in DEFINITION.md
-3. **Low BIF scores** → Address HIGH priority issues before proceeding
-4. **Status tracking confusion** → Follow propagation rules strictly
+1. **Unclear requirements** → Use correctness properties and ATDD format
+2. **Complex diagrams** → Keep ASCII diagrams simple and focused
+3. **Lost decisions** → Use notes.md to capture incremental learning
+4. **Low BIF scores** → Address HIGH priority issues with reasoning
 
 ### Getting Help
 
 - **Framework Questions**: Review [Development.md](./Development.md)
 - **AI Mode Issues**: Check [How To Use.md](./How%20To%20Use.md)
 - **Quality Problems**: Consult [BIF.md](./BIF.md)
-- **Implementation Patterns**: Reference `practice/technical_pattern.md`
+- **Implementation Patterns**: Reference [technical_pattern.md](../practice/technical_pattern.md)
 
 ---
 
-*The Repertoire framework transforms software development from ad-hoc coding to systematic, quality-driven engineering. Follow the patterns, trust the process, and build something extraordinary.* 🎼
+*The Repertoire framework transforms software development from ad-hoc coding to systematic, quality-driven engineering. The new level-based structure makes complex projects more understandable and maintainable.* 🎼

@@ -1,0 +1,144 @@
+{
+  "valid_jsonrpc_messages": [
+    {
+      "name": "simple_request",
+      "message": {
+        "jsonrpc": "2.0",
+        "method": "subtract",
+        "params": [42, 23],
+        "id": 1
+      },
+      "type": "request"
+    },
+    {
+      "name": "request_with_named_params",
+      "message": {
+        "jsonrpc": "2.0",
+        "method": "subtract",
+        "params": {"subtrahend": 23, "minuend": 42},
+        "id": 3
+      },
+      "type": "request"
+    },
+    {
+      "name": "notification",
+      "message": {
+        "jsonrpc": "2.0",
+        "method": "update",
+        "params": [1, 2, 3, 4, 5]
+      },
+      "type": "notification"
+    },
+    {
+      "name": "success_response",
+      "message": {
+        "jsonrpc": "2.0",
+        "result": 19,
+        "id": 1
+      },
+      "type": "response"
+    },
+    {
+      "name": "error_response",
+      "message": {
+        "jsonrpc": "2.0",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        },
+        "id": "1"
+      },
+      "type": "response"
+    },
+    {
+      "name": "xi_editor_new_view",
+      "message": {
+        "jsonrpc": "2.0",
+        "method": "new_view",
+        "params": {
+          "file_path": "/path/to/file.rs"
+        },
+        "id": "view_001"
+      },
+      "type": "request"
+    },
+    {
+      "name": "xi_editor_edit",
+      "message": {
+        "jsonrpc": "2.0",
+        "method": "edit",
+        "params": {
+          "view_id": "view_001",
+          "delta": {
+            "ops": [
+              {"op": "retain", "n": 10},
+              {"op": "insert", "s": "Hello, World!"},
+              {"op": "delete", "n": 5}
+            ],
+            "base_len": 15,
+            "target_len": 23
+          }
+        },
+        "id": "edit_001"
+      },
+      "type": "request"
+    }
+  ],
+  "invalid_jsonrpc_messages": [
+    {
+      "name": "missing_jsonrpc_field",
+      "message": {
+        "method": "test",
+        "id": 1
+      },
+      "expected_error": "missing jsonrpc field"
+    },
+    {
+      "name": "wrong_jsonrpc_version",
+      "message": {
+        "jsonrpc": "1.0",
+        "method": "test",
+        "id": 1
+      },
+      "expected_error": "jsonrpc must be '2.0'"
+    },
+    {
+      "name": "missing_method_in_request",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 1
+      },
+      "expected_error": "missing method field"
+    },
+    {
+      "name": "empty_method",
+      "message": {
+        "jsonrpc": "2.0",
+        "method": "",
+        "id": 1
+      },
+      "expected_error": "method cannot be empty"
+    },
+    {
+      "name": "response_with_both_result_and_error",
+      "message": {
+        "jsonrpc": "2.0",
+        "result": "success",
+        "error": {
+          "code": -32000,
+          "message": "Server error"
+        },
+        "id": 1
+      },
+      "expected_error": "response cannot have both result and error"
+    },
+    {
+      "name": "response_with_neither_result_nor_error",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 1
+      },
+      "expected_error": "response must have either result or error"
+    }
+  ]
+}

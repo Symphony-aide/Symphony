@@ -11,7 +11,7 @@ The shared crate named `common` contains the central definitions. No crate may d
 Use "Duck Debugging" statements only for temporary, loud, contextual logging during development.
 
 **Rules**:
-- Only active in debug builds (e.g., `cargo run`, `cargo test` — not in `--release`)
+- Only active in debug builds (e.g., `cargo run`, `cargo nextest run`, `cargo test` — not in `--release`)
 - Always use the exact prefix: `[DUCK DEBUGGING]`
 - Easy to search globally (`grep "[DUCK DEBUGGING]"`) and remove when no longer needed
 - Prefer over scattered `println!` or `log::debug!` without format

@@ -1,0 +1,8 @@
+[logging]
+level = "invalid_level"  # Invalid log level
+
+[logging.console]
+enabled = "not_a_boolean"  # Invalid type
+
+[filesystem]
+max_file_size = "not_a_number"  # Invalid type

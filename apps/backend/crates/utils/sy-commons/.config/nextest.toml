@@ -1,0 +1,23 @@
+[profile.default]
+# Store test results for rerunning failed tests
+store-dir = "target/nextest"
+
+# Retry failed tests automatically
+retries = 1
+
+# Show slow tests
+slow-timeout = { period = "60s", terminate-after = 2 }
+
+# Custom test groups
+[[profile.default.overrides]]
+filter = 'test(integration)'
+slow-timeout = { period = "120s" }
+
+[[profile.default.overrides]]
+filter = 'test(performance)'
+retries = 0  # Don't retry performance tests
+
+[profile.ci]
+# CI-specific configuration
+retries = 2
+fail-fast = false
