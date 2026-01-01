@@ -13,6 +13,7 @@ members = [
     "crates/utils/sy-commons",
     "crates/symphony-core-ports",
     "crates/sy-ipc-protocol",
+    "crates/sy-ipc-transport",
 ]
 
 [workspace.dependencies]

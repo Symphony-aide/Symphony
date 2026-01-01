@@ -8,11 +8,6 @@
 #![allow(clippy::redundant_clone)] // May be needed for test isolation
 #![allow(clippy::panic)] // Acceptable in tests for assertion failures
 
-use sy_ipc_protocol::{
-	CorrelationId, MessageEnvelope, MessageMetadata,
-	MessagePriority, MessageRegistry, MessageSerializer, MessageType, SerializationFormat,
-	JsonRpcRequest, JsonRpcMessage,
-};
 
 #[cfg(feature = "unit")]
 mod message_envelope_tests {
