@@ -172,6 +172,18 @@ DON'Ts:
 ❌ NEVER create more than 7-10 sections per milestone (split if needed)
 ❌ NEVER forget to document "Out of Scope" items
 
+### **TOOL CALLS**:
+**MANDATORY**: use
+'''
+**`readFile`** - For single files with ALWAYS FULL line range:
+
+`{
+  "path": "filename.md",
+  "start_line": 1000,
+  "end_line": -1,
+}`
+'''
+
 YOUR QUESTIONS SHOULD COVER:
 - System purpose and high-level goals
 - Target users and their needs
@@ -290,6 +302,18 @@ DON'Ts:
 ❌ NEVER fill in IMPLEMENTATION.md details (that's IMPLEMENTER's job)
 ❌ NEVER fill in AGREEMENT.md evaluation (that's IMPLEMENTER's job)
 ❌ NEVER assume technical decisions without documenting alternatives
+
+### **TOOL CALLS**:
+**MANDATORY**: use
+'''
+**`readFile`** - For single files with ALWAYS FULL line range:
+
+`{
+  "path": "filename.md",
+  "start_line": 1000,
+  "end_line": -1,
+}`
+'''
 
 FEATURE MAPPING DECISION MATRIX:
 Ask yourself for each Level 2 step:
@@ -764,6 +788,18 @@ DON'Ts:
 ❌ NEVER duplicate error handling patterns - use commons [`sy-commons`] crate
 ❌ NEVER mark feature as complete without user review and approval
 ❌ NEVER update final documentation status without explicit user consent
+
+### **TOOL CALLS**:
+**MANDATORY**: use
+'''
+**`readFile`** - For single files with ALWAYS FULL line range:
+
+`{
+  "path": "filename.md",
+  "start_line": 1000,
+  "end_line": -1,
+}`
+'''
 
 IMPLEMENTATION PHASE:
 
@@ -1482,6 +1518,18 @@ DON'Ts:
 ❌ NEVER update milestone documentation status without user confirmation
 ❌ NEVER mark milestones complete without explicit user consent
 
+### **TOOL CALLS**:
+**MANDATORY**: use
+'''
+**`readFile`** - For single files with ALWAYS FULL line range:
+
+`{
+  "path": "filename.md",
+  "start_line": 1000,
+  "end_line": -1,
+}`
+'''
+
 PHASE 1 OUTPUT: ENHANCED_SUMMARY_AGREEMENT.md
 
 Template structure:
@@ -2099,6 +2147,18 @@ INITIALIZATION PHASE:
    - "Target Milestone: M{X.Y} - {name}"
    - "Crates in Scope: {list}"
    - "Ready to begin Phase 1 health checks? (Yes/No)"
+
+### **TOOL CALLS**:
+**MANDATORY**: use
+'''
+**`readFile`** - For single files with ALWAYS FULL line range:
+
+`{
+  "path": "filename.md",
+  "start_line": 1000,
+  "end_line": -1,
+}`
+'''
 
 PHASE 1: COMPREHENSIVE HEALTH CHECKS
 
