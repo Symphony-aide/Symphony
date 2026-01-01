@@ -67,12 +67,10 @@ impl StringValidation for String {
 impl StringValidation for &str {
 	fn is_valid_email(&self) -> bool {
 		// Basic email validation - contains @ and at least one dot after @
-		if let Some(at_pos) = self.find('@') {
+		self.find('@').is_some_and(|at_pos| {
 			let after_at = &self[at_pos + 1..];
 			!after_at.is_empty() && after_at.contains('.') && at_pos > 0
-		} else {
-			false
-		}
+		})
 	}
 
 	fn is_valid_uuid(&self) -> bool {
@@ -136,6 +134,7 @@ impl<T> OptionExt<T> for Option<T> {
 }
 
 #[cfg(test)]
+#[allow(clippy::bool_comparison, clippy::unnecessary_literal_unwrap)]
 mod tests {
 	use super::*;
 

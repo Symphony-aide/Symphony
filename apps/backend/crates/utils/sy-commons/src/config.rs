@@ -112,6 +112,7 @@ pub struct DebugConfig {
 impl Config for DefaultConfig {}
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
 mod tests {
 	use super::*;
 	use std::fs;

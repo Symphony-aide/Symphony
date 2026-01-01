@@ -2,7 +2,10 @@
 //!
 //! These benchmarks verify that validation rules meet the <1ms performance requirement.
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+#![allow(clippy::doc_markdown, unused_doc_comments, clippy::semicolon_if_nothing_returned, missing_docs)]
+
+use criterion::{criterion_group, criterion_main, Criterion};
+use std::hint::black_box;
 use sy_commons::prevalidation::{
 	validate_fast, CompositeRule, MaxLengthRule, MinLengthRule, NonEmptyRule, PreValidationRule,
 };

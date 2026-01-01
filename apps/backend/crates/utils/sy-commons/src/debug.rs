@@ -59,6 +59,7 @@ macro_rules! duck {
 pub use crate::duck;
 
 #[cfg(test)]
+#[allow(clippy::assertions_on_constants)]
 mod tests {
 	#[test]
 	fn test_duck_macro_compiles() {

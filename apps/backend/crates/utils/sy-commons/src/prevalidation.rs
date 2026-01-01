@@ -109,6 +109,7 @@ impl<T> CompositeRule<T> {
 	}
 
 	/// Add a validation rule to this composite rule
+	#[must_use]
 	pub fn add_rule<R>(mut self, rule: R) -> Self
 	where
 		R: PreValidationRule<T, Error = SymphonyError> + 'static,
@@ -167,6 +168,7 @@ where
 }
 
 #[cfg(test)]
+#[allow(clippy::panic, clippy::unwrap_used)]
 mod tests {
 	use super::*;
 	use std::time::Instant;

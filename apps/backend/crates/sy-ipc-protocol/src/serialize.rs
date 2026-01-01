@@ -42,8 +42,11 @@ pub enum SerializationError {
 		"Performance target violated: {operation} took {duration_ms}ms, expected <{target_ms}ms"
 	)]
 	PerformanceViolation {
+		/// The operation that violated performance targets
 		operation: String,
+		/// Actual duration in milliseconds
 		duration_ms: u64,
+		/// Target duration in milliseconds
 		target_ms: u64,
 	},
 }
@@ -160,7 +163,8 @@ impl MessagePackSerializer {
 			.map_err(|e| SerializationError::MessagePackError(e.to_string()))?;
 
 		let duration = start.elapsed();
-		let duration_micros = duration.as_micros() as u64;
+		let duration_micros = u64::try_from(duration.as_micros())
+			.unwrap_or(u64::MAX); // If duration is too large, use max value
 
 		// Performance target: <0.01ms (10 microseconds) in production
 		// Allow more flexibility in debug/test builds
@@ -171,7 +175,7 @@ impl MessagePackSerializer {
 			);
 			return Err(SerializationError::PerformanceViolation {
 				operation: "MessagePack serialize".to_string(),
-				duration_ms: duration.as_millis() as u64,
+				duration_ms: u64::try_from(duration.as_millis()).unwrap_or(u64::MAX),
 				target_ms: 0, // <0.01ms
 			});
 		}
@@ -192,7 +196,8 @@ impl MessagePackSerializer {
 			.map_err(|e| SerializationError::MessagePackError(e.to_string()))?;
 
 		let duration = start.elapsed();
-		let duration_micros = duration.as_micros() as u64;
+		let duration_micros = u64::try_from(duration.as_micros())
+			.unwrap_or(u64::MAX); // If duration is too large, use max value
 
 		// Performance target: <0.01ms (10 microseconds) in production
 		// Allow more flexibility in debug/test builds
@@ -203,7 +208,7 @@ impl MessagePackSerializer {
 			);
 			return Err(SerializationError::PerformanceViolation {
 				operation: "MessagePack deserialize".to_string(),
-				duration_ms: duration.as_millis() as u64,
+				duration_ms: u64::try_from(duration.as_millis()).unwrap_or(u64::MAX),
 				target_ms: 0, // <0.01ms
 			});
 		}

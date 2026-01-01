@@ -4,6 +4,8 @@
 //! different components of the sy-commons crate, including error handling,
 //! logging, configuration, filesystem operations, and validation.
 
+#![allow(clippy::unwrap_used, clippy::panic, clippy::manual_string_new, clippy::assertions_on_constants, clippy::redundant_clone, clippy::unreadable_literal)]
+
 use std::fs;
 use sy_commons::*;
 use tempfile::TempDir;
@@ -31,7 +33,7 @@ async fn test_error_logging_integration() {
 	};
 
 	// This should succeed with console logging enabled
-	let result = init_logging(config);
+	let result = init_logging(&config);
 	assert!(result.is_ok()); // Should succeed with duck debugging message for file logging
 }
 

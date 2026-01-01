@@ -4,7 +4,12 @@
 //! - MessagePack/Bincode: <0.01ms (10 microseconds)
 //! - JSON-RPC: <1ms (1000 microseconds)
 
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+#![allow(clippy::similar_names)] // serializer/serialized is clear in context
+#![allow(clippy::unwrap_used)] // Acceptable in benchmarks for known good values
+#![allow(clippy::semicolon_if_nothing_returned)] // Benchmark style preference
+
+use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
+use std::hint::black_box;
 use sy_commons::debug::duck;
 use sy_ipc_protocol::{MessageEnvelope, MessageType, SerializationFormat};
 

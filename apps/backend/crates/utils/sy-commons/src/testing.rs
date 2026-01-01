@@ -39,7 +39,7 @@ impl SafeGenerator {
 
 	/// Generate unique string with prefix
 	///
-	/// Format: "{prefix}_{session_id}_{unique_id}"
+	/// Format: "{prefix}_{`session_id`}_{`unique_id`}"
 	pub fn unique_string_with_prefix(&self, prefix: &str) -> String {
 		let id = self.next_unique_id();
 		format!("{}_{}_{}", prefix, self.session_id, id)

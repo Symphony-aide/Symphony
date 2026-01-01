@@ -95,9 +95,9 @@ pub enum RotationConfig {
 ///     json: None,
 /// };
 ///
-/// init_logging(config).unwrap();
+/// init_logging(&config).unwrap();
 /// ```
-pub fn init_logging(config: LoggingConfig) -> Result<(), SymphonyError> {
+pub fn init_logging(config: &LoggingConfig) -> Result<(), SymphonyError> {
 	use tracing_subscriber::{fmt, util::SubscriberInitExt, EnvFilter};
 
 	// Parse log level
@@ -153,6 +153,7 @@ pub fn init_logging(config: LoggingConfig) -> Result<(), SymphonyError> {
 pub use tracing::{debug, error, info, trace, warn};
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
 mod tests {
 	use super::*;
 	use tempfile::TempDir;
@@ -215,7 +216,7 @@ mod tests {
 		};
 
 		// This should succeed but file logging is not yet implemented
-		let result = init_logging(config);
+		let result = init_logging(&config);
 		assert!(result.is_ok()); // Should succeed with duck debugging message
 	}
 }

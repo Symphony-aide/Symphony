@@ -22,18 +22,44 @@ Updated: December 25, 2025
 
 ### Dependency Management
 
-**RULE**: DONT determine third party crate versions manually, let Cargo find best latest compatible version.
+**RULE**: ALWAYS use workspace dependencies for sy-* packages to ensure consistency and avoid version conflicts.
 
-**DO**: 
+**MANDATORY PACKAGE DEPENDENCY PATTERN**:
 ```toml
+# In individual sy-* package Cargo.toml - ALWAYS use workspace versions
+[dependencies]
+# ✅ CORRECT - Use workspace dependencies
+serde.workspace = true
+tokio.workspace = true
+thiserror.workspace = true
+
+# ❌ WRONG - Direct version specification
 serde = "1.0"
-tokio = { version = "1.0", features = ["full"] }
+tokio = "1.35"
+thiserror = "2.0.17"
+
+[dev-dependencies]
+# ✅ CORRECT - Use workspace dependencies for tests too
+criterion.workspace = true
+rstest.workspace = true
+tokio-test.workspace = true
+proptest.workspace = true
 ```
 
-**DON'T**:
+**MANDATORY PACKAGE METADATA PATTERN**:
 ```toml
-serde = "1.0.195"  # Too specific
-tokio = "1.35.0"   # Let Cargo choose
+[package]
+name = "sy-example"
+version.workspace = true          # ✅ Use workspace version
+edition.workspace = true          # ✅ Use workspace edition
+license.workspace = true          # ✅ Use workspace license
+repository.workspace = true       # ✅ Use workspace repository
+description = "Package-specific description"
+keywords = ["symphony", "specific", "keywords"]
+categories = ["development-tools"]
+
+[lints]
+workspace = true                  # ✅ Use workspace lints
 ```
 
 ### Rust Implementation Patterns

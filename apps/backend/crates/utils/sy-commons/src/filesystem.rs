@@ -143,6 +143,7 @@ fn validate_path<P: AsRef<Path>>(path: P) -> Result<(), SymphonyError> {
 }
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
 mod tests {
 	use super::*;
 	use tempfile::TempDir;

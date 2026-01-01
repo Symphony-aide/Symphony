@@ -165,6 +165,7 @@ where
 }
 
 #[cfg(test)]
+#[allow(clippy::panic, clippy::manual_string_new, clippy::uninlined_format_args, clippy::unwrap_used)]
 mod tests {
 	use super::*;
 
