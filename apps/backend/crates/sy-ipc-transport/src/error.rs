@@ -121,8 +121,8 @@ pub enum ConfigError {
 
 impl From<TransportError> for SymphonyError {
     fn from(err: TransportError) -> Self {
-        SymphonyError::Generic {
-            message: format!("Transport layer operation failed: {}", err),
+        Self::Generic {
+            message: format!("Transport layer operation failed: {err}"),
             source: Some(Box::new(err)),
         }
     }
@@ -130,8 +130,8 @@ impl From<TransportError> for SymphonyError {
 
 impl From<ConfigError> for SymphonyError {
     fn from(err: ConfigError) -> Self {
-        SymphonyError::Configuration {
-            message: format!("Transport configuration error: {}", err),
+        Self::Configuration {
+            message: format!("Transport configuration error: {err}"),
             file: None,
         }
     }
@@ -165,6 +165,7 @@ mod tests {
     
     #[cfg(feature = "unit")]
     #[test]
+    #[allow(clippy::panic)]
     fn test_error_conversion_to_symphony_error() {
         let transport_error = TransportError::ConnectionTimeout;
         let symphony_error: SymphonyError = transport_error.into();
@@ -173,7 +174,9 @@ mod tests {
             SymphonyError::Generic { message, .. } => {
                 assert!(message.contains("Transport layer operation failed"));
             }
-            _ => panic!("Expected Generic error variant"),
+            _ => {
+                panic!("Expected Generic error variant, got: {symphony_error:?}");
+            }
         }
     }
 }

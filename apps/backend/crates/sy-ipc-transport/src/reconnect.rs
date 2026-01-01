@@ -66,6 +66,7 @@ pub struct ReconnectingTransport<T: Transport> {
 
 impl<T: Transport> ReconnectingTransport<T> {
     /// Create a new reconnecting transport wrapper
+    #[allow(clippy::missing_const_for_fn)]
     pub fn new(transport: T, config: T::Config, strategy: ReconnectStrategy) -> Self {
         Self {
             inner: transport,
@@ -87,7 +88,8 @@ impl<T: Transport> ReconnectingTransport<T> {
         
         if connection_healthy && matches!(self.state, ReconnectState::Connected) {
             // We have a healthy connection, return it
-            return Ok(self.current_connection.as_mut().unwrap());
+            #[allow(clippy::expect_used)]
+            return Ok(self.current_connection.as_mut().expect("Connection should exist when state is Connected"));
         }
         
         // Handle reconnection logic
@@ -101,7 +103,8 @@ impl<T: Transport> ReconnectingTransport<T> {
                     self.attempt_reconnect().await?;
                     // Check if reconnection was successful
                     if matches!(self.state, ReconnectState::Connected) {
-                        return Ok(self.current_connection.as_mut().unwrap());
+                        #[allow(clippy::expect_used)]
+                        return Ok(self.current_connection.as_mut().expect("Connection should exist when state is Connected"));
                     }
                 }
             }
@@ -128,6 +131,7 @@ impl<T: Transport> ReconnectingTransport<T> {
     }
     
     /// Attempt to reconnect
+    #[allow(clippy::cast_precision_loss, clippy::cast_possible_truncation, clippy::cast_sign_loss, clippy::cast_possible_wrap)]
     async fn attempt_reconnect(&mut self) -> Result<(), TransportError> {
         // Extract the current attempt number to avoid borrowing conflicts
         let current_attempt = if let ReconnectState::Reconnecting { attempt, .. } = &self.state {
@@ -184,7 +188,7 @@ impl<T: Transport> ReconnectingTransport<T> {
     }
     
     /// Get the current reconnection state
-    pub fn state(&self) -> &ReconnectState {
+    pub const fn state(&self) -> &ReconnectState {
         &self.state
     }
     
@@ -195,6 +199,8 @@ impl<T: Transport> ReconnectingTransport<T> {
 }
 
 /// Calculate exponential backoff delay with jitter
+#[must_use]
+#[allow(clippy::cast_precision_loss, clippy::cast_possible_wrap, clippy::cast_possible_truncation, clippy::cast_sign_loss)]
 pub fn calculate_backoff_delay(
     attempt: u32,
     initial_delay: Duration,
@@ -223,9 +229,15 @@ mod tests {
         let strategy = ReconnectStrategy::default();
         assert_eq!(strategy.initial_delay, Duration::from_millis(100));
         assert_eq!(strategy.max_delay, Duration::from_secs(30));
-        assert_eq!(strategy.multiplier, 2.0);
+        #[allow(clippy::float_cmp)]
+        {
+            assert_eq!(strategy.multiplier, 2.0);
+        }
         assert_eq!(strategy.max_attempts, Some(10));
-        assert_eq!(strategy.jitter_factor, 0.1);
+        #[allow(clippy::float_cmp)]
+        {
+            assert_eq!(strategy.jitter_factor, 0.1);
+        }
     }
     
     #[cfg(feature = "unit")]

@@ -56,6 +56,7 @@ impl TransportConfig for StdioConfig {
 }
 
 /// STDIO connection for process communication
+#[derive(Debug)]
 pub struct StdioConnection {
     child: Child,
     stdin: BufWriter<tokio::process::ChildStdin>,
@@ -66,7 +67,7 @@ pub struct StdioConnection {
 
 impl StdioConnection {
     /// Create a new STDIO connection
-    pub fn new(mut child: Child, config: StdioConfig) -> Result<Self, TransportError> {
+    pub fn new(mut child: Child, config: &StdioConfig) -> Result<Self, TransportError> {
         let stdin = BufWriter::new(
             child.stdin.take()
                 .ok_or_else(|| TransportError::ConnectionFailed {
@@ -153,9 +154,8 @@ impl StdioConnection {
     /// Check if the child process is still running
     pub fn is_process_running(&mut self) -> bool {
         match self.child.try_wait() {
-            Ok(Some(_)) => false, // Process has exited
             Ok(None) => true,     // Process is still running
-            Err(_) => false,      // Error checking status
+            Ok(Some(_)) | Err(_) => false, // Process has exited or error checking status
         }
     }
 }
@@ -192,12 +192,12 @@ impl AsyncWrite for StdioConnection {
 impl Connection for StdioConnection {
     async fn send_with_timeout(&mut self, data: &[u8], timeout: Duration) -> Result<usize, TransportError> {
         let line = std::str::from_utf8(data)
-            .map_err(|e| TransportError::SendFailed { message: format!("Invalid UTF-8: {}", e) })?;
+            .map_err(|e| TransportError::SendFailed { message: format!("Invalid UTF-8: {e}") })?;
         
         tokio::time::timeout(timeout, self.send_line(line))
             .await
             .map_err(|_| TransportError::SendTimeout)?
-            .map(|_| data.len())
+            .map(|()| data.len())
     }
     
     async fn recv_with_timeout(&mut self, buffer: &mut [u8], timeout: Duration) -> Result<usize, TransportError> {
@@ -251,7 +251,8 @@ pub struct StdioTransport {
 
 impl StdioTransport {
     /// Create a new STDIO transport
-    pub fn new() -> Self {
+    #[must_use]
+    pub const fn new() -> Self {
         Self {
             performance_profile: PerformanceProfile {
                 typical_latency: Duration::from_millis(1), // <1ms target
@@ -295,7 +296,7 @@ impl Transport for StdioTransport {
         
         let child = command.spawn()
             .map_err(|e| TransportError::ConnectionFailed {
-                message: format!("Failed to spawn process: {}", e),
+                message: format!("Failed to spawn process: {e}"),
             })?;
         
         let connection_time = start.elapsed();
@@ -303,7 +304,7 @@ impl Transport for StdioTransport {
             sy_commons::debug::duck!("STDIO process spawn took {}ms (target: <1ms)", connection_time.as_millis());
         }
         
-        StdioConnection::new(child, config.clone())
+        StdioConnection::new(child, config)
     }
     
     async fn listen(&self, _config: &Self::Config) -> Result<TransportListener<Self::Connection>, TransportError> {
@@ -457,7 +458,7 @@ mod tests {
             }
             Err(e) => {
                 // On some platforms, echo might not be available or behave differently
-                println!("⚠️ STDIO connection failed (may be expected on this platform): {:?}", e);
+                println!("⚠️ STDIO connection failed (may be expected on this platform): {e:?}");
                 // Don't fail the test - this might be expected behavior
             }
         }
@@ -465,6 +466,7 @@ mod tests {
     
     #[cfg(feature = "integration")]
     #[tokio::test]
+    #[allow(clippy::panic)]
     async fn test_stdio_connection_with_invalid_command() {
         let config = StdioConfig {
             command: ProcessCommandTestFactory::invalid_nonexistent(),
@@ -483,12 +485,13 @@ mod tests {
         if let Err(TransportError::ConnectionFailed { message }) = result {
             assert!(message.contains("Failed to spawn process"));
         } else {
-            panic!("Expected ConnectionFailed error");
+            panic!("Expected ConnectionFailed error, got: {result:?}");
         }
     }
     
     #[cfg(feature = "integration")]
     #[tokio::test]
+    #[allow(clippy::panic)]
     async fn test_stdio_listen_unsupported() {
         let config = StdioConfig {
             command: ProcessCommandTestFactory::valid_echo(),
@@ -507,7 +510,7 @@ mod tests {
         if let Err(TransportError::UnsupportedOperation { message }) = result {
             assert!(message.contains("does not support listening"));
         } else {
-            panic!("Expected UnsupportedOperation error");
+            panic!("Expected UnsupportedOperation error, got: {result:?}");
         }
     }
 }

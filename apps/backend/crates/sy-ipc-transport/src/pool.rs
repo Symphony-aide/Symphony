@@ -125,7 +125,7 @@ pub enum PoolError {
 pub struct ConnectionPool<T: Transport> {
     _transport: T,
     _config: PoolConfig,
-    _metrics: PoolMetrics,
+    metrics: PoolMetrics,
 }
 
 impl<T: Transport> ConnectionPool<T> {
@@ -134,12 +134,12 @@ impl<T: Transport> ConnectionPool<T> {
         Self {
             _transport: transport,
             _config: config,
-            _metrics: PoolMetrics::default(),
+            metrics: PoolMetrics::default(),
         }
     }
     
     /// Acquire a connection from the pool
-    pub fn acquire(&mut self) -> Result<PooledConnection<T::Connection>, PoolError> {
+    pub const fn acquire(&mut self) -> Result<PooledConnection<T::Connection>, PoolError> {
         // TODO: Implement connection pooling logic
         // This is a placeholder implementation
         Err(PoolError::PoolExhausted)
@@ -152,12 +152,12 @@ impl<T: Transport> ConnectionPool<T> {
     }
     
     /// Get pool metrics
-    pub fn metrics(&self) -> &PoolMetrics {
-        &self._metrics
+    pub const fn metrics(&self) -> &PoolMetrics {
+        &self.metrics
     }
     
     /// Shutdown the pool and close all connections
-    pub fn shutdown(&mut self) -> Result<(), PoolError> {
+    pub const fn shutdown(&mut self) -> Result<(), PoolError> {
         // TODO: Implement pool shutdown logic
         // This is a placeholder implementation
         Ok(())
@@ -188,6 +188,9 @@ mod tests {
         assert_eq!(metrics.connections_destroyed, 0);
         assert_eq!(metrics.active_connections, 0);
         assert_eq!(metrics.idle_connections, 0);
-        assert_eq!(metrics.reuse_rate, 0.0);
+        #[allow(clippy::float_cmp)]
+        {
+            assert_eq!(metrics.reuse_rate, 0.0);
+        }
     }
 }

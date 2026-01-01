@@ -98,6 +98,7 @@ impl UnixSocketConnection {
 #[cfg(not(unix))]
 impl UnixSocketConnection {
     /// Create a stub connection for non-Unix platforms
+    #[must_use]
     pub fn new(_socket_path: PathBuf) -> Self {
         Self {
             _phantom: std::marker::PhantomData,
@@ -294,7 +295,8 @@ pub struct UnixSocketTransport {
 
 impl UnixSocketTransport {
     /// Create a new Unix socket transport
-    pub fn new() -> Self {
+    #[must_use]
+    pub const fn new() -> Self {
         Self {
             performance_profile: PerformanceProfile {
                 typical_latency: Duration::from_nanos(100_000), // <0.1ms target
@@ -449,7 +451,7 @@ mod tests {
             buffer_size: BufferSizeTestFactory::valid_medium(),
         };
         
-        assert_eq!(config.endpoint(), socket_path.to_str().unwrap());
+        assert_eq!(config.endpoint(), socket_path.to_str().unwrap_or("invalid_path"));
         assert_eq!(config.timeout(), Duration::from_millis(100));
     }
     
@@ -458,6 +460,7 @@ mod tests {
     async fn test_unix_socket_connection_lifecycle() {
         use tempfile::TempDir;
         
+        #[allow(clippy::unwrap_used)]
         let temp_dir = TempDir::new().unwrap();
         let socket_path = temp_dir.path().join("test.sock");
         
@@ -480,9 +483,11 @@ mod tests {
     
     #[cfg(all(feature = "integration", not(unix)))]
     #[tokio::test]
+    #[allow(clippy::panic)]
     async fn test_unix_socket_connection_lifecycle_unsupported_platform() {
         use tempfile::TempDir;
         
+        #[allow(clippy::unwrap_used)]
         let temp_dir = TempDir::new().unwrap();
         let socket_path = temp_dir.path().join("test.sock");
         
@@ -504,7 +509,7 @@ mod tests {
                 println!("✅ Expected behavior: Unix sockets not supported on this platform (Windows)");
             }
             other => {
-                panic!("Expected UnsupportedPlatform error, got: {:?}", other);
+                panic!("Expected UnsupportedPlatform error, got: {other:?}");
             }
         }
     }
@@ -514,6 +519,7 @@ mod tests {
     async fn test_unix_socket_data_transmission() {
         use tempfile::TempDir;
         
+        #[allow(clippy::unwrap_used)]
         let temp_dir = TempDir::new().unwrap();
         let socket_path = temp_dir.path().join("test_data.sock");
         
@@ -526,6 +532,7 @@ mod tests {
         let transport = UnixSocketTransport::new();
         
         // Start listener in background
+        #[allow(clippy::unwrap_used)]
         let _listener = transport.listen(&config).await.unwrap();
         
         // Note: Full client-server test would require spawning a server task
@@ -536,9 +543,11 @@ mod tests {
     
     #[cfg(all(feature = "integration", not(unix)))]
     #[tokio::test]
+    #[allow(clippy::panic)]
     async fn test_unix_socket_data_transmission_unsupported_platform() {
         use tempfile::TempDir;
         
+        #[allow(clippy::unwrap_used)]
         let temp_dir = TempDir::new().unwrap();
         let socket_path = temp_dir.path().join("test_data.sock");
         
@@ -560,7 +569,7 @@ mod tests {
                 println!("✅ Expected behavior: Unix sockets not supported on this platform (Windows)");
             }
             other => {
-                panic!("Expected UnsupportedPlatform error, got: {:?}", other);
+                panic!("Expected UnsupportedPlatform error, got: {other:?}");
             }
         }
     }

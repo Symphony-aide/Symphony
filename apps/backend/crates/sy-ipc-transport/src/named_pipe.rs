@@ -104,6 +104,7 @@ pub struct NamedPipeConnection {
 #[cfg(windows)]
 impl NamedPipeConnection {
     /// Create a new named pipe connection
+    #[must_use]
     pub fn new(pipe_name: String) -> Self {
         Self {
             connection_info: ConnectionInfo {
@@ -294,7 +295,8 @@ pub struct NamedPipeTransport {
 
 impl NamedPipeTransport {
     /// Create a new named pipe transport
-    pub fn new() -> Self {
+    #[must_use]
+    pub const fn new() -> Self {
         Self {
             performance_profile: PerformanceProfile {
                 typical_latency: Duration::from_nanos(200_000), // <0.2ms target
