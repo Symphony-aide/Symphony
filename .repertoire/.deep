@@ -1,0 +1,51 @@
+# Deep Mode Structure
+
+## Level-Based Directory Structure
+milestones/
+├── level0/
+│   ├── requirements.md    # High-level goals with ATDD format
+│   ├── design.md         # Main architecture diagram
+│   ├── LEVEL0.md         # Complete implementation guidemap
+│   └── notes.md          # Strategic decisions (incremental)
+├── level1/
+│   ├── requirements.md    # Component responsibilities
+│   ├── design.md         # Component diagrams
+│   ├── LEVEL1.md         # Tactical breakdown
+│   └── notes.md          # Implementation notes
+└── level2/
+    ├── level2_m1/         # M1 specific requirements
+    ├── level2_m3/         # M3 specific requirements
+    ├── level2_m4/         # M4 specific requirements
+    └── level2_m5/         # M5 specific requirements
+
+## File Purposes
+- requirements.md: What & acceptance criteria (ATDD format)
+- design.md: Architecture & ASCII diagrams
+- LEVEL*.md: Complete milestone guidemap with detailed breakdown
+- notes.md: Decisions & insights (filled incrementally)
+
+## Features Organization
+features/
+├── m1.1/                  # M1.1 features (IPC Protocol)
+├── m1.2/                  # M1.2 features (Transport Layer)
+├── m3.1/                  # M3.1 features (Extension Ecosystem)
+├── m4.1/                  # M4.1 features (The Pit Infrastructure)
+└── m5.1/                  # M5.1 features (Visual Orchestration)
+
+## Status Tracking System
+- [ ] → Idle (not started)
+- [ - ] → In Progress (actively being worked on)
+- [ 1 ] → Completed successfully (first attempt)
+- [ 2 ] → Completed after 1 reopening
+- [ 3+ ] → Completed after multiple reopenings
+
+## Milestone Naming Convention
+- M{N} → Level 0 (Strategic milestone, e.g., M1)
+- M{N.X} → Level 1 (Section X of milestone N, e.g., M1.1)
+- M{N.X.Y} → Level 2 (Step Y of section X, e.g., M1.1.1)
+- F{XXX} → Features mapped from Level 2 steps
+
+## BIF Integration
+- 8-Dimension Evaluation: Feature Completeness, Code Quality, Documentation, Reliability, Performance, Integration, Maintenance, Stress Collapse Estimation
+- Atomic Feature Identification: Line-by-line analysis of implemented features
+- Production Readiness Assessment: Comprehensive quality validation before deployment
