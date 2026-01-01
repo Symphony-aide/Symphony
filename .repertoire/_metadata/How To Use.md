@@ -3269,6 +3269,9 @@ PROBLEM DETECTION AREAS:
    - Required: Use `sy-commons` for shared functionality
    - Pattern: Extend commons instead of duplicate
 
+**7. Configuration and Env Vars**
+   - Scan for: A code not using sy-commons::config which it handles env vars using `figment` and configuration for the caret
+
 **AND MORE, THOSE WERE JUST EXAMPLES OF COMMON PROBLEM DECTION AREAS**...
 
 INITIALIZATION RULES:
