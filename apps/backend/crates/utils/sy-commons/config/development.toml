@@ -1,0 +1,23 @@
+# Symphony Development Configuration
+# This file overrides default.toml settings for development environment.
+# Set SYMPHONY_ENV=development to use this configuration.
+
+[logging]
+# Use debug level for development
+level = "debug"
+
+[logging.console]
+enabled = true
+format = "Pretty"
+colors = true
+
+# Enable file logging for development
+[logging.file]
+enabled = true
+path = "logs/development.log"
+rotation = "Daily"
+max_files = 3
+
+[debug]
+duck_debugging = true
+performance_logging = true

@@ -1,0 +1,141 @@
+# Symphony Configuration Example
+# Copy this file to create environment-specific configurations:
+# - config/development.toml (for development environment)
+# - config/production.toml (for production environment)
+# - config/test.toml (for testing environment)
+#
+# Environment variables can override any setting using SYMPHONY_ prefix:
+# SYMPHONY_LOGGING_LEVEL=debug
+# SYMPHONY_LOGGING_CONSOLE_COLORS=false
+# SYMPHONY_LOGGING_FILE_ENABLED=true
+
+# =============================================================================
+# LOGGING CONFIGURATION
+# =============================================================================
+
+[logging]
+# Log level: "trace", "debug", "info", "warn", "error"
+# Default: "info"
+level = "debug"
+
+# Console logging configuration
+[logging.console]
+# Enable/disable console output
+# Default: true
+enabled = true
+
+# Console format: "Pretty", "Compact", "Full"
+# - Pretty: Colorful, multi-line format with indentation
+# - Compact: Single-line format with minimal information
+# - Full: Detailed format with all available fields
+# Default: "Pretty"
+format = "Pretty"
+
+# Enable/disable colors in console output
+# Default: true
+colors = true
+
+# File logging configuration (optional)
+[logging.file]
+# Enable/disable file logging
+# Default: false (commented out in default.toml)
+enabled = true
+
+# Path to log file (directories will be created automatically)
+# Default: "logs/app.log"
+path = "logs/symphony.log"
+
+# Log rotation strategy: "Daily", "Hourly", "Size"
+# - Daily: Rotate logs daily at midnight
+# - Hourly: Rotate logs every hour  
+# - Size: Rotate when file reaches specified size (use with size field)
+# Default: "Daily"
+rotation = "Daily"
+
+# Maximum number of rotated files to keep
+# Default: 7
+max_files = 14
+
+# JSON structured logging configuration (optional)
+[logging.json]
+# Enable/disable JSON logging
+# Default: false (commented out in default.toml)
+enabled = true
+
+# Path to JSON log file (optional, uses stdout if not specified)
+# Default: none (stdout)
+path = "logs/symphony.json"
+
+# Include span information in JSON output
+# Spans provide hierarchical context for log events
+# Default: false
+include_spans = true
+
+# =============================================================================
+# FILESYSTEM CONFIGURATION
+# =============================================================================
+
+[filesystem]
+# Custom temporary directory (optional)
+# If not specified, uses system default temp directory
+# Default: none (system default)
+temp_dir = "tmp/symphony"
+
+# Maximum file size for operations (in bytes)
+# Default: 104857600 (100MB)
+max_file_size = 209715200  # 200MB
+
+# Use atomic writes for file operations
+# Atomic writes ensure data integrity by writing to temp file first
+# Default: true
+atomic_writes = true
+
+# =============================================================================
+# DEBUG CONFIGURATION
+# =============================================================================
+
+[debug]
+# Enable duck debugging (duck!() macro)
+# When disabled, duck!() calls are no-ops
+# Default: true
+duck_debugging = true
+
+# Enable performance logging
+# Logs timing information for operations
+# Default: false
+performance_logging = true
+
+# =============================================================================
+# ENVIRONMENT VARIABLE EXAMPLES
+# =============================================================================
+#
+# You can override any configuration value using environment variables
+# with the SYMPHONY_ prefix. Nested values use underscores:
+#
+# # Basic logging
+# SYMPHONY_LOGGING_LEVEL=trace
+# SYMPHONY_LOGGING_CONSOLE_ENABLED=true
+# SYMPHONY_LOGGING_CONSOLE_FORMAT=compact
+# SYMPHONY_LOGGING_CONSOLE_COLORS=false
+#
+# # File logging
+# SYMPHONY_LOGGING_FILE_ENABLED=true
+# SYMPHONY_LOGGING_FILE_PATH=logs/custom.log
+# SYMPHONY_LOGGING_FILE_ROTATION=size:50MB
+# SYMPHONY_LOGGING_FILE_MAX_FILES=10
+#
+# # JSON logging
+# SYMPHONY_LOGGING_JSON_ENABLED=true
+# SYMPHONY_LOGGING_JSON_PATH=logs/structured.json
+# SYMPHONY_LOGGING_JSON_INCLUDE_SPANS=true
+#
+# # Filesystem
+# SYMPHONY_FILESYSTEM_TEMP_DIR=/custom/temp
+# SYMPHONY_FILESYSTEM_MAX_FILE_SIZE=314572800  # 300MB
+# SYMPHONY_FILESYSTEM_ATOMIC_WRITES=false
+#
+# # Debug
+# SYMPHONY_DEBUG_DUCK_DEBUGGING=false
+# SYMPHONY_DEBUG_PERFORMANCE_LOGGING=true
+#
+# =============================================================================

@@ -24,3 +24,20 @@ pnpm-lock.yaml
 !.husky/
 .symphony/.pnpm-store
 .symphony/.pnpm-cache
+
+# Environment files (exclude examples)
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+!.env.example*
+
+# Configuration files (exclude examples and defaults)
+config/*.toml
+!config/default.toml
+!config/*.example.toml
+
+# Logs directory
+logs/
+*.log
