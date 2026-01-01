@@ -166,9 +166,9 @@ impl TextEditingPort for MockTextEditingAdapter {
 		);
 
 		let mut buffers = self.buffers.lock().unwrap();
-		if buffers.contains_key(&buffer_id) {
+		if let std::collections::hash_map::Entry::Occupied(mut e) = buffers.entry(buffer_id) {
 			// Simple mock implementation - just clear the buffer
-			buffers.insert(buffer_id, String::new());
+			e.insert(String::new());
 			Ok(())
 		} else {
 			Err(crate::errors::PortError::TextEditingFailed {

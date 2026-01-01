@@ -1,0 +1,52 @@
+[package]
+name = "sy-xi-adapter"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "XI-editor adapter implementing TextEditingPort for Symphony's binary communication bridge"
+keywords = ["symphony", "xi-editor", "adapter", "text-editing"]
+categories = ["development-tools"]
+
+[lints]
+workspace = true
+
+[dependencies]
+# Workspace dependencies
+sy-commons = { path = "../utils/sy-commons" }
+symphony-core-ports = { path = "../symphony-core-ports" }
+sy-ipc-protocol = { path = "../sy-ipc-protocol" }
+sy-ipc-transport = { path = "../sy-ipc-transport" }
+
+# External dependencies
+tokio = { workspace = true, features = ["full"] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+uuid = { workspace = true, features = ["v4", "serde"] }
+thiserror = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+chrono = { workspace = true, features = ["serde"] }
+notify = { workspace = true }
+
+[dev-dependencies]
+# Testing dependencies
+fake = { version = "2.9", features = ["derive", "uuid", "chrono"] }
+rstest = { workspace = true }
+tokio-test = { workspace = true }
+criterion = { workspace = true }
+tempfile = { workspace = true }
+
+[features]
+# Default runs only fast unit tests
+default = []
+
+# Individual test category features
+unit = []
+integration = []
+xi_editor = []
+process = []
+jsonrpc = []
+events = []
+state_sync = []
+performance = []

@@ -37,7 +37,7 @@ pub struct EventReceiver {
 
 impl EventReceiver {
     /// Create a new event receiver
-    fn new(receiver: broadcast::Receiver<MessageEnvelope>) -> Self {
+    const fn new(receiver: broadcast::Receiver<MessageEnvelope>) -> Self {
         Self { receiver }
     }
     
@@ -134,10 +134,7 @@ impl TopicChannel {
     
     /// Send an event to all subscribers
     fn send(&self, message: MessageEnvelope) -> usize {
-        match self.sender.send(message) {
-            Ok(subscriber_count) => subscriber_count,
-            Err(_) => 0, // No subscribers
-        }
+        self.sender.send(message).unwrap_or_default()
     }
 }
 
@@ -151,7 +148,7 @@ struct PatternSubscription {
 
 /// High-performance topic-based publish/subscribe manager
 ///
-/// The PubSubManager provides efficient event distribution with support for:
+/// The `PubSubManager` provides efficient event distribution with support for:
 /// - Exact topic matching
 /// - Wildcard pattern matching (* and ?)
 /// - Hierarchical topic organization
@@ -209,6 +206,7 @@ impl PubSubManager {
     ///
     /// let manager = PubSubManager::new();
     /// ```
+    #[must_use]
     pub fn new() -> Self {
         duck!("Creating new PubSubManager");
         
@@ -257,18 +255,17 @@ impl PubSubManager {
         
         let subscriber_id = self.subscriber_count.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
         
-        if self.is_pattern(pattern) {
+        if Self::is_pattern(pattern) {
             // Pattern subscription
             let (tx, rx) = broadcast::channel(1000);
             let subscription = PatternSubscription {
                 id: subscriber_id,
                 pattern: pattern.to_string(),
-                regex: self.compile_pattern(pattern)?,
+                regex: Self::compile_pattern(pattern)?,
                 sender: tx,
             };
             
-            let mut pattern_subs = self.pattern_subscriptions.write().await;
-            pattern_subs.push(subscription);
+            self.pattern_subscriptions.write().await.push(subscription);
             
             Ok(EventReceiver::new(rx))
         } else {
@@ -468,12 +465,12 @@ impl PubSubManager {
     }
     
     /// Check if a pattern contains wildcards or regex characters
-    fn is_pattern(&self, pattern: &str) -> bool {
+    fn is_pattern(pattern: &str) -> bool {
         pattern.contains('*') || pattern.contains('?') || pattern.contains('[') || pattern.contains('^') || pattern.contains('$')
     }
     
     /// Compile a glob pattern to regex
-    fn compile_pattern(&self, pattern: &str) -> PubSubResult<Regex> {
+    fn compile_pattern(pattern: &str) -> PubSubResult<Regex> {
         // Validate pattern first
         if pattern.is_empty() {
             return Err(crate::error::PubSubError::InvalidPattern("Pattern cannot be empty".to_string()));
@@ -486,10 +483,10 @@ impl PubSubManager {
         }
         
         let regex_pattern = pattern
-            .replace("*", ".*")
-            .replace("?", ".");
+            .replace('*', ".*")
+            .replace('?', ".");
         
-        Regex::new(&format!("^{}$", regex_pattern))
+        Regex::new(&format!("^{regex_pattern}$"))
             .map_err(|e| crate::error::PubSubError::InvalidPattern(e.to_string()))
     }
 }

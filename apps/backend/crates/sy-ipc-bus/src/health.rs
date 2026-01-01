@@ -13,7 +13,7 @@ use sy_commons::debug::duck;
 use crate::error::{HealthResult};
 
 /// Health status of an endpoint
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HealthStatus {
     /// Endpoint is healthy and available
     Healthy,
@@ -86,7 +86,7 @@ impl Default for HealthConfig {
 
 /// Health monitor for message bus endpoints
 ///
-/// The HealthMonitor provides real-time health monitoring of endpoints with:
+/// The `HealthMonitor` provides real-time health monitoring of endpoints with:
 /// - Periodic health checks
 /// - Circuit breaker functionality
 /// - Failure detection and recovery
@@ -149,6 +149,7 @@ impl HealthMonitor {
     ///
     /// let monitor = HealthMonitor::new(Duration::from_secs(5));
     /// ```
+    #[must_use]
     pub fn new(check_interval: Duration) -> Self {
         duck!("Creating HealthMonitor with check interval: {:?}", check_interval);
         
@@ -180,6 +181,7 @@ impl HealthMonitor {
     /// 
     /// let monitor = HealthMonitor::new_with_config(config);
     /// ```
+    #[must_use]
     pub fn new_with_config(config: HealthConfig) -> Self {
         duck!("Creating HealthMonitor with config: {:?}", config);
         

@@ -15,6 +15,7 @@ members = [
     "crates/sy-ipc-protocol",
     "crates/sy-ipc-transport",
     "crates/sy-ipc-bus",
+    "crates/sy-xi-adapter",
 ]
 
 [workspace.dependencies]
@@ -51,6 +52,7 @@ directories = "5.0"
 tempfile = "3.0"
 uuid = { version = "1.6", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
+notify = "6.1"
 
 # Testing frameworks
 criterion = { version = "0.8", features = ["html_reports"] }
