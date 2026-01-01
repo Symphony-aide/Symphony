@@ -209,6 +209,38 @@ impl StringValidation for String {
 
 ---
 
+### Dependency Compatibility Issues
+
+**BINCODE V2 BREAKING CHANGES**: 
+
+Bincode v2 has breaking API changes from v1. **MANDATORY** patterns for bincode v2:
+
+```rust
+// ✅ CORRECT - Bincode v2 API
+let config = bincode::config::standard();
+let result = bincode::serde::encode_to_vec(message, config)?;
+let (result, _len) = bincode::serde::decode_from_slice(data, config)?;
+
+// ❌ WRONG - Bincode v1 API (no longer works)
+let result = bincode::serialize(message)?;
+let result = bincode::deserialize(data)?;
+```
+
+**MANDATORY Cargo.toml setup**:
+```toml
+bincode = { version = "2.0", features = ["serde"] }  # serde feature required
+```
+
+**KEY BREAKING CHANGES**:
+1. ✅ Free functions `serialize()`/`deserialize()` removed → use `encode_to_vec()`/`decode_from_slice()`
+2. ✅ Must use `Configuration` object (e.g., `bincode::config::standard()`)
+3. ✅ Must enable `serde` feature for serde integration
+4. ✅ `decode_from_slice()` returns tuple `(T, usize)` not just `T`
+
+**REFERENCE**: See `.repertoire/practice/bincode-caret-breaking-compatability.md` for complete migration guide.
+
+---
+
 ## WARNING HANDLING
 
 **ZERO TOLERANCE POLICY**: 
