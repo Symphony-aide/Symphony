@@ -1520,6 +1520,18 @@ If feature needs rework:
 2. Document reason for reopening in IMPLEMENTATION.md
 3. Go through implementation → BIF → verification again
 
+#### Do Health Steps
+- [ ] **Priority 1 – Critical Tests:** run `cargo nextest run -p "sy-*"` to execute unit and integration tests and log all failures.
+- [ ] **Priority 2 – Documentation Tests:** run `cargo test --doc -p "sy-*"` to validate documentation examples and log errors.
+- [ ] **Priority 3 – Code Quality:** run `cargo clippy -p "sy-*" --all-targets --all-features -- -D warnings -A clippy::cargo-common-metadata -A clippy::multiple-crate-versions` and log issues by severity.
+- [ ] **Priority 4 – Test Coverage:** run `cargo llvm-cov nextest -p "sy-*" --html` to collect coverage data after tests pass.
+- [ ] **Priority 5 – Performance Benchmarks:** run `cargo bench -p "sy-*"` to detect performance regressions after tests pass.
+6. **Priority 6 – Documentation Generation:** run `cargo doc -p "sy-*" --no-deps --document-private-items` and log warnings or errors.
+7. **Priority 7 – Code Formatting:** run `cargo fmt --check -p "sy-*"` and log formatting violations.
+8. **Priority 8 – Doc Test Coverage:** run `cargo llvm-cov test -p "sy-*" --doc` after doc tests pass to measure coverage.
+9. **Priority 9 – Dependency Audit:** run `cargo deny check` to report security and license issues.
+
+
 HANDOFF:
 
 Step 9: PREPARE NEXT FEATURE
