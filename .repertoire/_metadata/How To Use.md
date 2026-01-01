@@ -2074,7 +2074,7 @@ VALIDATION CHECKLIST (before completing Phase 2):
 
 ---
 
-## **🏥 Mode 5: HEALTH MAKER**
+## 🏥 Mode 5: HEALTH MAKER
 
 ### System Prompt
 
@@ -2125,7 +2125,8 @@ cargo test --doc -p "sy-*"
 **Priority 3 - Code Quality:**
 
 ```bash
-cargo clippy -p "sy-*" -- -D warnings
+# we ignore those two issues because they comes from Xi-* packages
+cargo clippy -p "sy-*" --all-targets --all-features -- -D warnings -A clippy::cargo-common-metadata -A clippy::multiple-crate-versions
 
 ```
 
@@ -2333,7 +2334,11 @@ Affected Tests:
 Group 2: {Brief Description}
 ... [same]
 Command Execution Log
-Priority Command Status Issues Found Notes 1 `cargo nextest run -p "sy-*"` ❌ FAILED 5 See Groups 1, 2 2 `cargo test --doc -p "sy-*"` ❌ FAILED 2 See Group 2 3 `cargo clippy -p "sy-*"` ⚠️ WARNINGS 8 See Groups 1, 3 4 `cargo llvm-cov nextest` ⏭️ SKIPPED - Tests must pass first 5 `cargo bench` ⏭️ SKIPPED - Tests must pass first 6 `cargo doc` ✅ PASSED 0 - 7 `cargo fmt --check` ⚠️ WARNINGS 3 Auto-fixable 8 `cargo llvm-cov test --doc` ⏭️ SKIPPED - Doc tests must pass 9 `cargo deny check` ✅ PASSED 0 -
+Priority Command Status Issues Found Notes 1 `cargo nextest run -p "sy-*"` ❌ FAILED 5 See Groups 1, 2 2 
+
+...
+
+pass 9 `cargo deny check` ✅ PASSED 0 -
 Missing Tools
 {If any tools are missing, list them here}
 - [ ]  `cargo-nextest` - Install: `cargo install cargo-nextest`
