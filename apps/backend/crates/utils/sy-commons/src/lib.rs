@@ -15,6 +15,7 @@
 //!
 //! ```rust
 //! use sy_commons::{SymphonyError, init_logging, load_config};
+//! use sy_commons::logging::{error, info, warn, duck}; // Recommended logging imports
 //!
 //! fn example() -> Result<(), Box<dyn std::error::Error>> {
 //!     // This example shows the API structure
@@ -117,7 +118,7 @@ pub mod testing;
 pub use config::{load_config, Config, DefaultConfig};
 pub use error::{ResultContext, SymphonyError};
 pub use filesystem::{create_dir_all, file_exists, get_project_dirs, read_file, write_file};
-pub use logging::{debug, error, info, init_logging, trace, warn, LoggingConfig};
+pub use logging::{error, info, warn, init_logging, LoggingConfig};
 pub use prevalidation::{
 	validate_fast, MaxLengthRule, MinLengthRule, NonEmptyRule, PreValidationRule,
 };

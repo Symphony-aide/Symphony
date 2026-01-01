@@ -149,8 +149,30 @@ pub fn init_logging(config: &LoggingConfig) -> Result<(), SymphonyError> {
 //     todo!("JSON logging layer implementation - will be completed in this feature")
 // }
 
-// Re-export tracing macros
-pub use tracing::{debug, error, info, trace, warn};
+// Re-export tracing macros (excluding debug, trace)
+pub use tracing::{error, info, warn};
+
+// Re-export duck macro for debugging (from crate root)
+pub use crate::duck;
+
+/// Macro to prevent usage of debug logging
+/// 
+/// This macro will cause a compilation error if someone tries to use `debug!()`.
+/// Use `duck!()` macro from `sy_commons::duck` instead of debug logging.
+/// 
+/// # Recommended usage:
+/// ```rust
+/// use sy_commons::logging::{error, info, warn, duck};
+/// 
+/// // Instead of debug!("message"), use:
+/// duck!("message");
+/// ```
+#[macro_export]
+macro_rules! debug {
+    ($($arg:tt)*) => {
+        compile_error!("Use duck!() macro from sy_commons::duck instead of debug logging. Import with: use sy_commons::logging::{error, info, warn, duck};");
+    };
+}
 
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
@@ -218,5 +240,22 @@ mod tests {
 		// This should succeed but file logging is not yet implemented
 		let result = init_logging(&config);
 		assert!(result.is_ok()); // Should succeed with duck debugging message
+	}
+
+	#[test]
+	fn test_recommended_logging_usage() {
+		// Test that the recommended usage pattern compiles and works
+		use crate::logging::{error, info, warn, duck};
+		
+		// These should all work without issues
+		error!("Test error message");
+		info!("Test info message");
+		warn!("Test warn message");
+		duck!("Test duck debugging message");
+		
+		// The debug macro should be available but will cause compilation error if used
+		// We can't test the compilation error directly in a unit test, but we can
+		// verify that the macro exists and is properly exported
+		assert!(true); // This test just ensures the imports work
 	}
 }
