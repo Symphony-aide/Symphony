@@ -236,7 +236,8 @@ impl BincodeSerializer {
 		duck!("Serializing message with Bincode");
 		let start = Instant::now();
 
-		let result = bincode::serialize(message)
+		let config = bincode::config::standard();
+		let result = bincode::serde::encode_to_vec(message, config)
 			.map_err(|e| SerializationError::BincodeError(e.to_string()))?;
 
 		let duration = start.elapsed();
@@ -265,7 +266,8 @@ impl BincodeSerializer {
 		duck!("Deserializing message with Bincode");
 		let start = Instant::now();
 
-		let result = bincode::deserialize(data)
+		let config = bincode::config::standard();
+		let (result, _len) = bincode::serde::decode_from_slice(data, config)
 			.map_err(|e| SerializationError::BincodeError(e.to_string()))?;
 
 		let duration = start.elapsed();

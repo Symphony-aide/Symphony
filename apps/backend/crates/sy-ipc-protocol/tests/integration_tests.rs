@@ -3,16 +3,16 @@
 //! Tests the complete message protocol functionality including
 //! serialization, JSON-RPC compliance, and schema validation.
 
-use std::time::Instant;
-use sy_commons::debug::duck;
 use sy_ipc_protocol::{
-	CorrelationId, JsonRpcMessage, JsonRpcRequest, MessageEnvelope, MessageMetadata,
+	CorrelationId, MessageEnvelope, MessageMetadata,
 	MessagePriority, MessageRegistry, MessageSerializer, MessageType, SerializationFormat,
+	JsonRpcRequest, JsonRpcMessage,
 };
 
 #[cfg(feature = "unit")]
 mod message_envelope_tests {
 	use super::*;
+	use sy_commons::debug::duck;
 
 	#[test]
 	fn test_message_envelope_creation() {
@@ -77,6 +77,8 @@ mod message_envelope_tests {
 #[cfg(feature = "unit")]
 mod serialization_tests {
 	use super::*;
+	use sy_commons::debug::duck;
+	use std::time::Instant;
 
 	#[tokio::test]
 	async fn test_messagepack_serialization() {
@@ -160,6 +162,7 @@ mod serialization_tests {
 #[cfg(feature = "jsonrpc")]
 mod jsonrpc_tests {
 	use super::*;
+	use sy_commons::debug::duck;
 	use serde_json::Value;
 
 	#[test]
@@ -208,6 +211,7 @@ mod jsonrpc_tests {
 #[cfg(feature = "unit")]
 mod registry_tests {
 	use super::*;
+	use sy_commons::debug::duck;
 
 	#[test]
 	fn test_message_registry_creation() {
