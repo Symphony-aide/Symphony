@@ -132,11 +132,11 @@ impl XiAdapterError {
     }
 }
 
-/// Convert XiAdapterError to SymphonyError
+/// Convert `XiAdapterError` to `SymphonyError`
 impl From<XiAdapterError> for sy_commons::SymphonyError {
     fn from(err: XiAdapterError) -> Self {
-        sy_commons::SymphonyError::Generic {
-            message: format!("XI-editor adapter error: {}", err),
+        Self::Generic {
+            message: format!("XI-editor adapter error: {err}"),
             source: Some(Box::new(err)),
         }
     }
@@ -164,7 +164,7 @@ mod tests {
     #[test]
     fn test_error_display() {
         let err = XiAdapterError::process("Test process error");
-        let display = format!("{}", err);
+        let display = format!("{err}");
         assert!(display.contains("Process error"));
         assert!(display.contains("Test process error"));
     }
@@ -174,7 +174,7 @@ mod tests {
         let xi_err = XiAdapterError::jsonrpc("Test RPC error");
         let symphony_err: sy_commons::SymphonyError = xi_err.into();
         
-        let display = format!("{}", symphony_err);
+        let display = format!("{symphony_err}");
         assert!(display.contains("XI-editor adapter error"));
     }
 }

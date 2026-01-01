@@ -65,6 +65,7 @@ impl XiEditorProcessManager {
     /// let config = XiEditorConfig::default();
     /// let (manager, status_receiver) = XiEditorProcessManager::new(config);
     /// ```
+    #[must_use]
     pub fn new(config: XiEditorConfig) -> (Self, mpsc::UnboundedReceiver<ProcessStatus>) {
         let (status_sender, status_receiver) = mpsc::unbounded_channel();
 
@@ -130,7 +131,7 @@ impl XiEditorProcessManager {
 
         // Spawn process
         let child = command.spawn()
-            .map_err(|e| XiAdapterError::process(format!("Failed to spawn XI-editor: {}", e)))
+            .map_err(|e| XiAdapterError::process(format!("Failed to spawn XI-editor: {e}")))
             .context("Failed to start XI-editor process")?;
 
         let startup_time = start_time.elapsed();
@@ -147,7 +148,7 @@ impl XiEditorProcessManager {
         }
 
         // Start health monitoring
-        self.start_health_monitoring().await;
+        self.start_health_monitoring();
 
         // Notify status change
         let _ = self.status_sender.send(ProcessStatus::Started);
@@ -182,9 +183,9 @@ impl XiEditorProcessManager {
     /// ```
     pub async fn stop(&self) -> Result<(), SymphonyError> {
         duck!("Stopping XI-editor process");
-        let mut process = self.process.write().await;
-
-        if let Some(mut child) = process.take() {
+        
+        let value = self.process.write().await.take();
+        if let Some(mut child) = value {
             // Try graceful shutdown first
             if let Some(stdin) = child.stdin.take() {
                 drop(stdin); // Close stdin to signal shutdown
@@ -290,31 +291,27 @@ impl XiEditorProcessManager {
     pub async fn is_running(&self) -> bool {
         let mut process = self.process.write().await;
 
-        if let Some(child) = process.as_mut() {
-            match child.try_wait() {
-                Ok(Some(_)) => {
-                    duck!("XI-editor process has exited");
-                    false // Process has exited
-                }
-                Ok(None) => {
-                    // Process is still running
-                    true
-                }
-                Err(e) => {
-                    duck!("Error checking XI-editor process status: {}", e);
-                    false // Error checking status
-                }
+        process.as_mut().is_some_and(|child| match child.try_wait() {
+            Ok(Some(_)) => {
+                duck!("XI-editor process has exited");
+                false // Process has exited
             }
-        } else {
-            false
-        }
+            Ok(None) => {
+                // Process is still running
+                true
+            }
+            Err(e) => {
+                duck!("Error checking XI-editor process status: {}", e);
+                false // Error checking status
+            }
+        })
     }
 
     /// Start health monitoring task
     ///
     /// Spawns a background task that periodically checks process health
     /// and triggers automatic restart if the process dies unexpectedly.
-    async fn start_health_monitoring(&self) {
+    fn start_health_monitoring(&self) {
         let process = Arc::clone(&self.process);
         let status_sender = self.status_sender.clone();
         let health_check_interval = self.config.health_check_interval;
@@ -331,15 +328,10 @@ impl XiEditorProcessManager {
                 // Check if process is still running
                 let is_running = {
                     let mut process_guard = process.write().await;
-                    if let Some(child) = process_guard.as_mut() {
-                        match child.try_wait() {
-                            Ok(Some(_)) => false, // Process has exited
-                            Ok(None) => true,     // Process is still running
-                            Err(_) => false,      // Error checking status
-                        }
-                    } else {
-                        false
-                    }
+                    process_guard.as_mut().is_some_and(|child| match child.try_wait() {
+                        Ok(Some(_)) | Err(_) => false, // Process has exited or error checking status
+                        Ok(None) => true,     // Process is still running
+                    })
                 };
 
                 if !is_running {

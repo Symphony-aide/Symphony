@@ -1,6 +1,6 @@
 //! Core message bus implementation
 //!
-//! This module provides the central MessageBus that coordinates all message routing,
+//! This module provides the central `MessageBus` that coordinates all message routing,
 //! correlation, pub/sub, and health monitoring functionality.
 
 use std::sync::Arc;
@@ -44,7 +44,7 @@ impl Default for BusConfig {
 
 /// Central message bus for Symphony IPC communication
 ///
-/// The MessageBus provides high-performance message routing with pattern-based routing,
+/// The `MessageBus` provides high-performance message routing with pattern-based routing,
 /// request/response correlation, publish/subscribe messaging, and health monitoring.
 ///
 /// # Performance Targets
@@ -98,6 +98,7 @@ impl MessageBus {
     ///     let bus = MessageBus::new(config);
     /// }
     /// ```
+    #[must_use]
     pub fn new(config: BusConfig) -> Self {
         duck!("Creating new MessageBus with config: {:?}", config);
         
@@ -216,7 +217,7 @@ impl MessageBus {
             sy_ipc_protocol::MessageType::XiNotification |
             sy_ipc_protocol::MessageType::HealthCheck |
             sy_ipc_protocol::MessageType::ErrorReport => {
-                self.handle_notification(message).await
+                self.handle_notification(&message)
             }
             sy_ipc_protocol::MessageType::SystemEvent |
             sy_ipc_protocol::MessageType::XiEvent => {
@@ -302,7 +303,7 @@ impl MessageBus {
     }
     
     /// Handle notification messages
-    async fn handle_notification(&self, message: MessageEnvelope) -> BusResult<()> {
+    fn handle_notification(&self, message: &MessageEnvelope) -> BusResult<()> {
         let routing_key = format!("{:?}", message.message_type).to_lowercase();
         
         // Find all matching routes (notifications can go to multiple endpoints)

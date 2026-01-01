@@ -1,7 +1,9 @@
 //! Unit tests for request/response correlation management
 //!
-//! These tests verify the CorrelationManager behavior including correlation registration,
+//! These tests verify the `CorrelationManager` behavior including correlation registration,
 //! resolution, timeout handling, and cleanup functionality.
+
+#![allow(clippy::unwrap_used)]
 
 use sy_ipc_bus::{CorrelationManager, CorrelationError};
 use crate::factory::{CorrelationIdTestFactory, EndpointIdTestFactory};
@@ -57,7 +59,7 @@ mod tests {
         assert!(result.is_err(), "Duplicate correlation ID should fail");
         match result.unwrap_err() {
             CorrelationError::CorrelationAlreadyExists(_) => {}, // Expected error
-            other => panic!("Expected CorrelationAlreadyExists error, got: {:?}", other),
+            other => panic!("Expected CorrelationAlreadyExists error, got: {other:?}"),
         }
     }
 
@@ -93,7 +95,7 @@ mod tests {
         assert!(result.is_err(), "Resolving non-existent correlation should fail");
         match result.unwrap_err() {
             CorrelationError::CorrelationNotFound(_) => {}, // Expected error
-            other => panic!("Expected CorrelationNotFound error, got: {:?}", other),
+            other => panic!("Expected CorrelationNotFound error, got: {other:?}"),
         }
     }
 
@@ -117,7 +119,7 @@ mod tests {
         assert!(result.is_err(), "Timed out correlation should fail to resolve");
         match result.unwrap_err() {
             CorrelationError::RequestTimeout(_) => {}, // Expected error
-            other => panic!("Expected RequestTimeout error, got: {:?}", other),
+            other => panic!("Expected RequestTimeout error, got: {other:?}"),
         }
     }
 

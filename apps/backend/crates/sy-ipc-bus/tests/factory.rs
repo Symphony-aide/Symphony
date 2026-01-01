@@ -3,6 +3,10 @@
 //! This module provides factory structs for generating test data following the mandatory
 //! factory-based testing patterns. ZERO TOLERANCE for hardcoded test data.
 
+#![allow(clippy::must_use_candidate)]
+#![allow(clippy::missing_const_for_fn)]
+#![allow(clippy::uninlined_format_args)]
+
 use sy_commons::testing::safe_generator;
 use sy_ipc_protocol::{MessageType, MessageMetadata, MessagePriority};
 use sy_ipc_bus::MessageEnvelope;

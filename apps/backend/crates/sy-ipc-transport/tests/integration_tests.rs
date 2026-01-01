@@ -3,14 +3,15 @@
 //! These tests verify that transport implementations work correctly across
 //! platforms and meet performance requirements.
 
+// Tests are allowed to panic for assertion failures
+#![allow(clippy::panic)]
+
 #[cfg(feature = "integration")]
 mod cross_platform_tests {
-    use sy_ipc_transport::*;
+    use sy_ipc_transport::{
+        NamedPipeTransport, StdioTransport, Transport, TransportType, UnixSocketTransport,
+    };
     use std::time::Duration;
-    
-    // Import test factories for integration tests
-    #[cfg(feature = "test-utils")]
-    use sy_ipc_transport::test_utils::factory::*;
     
     #[tokio::test]
     async fn test_unix_socket_cross_platform_availability() {
@@ -71,16 +72,21 @@ mod cross_platform_tests {
 
 #[cfg(feature = "integration")]
 mod unix_socket_integration_tests {
-    use sy_ipc_transport::*;
-    use tempfile::TempDir;
+    use sy_ipc_transport::{
+        Transport, TransportError, UnixSocketConfig, UnixSocketTransport,
+    };
     
     // Import test factories for integration tests
     #[cfg(feature = "test-utils")]
-    use sy_ipc_transport::test_utils::factory::*;
+    use sy_ipc_transport::test_utils::factory::{
+        BufferSizeTestFactory, TimeoutTestFactory, UnixSocketPathTestFactory,
+    };
     
     #[cfg(all(feature = "integration", unix))]
     #[tokio::test]
     async fn test_unix_socket_listener_and_connection() {
+        use tempfile::TempDir;
+        
         let temp_dir = TempDir::new().unwrap();
         let socket_path = temp_dir.path().join("integration_test.sock");
         
@@ -132,7 +138,8 @@ mod unix_socket_integration_tests {
                 println!("✅ Expected behavior: Unix sockets not supported on Windows");
             }
             other => {
-                panic!("Expected UnsupportedPlatform error, got: {:?}", other);
+                eprintln!("Expected UnsupportedPlatform error, got: {other:?}");
+                panic!("Expected UnsupportedPlatform error");
             }
         }
     }
@@ -164,7 +171,8 @@ mod unix_socket_integration_tests {
                 println!("✅ Expected connection timeout on Unix platform");
             }
             Err(other) => {
-                panic!("Unexpected error type: {:?}", other);
+                eprintln!("Unexpected error type: {other:?}");
+                panic!("Expected ConnectionFailed or ConnectionTimeout error");
             }
             Ok(_) => {
                 panic!("Connection should not succeed without listener");
@@ -194,7 +202,8 @@ mod unix_socket_integration_tests {
                 println!("✅ Expected behavior: Unix sockets not supported on Windows");
             }
             Err(other) => {
-                panic!("Expected UnsupportedPlatform error, got: {:?}", other);
+                eprintln!("Expected UnsupportedPlatform error, got: {other:?}");
+                panic!("Expected UnsupportedPlatform error");
             }
             Ok(_) => {
                 panic!("Unix sockets should not work on non-Unix platforms");
@@ -205,11 +214,15 @@ mod unix_socket_integration_tests {
 
 #[cfg(feature = "integration")]
 mod stdio_integration_tests {
-    use sy_ipc_transport::*;
+    use sy_ipc_transport::{
+        Connection, StdioConfig, StdioTransport, Transport, TransportError, TransportType,
+    };
     
     // Import test factories for integration tests
     #[cfg(feature = "test-utils")]
-    use sy_ipc_transport::test_utils::factory::*;
+    use sy_ipc_transport::test_utils::factory::{
+        ProcessCommandTestFactory, TimeoutTestFactory,
+    };
     
     #[tokio::test]
     async fn test_stdio_connection_with_echo_command() {
@@ -256,7 +269,7 @@ mod stdio_integration_tests {
             }
             Err(e) => {
                 // On some platforms or environments, echo might not be available
-                println!("⚠️ STDIO connection failed (may be expected in some environments): {:?}", e);
+                println!("⚠️ STDIO connection failed (may be expected in some environments): {e:?}");
                 // Don't fail the test - this might be expected in some CI environments
             }
         }
@@ -284,7 +297,8 @@ mod stdio_integration_tests {
                        "Error message should indicate process spawn failure");
             }
             Err(other) => {
-                panic!("Unexpected error type: {:?}", other);
+                eprintln!("Unexpected error type: {other:?}");
+                panic!("Expected ConnectionFailed error");
             }
             Ok(_) => {
                 panic!("Connection should not succeed with invalid command");
@@ -314,7 +328,8 @@ mod stdio_integration_tests {
                        "Error should indicate listening is not supported");
             }
             Err(other) => {
-                panic!("Unexpected error type: {:?}", other);
+                eprintln!("Unexpected error type: {other:?}");
+                panic!("Expected UnsupportedOperation error");
             }
             Ok(_) => {
                 panic!("Listen should not be supported");
@@ -325,11 +340,15 @@ mod stdio_integration_tests {
 
 #[cfg(feature = "integration")]
 mod named_pipe_integration_tests {
-    use sy_ipc_transport::*;
+    use sy_ipc_transport::{
+        NamedPipeConfig, NamedPipeTransport, Transport, TransportError,
+    };
     
     // Import test factories for integration tests
     #[cfg(feature = "test-utils")]
-    use sy_ipc_transport::test_utils::factory::*;
+    use sy_ipc_transport::test_utils::factory::{
+        BufferSizeTestFactory, NamedPipeNameTestFactory, TimeoutTestFactory,
+    };
     
     #[cfg(all(feature = "integration", windows))]
     #[tokio::test]
@@ -361,7 +380,7 @@ mod named_pipe_integration_tests {
             }
             Err(other) => {
                 // Other errors are acceptable for now
-                println!("⚠️ Named pipe connection error (may be expected): {:?}", other);
+                println!("⚠️ Named pipe connection error (may be expected): {other:?}");
             }
         }
     }
@@ -388,7 +407,8 @@ mod named_pipe_integration_tests {
                 println!("✅ Expected behavior: Named pipes not supported on Unix platforms");
             }
             Err(other) => {
-                panic!("Expected UnsupportedPlatform error, got: {:?}", other);
+                eprintln!("Expected UnsupportedPlatform error, got: {other:?}");
+                panic!("Expected UnsupportedPlatform error");
             }
             Ok(_) => {
                 panic!("Named pipes should not work on non-Windows platforms");
@@ -399,18 +419,31 @@ mod named_pipe_integration_tests {
 
 #[cfg(feature = "performance")]
 mod performance_tests {
-    use sy_ipc_transport::*;
+    use sy_ipc_transport::{
+        NamedPipeTransport, StdioConfig, StdioTransport, TransportConfig,
+    };
     use std::time::{Duration, Instant};
     
     // Import test factories for performance tests
     #[cfg(feature = "test-utils")]
-    use sy_ipc_transport::test_utils::factory::*;
+    use sy_ipc_transport::test_utils::factory::{
+        ProcessCommandTestFactory, TimeoutTestFactory,
+    };
+    
+    #[cfg(all(feature = "test-utils", unix))]
+    use sy_ipc_transport::test_utils::factory::{
+        BufferSizeTestFactory, UnixSocketPathTestFactory,
+    };
+    
+    #[cfg(unix)]
+    use sy_ipc_transport::{Transport, UnixSocketConfig, UnixSocketTransport};
     
     #[tokio::test]
     async fn test_transport_creation_performance() {
         let start = Instant::now();
         
         // Test that transport creation is fast
+        #[cfg(unix)]
         let _unix_transport = UnixSocketTransport::new();
         let _named_pipe_transport = NamedPipeTransport::new();
         let _stdio_transport = StdioTransport::new();
@@ -419,7 +452,7 @@ mod performance_tests {
         
         // Transport creation should be very fast (< 1ms)
         assert!(creation_time < Duration::from_millis(1), 
-               "Transport creation took too long: {:?}", creation_time);
+               "Transport creation took too long: {creation_time:?}");
     }
     
     #[cfg(unix)]
@@ -442,7 +475,7 @@ mod performance_tests {
         
         // 1000 validations should complete quickly (< 10ms)
         assert!(validation_time < Duration::from_millis(10),
-               "Config validation took too long: {:?}", validation_time);
+               "Config validation took too long: {validation_time:?}");
     }
     
     #[tokio::test]
@@ -466,6 +499,6 @@ mod performance_tests {
         
         // 1000 validations should complete quickly (< 10ms)
         assert!(validation_time < Duration::from_millis(10),
-               "Config validation took too long: {:?}", validation_time);
+               "Config validation took too long: {validation_time:?}");
     }
 }

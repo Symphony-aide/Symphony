@@ -1,6 +1,6 @@
 //! Unit tests for pattern-based message routing
 //!
-//! These tests verify the PatternRouter behavior including route registration,
+//! These tests verify the `PatternRouter` behavior including route registration,
 //! pattern matching, and route finding functionality.
 
 use sy_ipc_bus::{PatternRouter, RouterError};
@@ -82,7 +82,7 @@ mod tests {
         assert!(result.is_err(), "Invalid pattern should fail registration");
         match result.unwrap_err() {
             RouterError::PatternCompilationFailed(_) => {}, // Expected error for regex compilation failure
-            other => panic!("Expected PatternCompilationFailed error, got: {:?}", other),
+            other => panic!("Expected PatternCompilationFailed error, got: {other:?}"),
         }
     }
 
@@ -151,13 +151,13 @@ mod tests {
         router.register_route("*.create", endpoint2.clone(), PriorityTestFactory::medium()).await.unwrap();
         
         // Act
-        let routes = router.find_all_routes("user.create");
+        let found_routes = router.find_all_routes("user.create");
         
         // Assert
-        assert_eq!(routes.len(), 2, "Should find both matching routes");
+        assert_eq!(found_routes.len(), 2, "Should find both matching routes");
         // Routes should be sorted by priority (highest first)
-        assert_eq!(routes[0].endpoint_id, endpoint1); // Higher priority
-        assert_eq!(routes[1].endpoint_id, endpoint2); // Lower priority
+        assert_eq!(found_routes[0].endpoint_id, endpoint1); // Higher priority
+        assert_eq!(found_routes[1].endpoint_id, endpoint2); // Lower priority
     }
 
     #[tokio::test]
@@ -192,7 +192,7 @@ mod tests {
         assert!(result.is_err(), "Removing non-existent route should fail");
         match result.unwrap_err() {
             RouterError::RouteNotFound(_) => {}, // Expected error
-            other => panic!("Expected RouteNotFound error, got: {:?}", other),
+            other => panic!("Expected RouteNotFound error, got: {other:?}"),
         }
     }
 

@@ -33,7 +33,7 @@ struct CompiledRoute {
 
 /// High-performance pattern-based message router
 ///
-/// The PatternRouter provides efficient message routing based on patterns with support for:
+/// The `PatternRouter` provides efficient message routing based on patterns with support for:
 /// - Exact string matching (fastest)
 /// - Wildcard patterns (* and ?)
 /// - Regex patterns
@@ -88,6 +88,7 @@ impl PatternRouter {
     ///
     /// let router = PatternRouter::new();
     /// ```
+    #[must_use]
     pub fn new() -> Self {
         duck!("Creating new PatternRouter");
         
@@ -145,9 +146,9 @@ impl PatternRouter {
             created_at: chrono::Utc::now(),
         };
         
-        if self.is_pattern(pattern) {
+        if Self::is_pattern(pattern) {
             // Pattern route - compile regex
-            let regex_pattern = self.glob_to_regex(pattern)?;
+            let regex_pattern = Self::glob_to_regex(pattern);
             let compiled_regex = Regex::new(&regex_pattern)
                 .map_err(|e| crate::error::RouterError::PatternCompilationFailed(e.to_string()))?;
             
@@ -384,12 +385,12 @@ impl PatternRouter {
     }
     
     /// Check if a pattern contains wildcards or regex characters
-    fn is_pattern(&self, pattern: &str) -> bool {
+    fn is_pattern(pattern: &str) -> bool {
         pattern.contains('*') || pattern.contains('?') || pattern.contains('[') || pattern.contains('^') || pattern.contains('$')
     }
     
     /// Convert glob pattern to regex
-    fn glob_to_regex(&self, pattern: &str) -> RouterResult<String> {
+    fn glob_to_regex(pattern: &str) -> String {
         let mut regex = String::new();
         regex.push('^');
         
@@ -421,7 +422,7 @@ impl PatternRouter {
         }
         
         regex.push('$');
-        Ok(regex)
+        regex
     }
 }
 

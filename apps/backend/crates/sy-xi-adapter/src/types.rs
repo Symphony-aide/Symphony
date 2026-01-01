@@ -85,18 +85,10 @@ pub struct JsonRpcError {
 }
 
 /// XI-editor text delta for edit operations
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct TextDelta {
     /// Operations in the delta
     pub ops: Vec<DeltaOp>,
-}
-
-impl Default for TextDelta {
-    fn default() -> Self {
-        Self {
-            ops: Vec::new(),
-        }
-    }
 }
 
 /// Delta operation
@@ -187,19 +179,19 @@ pub enum XiEvent {
     /// Buffer update event
     #[serde(rename = "update")]
     Update {
-        /// Parameters containing view_id, update, and revision
+        /// Parameters containing `view_id`, update, and revision
         params: UpdateParams,
     },
     /// Scroll event
     #[serde(rename = "scroll_to")]
     ScrollTo {
-        /// Parameters containing view_id, line, and column
+        /// Parameters containing `view_id`, line, and column
         params: ScrollParams,
     },
     /// Configuration changed event
     #[serde(rename = "config_changed")]
     ConfigChanged {
-        /// Parameters containing view_id and changes
+        /// Parameters containing `view_id` and changes
         params: ConfigParams,
     },
     /// Theme changed event
@@ -211,19 +203,19 @@ pub enum XiEvent {
     /// Available plugins event
     #[serde(rename = "available_plugins")]
     AvailablePlugins {
-        /// Parameters containing view_id and plugins
+        /// Parameters containing `view_id` and plugins
         params: PluginsParams,
     },
     /// Plugin started event
     #[serde(rename = "plugin_started")]
     PluginStarted {
-        /// Parameters containing view_id and plugin name
+        /// Parameters containing `view_id` and plugin name
         params: PluginStatusParams,
     },
     /// Plugin stopped event
     #[serde(rename = "plugin_stopped")]
     PluginStopped {
-        /// Parameters containing view_id, plugin name, and exit code
+        /// Parameters containing `view_id`, plugin name, and exit code
         params: PluginStoppedParams,
     },
 }
@@ -320,6 +312,7 @@ pub struct BufferMetadata {
 
 impl BufferMetadata {
     /// Create new buffer metadata
+    #[must_use]
     pub fn new(buffer_id: BufferId) -> Self {
         Self {
             buffer_id,
@@ -337,13 +330,14 @@ impl BufferMetadata {
     pub fn update_from_view_update(&mut self, update: &ViewUpdate, revision: u64) {
         self.revision = revision;
         self.pristine = update.pristine;
-        self.cursor_positions = update.cursor.clone();
-        self.selections = update.selection.clone();
+        self.cursor_positions.clone_from(&update.cursor);
+        self.selections.clone_from(&update.selection);
         self.last_updated = chrono::Utc::now();
     }
     
     /// Check if buffer is dirty (has unsaved changes)
-    pub fn is_dirty(&self) -> bool {
+    #[must_use]
+    pub const fn is_dirty(&self) -> bool {
         !self.pristine
     }
 }
@@ -388,7 +382,9 @@ mod tests {
             id: serde_json::Value::Number(serde_json::Number::from(1)),
         };
         
-        let json = serde_json::to_string(&request).unwrap();
+        let json = serde_json::to_string(&request);
+        assert!(json.is_ok());
+        let json = json.unwrap();
         assert!(json.contains("\"jsonrpc\":\"2.0\""));
         assert!(json.contains("\"method\":\"test_method\""));
         assert!(json.contains("\"id\":1"));
@@ -403,7 +399,9 @@ mod tests {
             id: serde_json::Value::Number(serde_json::Number::from(1)),
         };
         
-        let json = serde_json::to_string(&response).unwrap();
+        let json = serde_json::to_string(&response);
+        assert!(json.is_ok());
+        let json = json.unwrap();
         assert!(json.contains("\"result\":\"success\""));
         assert!(!json.contains("\"error\""));
     }
@@ -459,7 +457,9 @@ mod tests {
             }
         }"#;
         
-        let event: XiEvent = serde_json::from_str(json).unwrap();
+        let event: Result<XiEvent, _> = serde_json::from_str(json);
+        assert!(event.is_ok());
+        let event = event.unwrap();
         
         match event {
             XiEvent::Update { params } => {
@@ -467,7 +467,7 @@ mod tests {
                 assert_eq!(params.rev, 1);
                 assert!(params.update.pristine);
             }
-            _ => panic!("Expected Update event"),
+            _ => unreachable!("Expected Update event"),
         }
     }
 }

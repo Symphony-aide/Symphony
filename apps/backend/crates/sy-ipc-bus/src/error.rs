@@ -194,60 +194,58 @@ pub type HealthResult<T> = Result<T, HealthError>;
 
 impl BusError {
     /// Check if error is retryable
-    pub fn is_retryable(&self) -> bool {
-        match self {
-            BusError::EndpointUnhealthy(_) => true,
-            BusError::DeliveryFailed(_) => true,
-            BusError::Health(HealthError::HealthCheckFailed(_)) => true,
-            BusError::Internal(_) => true,
-            _ => false,
-        }
+    #[must_use]
+    pub const fn is_retryable(&self) -> bool {
+        matches!(self, Self::EndpointUnhealthy(_) | Self::DeliveryFailed(_) | Self::Health(HealthError::HealthCheckFailed(_)) | Self::Internal(_))
     }
     
     /// Check if error indicates a temporary condition
-    pub fn is_temporary(&self) -> bool {
-        match self {
-            BusError::EndpointUnhealthy(_) => true,
-            BusError::BusShuttingDown => false,
-            BusError::Health(HealthError::CircuitBreakerOpen(_)) => true,
-            _ => false,
-        }
+    #[must_use]
+    pub const fn is_temporary(&self) -> bool {
+        matches!(
+            self,
+            Self::EndpointUnhealthy(_) | Self::Health(HealthError::CircuitBreakerOpen(_))
+        )
     }
 }
 
 impl RouterError {
     /// Check if error is due to invalid configuration
-    pub fn is_configuration_error(&self) -> bool {
+    #[must_use]
+    pub const fn is_configuration_error(&self) -> bool {
         matches!(
             self,
-            RouterError::InvalidPattern(_) | RouterError::PatternCompilationFailed(_)
+            Self::InvalidPattern(_) | Self::PatternCompilationFailed(_)
         )
     }
 }
 
 impl CorrelationError {
     /// Check if error is due to timeout
-    pub fn is_timeout(&self) -> bool {
-        matches!(self, CorrelationError::RequestTimeout(_))
+    #[must_use]
+    pub const fn is_timeout(&self) -> bool {
+        matches!(self, Self::RequestTimeout(_))
     }
 }
 
 impl PubSubError {
     /// Check if error is due to capacity limits
-    pub fn is_capacity_error(&self) -> bool {
+    #[must_use]
+    pub const fn is_capacity_error(&self) -> bool {
         matches!(
             self,
-            PubSubError::SubscriberLimitExceeded { .. } | PubSubError::ChannelCapacityExceeded
+            Self::SubscriberLimitExceeded { .. } | Self::ChannelCapacityExceeded
         )
     }
 }
 
 impl HealthError {
     /// Check if error indicates endpoint is down
-    pub fn is_endpoint_down(&self) -> bool {
+    #[must_use]
+    pub const fn is_endpoint_down(&self) -> bool {
         matches!(
             self,
-            HealthError::HealthCheckFailed(_) | HealthError::CircuitBreakerOpen(_)
+            Self::HealthCheckFailed(_) | Self::CircuitBreakerOpen(_)
         )
     }
 }

@@ -1,7 +1,12 @@
 //! Unit tests for health monitoring functionality
 //!
-//! These tests verify the HealthMonitor behavior including endpoint registration,
+//! These tests verify the `HealthMonitor` behavior including endpoint registration,
 //! health checking, circuit breaker functionality, and failure detection.
+
+#![allow(clippy::unwrap_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::overly_complex_bool_expr)]
+#![allow(clippy::uninlined_format_args)]
 
 use sy_ipc_bus::{HealthMonitor, HealthConfig, HealthError};
 use crate::factory::EndpointIdTestFactory;
@@ -102,7 +107,7 @@ mod tests {
         assert!(result.is_err(), "Unregistering non-existent endpoint should fail");
         match result.unwrap_err() {
             HealthError::EndpointNotRegistered(_) => {}, // Expected error
-            other => panic!("Expected EndpointNotRegistered error, got: {:?}", other),
+            other => panic!("Expected EndpointNotRegistered error, got: {other:?}"),
         }
     }
 
@@ -165,7 +170,7 @@ mod tests {
         assert!(result.is_err(), "Health check should fail for unregistered endpoint");
         match result.unwrap_err() {
             HealthError::EndpointNotRegistered(_) => {}, // Expected error
-            other => panic!("Expected EndpointNotRegistered error, got: {:?}", other),
+            other => panic!("Expected EndpointNotRegistered error, got: {other:?}"),
         }
     }
 

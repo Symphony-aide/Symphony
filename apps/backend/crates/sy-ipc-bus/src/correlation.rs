@@ -27,7 +27,7 @@ struct PendingRequest {
 
 /// Request/response correlation manager
 ///
-/// The CorrelationManager provides reliable correlation of requests with responses using
+/// The `CorrelationManager` provides reliable correlation of requests with responses using
 /// correlation IDs. It handles timeout cleanup and prevents memory leaks from orphaned correlations.
 ///
 /// # Features
@@ -82,6 +82,7 @@ impl CorrelationManager {
     ///     let manager = CorrelationManager::new(Duration::from_secs(30));
     /// }
     /// ```
+    #[must_use]
     pub fn new(timeout_duration: Duration) -> Self {
         duck!("Creating CorrelationManager with timeout: {:?}", timeout_duration);
         
@@ -147,6 +148,7 @@ impl CorrelationManager {
         }
         
         pending.insert(correlation_id, pending_request);
+        drop(pending);
         Ok(())
     }
     
@@ -236,14 +238,11 @@ impl CorrelationManager {
         
         let pending = self.pending_requests.read().await;
         
-        match pending.get(correlation_id) {
-            Some(request) => {
-                let now = Utc::now();
-                // Return false if timed out
-                now <= request.timeout_at
-            }
-            None => false,
-        }
+        pending.get(correlation_id).is_some_and(|request| {
+            let now = Utc::now();
+            // Return false if timed out
+            now <= request.timeout_at
+        })
     }
     
     /// Get the number of pending correlations
@@ -317,6 +316,7 @@ impl CorrelationManager {
         });
         
         let final_count = pending.len();
+        drop(pending);
         initial_count - final_count
     }
     

@@ -232,8 +232,7 @@ impl HealthMonitor {
             response_times: Vec::new(),
         };
         
-        let mut endpoints = self.endpoints.write().await;
-        endpoints.insert(endpoint_id.to_string(), endpoint_health);
+        self.endpoints.write().await.insert(endpoint_id.to_string(), endpoint_health);
         
         Ok(())
     }
@@ -362,7 +361,7 @@ impl HealthMonitor {
         
         // For now, simulate a health check (in real implementation, this would ping the endpoint)
         // This is a stub implementation that assumes endpoints are healthy
-        let response_time = start.elapsed().as_millis() as u64;
+        let response_time = u64::try_from(start.elapsed().as_millis()).unwrap_or(0);
         
         let health_check = HealthCheck {
             endpoint_id: endpoint_id.to_string(),
@@ -429,28 +428,25 @@ impl HealthMonitor {
         
         let endpoints = self.endpoints.read().await;
         
-        match endpoints.get(endpoint_id) {
-            Some(health) => {
-                let avg_response_time = if health.response_times.is_empty() {
-                    None
+        endpoints.get(endpoint_id).map_or_else(|| Err(crate::error::HealthError::EndpointNotRegistered(endpoint_id.to_string())), |health| {
+            let avg_response_time = if health.response_times.is_empty() {
+                None
+            } else {
+                Some(health.response_times.iter().sum::<u64>() / health.response_times.len() as u64)
+            };
+            
+            Ok(HealthCheck {
+                endpoint_id: endpoint_id.to_string(),
+                status: health.status.clone(),
+                checked_at: health.last_check,
+                response_time_ms: avg_response_time,
+                error_message: if health.circuit_breaker_open {
+                    Some("Circuit breaker open".to_string())
                 } else {
-                    Some(health.response_times.iter().sum::<u64>() / health.response_times.len() as u64)
-                };
-                
-                Ok(HealthCheck {
-                    endpoint_id: endpoint_id.to_string(),
-                    status: health.status.clone(),
-                    checked_at: health.last_check,
-                    response_time_ms: avg_response_time,
-                    error_message: if health.circuit_breaker_open {
-                        Some("Circuit breaker open".to_string())
-                    } else {
-                        None
-                    },
-                })
-            }
-            None => Err(crate::error::HealthError::EndpointNotRegistered(endpoint_id.to_string())),
-        }
+                    None
+                },
+            })
+        })
     }
     
     /// Get health status for all registered endpoints
@@ -478,10 +474,9 @@ impl HealthMonitor {
     pub async fn get_all_endpoint_health(&self) -> HealthResult<Vec<HealthCheck>> {
         duck!("Getting health for all endpoints");
         
-        let endpoints = self.endpoints.read().await;
         let mut health_checks = Vec::new();
         
-        for (endpoint_id, health) in endpoints.iter() {
+        for (endpoint_id, health) in self.endpoints.read().await.iter() {
             let avg_response_time = if health.response_times.is_empty() {
                 None
             } else {
@@ -531,6 +526,7 @@ impl HealthMonitor {
         }
         
         *running = true;
+        drop(running);
         
         // Start background monitoring task (simplified implementation)
         // In a real implementation, this would spawn a background task
@@ -557,8 +553,7 @@ impl HealthMonitor {
     pub async fn stop_monitoring(&self) -> HealthResult<()> {
         duck!("Stopping health monitoring");
         
-        let mut running = self.running.write().await;
-        *running = false;
+        *self.running.write().await = false;
         
         Ok(())
     }
@@ -584,8 +579,7 @@ impl HealthMonitor {
         self.stop_monitoring().await?;
         
         // Clear all endpoints
-        let mut endpoints = self.endpoints.write().await;
-        endpoints.clear();
+        self.endpoints.write().await.clear();
         
         Ok(())
     }

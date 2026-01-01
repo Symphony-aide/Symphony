@@ -1,7 +1,12 @@
 //! Unit tests for publish/subscribe messaging
 //!
-//! These tests verify the PubSubManager behavior including topic subscription,
+//! These tests verify the `PubSubManager` behavior including topic subscription,
 //! event publishing, pattern matching, and subscriber management.
+
+#![allow(clippy::unwrap_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::needless_borrow)]
+#![allow(clippy::uninlined_format_args)]
 
 use sy_ipc_bus::{PubSubManager, PubSubError};
 use crate::factory::{TopicTestFactory, MessageEnvelopeTestFactory};
@@ -54,13 +59,13 @@ mod tests {
         let invalid_pattern = "[invalid"; // Malformed regex pattern
         
         // Act
-        let result = manager.subscribe(&invalid_pattern).await;
+        let result = manager.subscribe(invalid_pattern).await;
         
         // Assert
         assert!(result.is_err(), "Invalid topic pattern should fail subscription");
         match result.unwrap_err() {
             PubSubError::InvalidPattern(_) => {}, // Expected error
-            other => panic!("Expected InvalidPattern error, got: {:?}", other),
+            other => panic!("Expected InvalidPattern error, got: {other:?}"),
         }
     }
 

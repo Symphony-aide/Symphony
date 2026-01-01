@@ -1,6 +1,6 @@
 //! Unit tests for core message bus functionality
 //!
-//! These tests verify the central MessageBus behavior including route registration,
+//! These tests verify the central `MessageBus` behavior including route registration,
 //! message routing, and basic bus operations.
 
 use sy_ipc_bus::{MessageBus, BusConfig};
@@ -129,7 +129,7 @@ mod tests {
         };
         
         // Act
-        let _bus = MessageBus::new(custom_config.clone());
+        let _bus = MessageBus::new(custom_config);
         
         // Assert - bus should be created with custom config
         // This test verifies that custom configuration is accepted

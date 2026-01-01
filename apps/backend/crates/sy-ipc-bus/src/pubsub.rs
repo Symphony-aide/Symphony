@@ -275,6 +275,7 @@ impl PubSubManager {
                 .or_insert_with(|| TopicChannel::new(1000));
             
             let receiver = topic_channel.subscribe();
+            drop(topics);
             Ok(EventReceiver::new(receiver))
         }
     }

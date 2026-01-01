@@ -4,6 +4,11 @@
 //! factory-based testing pattern. All test data is generated using sy-commons
 //! safe_generator to ensure thread-safety and uniqueness.
 
+#![allow(clippy::must_use_candidate)]
+#![allow(clippy::missing_const_for_fn)]
+#![allow(clippy::uninlined_format_args)]
+#![allow(clippy::doc_markdown)]
+
 use sy_commons::testing::safe_generator;
 use symphony_core_ports::{BufferId, ViewId, Position, Range, TextChange};
 use std::path::PathBuf;

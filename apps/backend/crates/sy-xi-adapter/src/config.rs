@@ -118,37 +118,43 @@ impl Default for FileWatchingConfig {
 
 impl XiEditorConfig {
     /// Create a new configuration with custom XI-editor path
+    #[must_use]
     pub fn with_xi_editor_path<P: Into<PathBuf>>(mut self, path: P) -> Self {
         self.xi_editor_path = path.into();
         self
     }
     
     /// Set working directory
+    #[must_use]
     pub fn with_working_directory<P: Into<PathBuf>>(mut self, dir: P) -> Self {
         self.working_directory = Some(dir.into());
         self
     }
     
     /// Add command line argument
+    #[must_use]
     pub fn with_arg<S: Into<String>>(mut self, arg: S) -> Self {
         self.args.push(arg.into());
         self
     }
     
     /// Add environment variable
+    #[must_use]
     pub fn with_env<K: Into<String>, V: Into<String>>(mut self, key: K, value: V) -> Self {
         self.environment.insert(key.into(), value.into());
         self
     }
     
     /// Set request timeout
-    pub fn with_request_timeout(mut self, timeout: Duration) -> Self {
+    #[must_use]
+    pub const fn with_request_timeout(mut self, timeout: Duration) -> Self {
         self.request_timeout = timeout;
         self
     }
     
     /// Set maximum restarts
-    pub fn with_max_restarts(mut self, max_restarts: usize) -> Self {
+    #[must_use]
+    pub const fn with_max_restarts(mut self, max_restarts: usize) -> Self {
         self.max_restarts = max_restarts;
         self
     }
@@ -263,8 +269,10 @@ mod tests {
     
     #[test]
     fn test_config_validation_zero_timeout() {
-        let mut config = XiEditorConfig::default();
-        config.startup_timeout = Duration::from_millis(0);
+        let config = XiEditorConfig {
+            startup_timeout: Duration::from_millis(0),
+            ..Default::default()
+        };
         
         let result = config.validate();
         assert!(result.is_err());

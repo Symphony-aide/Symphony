@@ -61,7 +61,7 @@ impl XiJsonRpcClient {
     /// Create a new JSON-RPC client
     ///
     /// # Arguments
-    /// * `stdin` - XI-editor process STDIN handle or any AsyncWrite stream
+    /// * `stdin` - XI-editor process STDIN handle or any `AsyncWrite` stream
     /// * `request_timeout` - Maximum time to wait for responses
     ///
     /// # Examples
@@ -78,6 +78,7 @@ impl XiJsonRpcClient {
     /// # Ok(())
     /// # }
     /// ```
+    #[must_use]
     pub fn new(
         stdin: tokio::io::DuplexStream,
         request_timeout: Duration,
@@ -147,20 +148,21 @@ impl XiJsonRpcClient {
 
         // Send request
         let request_json = serde_json::to_string(&request)
-            .map_err(|e| XiAdapterError::jsonrpc(format!("Request serialization failed: {}", e)))
+            .map_err(|e| XiAdapterError::jsonrpc(format!("Request serialization failed: {e}")))
             .context("Failed to serialize JSON-RPC request")?;
 
         {
             let mut stdin = self.stdin.lock().await;
             stdin.write_all(request_json.as_bytes()).await
-                .map_err(|e| XiAdapterError::jsonrpc(format!("STDIN write failed: {}", e)))
+                .map_err(|e| XiAdapterError::jsonrpc(format!("STDIN write failed: {e}")))
                 .context("Failed to write JSON-RPC request to XI-editor")?;
             stdin.write_all(b"\n").await
-                .map_err(|e| XiAdapterError::jsonrpc(format!("STDIN newline write failed: {}", e)))
+                .map_err(|e| XiAdapterError::jsonrpc(format!("STDIN newline write failed: {e}")))
                 .context("Failed to write newline to XI-editor")?;
             stdin.flush().await
-                .map_err(|e| XiAdapterError::jsonrpc(format!("STDIN flush failed: {}", e)))
+                .map_err(|e| XiAdapterError::jsonrpc(format!("STDIN flush failed: {e}")))
                 .context("Failed to flush STDIN to XI-editor")?;
+            drop(stdin);
         }
 
         duck!("JSON-RPC request sent, waiting for response with timeout: {:?}", self.request_timeout);
@@ -181,16 +183,13 @@ impl XiJsonRpcClient {
         }
 
         // Handle response
-        match response.error {
-            Some(error) => {
-                duck!("XI-editor returned error: {:?}", error);
-                Err(XiAdapterError::jsonrpc(format!("XI-editor error: {:?}", error)).into())
-            }
-            None => {
-                let result = response.result.unwrap_or(serde_json::Value::Null);
-                duck!("JSON-RPC call successful, result: {:?}", result);
-                Ok(result)
-            }
+        if let Some(error) = response.error {
+            duck!("XI-editor returned error: {:?}", error);
+            Err(XiAdapterError::jsonrpc(format!("XI-editor error: {error:?}")).into())
+        } else {
+            let result = response.result.unwrap_or(serde_json::Value::Null);
+            duck!("JSON-RPC call successful, result: {:?}", result);
+            Ok(result)
         }
     }
 
@@ -231,19 +230,20 @@ impl XiJsonRpcClient {
         };
 
         let notification_json = serde_json::to_string(&notification)
-            .map_err(|e| XiAdapterError::jsonrpc(format!("Notification serialization failed: {}", e)))
+            .map_err(|e| XiAdapterError::jsonrpc(format!("Notification serialization failed: {e}")))
             .context("Failed to serialize JSON-RPC notification")?;
 
         let mut stdin = self.stdin.lock().await;
         stdin.write_all(notification_json.as_bytes()).await
-            .map_err(|e| XiAdapterError::jsonrpc(format!("STDIN write failed: {}", e)))
+            .map_err(|e| XiAdapterError::jsonrpc(format!("STDIN write failed: {e}")))
             .context("Failed to write JSON-RPC notification to XI-editor")?;
         stdin.write_all(b"\n").await
-            .map_err(|e| XiAdapterError::jsonrpc(format!("STDIN newline write failed: {}", e)))
+            .map_err(|e| XiAdapterError::jsonrpc(format!("STDIN newline write failed: {e}")))
             .context("Failed to write newline to XI-editor")?;
         stdin.flush().await
-            .map_err(|e| XiAdapterError::jsonrpc(format!("STDIN flush failed: {}", e)))
+            .map_err(|e| XiAdapterError::jsonrpc(format!("STDIN flush failed: {e}")))
             .context("Failed to flush STDIN to XI-editor")?;
+        drop(stdin);
 
         duck!("JSON-RPC notification sent successfully");
         Ok(())
@@ -260,9 +260,9 @@ impl XiJsonRpcClient {
     /// Returns an error if response handling fails
     pub async fn handle_response(&self, response: JsonRpcResponse) -> Result<(), SymphonyError> {
         duck!("Handling JSON-RPC response: id={:?}", response.id);
-        let mut correlation_map = self.correlation_map.lock().await;
-
-        if let Some(response_tx) = correlation_map.remove(&response.id) {
+        
+        let value = self.correlation_map.lock().await.remove(&response.id);
+        if let Some(response_tx) = value {
             let _ = response_tx.send(response); // Ignore send errors (receiver may have timed out)
             duck!("Response delivered to waiting request");
         } else {

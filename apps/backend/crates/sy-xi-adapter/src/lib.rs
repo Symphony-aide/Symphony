@@ -109,5 +109,5 @@ pub use types::*;
 pub use symphony_core_ports::{BufferId, ViewId, Position, Range, TextEditingEvent};
 pub use sy_commons::{SymphonyError, ResultContext};
 
-/// Result type alias using SymphonyError
+/// Result type alias using `SymphonyError`
 pub type Result<T> = std::result::Result<T, SymphonyError>;
