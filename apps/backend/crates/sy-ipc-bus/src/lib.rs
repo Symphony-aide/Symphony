@@ -42,22 +42,22 @@
 //! ```
 
 pub mod bus;
-pub mod router;
 pub mod correlation;
-pub mod pubsub;
-pub mod health;
 pub mod error;
+pub mod health;
+pub mod pubsub;
+pub mod router;
 
 // Re-export main types
-pub use bus::{MessageBus, BusConfig};
+pub use bus::{BusConfig, MessageBus};
+pub use correlation::{CorrelationId, CorrelationManager};
+pub use error::{BusError, CorrelationError, HealthError, PubSubError, RouterError};
+pub use health::{HealthConfig, HealthMonitor};
+pub use pubsub::{EventReceiver, PubSubManager};
 pub use router::{PatternRouter, Route};
-pub use correlation::{CorrelationManager, CorrelationId};
-pub use pubsub::{PubSubManager, EventReceiver};
-pub use health::{HealthMonitor, HealthConfig};
-pub use error::{BusError, RouterError, CorrelationError, PubSubError, HealthError};
 
 // Re-export protocol types for convenience
-pub use sy_ipc_protocol::{MessageType};
+pub use sy_ipc_protocol::MessageType;
 
 /// Type alias for message envelope with byte payload
 pub type MessageEnvelope = sy_ipc_protocol::MessageEnvelope<Vec<u8>>;

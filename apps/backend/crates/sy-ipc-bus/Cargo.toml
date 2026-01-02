@@ -13,7 +13,7 @@ workspace = true
 
 [features]
 # Default runs only fast unit tests
-default = []
+default = ["unit"]
 # Individual test category features
 unit = []
 integration = []

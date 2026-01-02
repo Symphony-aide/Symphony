@@ -578,11 +578,15 @@ mod tests {
 		};
 
 		// Test that helper functions work (they don't return Results anymore)
-		_create_basic_console_setup(&console_config);
-		_create_basic_file_setup(&file_config);
-		_create_basic_json_setup(&json_config);
+		// ALIGNMENT: Allow underscore-prefixed items in test context per clippy.md
+		#[allow(clippy::used_underscore_items)]
+		{
+			_create_basic_console_setup(&console_config);
+			_create_basic_file_setup(&file_config);
+			_create_basic_json_setup(&json_config);
+		}
 		
+		// ALIGNMENT: Remove always-true assertion per clippy.md
 		// If we get here without panicking, the functions work
-		assert!(true);
 	}
 }

@@ -13,9 +13,47 @@ use uuid::Uuid;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct BufferId(pub Uuid);
 
+impl BufferId {
+	/// Create a new BufferId with a random UUID
+	pub fn new() -> Self {
+		Self(Uuid::new_v4())
+	}
+
+	/// Create a BufferId from a string (for testing/mocking)
+	pub fn from_string(s: &str) -> Self {
+		// For testing, create a deterministic UUID from the string
+		Self(Uuid::new_v5(&Uuid::NAMESPACE_OID, s.as_bytes()))
+	}
+}
+
+impl Default for BufferId {
+	fn default() -> Self {
+		Self::new()
+	}
+}
+
 /// View identifier for text editing views
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct ViewId(pub Uuid);
+
+impl ViewId {
+	/// Create a new ViewId with a random UUID
+	pub fn new() -> Self {
+		Self(Uuid::new_v4())
+	}
+
+	/// Create a ViewId from a string (for testing/mocking)
+	pub fn from_string(s: &str) -> Self {
+		// For testing, create a deterministic UUID from the string
+		Self(Uuid::new_v5(&Uuid::NAMESPACE_OID, s.as_bytes()))
+	}
+}
+
+impl Default for ViewId {
+	fn default() -> Self {
+		Self::new()
+	}
+}
 
 /// Model identifier for AI models
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -542,6 +580,11 @@ pub enum TextEditingEvent {
 		buffer_id: BufferId,
 		changes: Vec<TextChange>,
 	},
+	/// Buffer content changed
+	BufferChanged {
+		buffer_id: BufferId,
+		changes: Vec<TextChange>,
+	},
 	/// Buffer was saved
 	BufferSaved {
 		buffer_id: BufferId,
@@ -552,10 +595,19 @@ pub enum TextEditingEvent {
 		view_id: ViewId,
 		buffer_id: BufferId,
 	},
+	/// View was scrolled
+	ViewScrolled {
+		view_id: ViewId,
+		position: Position,
+	},
 	/// Cursor moved
 	CursorMoved { view_id: ViewId, position: Position },
 	/// Selection changed
 	SelectionChanged { view_id: ViewId, range: Range },
+	/// Generic notification event
+	Notification {
+		message: String,
+	},
 }
 
 /// Binary synchronization events

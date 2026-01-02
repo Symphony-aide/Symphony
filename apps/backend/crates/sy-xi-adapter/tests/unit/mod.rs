@@ -10,6 +10,7 @@
 #![allow(clippy::uninlined_format_args)]
 #![allow(clippy::doc_markdown)]
 
+pub mod event_stream_test;
 pub mod jsonrpc_client_test;
 pub mod process_manager_test;
 

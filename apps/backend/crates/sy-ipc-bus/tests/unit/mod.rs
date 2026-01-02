@@ -11,7 +11,7 @@
 #![allow(clippy::overly_complex_bool_expr)]
 
 pub mod bus_core_test;
-pub mod router_test;
 pub mod correlation_test;
-pub mod pubsub_test;
 pub mod health_monitor_test;
+pub mod pubsub_test;
+pub mod router_test;
