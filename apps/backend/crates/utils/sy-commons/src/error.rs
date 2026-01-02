@@ -211,7 +211,7 @@ mod tests {
 			value: Some("test_value".to_string()),
 		};
 
-		let display = format!("{}", error);
+		let display = format!("{error}");
 		assert!(display.contains("Validation error"));
 		assert!(display.contains("Test error"));
 	}
@@ -223,7 +223,7 @@ mod tests {
 			source: None,
 		};
 
-		let debug = format!("{:?}", error);
+		let debug = format!("{error:?}");
 		assert!(debug.contains("Generic"));
 		assert!(debug.contains("Test error"));
 	}

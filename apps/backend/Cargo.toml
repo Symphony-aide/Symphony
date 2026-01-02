@@ -176,17 +176,26 @@ keywords = ["editor", "ide", "ai", "development", "aide"]
 categories = ["text-editors", "development-tools", "command-line-utilities"]
 
 [dependencies]
+# Symphony utilities
+sy-commons = { path = "crates/utils/sy-commons" }
+
+# Logging (required for auto-initializing macros)
+tracing.workspace = true
+
+# XI-editor core components (commented out for now)
 #xi-core-lib = { path = "crates/core/xi-core-lib" }
 #xi-rpc = { path = "crates/core/xi-rpc" }
 #xi-rope = { path = "crates/utils/xi-rope" }
-#
+
+# Workspace dependencies
 #serde.workspace = true
 #serde_json.workspace = true
 #log.workspace = true
 #tokio.workspace = true
 #anyhow.workspace = true
 
-env_logger = "0.11"
+# Remove env_logger since we're using Symphony's logging system
+# env_logger = "0.11"
 
 
 [[bin]]

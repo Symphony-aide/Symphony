@@ -204,7 +204,7 @@ pub fn init_logging(config: &LoggingConfig) -> Result<(), SymphonyError> {
 
 	// Parse log level
 	let env_filter = EnvFilter::try_new(&config.level).map_err(|e| SymphonyError::Configuration {
-		message: format!("Invalid log level '{}': {}", config.level, e),
+		message: format!("Invalid log level '{}': {e}", config.level),
 		file: None,
 	})?;
 
@@ -251,7 +251,7 @@ pub fn init_logging(config: &LoggingConfig) -> Result<(), SymphonyError> {
 			if let Some(parent) = file_config.path.parent() {
 				std::fs::create_dir_all(parent).map_err(|e| SymphonyError::Io {
 					source: e,
-					context: Some(format!("Failed to create log directory: {:?}", parent)),
+					context: Some(format!("Failed to create log directory: {}", parent.display())),
 				})?;
 			}
 		}
@@ -264,7 +264,7 @@ pub fn init_logging(config: &LoggingConfig) -> Result<(), SymphonyError> {
 				if let Some(parent) = path.parent() {
 					std::fs::create_dir_all(parent).map_err(|e| SymphonyError::Io {
 						source: e,
-						context: Some(format!("Failed to create JSON log directory: {:?}", parent)),
+						context: Some(format!("Failed to create JSON log directory: {}", parent.display())),
 					})?;
 				}
 			}
@@ -277,31 +277,28 @@ pub fn init_logging(config: &LoggingConfig) -> Result<(), SymphonyError> {
 // Helper functions for future enhancement
 // These are simplified implementations that can be expanded later
 
-/// Create a basic console logging setup
+/// Create a basic console logging setup\
 /// This is a simplified version that can be enhanced in the future
-fn _create_basic_console_setup(config: &ConsoleConfig) -> Result<(), SymphonyError> {
+fn _create_basic_console_setup(config: &ConsoleConfig) {
 	// This function is reserved for future implementation
 	// Currently, console logging is handled directly in init_logging
 	crate::duck!("Console setup with format: {:?}, colors: {}", config.format, config.colors);
-	Ok(())
 }
 
-/// Create a basic file logging setup  
+/// Create a basic file logging setup\
 /// This is a simplified version that can be enhanced in the future
-fn _create_basic_file_setup(config: &FileConfig) -> Result<(), SymphonyError> {
+fn _create_basic_file_setup(config: &FileConfig) {
 	// This function is reserved for future implementation
 	// Currently, file logging setup is handled directly in init_logging
 	crate::duck!("File setup for: {:?}, rotation: {:?}", config.path, config.rotation);
-	Ok(())
 }
 
 /// Create a basic JSON logging setup
 /// This is a simplified version that can be enhanced in the future  
-fn _create_basic_json_setup(config: &JsonConfig) -> Result<(), SymphonyError> {
+fn _create_basic_json_setup(config: &JsonConfig) {
 	// This function is reserved for future implementation
 	// Currently, JSON logging setup is handled directly in init_logging
 	crate::duck!("JSON setup, path: {:?}, spans: {}", config.path, config.include_spans);
-	Ok(())
 }
 
 // Re-export tracing macros (excluding debug, trace)
@@ -477,7 +474,6 @@ mod tests {
 		// The debug macro should be available but will cause compilation error if used
 		// We can't test the compilation error directly in a unit test, but we can
 		// verify that the macro exists and is properly exported
-		assert!(true); // This test just ensures the imports work
 	}
 
 	#[test]
@@ -581,9 +577,12 @@ mod tests {
 			include_spans: true,
 		};
 
-		// Test that helper functions work
-		assert!(_create_basic_console_setup(&console_config).is_ok());
-		assert!(_create_basic_file_setup(&file_config).is_ok());
-		assert!(_create_basic_json_setup(&json_config).is_ok());
+		// Test that helper functions work (they don't return Results anymore)
+		_create_basic_console_setup(&console_config);
+		_create_basic_file_setup(&file_config);
+		_create_basic_json_setup(&json_config);
+		
+		// If we get here without panicking, the functions work
+		assert!(true);
 	}
 }

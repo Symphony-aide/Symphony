@@ -29,13 +29,13 @@ fn main() {
             
             // Initialize logging with loaded config
             if let Err(e) = sy_commons::logging::init_logging(&config.logging) {
-                println!("⚠️  Failed to initialize logging with config: {}", e);
+                println!("⚠️  Failed to initialize logging with config: {e}");
             } else {
                 println!("✅ Logging initialized with loaded configuration");
             }
         }
         Err(e) => {
-            println!("⚠️  Failed to load configuration: {}", e);
+            println!("⚠️  Failed to load configuration: {e}");
             println!("   This is expected if config files don't exist");
         }
     }
@@ -53,7 +53,7 @@ fn main() {
     println!("Set SYMPHONY_LOGGING_LEVEL=debug to override log level");
     
     if let Ok(env) = std::env::var("SYMPHONY_ENV") {
-        println!("Current SYMPHONY_ENV: {}", env);
+        println!("Current SYMPHONY_ENV: {env}");
     } else {
         println!("SYMPHONY_ENV not set (using default: development)");
     }
