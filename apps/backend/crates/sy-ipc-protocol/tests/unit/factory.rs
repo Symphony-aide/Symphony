@@ -1,5 +1,9 @@
 //! Factory module link for unit tests
-//! 
+//!
 //! Re-exports all factory types from the main factory module.
 
-pub use crate::factory::*;
+// Import the factory from the parent directory
+#[path = "../factory.rs"]
+pub mod parent_factory;
+
+pub use parent_factory::*;

@@ -56,3 +56,44 @@ xi_protocol = []
 name = "serialization_bench"
 harness = false
 required-features = ["performance"]
+
+# Unit test targets
+[[test]]
+name = "jsonrpc_compliance_test"
+path = "tests/unit/jsonrpc_compliance_test.rs"
+required-features = ["jsonrpc"]
+
+[[test]]
+name = "message_envelope_test"
+path = "tests/unit/message_envelope_test.rs"
+required-features = ["unit"]
+
+[[test]]
+name = "serialization_test"
+path = "tests/unit/serialization_test.rs"
+required-features = ["unit"]
+
+[[test]]
+name = "schema_test"
+path = "tests/unit/schema_test.rs"
+required-features = ["unit"]
+
+[[test]]
+name = "xi_protocol_test"
+path = "tests/unit/xi_protocol_test.rs"
+required-features = ["xi_protocol"]
+
+[[test]]
+name = "jsonrpc_client_test"
+path = "tests/unit/jsonrpc_client_test.rs"
+required-features = ["jsonrpc"]
+
+[[test]]
+name = "registry_test"
+path = "tests/unit/registry_test.rs"
+required-features = ["unit"]
+
+[[test]]
+name = "serializer_test"
+path = "tests/unit/serializer_test.rs"
+required-features = ["unit"]

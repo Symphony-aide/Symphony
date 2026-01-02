@@ -7,8 +7,10 @@
 
 use serde_json::Value;
 use sy_commons::testing::safe_generator;
+use sy_ipc_protocol::jsonrpc::JsonRpcNotification;
 use sy_ipc_protocol::{
-	CorrelationId, JsonRpcRequest, MessageEnvelope, MessageMetadata, MessagePriority, MessageType,
+	CorrelationId, JsonRpcError, JsonRpcRequest, JsonRpcResponse, MessageEnvelope, MessageMetadata,
+	MessagePriority, MessageType,
 };
 use uuid::Uuid;
 
@@ -112,5 +114,131 @@ impl MessageMetadataTestFactory {
 			source_component: format!("source_{id}"),
 			target_component: Some(format!("target_{id}")),
 		}
+	}
+
+	/// Generates normal priority metadata
+	#[must_use]
+	pub fn normal() -> MessageMetadata {
+		let id = safe_generator().next_unique_id();
+		MessageMetadata {
+			priority: MessagePriority::Normal,
+			routing_hints: vec![],
+			timeout_ms: None,
+			retry_count: 0,
+			source_component: format!("source_{id}"),
+			target_component: None,
+		}
+	}
+}
+
+/// Factory for generating JSON-RPC responses
+pub struct JsonRpcResponseTestFactory;
+
+impl JsonRpcResponseTestFactory {
+	/// Generates a successful JSON-RPC response
+	#[must_use]
+	pub fn success() -> JsonRpcResponse {
+		let id = safe_generator().next_unique_id();
+		JsonRpcResponse {
+			jsonrpc: "2.0".to_string(),
+			result: Some(Value::String(format!("success_result_{id}"))),
+			error: None,
+			id: Value::Number(id.into()),
+		}
+	}
+
+	/// Generates an error JSON-RPC response
+	#[must_use]
+	pub fn error() -> JsonRpcResponse {
+		let id = safe_generator().next_unique_id();
+		JsonRpcResponse {
+			jsonrpc: "2.0".to_string(),
+			result: None,
+			error: Some(JsonRpcErrorTestFactory::invalid_request()),
+			id: Value::Number(id.into()),
+		}
+	}
+}
+
+/// Factory for generating JSON-RPC errors
+pub struct JsonRpcErrorTestFactory;
+
+impl JsonRpcErrorTestFactory {
+	/// Generates a parse error
+	#[must_use]
+	pub fn parse_error() -> JsonRpcError {
+		JsonRpcError {
+			code: -32700,
+			message: "Parse error".to_string(),
+			data: None,
+		}
+	}
+
+	/// Generates an invalid request error
+	#[must_use]
+	pub fn invalid_request() -> JsonRpcError {
+		JsonRpcError {
+			code: -32600,
+			message: "Invalid Request".to_string(),
+			data: None,
+		}
+	}
+
+	/// Generates a method not found error
+	#[must_use]
+	pub fn method_not_found() -> JsonRpcError {
+		JsonRpcError {
+			code: -32601,
+			message: "Method not found".to_string(),
+			data: None,
+		}
+	}
+
+	/// Generates an invalid params error
+	#[must_use]
+	pub fn invalid_params() -> JsonRpcError {
+		JsonRpcError {
+			code: -32602,
+			message: "Invalid params".to_string(),
+			data: None,
+		}
+	}
+
+	/// Generates an internal error
+	#[must_use]
+	pub fn internal_error() -> JsonRpcError {
+		JsonRpcError {
+			code: -32603,
+			message: "Internal error".to_string(),
+			data: None,
+		}
+	}
+}
+
+/// Factory for generating JSON-RPC notifications
+pub struct JsonRpcNotificationTestFactory;
+
+impl JsonRpcNotificationTestFactory {
+	/// Generates a valid JSON-RPC notification
+	#[must_use]
+	pub fn valid() -> JsonRpcNotification {
+		let id = safe_generator().next_unique_id();
+		JsonRpcNotification {
+			jsonrpc: "2.0".to_string(),
+			method: format!("notification_method_{id}"),
+			params: Some(Value::String(format!("notification_params_{id}"))),
+		}
+	}
+}
+
+/// Factory for generating string test data
+pub struct StringTestFactory;
+
+impl StringTestFactory {
+	/// Generates a test payload string
+	#[must_use]
+	pub fn payload() -> String {
+		let id = safe_generator().next_unique_id();
+		format!("test_payload_{id}")
 	}
 }
