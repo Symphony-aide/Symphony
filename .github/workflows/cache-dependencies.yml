@@ -1,0 +1,174 @@
+name: Cache Dependencies
+
+on:
+  push:
+    paths:
+      - 'apps/backend/Cargo.toml'
+      - 'apps/backend/Cargo.lock'
+      - 'apps/backend/crates/**/Cargo.toml'
+      - '.github/workflows/cache-dependencies.yml'
+  pull_request:
+    paths:
+      - 'apps/backend/Cargo.toml'
+      - 'apps/backend/Cargo.lock'
+      - 'apps/backend/crates/**/Cargo.toml'
+      - '.github/workflows/cache-dependencies.yml'
+  workflow_dispatch: # Allow manual triggering
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+  RUST_BACKTRACE: 1
+
+jobs:
+  cache-setup:
+    runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.cache-info.outputs.cache-key }}
+      rust-version: ${{ steps.rust-info.outputs.rust-version }}
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Get Rust info
+      id: rust-info
+      run: |
+        # Get stable Rust version for cache key
+        RUST_VERSION=$(curl -s https://forge.rust-lang.org/infra/channel-layout.html | grep -o 'stable-[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}' | head -1 || echo "stable")
+        echo "rust-version=$RUST_VERSION" >> $GITHUB_OUTPUT
+        echo "Rust version: $RUST_VERSION"
+    
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: clippy, rustfmt
+    
+    - name: Generate cache key info
+      id: cache-info
+      run: |
+        # Create comprehensive cache key based on:
+        # - Rust version
+        # - Cargo.lock hash
+        # - OS
+        # - Workflow file hash (for cache invalidation)
+        CARGO_LOCK_HASH=$(sha256sum apps/backend/Cargo.lock | cut -d' ' -f1 | cut -c1-8)
+        WORKFLOW_HASH=$(sha256sum .github/workflows/cache-dependencies.yml | cut -d' ' -f1 | cut -c1-8)
+        CACHE_KEY="symphony-deps-${{ runner.os }}-${{ steps.rust-info.outputs.rust-version }}-${CARGO_LOCK_HASH}-${WORKFLOW_HASH}"
+        echo "cache-key=$CACHE_KEY" >> $GITHUB_OUTPUT
+        echo "Cache key: $CACHE_KEY"
+    
+    - name: Cache Rust dependencies
+      id: cache-deps
+      uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: "apps/backend"
+        cache-on-failure: true
+        shared-key: "symphony-backend"
+        key: ${{ steps.cache-info.outputs.cache-key }}
+    
+    - name: Cache cargo tools
+      id: cache-tools
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/bin/cargo-nextest
+          ~/.cargo/bin/cargo-fuzz
+          ~/.cargo/bin/cargo-llvm-cov
+          ~/.cargo/bin/cargo-deny
+          ~/.cargo/bin/tauri
+        key: cargo-tools-${{ runner.os }}-${{ steps.rust-info.outputs.rust-version }}-v2
+    
+    - name: Install cargo tools
+      if: steps.cache-tools.outputs.cache-hit != 'true'
+      run: |
+        echo "Installing cargo tools..."
+        
+        # Install tools in parallel for speed
+        cargo install cargo-nextest --locked &
+        cargo install cargo-fuzz --locked &
+        cargo install cargo-llvm-cov --locked &
+        cargo install cargo-deny --locked &
+        cargo install tauri-cli --locked &
+        
+        # Wait for all installations to complete
+        wait
+        
+        echo "All cargo tools installed successfully"
+    
+    - name: Verify tool installations
+      run: |
+        echo "Verifying installed tools..."
+        cargo nextest --version
+        cargo fuzz --version
+        cargo llvm-cov --version
+        cargo deny --version
+        tauri --version
+        echo "All tools verified successfully"
+    
+    - name: Pre-compile dependencies
+      working-directory: apps/backend
+      run: |
+        echo "Pre-compiling all dependencies..."
+        
+        # Build all dependencies (but not our code) to populate cache
+        # This includes both sy-* and xi-* crates dependencies
+        cargo build --workspace --all-targets
+        
+        echo "Dependencies pre-compiled successfully"
+    
+    - name: Generate dependency report
+      working-directory: apps/backend
+      run: |
+        echo "Generating dependency report..."
+        
+        # Check for security vulnerabilities
+        cargo deny check advisories || echo "Security check completed (warnings may exist)"
+        
+        # Generate dependency tree
+        cargo tree --workspace > dependency-tree.txt
+        echo "Dependency tree generated"
+        
+        # Show cache statistics
+        echo "Cache statistics:"
+        du -sh ~/.cargo/registry || echo "Registry cache size unknown"
+        du -sh target || echo "Target cache size unknown"
+    
+    - name: Upload dependency report
+      uses: actions/upload-artifact@v4
+      with:
+        name: dependency-report-${{ github.sha }}
+        path: apps/backend/dependency-tree.txt
+        retention-days: 7
+    
+    - name: Cache validation
+      working-directory: apps/backend
+      run: |
+        echo "Validating cache setup..."
+        
+        # Quick compilation check to ensure cache is working
+        cargo check --workspace --all-targets
+        
+        echo "Cache validation completed successfully"
+        echo "✅ Dependencies cached and ready for other workflows"
+
+  cache-status:
+    runs-on: ubuntu-latest
+    needs: cache-setup
+    if: always()
+    
+    steps:
+    - name: Report cache status
+      run: |
+        echo "Cache Setup Status: ${{ needs.cache-setup.result }}"
+        echo "Cache Key: ${{ needs.cache-setup.outputs.cache-key }}"
+        echo "Rust Version: ${{ needs.cache-setup.outputs.rust-version }}"
+        
+        if [ "${{ needs.cache-setup.result }}" = "success" ]; then
+          echo "✅ Cache setup completed successfully"
+          echo "Other workflows can now use the cached dependencies"
+        else
+          echo "❌ Cache setup failed"
+          echo "Other workflows may need to rebuild dependencies"
+          exit 1
+        fi

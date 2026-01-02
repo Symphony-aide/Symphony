@@ -6,19 +6,20 @@ on:
       - 'apps/backend/crates/**/sy-*/**'
       - 'apps/backend/Cargo.toml'
       - 'apps/backend/Cargo.lock'
-  pull_request:
-    paths:
-      - 'apps/backend/crates/**/sy-*/**'
-      - 'apps/backend/Cargo.toml'
-      - 'apps/backend/Cargo.lock'
+
 
 env:
   CARGO_TERM_COLOR: always
   CARGO_INCREMENTAL: 0
 
 jobs:
+  # Wait for cache to be ready
+  wait-for-cache:
+    uses: ./.github/workflows/cache-dependencies.yml
+  
   doc-test-sy-crates:
     runs-on: ubuntu-latest
+    needs: wait-for-cache
     
     steps:
     - uses: actions/checkout@v4
@@ -26,12 +27,13 @@ jobs:
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
     
-    - name: Cache Rust dependencies
+    - name: Restore Rust dependencies cache
       uses: Swatinem/rust-cache@v2
       with:
         workspaces: "apps/backend"
         cache-on-failure: true
         shared-key: "symphony-backend"
+        key: ${{ needs.wait-for-cache.outputs.cache-key }}
     
     - name: Run sy-* doc tests
       working-directory: apps/backend

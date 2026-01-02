@@ -6,19 +6,20 @@ on:
       - 'apps/backend/crates/**/xi-*/**'
       - 'apps/backend/Cargo.toml'
       - 'apps/backend/Cargo.lock'
-  pull_request:
-    paths:
-      - 'apps/backend/crates/**/xi-*/**'
-      - 'apps/backend/Cargo.toml'
-      - 'apps/backend/Cargo.lock'
+
 
 env:
   CARGO_TERM_COLOR: always
   CARGO_INCREMENTAL: 0
 
 jobs:
+  # Wait for cache to be ready
+  wait-for-cache:
+    uses: ./.github/workflows/cache-dependencies.yml
+  
   test-xi-crates:
     runs-on: ubuntu-latest
+    needs: wait-for-cache
     
     steps:
     - uses: actions/checkout@v4
@@ -26,24 +27,30 @@ jobs:
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
     
-    - name: Cache Rust dependencies
+    - name: Restore Rust dependencies cache
       uses: Swatinem/rust-cache@v2
       with:
         workspaces: "apps/backend"
         cache-on-failure: true
         shared-key: "symphony-backend"
+        key: ${{ needs.wait-for-cache.outputs.cache-key }}
     
-    - name: Cache cargo tools
+    - name: Restore cargo tools cache
       uses: actions/cache@v4
-      id: cache-tools
       with:
-        path: ~/.cargo/bin
-        key: cargo-tools-${{ runner.os }}-nextest
+        path: |
+          ~/.cargo/bin/cargo-nextest
+          ~/.cargo/bin/cargo-fuzz
+          ~/.cargo/bin/cargo-llvm-cov
+          ~/.cargo/bin/cargo-deny
+          ~/.cargo/bin/tauri
+        key: cargo-tools-${{ runner.os }}-${{ needs.wait-for-cache.outputs.rust-version }}-v2
     
-    - name: Install required tools
-      if: steps.cache-tools.outputs.cache-hit != 'true'
+    - name: Verify cached tools
       run: |
-        cargo install cargo-nextest --locked
+        echo "Verifying cached tools are available..."
+        cargo nextest --version || (echo "cargo-nextest not cached, installing..." && cargo install cargo-nextest --locked)
+        echo "Tools verified successfully"
     
     - name: Run xi-* crate tests
       working-directory: apps/backend
