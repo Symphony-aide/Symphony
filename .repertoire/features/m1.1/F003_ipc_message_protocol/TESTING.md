@@ -15,6 +15,41 @@
 
 **DON'T Test**: Transport layer implementation details, message routing logic, or business logic that uses these protocols.
 
+## Source Code Coverage Table
+
+**Purpose:** Ensure every public struct, enum, and function is tested, including error cases and enum variants.
+
+| Source Code | Test Case |
+|-------------|-----------|
+| sy_ipc_protocol::MessageEnvelope::new | message_envelope_test::test_envelope_creation |
+| sy_ipc_protocol::MessageType (enum variants) | message_envelope_test::test_message_type_variants |
+| sy_ipc_protocol::MessagePriority (enum variants) | message_envelope_test::test_priority_variants |
+| sy_ipc_protocol::CorrelationId::new | message_envelope_test::test_correlation_id_generation |
+| sy_ipc_protocol::MessageMetadata | message_envelope_test::test_metadata_handling |
+| sy_ipc_protocol::JsonRpcRequest::new | jsonrpc_compliance_test::test_request_creation |
+| sy_ipc_protocol::JsonRpcResponse::success | jsonrpc_compliance_test::test_success_response |
+| sy_ipc_protocol::JsonRpcResponse::error | jsonrpc_compliance_test::test_error_response |
+| sy_ipc_protocol::JsonRpcError (enum variants) | jsonrpc_compliance_test::test_error_variants |
+| sy_ipc_protocol::JsonRpcClient::send_request | jsonrpc_compliance_test::test_client_request |
+| sy_ipc_protocol::MessageSerializer::serialize | serialization_test::test_serialize_all_formats |
+| sy_ipc_protocol::MessageSerializer::deserialize | serialization_test::test_deserialize_all_formats |
+| sy_ipc_protocol::SerializationFormat (enum variants) | serialization_test::test_format_variants |
+| sy_ipc_protocol::SerializationError (enum variants) | serialization_test::test_serialization_errors |
+| sy_ipc_protocol::SchemaValidator::validate | schema_validation_test::test_schema_validation |
+| sy_ipc_protocol::ValidationError (enum variants) | schema_validation_test::test_validation_errors |
+| sy_ipc_protocol::MessageRegistry::register | registry_test::test_message_registration |
+| sy_ipc_protocol::XiOperation (enum variants) | xi_protocol_test::test_xi_operation_variants |
+| sy_ipc_protocol::XiEvent (enum variants) | xi_protocol_test::test_xi_event_variants |
+| sy_ipc_protocol::TextDelta::apply | xi_protocol_test::test_text_delta_operations |
+| sy_ipc_protocol::ViewUpdate::new | xi_protocol_test::test_view_update_creation |
+
+**Table Rules:**
+- **Source Code Column:** Full path/namespace, struct/enum/function name, line range for functions
+- **Test Case Column:** Test file name, one or more test case names  
+- **Coverage Requirement:** Every public struct, enum, function must have corresponding test cases
+- **Error Coverage:** All error cases and enum variants must be tested
+- **Update Timing:** Table updated after source code creation (Step 2 in TDD)
+
 ## Feature Type Analysis
 
 **Primary Type**: Infrastructure  

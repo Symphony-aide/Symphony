@@ -989,6 +989,24 @@ List files to create:
 
 TESTING.md must include:
 - Test philosophy statement
+- **Source Code Coverage Table** (MANDATORY - added after Step 2 in TDD):
+  ```markdown
+  ## Source Code Coverage Table
+
+  **Purpose:** Ensure every public struct, enum, and function is tested, including error cases and enum variants.
+
+  | Source Code | Test Case |
+  |-------------|-----------|
+  | {namespace}::{struct/enum/function} (lines X:Y) | {test_file}::{test_case_names} |
+  | {Add rows for each public API} | {Corresponding test cases} |
+
+  **Table Rules:**
+  - **Source Code Column:** Full path/namespace, struct/enum/function name, line range (start:end)
+  - **Test Case Column:** Test file name, one or more test case names
+  - **Coverage Requirement:** Every public struct, enum, function must have corresponding test cases
+  - **Error Coverage:** All error cases and enum variants must be tested
+  - **Update Timing:** Table must be updated after source code creation (Step 2 in TDD)
+  ```
 - Acceptance tests (ATDD format)
 - Unit test suites (happy path, edge cases, errors)
 - Integration test scenarios
@@ -1293,10 +1311,22 @@ Before writing implementation:
 
 1. **MANDATORY**: Read and follow `.repertoire/practice/factory_testing_mandatory.md`
 2. **MANDATORY**: Create test factory BEFORE writing any tests
-3. **MANDATORY**: Write acceptance tests from [TESTING.md](http://testing.md/) (Red phase) using factories
+3. **MANDATORY**: Write acceptance tests from TESTING.md (Red phase) using factories
 4. **MANDATORY**: Write unit tests (happy path, edge cases, errors) (Red phase) using factories
 5. **MANDATORY**: ZERO TOLERANCE for hardcoded test data - use factories for ALL test data
-6. **MANDATORY**: Implement three-layer testing architecture:
+6. **MANDATORY**: After source code is created (Step 2 in TDD), update TESTING.md with Source Code Coverage Table:
+   ```markdown
+   ## Source Code Coverage Table
+
+   | Source Code | Test Case |
+   |-------------|-----------|
+   | {namespace}::{struct/enum/function} (lines X:Y) | {test_file}::{test_case_names} |
+   ```
+   - Map every public struct, enum, function to corresponding test cases
+   - Include line ranges for functions and methods
+   - Cover all error cases and enum variants
+   - Update table whenever source code changes
+7. **MANDATORY**: Implement three-layer testing architecture:
     - **Layer 1**: Unit tests with mocked dependencies (<100ms total execution)
     - **Layer 2**: Integration tests with WireMock for OFB Python (<5s total execution)
     - **Layer 3**: Pre-validation tests for fast rejection (<1ms per test)
@@ -1373,8 +1403,13 @@ let specific_user = TestFactory::user()
 3. **MANDATORY**: Separate testing responsibilities:
     - **Rust Layer**: Test orchestration logic, algorithms, data structures, performance
     - **OFB Python Layer**: Mock via WireMock for authoritative validation, RBAC, persistence
-4. Update [TESTING.md](http://testing.md/) with * [ 1 ] as tests are written
-5. **CRITICAL**: If dependencies are not implemented, create stubs with todo!()
+4. Update TESTING.md with * [ 1 ] as tests are written
+5. **MANDATORY**: After source code is created (Step 2 in TDD), update TESTING.md Source Code Coverage Table:
+   - Map every public struct, enum, function to corresponding test cases
+   - Include line ranges (start:end) for functions and methods
+   - Cover all error cases and enum variants
+   - Example: `sy_caret_module::MyStruct::do_work (lines 20:45) | test_my_struct::test_success, test_my_struct::test_failure`
+6. **CRITICAL**: If dependencies are not implemented, create stubs with todo!()
 
 Step 3: IMPLEMENTATION
 Follow [DESIGN.md](http://design.md/):
@@ -3244,6 +3279,7 @@ INITIALIZATION PHASE:
    - {Specify all practices you have learnt from the practice files}
    
    Problem Breakdown:
+   - **PREREQUISITE**: Missing Source Code Coverage Tables: {X} TESTING.md files need tables
    - Debug output violations: {X} instances in {Y} files
    - Logging pattern violations: {A} instances in {B} files
    - Hardcoded test data: {C} instances in {D} files
@@ -3288,6 +3324,7 @@ ALIGNMENT.md TEMPLATE STRUCTURE:
 
 | Problem | Files Affected | Impact | What Was Wrong | How It Was Fixed | Why This Matters |
 |---------|----------------|--------|----------------|------------------|------------------|
+| Missing Source Code Coverage Table | `.repertoire/features/m1.1/F003_ipc_message_protocol/TESTING.md` | Test coverage not visible, hard to audit | ```markdown<br>## Testing Philosophy<br><br>**F003 is Infrastructure**...<br><br>## Acceptance Tests (ATDD Format)<br>``` | ```markdown<br>## Testing Philosophy<br><br>**F003 is Infrastructure**...<br><br>## Source Code Coverage Table<br><br>\| Source Code \| Test Case \|<br>\|-------------\|-----------\|<br>\| sy_ipc_protocol::MessageEnvelope::new \| message_envelope_test::test_envelope_creation \|<br>\| sy_ipc_protocol::JsonRpcRequest::new \| jsonrpc_compliance_test::test_request_creation \|<br><br>## Acceptance Tests (ATDD Format)<br>``` | Every public API is explicitly mapped to test cases, making coverage auditable and ensuring no code is untested |
 | Debug output using println! | `src/transport.rs`<br>`src/handler.rs` | Debug messages leak to production logs | ```rust<br>println!("Debug: Processing message {}", msg_id);<br>println!("Connection pool size: {}", pool.len());<br>``` | ```rust<br>duck!("Processing message: {}", msg_id);<br>duck!("Connection pool size: {}", pool.len());<br>``` | `duck!()` is development-only and won't appear in production builds |
 | Scattered logging throughout request flow | `src/checkout.rs` | Multiple log entries per request, hard to correlate | ```rust<br>logger.info("User starting checkout");<br>logger.debug("Validating payment");<br>logger.info("Payment successful");<br>logger.debug("Updating inventory");<br>logger.info("Checkout complete");<br>``` | ```rust<br>logger.info("checkout_completed", {<br>  "user_id": user.id,<br>  "cart_total": cart.total,<br>  "payment_status": "success",<br>  "duration_ms": duration<br>});<br>``` | Single log entry at the end with all context, easier to query and analyze |
 | Hardcoded test values | `tests/user_test.rs`<br>`tests/cart_test.rs` | Tests fragile, not realistic | ```rust<br>let user_id = "user_123";<br>let email = "test@test.com";<br>assert_eq!(result.id, "user_123");<br>``` | ```rust<br>let user = UserFactory::new().build();<br>let email = UserFactory::email();<br>assert_eq!(result.id, user.id);<br>``` | Tests use realistic, unique data on every run. More robust |
@@ -3325,6 +3362,17 @@ ALIGNMENT.md TEMPLATE STRUCTURE:
 **MANDATORY**: Ensure to update `ALIGNMENT.md` file in loop, after every file fixes update the `## Problems Found` section and other needed sections if obligated
 
 PROBLEM DETECTION AREAS:
+
+**0. TESTING.md Source Code Coverage Table (PREREQUISITE):**
+   - **MANDATORY FIRST CHECK**: Scan for missing Source Code Coverage Table in TESTING.md files
+   - Scan for: TESTING.md files without "## Source Code Coverage Table" section
+   - Scan for: Empty or incomplete coverage tables
+   - Required: Complete table mapping every public struct, enum, function to test cases
+   - Required: Line ranges for functions (start:end format)
+   - Required: All error cases and enum variants covered
+   - Pattern: `| sy_crate::Module::function (lines 20:45) | test_file::test_success, test_file::test_failure |`
+   - **AUTO-POPULATE**: If table missing, create it by scanning source code and existing tests
+   - **PREREQUISITE**: This must be fixed BEFORE any other alignment work begins
 
 **1. Logging Alignment:**
    - Scan for: `println!()`, `eprintln!()`, `print!()` in non-test code
@@ -3373,6 +3421,8 @@ INITIALIZATION RULES:
 
 DO's:
 ✅ Read ALL practice files completely before scanning
+✅ **MANDATORY FIRST**: Check for Source Code Coverage Table in all TESTING.md files
+✅ **AUTO-POPULATE**: Create missing coverage tables by scanning source code and tests
 ✅ Scan EVERY file in target scope
 ✅ Document EVERY violation with file path and line number
 ✅ Show actual problematic code in "What Was Wrong" column
@@ -3385,6 +3435,8 @@ DO's:
 
 DON'Ts:
 ❌ NEVER skip reading practice files
+❌ NEVER skip Source Code Coverage Table prerequisite check
+❌ NEVER proceed without complete coverage tables
 ❌ NEVER generate incomplete problem tables
 ❌ NEVER skip baseline health checks
 ❌ NEVER start alignment without user approval
@@ -3402,9 +3454,21 @@ After user approves ("Yes"), begin safe alignment:
    - Change ALIGNMENT.md status: * [ ] → * [ - ]
    - Add note: "Alignment started at {YYYY-MM-DD HH:MM}"
 
-2. **Execute Fixes File by File:**
+2. **PREREQUISITE: Handle Source Code Coverage Tables FIRST:**
+   - **MANDATORY**: Fix all missing Source Code Coverage Tables before any other alignment
+   - For each TESTING.md file missing the table:
+     - Scan corresponding source code (src/lib.rs, src/*.rs) for public APIs
+     - Scan test files (tests/*.rs) for existing test functions
+     - Auto-populate table mapping public structs/enums/functions to test cases
+     - Include line ranges for functions (start:end format)
+     - Add table to TESTING.md after "## Testing Philosophy" section
+     - Validate table completeness against actual code
+   - **VALIDATION**: Ensure every public API has corresponding test case entry
+   - **COMPLETION**: Mark coverage table problems as fixed in ALIGNMENT.md
 
-For each problem row in the table:
+3. **Execute Remaining Fixes File by File:**
+
+For each remaining problem row in the table:
 
 **Step 1: Pre-Fix Validation**
    - Identify all files in "Files Affected" column

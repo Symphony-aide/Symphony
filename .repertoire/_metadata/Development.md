@@ -787,11 +787,32 @@ CREATE TABLE table_name (
 
 **Purpose:** Acceptance Test-Driven Development strategy.
 
+**MANDATORY REQUIREMENT:** After source code is created (Step 2 in TDD), TESTING.md must be updated with a **Source Code Coverage Table** that shows how every public struct, enum, and function is covered by tests.
+
 ```markdown
 # Testing Strategy: F{XXX} - <NAME>
 
 ## Test Philosophy
 <How we approach testing for this feature>
+
+## Source Code Coverage Table
+
+**Purpose:** Ensure every public struct, enum, and function is tested, including error cases and enum variants.
+
+| Source Code | Test Case |
+|-------------|-----------|
+| sy_caret_module::MyStruct::do_work (lines 20:45) | test_my_struct::test_success, test_my_struct::test_failure |
+| sy_caret_module::MyEnum::VariantA | test_my_enum::test_variant_a_handling |
+| sy_caret_module::MyEnum::VariantB | test_my_enum::test_variant_b_handling |
+| sy_caret_module::public_function (lines 100:120) | test_public_function::test_valid_input, test_public_function::test_invalid_input |
+| sy_caret_module::ErrorType::NetworkError | test_errors::test_network_error_propagation |
+
+**Table Rules:**
+- **Source Code Column:** Full path/namespace, struct/enum/function name, line range (start:end)
+- **Test Case Column:** Test file name, one or more test case names
+- **Coverage Requirement:** Every public struct, enum, function must have corresponding test cases
+- **Error Coverage:** All error cases and enum variants must be tested
+- **Update Timing:** Table must be updated after source code creation (Step 2 in TDD)
 
 ## Acceptance Tests (ATDD)
 

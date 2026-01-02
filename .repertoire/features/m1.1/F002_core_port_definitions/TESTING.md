@@ -16,6 +16,89 @@
 
 **DON'T Test**: Internal implementation details of future concrete adapters, business logic that will use these ports, or performance characteristics of real implementations.
 
+## Source Code Coverage Table
+
+**Purpose:** Ensure every public struct, enum, and function is tested, including error cases and enum variants.
+
+| Source Code | Test Case |
+|-------------|-----------|
+| symphony_core_ports::TextEditingPort::create_buffer | ports_contract_test::test_create_buffer_success, ports_contract_test::test_create_buffer_with_file |
+| symphony_core_ports::TextEditingPort::close_buffer | ports_contract_test::test_close_buffer_success, ports_contract_test::test_close_nonexistent_buffer |
+| symphony_core_ports::TextEditingPort::get_buffer_content | ports_contract_test::test_get_buffer_content_success, ports_contract_test::test_get_nonexistent_buffer |
+| symphony_core_ports::TextEditingPort::insert_text | ports_contract_test::test_insert_text_success, ports_contract_test::test_insert_text_invalid_position |
+| symphony_core_ports::TextEditingPort::delete_text | ports_contract_test::test_delete_text_success, ports_contract_test::test_delete_text_invalid_range |
+| symphony_core_ports::TextEditingPort::replace_text | ports_contract_test::test_replace_text_success, ports_contract_test::test_replace_text_invalid_range |
+| symphony_core_ports::TextEditingPort::save_buffer | ports_contract_test::test_save_buffer_success, ports_contract_test::test_save_buffer_no_file |
+| symphony_core_ports::TextEditingPort::save_buffer_as | ports_contract_test::test_save_buffer_as_success, ports_contract_test::test_save_buffer_as_invalid_path |
+| symphony_core_ports::TextEditingPort::reload_buffer | ports_contract_test::test_reload_buffer_success, ports_contract_test::test_reload_buffer_no_file |
+| symphony_core_ports::TextEditingPort::create_view | ports_contract_test::test_create_view_success, ports_contract_test::test_create_view_invalid_buffer |
+| symphony_core_ports::TextEditingPort::close_view | ports_contract_test::test_close_view_success, ports_contract_test::test_close_nonexistent_view |
+| symphony_core_ports::TextEditingPort::set_cursor | ports_contract_test::test_set_cursor_success, ports_contract_test::test_set_cursor_invalid_position |
+| symphony_core_ports::TextEditingPort::set_selection | ports_contract_test::test_set_selection_success, ports_contract_test::test_set_selection_invalid_range |
+| symphony_core_ports::TextEditingPort::subscribe_to_events | ports_contract_test::test_subscribe_events_success, ports_contract_test::test_subscribe_events_failure |
+| symphony_core_ports::PitPort::allocate_model | ports_contract_test::test_allocate_model_success, ports_contract_test::test_allocate_model_insufficient_resources |
+| symphony_core_ports::PitPort::deallocate_model | ports_contract_test::test_deallocate_model_success, ports_contract_test::test_deallocate_invalid_handle |
+| symphony_core_ports::PitPort::get_model_status | ports_contract_test::test_get_model_status_success, ports_contract_test::test_get_model_status_invalid_handle |
+| symphony_core_ports::PitPort::create_workflow | ports_contract_test::test_create_workflow_success, ports_contract_test::test_create_workflow_invalid_definition |
+| symphony_core_ports::PitPort::execute_workflow | ports_contract_test::test_execute_workflow_success, ports_contract_test::test_execute_workflow_failure |
+| symphony_core_ports::PitPort::get_workflow_status | ports_contract_test::test_get_workflow_status_success, ports_contract_test::test_get_workflow_status_nonexistent |
+| symphony_core_ports::PitPort::store_artifact | ports_contract_test::test_store_artifact_success, ports_contract_test::test_store_artifact_failure |
+| symphony_core_ports::PitPort::retrieve_artifact | ports_contract_test::test_retrieve_artifact_success, ports_contract_test::test_retrieve_nonexistent_artifact |
+| symphony_core_ports::PitPort::delete_artifact | ports_contract_test::test_delete_artifact_success, ports_contract_test::test_delete_nonexistent_artifact |
+| symphony_core_ports::PitPort::submit_decision | ports_contract_test::test_submit_decision_success, ports_contract_test::test_submit_decision_failure |
+| symphony_core_ports::PitPort::get_policy | ports_contract_test::test_get_policy_success, ports_contract_test::test_get_nonexistent_policy |
+| symphony_core_ports::PitPort::mark_stale | ports_contract_test::test_mark_stale_success, ports_contract_test::test_mark_stale_nonexistent |
+| symphony_core_ports::PitPort::cleanup_stale | ports_contract_test::test_cleanup_stale_success, ports_contract_test::test_cleanup_stale_failure |
+| symphony_core_ports::ExtensionPort::load_extension | ports_contract_test::test_load_extension_success, ports_contract_test::test_load_extension_invalid_manifest |
+| symphony_core_ports::ExtensionPort::unload_extension | ports_contract_test::test_unload_extension_success, ports_contract_test::test_unload_nonexistent_extension |
+| symphony_core_ports::ExtensionPort::activate_extension | ports_contract_test::test_activate_extension_success, ports_contract_test::test_activate_extension_failure |
+| symphony_core_ports::ExtensionPort::deactivate_extension | ports_contract_test::test_deactivate_extension_success, ports_contract_test::test_deactivate_extension_failure |
+| symphony_core_ports::ExtensionPort::send_message | ports_contract_test::test_send_message_success, ports_contract_test::test_send_message_failure |
+| symphony_core_ports::ExtensionPort::broadcast_message | ports_contract_test::test_broadcast_message_success, ports_contract_test::test_broadcast_message_failure |
+| symphony_core_ports::ExtensionPort::list_extensions | ports_contract_test::test_list_extensions_success, ports_contract_test::test_list_extensions_failure |
+| symphony_core_ports::ExtensionPort::get_extension_info | ports_contract_test::test_get_extension_info_success, ports_contract_test::test_get_extension_info_nonexistent |
+| symphony_core_ports::ExtensionPort::get_extension_health | ports_contract_test::test_get_extension_health_success, ports_contract_test::test_get_extension_health_nonexistent |
+| symphony_core_ports::ExtensionPort::restart_extension | ports_contract_test::test_restart_extension_success, ports_contract_test::test_restart_extension_failure |
+| symphony_core_ports::ConductorPort::start_conductor | ports_contract_test::test_start_conductor_success, ports_contract_test::test_start_conductor_failure |
+| symphony_core_ports::ConductorPort::stop_conductor | ports_contract_test::test_stop_conductor_success, ports_contract_test::test_stop_conductor_failure |
+| symphony_core_ports::ConductorPort::get_conductor_status | ports_contract_test::test_get_conductor_status_success, ports_contract_test::test_get_conductor_status_failure |
+| symphony_core_ports::ConductorPort::submit_decision | ports_contract_test::test_submit_decision_success, ports_contract_test::test_submit_decision_conductor_down |
+| symphony_core_ports::ConductorPort::get_decision_history | ports_contract_test::test_get_decision_history_success, ports_contract_test::test_get_decision_history_failure |
+| symphony_core_ports::ConductorPort::update_policy | ports_contract_test::test_update_policy_success, ports_contract_test::test_update_policy_invalid |
+| symphony_core_ports::ConductorPort::get_active_policies | ports_contract_test::test_get_active_policies_success, ports_contract_test::test_get_active_policies_failure |
+| symphony_core_ports::ConductorPort::submit_feedback | ports_contract_test::test_submit_feedback_success, ports_contract_test::test_submit_feedback_invalid_decision |
+| symphony_core_ports::ConductorPort::get_learning_metrics | ports_contract_test::test_get_learning_metrics_success, ports_contract_test::test_get_learning_metrics_failure |
+| symphony_core_ports::DataAccessPort::pre_validate_workflow | ports_contract_test::test_pre_validate_workflow_success, ports_contract_test::test_pre_validate_workflow_invalid |
+| symphony_core_ports::DataAccessPort::pre_validate_user | ports_contract_test::test_pre_validate_user_success, ports_contract_test::test_pre_validate_user_invalid |
+| symphony_core_ports::DataAccessPort::pre_validate_extension | ports_contract_test::test_pre_validate_extension_success, ports_contract_test::test_pre_validate_extension_invalid |
+| symphony_core_ports::DataAccessPort::create_workflow | ports_contract_test::test_create_workflow_success, ports_contract_test::test_create_workflow_auth_failure |
+| symphony_core_ports::DataAccessPort::get_workflow | ports_contract_test::test_get_workflow_success, ports_contract_test::test_get_workflow_not_found |
+| symphony_core_ports::DataAccessPort::update_workflow | ports_contract_test::test_update_workflow_success, ports_contract_test::test_update_workflow_access_denied |
+| symphony_core_ports::DataAccessPort::delete_workflow | ports_contract_test::test_delete_workflow_success, ports_contract_test::test_delete_workflow_access_denied |
+| symphony_core_ports::DataAccessPort::authenticate_user | ports_contract_test::test_authenticate_user_success, ports_contract_test::test_authenticate_user_invalid_credentials |
+| symphony_core_ports::DataAccessPort::authorize_action | ports_contract_test::test_authorize_action_success, ports_contract_test::test_authorize_action_denied |
+| symphony_core_ports::DataAccessPort::get_user_permissions | ports_contract_test::test_get_user_permissions_success, ports_contract_test::test_get_user_permissions_not_found |
+| symphony_core_ports::DataAccessPort::register_extension | ports_contract_test::test_register_extension_success, ports_contract_test::test_register_extension_invalid_manifest |
+| symphony_core_ports::DataAccessPort::get_extension_metadata | ports_contract_test::test_get_extension_metadata_success, ports_contract_test::test_get_extension_metadata_not_found |
+| symphony_core_ports::DataAccessPort::update_extension_status | ports_contract_test::test_update_extension_status_success, ports_contract_test::test_update_extension_status_not_found |
+| symphony_core_ports::BufferId (struct) | types_validation_test::test_buffer_id_creation, types_validation_test::test_buffer_id_uniqueness |
+| symphony_core_ports::ViewId (struct) | types_validation_test::test_view_id_creation, types_validation_test::test_view_id_uniqueness |
+| symphony_core_ports::Position (struct) | types_validation_test::test_position_creation, types_validation_test::test_position_serialization |
+| symphony_core_ports::Range (struct) | types_validation_test::test_range_creation, types_validation_test::test_range_validation |
+| symphony_core_ports::PortError (enum variants) | errors_propagation_test::test_port_error_variants, errors_propagation_test::test_error_conversion |
+| symphony_core_ports::mocks::MockTextEditingAdapter | mocks_behavior_test::test_mock_determinism, mocks_behavior_test::test_mock_performance |
+| symphony_core_ports::mocks::MockPitAdapter | mocks_behavior_test::test_pit_mock_behavior, mocks_behavior_test::test_pit_mock_error_injection |
+| symphony_core_ports::mocks::MockExtensionAdapter | mocks_behavior_test::test_extension_mock_behavior, mocks_behavior_test::test_extension_mock_lifecycle |
+| symphony_core_ports::mocks::MockConductorAdapter | mocks_behavior_test::test_conductor_mock_behavior, mocks_behavior_test::test_conductor_mock_decisions |
+| symphony_core_ports::mocks::MockDataAccessAdapter | mocks_behavior_test::test_data_access_mock_behavior, mocks_behavior_test::test_data_access_mock_validation |
+
+**Table Rules:**
+- **Source Code Column:** Full path/namespace, struct/enum/function name, line range for functions
+- **Test Case Column:** Test file name, one or more test case names  
+- **Coverage Requirement:** Every public struct, enum, function must have corresponding test cases
+- **Error Coverage:** All error cases and enum variants must be tested
+- **Update Timing:** Table updated after source code creation (Step 2 in TDD)
+
 ## Feature Type Analysis
 
 **Primary Type**: Infrastructure  
