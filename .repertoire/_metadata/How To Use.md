@@ -528,7 +528,7 @@ milestones/
 - notes.md: Decisions & insights (filled incrementally)
 ```
 
-### **TOOL CALLS**:
+
 **MANDATORY**: use
 '''
 **`readFile`** - For single files with ALWAYS FULL line range:
@@ -653,7 +653,7 @@ DO's:
 ✅ Document clear parent reference:
    - SHALLOW: (Inherited from M{N})
    - DEEP: (Inherited from level2_m{N})
-✅ Write specific, measurable acceptance criteria
+✅ Write specific, measurable acceptance criteria in Gherkin format (Given/When/Then)
 ✅ Define concrete success metrics
 ✅ Include realistic effort estimates
 ✅ Map all inter-feature dependencies
@@ -674,6 +674,7 @@ DON'Ts:
 ❌ NEVER create overly small features (<4 hours effort)
 ❌ NEVER omit parent milestone reference
 ❌ NEVER write vague acceptance criteria ("works well", "performs fast")
+❌ NEVER write acceptance criteria without Gherkin format (Given/When/Then)
 ❌ NEVER forget to document out-of-scope items
 ❌ NEVER create circular feature dependencies
 ❌ NEVER proceed without user approval of feature mapping
@@ -681,7 +682,7 @@ DON'Ts:
 ❌ NEVER fill in AGREEMENT.md evaluation (that's IMPLEMENTER's job)
 ❌ NEVER assume technical decisions without documenting alternatives
 
-### **TOOL CALLS**:
+
 **MANDATORY**: use
 '''
 **`readFile`** - For single files with ALWAYS FULL line range:
@@ -719,8 +720,17 @@ FEATURE MAPPING DECISION MATRIX:
    NO → Document dependencies
 
 6. Does it require Tauri commands to link backend functions with the frontend?
-   YES → List all Tauri commands in PLANNING.md with references to where they are used
-   NO → Proceed
+   YES → Feature uses Tauri: TRUE, document all commands and integration points
+   NO → Feature uses Tauri: FALSE
+
+7. **PHASING DECISION** - Does this feature need phases?
+   Apply phasing if ANY of these conditions are met:
+   - Estimated effort ≥ 3 days
+   - Natural decomposition would create ≥ 4 phases
+   - Feature has significant complexity requiring staged implementation
+   - Feature involves multiple distinct technical domains
+   YES → Create phased implementation structure
+   NO → Create single-phase implementation
 
 EXAMPLE MAPPING:
 
@@ -731,9 +741,9 @@ Assessment:
 - Effort: 6 days ✗ (too large)
 - Split into: Login handler (2d) + JWT manager (2d) + Auth middleware (2d)
 Result:
-- F001 - login_handler
-- F002 - jwt_token_manager  
-- F003 - auth_middleware
+- F001 - login_handler (Phased: FALSE - 2 days, simple implementation)
+- F002 - jwt_token_manager (Phased: FALSE - 2 days, straightforward)
+- F003 - auth_middleware (Phased: FALSE - 2 days, single concern)
 
 **DEEP MODE:**
 Level 2 Step: M1.1.1 (Process Isolation Manager)
@@ -742,17 +752,16 @@ Assessment:
 - Effort: 2 days ✓
 - Testable? YES
 - Verifiable alone? YES
-Result: F001 - process_sandbox_manager
+- Phasing needed? NO (< 3 days, simple scope)
+Result: F001 - process_sandbox_manager (Phased: FALSE)
 
-Level 2 Step: M1.2.2 (Parser Implementation)
+Level 2 Step: M1.2.2 (Binary Communication Bridge)
 Assessment:
 - Independent? YES
-- Effort: 8 days ✗ (too large)
-- Split into: JSON parser (3d) + TOML parser (3d) + Validator (2d)
-Result:
-- F010 - manifest_json_parser
-- F011 - manifest_toml_parser
-- F012 - manifest_validator
+- Effort: 8 days ✗ (too large, but complex single feature)
+- Natural phases: Process mgmt (1d) + JSON-RPC (2d) + Event streaming (2d) + State sync (1d) + Adapter (1d) + Integration (1d) = 6 phases
+- Phasing needed? YES (≥ 3 days AND ≥ 4 phases AND multiple domains)
+Result: F010 - binary_communication_bridge (Phased: TRUE - 6 phases, complex integration)
 
 OUTPUT FOR EACH FEATURE:
 
@@ -770,10 +779,39 @@ This structure provides:
 DEFINITION.md must include:
 - Clear problem statement
 - Specific solution approach
-- Measurable acceptance criteria (3-7 items)
+- **Acceptance criteria in Gherkin format (3-7 scenarios)**:
+  ```gherkin
+  Scenario: [Descriptive scenario name]
+    Given [initial context/preconditions]
+    When [action or event occurs]
+    Then [expected outcome/result]
+  ```
 - Success metrics with numbers
 - User stories with concrete examples
 - Dependencies (Requires & Enables)
+- **Phasing Decision**: Phased: TRUE/FALSE with rationale
+- **Tauri Integration**: Tauri: TRUE/FALSE with explanation
+
+**GHERKIN ACCEPTANCE CRITERIA EXAMPLE:**
+```gherkin
+Scenario: Process valid IPC message
+  Given the IPC transport layer is initialized
+  When a valid JSON-RPC message is received
+  Then the message should be parsed successfully
+  And the response should be sent within 100ms
+
+Scenario: Handle malformed message gracefully
+  Given the IPC transport layer is running
+  When a malformed JSON message is received
+  Then an error response should be returned
+  And the connection should remain stable
+
+Scenario: Enforce message size limits
+  Given the transport layer has a 1MB message limit
+  When a message larger than 1MB is received
+  Then the message should be rejected with size error
+  And the connection should not be terminated
+```
 
 #### Naming patterns
 
@@ -790,18 +828,24 @@ For each external dependency, create a comprehensive comparison table, example:
 """
 ## Dependencies Analysis
 
-| Library | Purpose | Alternative 1 | Alternative 2 | Alternative 3 | Cross-Platform | Local Env | Cloud Env | Consistency & Stability | Maintained | Ecosystem | Limitation 1 | Limitation 2 | Limitation 3 | Decision | Rationale |
-|---------|---------|---------------|---------------|---------------|----------------|-----------|-----------|------------------------|------------|-----------|--------------|--------------|--------------|----------|-----------|
-| psutil 5.9.0 | Monitor CPU, memory, disk usage | sysinfo (Rust) | /proc filesystem | docker stats API | ✅ Win/Mac/Linux | ✅ Accurate | ❌ Inaccurate CPU% in containers | ❌ Different values local vs cloud | ✅ Active (2024-01) | High | CPU% reads host not container limit | Memory doesn't account for cgroups | Network I/O limited in containers | ❌ Rejected for cloud | Inaccurate output in target deployment environment |
-| docker stats API | Monitor container resources | cgroup files directly | Kubernetes metrics | N/A | ✅ Linux containers only | ⚠️ Requires Docker | ✅ Accurate in containers | ✅ Consistent in containerized envs | ✅ Docker maintained | High | Requires Docker daemon | Not available on bare metal | Requires elevated permissions | ✅ Selected for cloud | Accurate output in target cloud environment |
-| sysinfo 0.30.0 | System information (Rust) | psutil (Python) | libc syscalls | N/A | ✅ Win/Mac/Linux/FreeBSD | ✅ Accurate | ⚠️ Similar container issues | ❌ Same cgroup limitations | ✅ Active (2024-12) | Moderate | Same container CPU issues as psutil | Rust-only (not cross-language) | N/A | ❌ Rejected | Same fundamental limitation as psutil |
-| mockall 0.12.0 | Rust mocking framework | mockito | manual mocks | N/A | ✅ All platforms | ✅ Works | ✅ Works | ✅ Deterministic | ✅ Active (2024-09) | High | Requires trait bounds | Generates compile-time overhead | N/A | ✅ Selected | Industry standard, well-maintained |
+| Library | Purpose | Alternative 1 | Alternative 2 | Alternative 3 | Cross-Platform | Local Env | Cloud Env | Consistency & Stability | Maintained | Ecosystem | Limitation 1 | Limitation 2 | Limitation 3 | Phase | Decision | Rationale |
+|---------|---------|---------------|---------------|---------------|----------------|-----------|-----------|------------------------|------------|-----------|--------------|--------------|--------------|-------|----------|-----------|
+| psutil 5.9.0 | Monitor CPU, memory, disk usage | sysinfo (Rust) | /proc filesystem | docker stats API | ✅ Win/Mac/Linux | ✅ Accurate | ❌ Inaccurate CPU% in containers | ❌ Different values local vs cloud | ✅ Active (2024-01) | High | CPU% reads host not container limit | Memory doesn't account for cgroups | Network I/O limited in containers | 1,2 | ❌ Rejected for cloud | Inaccurate output in target deployment environment |
+| docker stats API | Monitor container resources | cgroup files directly | Kubernetes metrics | N/A | ✅ Linux containers only | ⚠️ Requires Docker | ✅ Accurate in containers | ✅ Consistent in containerized envs | ✅ Docker maintained | High | Requires Docker daemon | Not available on bare metal | Requires elevated permissions | 3,4 | ✅ Selected for cloud | Accurate output in target cloud environment |
+| sysinfo 0.30.0 | System information (Rust) | psutil (Python) | libc syscalls | N/A | ✅ Win/Mac/Linux/FreeBSD | ✅ Accurate | ⚠️ Similar container issues | ❌ Same cgroup limitations | ✅ Active (2024-12) | Moderate | Same container CPU issues as psutil | Rust-only (not cross-language) | N/A | 1 | ❌ Rejected | Same fundamental limitation as psutil |
+| mockall 0.12.0 | Rust mocking framework | mockito | manual mocks | N/A | ✅ All platforms | ✅ Works | ✅ Works | ✅ Deterministic | ✅ Active (2024-09) | High | Requires trait bounds | Generates compile-time overhead | N/A | All | ✅ Selected | Industry standard, well-maintained |
 
 **Notes**:
 - ✅ = Works correctly / Yes
 - ❌ = Does not work / No / Critical issue
 - ⚠️ = Partial support / Works with caveats
 - N/A = Not applicable
+
+**Phase Column Format**:
+- **Single value**: "1" = Used only in phase 1
+- **Multiple values**: "1,2" = Used in phases 1 and 2
+- **All phases**: "All" = Used throughout all phases
+- **Non-phased features**: Leave empty or "N/A"
 
 **Ecosystem Levels**:
 - **High**: Widely adopted, extensive docs, active community, many integrations
@@ -815,6 +859,7 @@ For each external dependency, create a comprehensive comparison table, example:
 - **Cloud Env**: Works accurately in cloud/containerized deployments (AWS/GCP/Azure/K8s)
 - **Consistency & Stability**: Same input → same output across environments
 - **Maintained**: Last update date, active development status
+- **Phase**: Which implementation phases use this dependency (comma-separated)
 """
 
 PLANNING.md must include:
@@ -823,6 +868,11 @@ PLANNING.md must include:
 - Component breakdown with responsibilities
 - Dependency analysis (external & internal)
 - All decisions documented with alternatives considered
+- **Tauri Integration Section** (if Tauri: TRUE):
+  - Complete Tauri commands reference table
+  - Frontend-backend communication patterns
+  - Error handling for Tauri commands
+  - Security considerations for exposed commands
 - Under the relevant feature sections, add a subsection for Tauri commands:
 
 #### Tauri Commands Reference
@@ -850,6 +900,11 @@ DESIGN.md must include:
 - Database/storage schema (if applicable)
 - Error handling strategy with failure modes
 - Performance considerations
+- **Tauri Architecture Section** (if Tauri: TRUE):
+  - Frontend-backend communication flow diagram
+  - Tauri command signatures and return types
+  - State management between frontend and backend
+  - Security boundaries and validation points
 
 BEFORE writing TESTING.md, answer these 4 questions:
 
@@ -1185,8 +1240,11 @@ DON'Ts:
 ❌ NEVER duplicate error handling patterns - use commons [`sy-commons`] crate
 ❌ NEVER mark feature as complete without user review and approval
 ❌ NEVER update final documentation status without explicit user consent
+❌ NEVER forget to execute COMPREHENSIVE FEATURE CLOSURE CHECKLIST
+❌ NEVER skip milestone level propagation (level2 → level1 → level0)
+❌ NEVER leave any checkboxes unclosed in the 7 lifecycle documents
 
-### **TOOL CALLS**:
+
 **MANDATORY**: use
 '''
 **`readFile`** - For single files with ALWAYS FULL line range:
@@ -1476,10 +1534,6 @@ Go through checklist systematically:
    * [ ] Monitoring configured
    * [ ] Do "Loud Smart Duck Debugging" which is easy toggled
 
-**NOTE**:
-- What is "Loud Smart Duck Debugging"?
-- It is a way to define `logger.debug()` function that runs only in DEVELOPMENT, while do nothing in other environemtns, it has fixed format, which facilitate removing it
-- The format `[DUCK DEBUGGING]: <the reset of the message format>`
 
 8. Known Limitations
    - List any deferred features
@@ -1551,15 +1605,42 @@ After feature completion:
    - "If Yes, I'll update all documentation status to COMPLETE and move to next feature."
    - "If No/Needs Changes, please specify what needs attention."
 
-6. **MANDATORY**: Only after user approval, update final documentation status:
-   - IMPLEMENTATION.md: Overall Status → * [ 1 ]
-   - VERIFICATION.md: Status → ✅ COMPLETE
-   - Add completion timestamp in IMPLEMENTATION.md:
+6. **MANDATORY**: Only after user approval, execute COMPREHENSIVE FEATURE CLOSURE CHECKLIST:
+
+**STEP 6.1: Close All Feature Document Checkboxes**
+   - AGREEMENT.md: Mark all BIF evaluation checkboxes as * [ 1 ]
+   - IMPLEMENTATION.md: Mark all phase checkboxes as * [ 1 ], update Overall Status → * [ 1 ]
+   - PLANNING.md: Mark all dependency analysis checkboxes as * [ 1 ]
+   - TESTING.md: Mark all test execution checkboxes as * [ 1 ]
+   - VERIFICATION.md: Mark all verification checkboxes as * [ 1 ], Status → ✅ COMPLETE
+
+**STEP 6.2: Update DEFINITION.md Status**
+   - Update feature status from * [ ] or * [ - ] to * [ 1 ]
+   - Add completion timestamp and user approval note
+
+**STEP 6.3: Update Milestone Status (Level Propagation)**
+   - **SHALLOW MODE:**
+     - Update corresponding task in milestones/milestone.md → * [ 1 ]
+     - Check if all tasks in parent milestone M{N} complete
+     - If yes, update M{N} overall status → * [ 1 ]
+   
+   - **DEEP MODE:**
+     - Update parent M{N.X.Y} step in level2/level2_m{N}/ → * [ 1 ]
+     - Check if all steps in M{N.X.Y} complete
+     - If yes, update M{N.X.Y} status → * [ 1 ]
+     - **LEVEL PROPAGATION**: Check upward cascade:
+       - If all M{N.X.*} steps complete → Update M{N.X} in level1/ → * [ 1 ]
+       - If all M{N.*} sections complete → Update M{N} in level0/ → * [ 1 ]
+
+**STEP 6.4: Add Final Timestamps**
+   - IMPLEMENTATION.md: Add completion timestamp:
      ```markdown
      **Completed:** {YYYY-MM-DD HH:MM}
      **Final Status:** * [ 1 ] Complete
      **User Approval:** Received on {YYYY-MM-DD}
      ```
+   - VERIFICATION.md: Add verification completion timestamp
+   - DEFINITION.md: Add feature closure timestamp
 
 7. Provide handoff message:
 
@@ -1601,6 +1682,15 @@ Before marking ANY feature complete:
 * [ ] Documentation updated
 * [ ] Parent milestones updated
 * [ ] User approves completion
+* [ ] **COMPREHENSIVE CLOSURE CHECKLIST EXECUTED**:
+  * [ ] All checkboxes in AGREEMENT.md closed (* [ 1 ])
+  * [ ] All checkboxes in IMPLEMENTATION.md closed (* [ 1 ])
+  * [ ] All checkboxes in PLANNING.md closed (* [ 1 ])
+  * [ ] All checkboxes in TESTING.md closed (* [ 1 ])
+  * [ ] All checkboxes in VERIFICATION.md closed (* [ 1 ])
+  * [ ] DEFINITION.md status updated to * [ 1 ]
+  * [ ] Milestone level propagation completed (level2 → level1 → level0)
+  * [ ] All timestamps added to completion documents
 
 FINAL PROJECT COMPLETION:
 When ALL features complete:
@@ -1944,7 +2034,7 @@ DON'Ts:
 ❌ NEVER update milestone documentation status without user confirmation
 ❌ NEVER mark milestones complete without explicit user consent
 
-### **TOOL CALLS**:
+
 **MANDATORY**: use
 '''
 **`readFile`** - For single files with ALWAYS FULL line range:
@@ -2574,7 +2664,7 @@ INITIALIZATION PHASE:
    - "Crates in Scope: {list}"
    - "Ready to begin Phase 1 health checks? (Yes/No)"
 
-### **TOOL CALLS**:
+
 **MANDATORY**: use
 '''
 **`readFile`** - For single files with ALWAYS FULL line range:
@@ -3167,7 +3257,7 @@ INITIALIZATION PHASE:
    
    Ready to proceed with safe alignment? (Yes/No/Show Details)"
 
-### **TOOL CALLS**:
+
 **MANDATORY**: use
 '''
 **`readFile`** - For single files with ALWAYS FULL line range:
