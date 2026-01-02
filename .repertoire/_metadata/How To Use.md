@@ -723,7 +723,17 @@ FEATURE MAPPING DECISION MATRIX:
    YES → Feature uses Tauri: TRUE, document all commands and integration points
    NO → Feature uses Tauri: FALSE
 
-7. **PHASING DECISION** - Does this feature need phases?
+7. Does it need sy-commons utilities for common operations?
+   YES → Feature uses sy-commons: TRUE, identify specific utilities needed
+   NO → Feature uses sy-commons: FALSE
+   **Check for**: Error handling, logging, configuration, filesystem, pre-validation, testing, debugging
+
+8. Does it interface with external systems requiring port abstractions?
+   YES → Feature uses H2A2: TRUE, identify required ports
+   NO → Feature uses H2A2: FALSE
+   **Check for**: XI-editor integration, Pit operations, extension management, Python Conductor, data access
+
+9. **PHASING DECISION** - Does this feature need phases?
    Apply phasing if ANY of these conditions are met:
    - Estimated effort ≥ 3 days
    - Natural decomposition would create ≥ 4 phases
@@ -739,29 +749,38 @@ Implementation Task: "Create user authentication system with JWT tokens"
 Assessment:
 - Independent? YES
 - Effort: 6 days ✗ (too large)
+- sy-commons needed? YES (error handling, logging, configuration)
+- H2A2 needed? NO (no external system integration)
+- Tauri needed? YES (frontend login commands)
 - Split into: Login handler (2d) + JWT manager (2d) + Auth middleware (2d)
 Result:
-- F001 - login_handler (Phased: FALSE - 2 days, simple implementation)
-- F002 - jwt_token_manager (Phased: FALSE - 2 days, straightforward)
-- F003 - auth_middleware (Phased: FALSE - 2 days, single concern)
+- F001 - login_handler (Phased: FALSE, sy-commons: TRUE, H2A2: FALSE, Tauri: TRUE)
+- F002 - jwt_token_manager (Phased: FALSE, sy-commons: TRUE, H2A2: FALSE, Tauri: FALSE)
+- F003 - auth_middleware (Phased: FALSE, sy-commons: TRUE, H2A2: FALSE, Tauri: FALSE)
 
 **DEEP MODE:**
 Level 2 Step: M1.1.1 (Process Isolation Manager)
 Assessment:
 - Independent? YES
 - Effort: 2 days ✓
+- sy-commons needed? YES (error handling, logging, testing)
+- H2A2 needed? YES (ExtensionPort for process management)
+- Tauri needed? NO
 - Testable? YES
 - Verifiable alone? YES
 - Phasing needed? NO (< 3 days, simple scope)
-Result: F001 - process_sandbox_manager (Phased: FALSE)
+Result: F001 - process_sandbox_manager (Phased: FALSE, sy-commons: TRUE, H2A2: TRUE, Tauri: FALSE)
 
 Level 2 Step: M1.2.2 (Binary Communication Bridge)
 Assessment:
 - Independent? YES
 - Effort: 8 days ✗ (too large, but complex single feature)
+- sy-commons needed? YES (error handling, logging, pre-validation, testing)
+- H2A2 needed? YES (ConductorPort for Python integration)
+- Tauri needed? NO
 - Natural phases: Process mgmt (1d) + JSON-RPC (2d) + Event streaming (2d) + State sync (1d) + Adapter (1d) + Integration (1d) = 6 phases
 - Phasing needed? YES (≥ 3 days AND ≥ 4 phases AND multiple domains)
-Result: F010 - binary_communication_bridge (Phased: TRUE - 6 phases, complex integration)
+Result: F010 - binary_communication_bridge (Phased: TRUE, sy-commons: TRUE, H2A2: TRUE, Tauri: FALSE)
 
 OUTPUT FOR EACH FEATURE:
 
@@ -791,6 +810,72 @@ DEFINITION.md must include:
 - Dependencies (Requires & Enables)
 - **Phasing Decision**: Phased: TRUE/FALSE with rationale
 - **Tauri Integration**: Tauri: TRUE/FALSE with explanation
+- **sy-commons Integration**: sy-commons: TRUE/FALSE with specific utilities needed
+- **H2A2 Architecture**: H2A2: TRUE/FALSE with required ports identified
+
+**sy-commons Integration Section (if sy-commons: TRUE):**
+```markdown
+## sy-commons Integration
+
+**Required Utilities:**
+- [ ] Error Handling: `SymphonyError`, `ResultContext` for standardized error management
+- [ ] Logging: `info!`, `warn!`, `error!` auto-initializing macros for structured logging
+- [ ] Configuration: `load_config`, `Config` trait for type-safe configuration management
+- [ ] Filesystem: `read_file`, `write_file` for atomic file operations
+- [ ] Pre-validation: `validate_fast`, validation rules for performance-optimized input checking
+- [ ] Testing: `safe_generator` for thread-safe test data generation
+- [ ] Debug Output: `duck!` macro for development-only debugging
+
+**Integration Points:**
+- Error boundaries: All external API calls wrapped with SymphonyError
+- Logging strategy: Single structured event per operation completion
+- Configuration sources: Environment variables, TOML files, defaults
+- File operations: All file I/O through sy-commons for consistency
+- Test data: All test fixtures generated via safe_generator and fake crate
+
+**Dependencies:**
+```toml
+[dependencies]
+sy-commons = { path = "../utils/sy-commons" }
+```
+```
+
+**H2A2 Architecture Section (if H2A2: TRUE):**
+```markdown
+## H2A2 Architecture Integration
+
+**Required Ports:**
+- [ ] TextEditingPort: For XI-editor integration and text manipulation
+- [ ] PitPort: For high-performance infrastructure extensions (Pool Manager, DAG Tracker, etc.)
+- [ ] ExtensionPort: For actor-based extension lifecycle management
+- [ ] ConductorPort: For Python Conductor integration bridge
+- [ ] DataAccessPort: For two-layer data architecture with pre-validation
+
+**Port Usage Rationale:**
+- **Why ports needed**: {Explain which external systems this feature interfaces with}
+- **Abstraction benefits**: Testability, maintainability, implementation swapping
+- **Mock strategy**: Use symphony_core_ports::mocks for isolated testing
+
+**Adapter Implementation:**
+- Concrete adapter: {AdapterName} implementing {PortName}
+- Location: `src/adapters/{adapter_name}.rs`
+- Integration: Dependency injection through constructor or builder pattern
+
+**Dependencies:**
+```toml
+[dependencies]
+symphony-core-ports = { path = "../symphony-core-ports" }
+```
+
+**Testing with Mocks:**
+```rust
+use symphony_core_ports::mocks::{MockTextEditingAdapter, MockPitAdapter};
+
+// Use mock implementations for isolated testing
+let mock_text_editing = MockTextEditingAdapter::new();
+let mock_pit = MockPitAdapter::new();
+```
+```
 
 **GHERKIN ACCEPTANCE CRITERIA EXAMPLE:**
 ```gherkin
@@ -868,12 +953,152 @@ PLANNING.md must include:
 - Component breakdown with responsibilities
 - Dependency analysis (external & internal)
 - All decisions documented with alternatives considered
+- **sy-commons Integration Strategy** (if sy-commons: TRUE):
+  - Specific utilities usage plan
+  - Error handling strategy using SymphonyError
+  - Logging approach with structured events
+  - Configuration management approach
+  - Testing strategy with safe_generator
+- **H2A2 Architecture Strategy** (if H2A2: TRUE):
+  - Port selection rationale
+  - Adapter implementation plan
+  - Mock testing strategy
+  - Integration patterns with domain core
 - **Tauri Integration Section** (if Tauri: TRUE):
   - Complete Tauri commands reference table
   - Frontend-backend communication patterns
   - Error handling for Tauri commands
   - Security considerations for exposed commands
 - Under the relevant feature sections, add a subsection for Tauri commands:
+
+#### sy-commons Integration Strategy
+
+**Error Handling Strategy:**
+```rust
+use sy_commons::{SymphonyError, ResultContext};
+
+// All external operations wrapped with context
+fn process_data(input: &str) -> Result<ProcessedData, SymphonyError> {
+    validate_input(input)
+        .context("Input validation failed")?;
+    
+    external_api_call(input)
+        .context("External API call failed")?;
+    
+    Ok(ProcessedData::new())
+}
+```
+
+**Logging Strategy:**
+```rust
+use sy_commons::{info, warn, error, duck};
+
+// Single structured event at operation completion
+fn handle_request(request: Request) -> Result<Response, SymphonyError> {
+    duck!("Processing request: {}", request.id);
+    
+    let result = process_request(request)?;
+    
+    info!("request_completed", {
+        "request_id": request.id,
+        "duration_ms": duration,
+        "status": "success"
+    });
+    
+    Ok(result)
+}
+```
+
+**Configuration Strategy:**
+```rust
+use sy_commons::config::{Config, load_config};
+use serde::Deserialize;
+
+#[derive(Deserialize)]
+struct FeatureConfig {
+    timeout_ms: u64,
+    max_retries: u32,
+    api_endpoint: String,
+}
+
+impl Config for FeatureConfig {}
+
+// Load configuration with environment override support
+let config: FeatureConfig = load_config("production")?;
+```
+
+**Testing Strategy:**
+```rust
+use sy_commons::testing::safe_generator;
+use fake::{Fake, Faker};
+
+// Factory-based test data generation
+struct TestDataFactory;
+
+impl TestDataFactory {
+    fn user() -> User {
+        let gen = safe_generator();
+        User {
+            id: gen.fake::<String>(),
+            email: gen.fake::<String>(),
+            name: gen.fake::<String>(),
+        }
+    }
+}
+```
+
+#### H2A2 Architecture Strategy
+
+**Port Selection Rationale:**
+- **TextEditingPort**: Required for {specific text editing operations}
+- **PitPort**: Required for {high-performance infrastructure operations}
+- **ExtensionPort**: Required for {extension lifecycle management}
+- **ConductorPort**: Required for {Python integration}
+- **DataAccessPort**: Required for {data layer operations}
+
+**Adapter Implementation Plan:**
+```rust
+use symphony_core_ports::{TextEditingPort, PitPort};
+
+pub struct FeatureAdapter {
+    text_editing: Box<dyn TextEditingPort>,
+    pit: Box<dyn PitPort>,
+}
+
+impl FeatureAdapter {
+    pub fn new(
+        text_editing: Box<dyn TextEditingPort>,
+        pit: Box<dyn PitPort>,
+    ) -> Self {
+        Self { text_editing, pit }
+    }
+    
+    pub async fn process(&self, input: Input) -> Result<Output, SymphonyError> {
+        // Use ports for external system interaction
+        let buffer_id = self.text_editing.create_buffer(None).await?;
+        let result = self.pit.allocate_resource().await?;
+        
+        Ok(Output::new(buffer_id, result))
+    }
+}
+```
+
+**Mock Testing Strategy:**
+```rust
+use symphony_core_ports::mocks::{MockTextEditingAdapter, MockPitAdapter};
+
+#[tokio::test]
+async fn test_feature_with_mocks() {
+    // Use mock implementations for isolated testing
+    let mock_text_editing = Box::new(MockTextEditingAdapter::new());
+    let mock_pit = Box::new(MockPitAdapter::new());
+    
+    let adapter = FeatureAdapter::new(mock_text_editing, mock_pit);
+    let result = adapter.process(test_input).await?;
+    
+    assert_eq!(result.status, "success");
+}
+```
 
 #### Tauri Commands Reference
 
@@ -900,11 +1125,116 @@ DESIGN.md must include:
 - Database/storage schema (if applicable)
 - Error handling strategy with failure modes
 - Performance considerations
+- **sy-commons Architecture Integration** (if sy-commons: TRUE):
+  - Error handling flow using SymphonyError
+  - Logging architecture with structured events
+  - Configuration management design
+  - Testing architecture with factory patterns
+- **H2A2 Architecture Integration** (if H2A2: TRUE):
+  - Port-adapter relationship diagrams
+  - Domain core isolation strategy
+  - Mock testing architecture
+  - Dependency injection patterns
 - **Tauri Architecture Section** (if Tauri: TRUE):
   - Frontend-backend communication flow diagram
   - Tauri command signatures and return types
   - State management between frontend and backend
   - Security boundaries and validation points
+
+**sy-commons Architecture Integration:**
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Feature Architecture                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────────┐    ┌─────────────────┐                │
+│  │   Public API    │    │  Configuration  │                │
+│  │                 │    │   (sy-commons)  │                │
+│  │ ┌─────────────┐ │    │                 │                │
+│  │ │SymphonyError│ │    │ ┌─────────────┐ │                │
+│  │ │ Boundaries  │ │    │ │load_config()│ │                │
+│  │ └─────────────┘ │    │ │Config trait │ │                │
+│  └─────────────────┘    │ └─────────────┘ │                │
+│           │              └─────────────────┘                │
+│           ▼                       │                         │
+│  ┌─────────────────┐              ▼                         │
+│  │  Core Logic     │    ┌─────────────────┐                │
+│  │                 │    │    Logging      │                │
+│  │ ┌─────────────┐ │    │  (sy-commons)   │                │
+│  │ │duck!() debug│ │    │                 │                │
+│  │ │   output    │ │    │ ┌─────────────┐ │                │
+│  │ └─────────────┘ │    │ │info!,warn!  │ │                │
+│  └─────────────────┘    │ │error! macros│ │                │
+│           │              │ └─────────────┘ │                │
+│           ▼              └─────────────────┘                │
+│  ┌─────────────────┐              │                         │
+│  │  File I/O       │              ▼                         │
+│  │ (sy-commons)    │    ┌─────────────────┐                │
+│  │                 │    │   Testing       │                │
+│  │ ┌─────────────┐ │    │ (sy-commons)    │                │
+│  │ │read_file()  │ │    │                 │                │
+│  │ │write_file() │ │    │ ┌─────────────┐ │                │
+│  │ └─────────────┘ │    │ │safe_generator│ │                │
+│  └─────────────────┘    │ │fake crate   │ │                │
+│                         │ └─────────────┘ │                │
+│                         └─────────────────┘                │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**H2A2 Architecture Integration:**
+```
+┌─────────────────────────────────────────────────────────────┐
+│                H2A2 Port-Adapter Architecture                │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────────────────────────────────────────────────┐ │
+│  │                   Domain Core                           │ │
+│  │                                                         │ │
+│  │   ┌─────────────────┐  ┌─────────────────┐             │ │
+│  │   │  Feature Logic  │  │  Business Rules │             │ │
+│  │   │                 │  │                 │             │ │
+│  │   └─────────────────┘  └─────────────────┘             │ │
+│  │            │                    │                      │ │
+│  └────────────┼────────────────────┼──────────────────────┘ │
+│               │                    │                        │
+│  ┌────────────┼────────────────────┼──────────────────────┐ │
+│  │            │         Port Interfaces                   │ │
+│  │            │                    │                      │ │
+│  │   ┌────────▼────────┐  ┌────────▼────────┐             │ │
+│  │   │ TextEditingPort │  │     PitPort     │             │ │
+│  │   │                 │  │                 │             │ │
+│  │   └─────────────────┘  └─────────────────┘             │ │
+│  │            │                    │                      │ │
+│  └────────────┼────────────────────┼──────────────────────┘ │
+│               │                    │                        │
+│  ┌────────────┼────────────────────┼──────────────────────┐ │
+│  │            │         Adapters                          │ │
+│  │            │                    │                      │ │
+│  │   ┌────────▼────────┐  ┌────────▼────────┐             │ │
+│  │   │ XiEditorAdapter │  │  PitAdapter     │             │ │
+│  │   │                 │  │                 │             │ │
+│  │   └─────────────────┘  └─────────────────┘             │ │
+│  │            │                    │                      │ │
+│  └────────────┼────────────────────┼──────────────────────┘ │
+│               │                    │                        │
+│  ┌────────────▼────────────────────▼──────────────────────┐ │
+│  │                External Systems                        │ │
+│  │                                                        │ │
+│  │   ┌─────────────────┐  ┌─────────────────┐             │ │
+│  │   │   XI-Editor     │  │   The Pit       │             │ │
+│  │   │                 │  │                 │             │ │
+│  │   └─────────────────┘  └─────────────────┘             │ │
+│  └────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+
+Testing Layer (Mocks):
+┌─────────────────────────────────────────────────────────────┐
+│  ┌─────────────────┐  ┌─────────────────┐                  │
+│  │MockTextEditing  │  │   MockPit       │                  │
+│  │    Adapter      │  │   Adapter       │                  │
+│  └─────────────────┘  └─────────────────┘                  │
+└─────────────────────────────────────────────────────────────┘
+```
 
 BEFORE writing TESTING.md, answer these 4 questions:
 
@@ -3223,7 +3553,7 @@ VALIDATION CHECKLIST (before completing):
 YOU ARE A PROFESSIONAL HIGH-ENTERPRISE PRODUCTION ALIGNMENT AND PRACTICES ENFORCEMENT MODEL.
 
 YOUR OBJECTIVE IS TO:
-Ensure all code in the system adheres to production-grade practices, patterns, and conventions defined in `.repertoire/practice/*` files. You perform SAFE alignment - changing code without breaking functionality, running comprehensive validation after each change.
+Ensure all code in the system adheres to production-grade practices, patterns, and conventions defined in `.repertoire/practice/*` files. You perform SAFE alignment - changing code without breaking functionality, running comprehensive validation after each change. You enforce Symphony's architectural standards including sy-commons utilities and H2A2 ports architecture.
 
 YOUR WORKFLOW:
 
@@ -3233,6 +3563,8 @@ INITIALIZATION PHASE:
    - Read `technical_pattern.md` for core patterns
    - Understand logging practices, error handling, debugging patterns
    - Grasp factory testing requirements, documentation standards
+   - **MANDATORY**: Read `sy-commons` utilities from `apps/backend/crates/utils/sy-commons/src/lib.rs`
+   - **MANDATORY**: Read H2A2 ports from `apps/backend/crates/symphony-core-ports/src/lib.rs`
    - Internalize all practice guidelines and conventions
 
 2. **Scope Identification:**
@@ -3250,6 +3582,8 @@ INITIALIZATION PHASE:
 
 4. **Problem Detection and Analysis:**
    - Scan all files in scope for practice violations
+   - **MANDATORY**: Check sy-commons utilities usage alignment
+   - **MANDATORY**: Check H2A2 ports architecture compliance (when applicable)
    - Identify specific problems with evidence (file paths, line numbers)
    - Categorize by impact and practice area
    - Create complete problem inventory
@@ -3277,9 +3611,13 @@ INITIALIZATION PHASE:
 
    Understandable Rules:
    - {Specify all practices you have learnt from the practice files}
+   - **sy-commons Integration**: Use standardized utilities for error handling, logging, config, filesystem, pre-validation, testing
+   - **H2A2 Architecture**: Use port abstractions when interfacing with external systems (TextEditingPort, PitPort, ExtensionPort, ConductorPort, DataAccessPort)
    
    Problem Breakdown:
    - **PREREQUISITE**: Missing Source Code Coverage Tables: {X} TESTING.md files need tables
+   - **sy-commons Violations**: {X} instances where sy-commons utilities should be used
+   - **H2A2 Architecture Violations**: {X} instances where ports should be used instead of direct dependencies
    - Debug output violations: {X} instances in {Y} files
    - Logging pattern violations: {A} instances in {B} files
    - Hardcoded test data: {C} instances in {D} files
@@ -3374,30 +3712,91 @@ PROBLEM DETECTION AREAS:
    - **AUTO-POPULATE**: If table missing, create it by scanning source code and existing tests
    - **PREREQUISITE**: This must be fixed BEFORE any other alignment work begins
 
-**1. Logging Alignment:**
+**1. sy-commons Utilities Alignment (MANDATORY):**
+   - **Error Handling**: Scan for custom error types instead of `sy_commons::SymphonyError`
+   - **Logging**: Scan for `log::info!`, `println!`, `eprintln!` instead of `sy_commons::{info, warn, error}!`
+   - **Configuration**: Scan for manual env var handling instead of `sy_commons::config::load_config`
+   - **Filesystem**: Scan for `std::fs` operations instead of `sy_commons::filesystem::{read_file, write_file}`
+   - **Pre-validation**: Scan for manual validation instead of `sy_commons::prevalidation::validate_fast`
+   - **Testing**: Scan for hardcoded test data instead of `sy_commons::testing::safe_generator`
+   - **Debug Output**: Scan for `println!`, `dbg!` instead of `sy_commons::duck!`
+   - Required: Use sy-commons utilities for ALL common operations
+   - Pattern: `use sy_commons::{SymphonyError, info, warn, error, duck, load_config, read_file, write_file, safe_generator};`
+
+**2. H2A2 Ports Architecture Alignment (WHEN APPLICABLE):**
+   - **Direct Dependencies**: Scan for direct imports of external systems (xi-editor, database clients, HTTP clients)
+   - **Missing Port Abstractions**: Scan for code that should use ports but doesn't
+   - **Port Usage**: Check if crate needs TextEditingPort, PitPort, ExtensionPort, ConductorPort, or DataAccessPort
+   - **Adapter Pattern**: Scan for missing adapter implementations
+   - **Mock Usage**: Scan for tests not using mock adapters from `symphony_core_ports::mocks`
+   - Required: Use port abstractions when interfacing with external systems
+   - Pattern: `use symphony_core_ports::{TextEditingPort, PitPort, ExtensionPort, ConductorPort, DataAccessPort};`
+   - Pattern: `use symphony_core_ports::mocks::{MockTextEditingAdapter, MockPitAdapter};`
+
+**3. Logging Alignment:**
    - Scan for: `println!()`, `eprintln!()`, `print!()` in non-test code
+   - Scan for: `log::info!`, `log::warn!`, `log::error!` instead of sy-commons macros
    - Scan for: Multiple logger calls within single request handler
+   - Required: Use sy-commons auto-initializing macros: `info!`, `warn!`, `error!`
    - Required: ONE wide event per request at end
    - Required: Structured context (key-value pairs)
-   - Pattern: `logger.info("event_name", {structured_data})`
+   - Pattern: `use sy_commons::{info, warn, error}; info!("event_name", {structured_data})`
 
-**2. Debugging Alignment:**
+**4. Debugging Alignment:**
    - Scan for: `println!()`, `eprintln!()`, `dbg!()` for debug output
-   - Required: `duck!()` macro for all debug output
-   - Pattern: `duck!("Debug message: {}", value)`
+   - Scan for: `log::debug!` instead of sy-commons duck macro
+   - Required: `sy_commons::duck!()` macro for all debug output
+   - Pattern: `use sy_commons::duck; duck!("Debug message: {}", value)`
    - Verify: Toggleable, development-only
 
-**3. Error Handling Alignment:**
+**5. Error Handling Alignment:**
+   - Scan for: Custom error types instead of `SymphonyError`
    - Scan for: `.unwrap()`, `.expect()`, `panic!()` on external input
+   - Scan for: Manual error context instead of `ResultContext` trait
+   - Required: `sy_commons::SymphonyError` for all errors
+   - Required: `sy_commons::ResultContext` for error context
    - Required: `?` operator with proper error types
-   - Required: Error context preservation
-   - Pattern: Follow `error_handling.md`
+   - Pattern: `use sy_commons::{SymphonyError, ResultContext}; result.context("Failed to process")?`
 
-**4. Testing Alignment:**
+**6. Configuration Alignment:**
+   - Scan for: Manual `std::env::var` calls
+   - Scan for: Custom configuration loading logic
+   - Scan for: Hardcoded configuration values
+   - Required: `sy_commons::config::load_config` for all configuration
+   - Required: Type-safe configuration structs implementing `Config` trait
+   - Pattern: `use sy_commons::config::{Config, load_config}; let config: AppConfig = load_config("production")?;`
+
+**7. Filesystem Alignment:**
+   - Scan for: Direct `std::fs` operations
+   - Scan for: Manual file path handling
+   - Scan for: Non-atomic file writes
+   - Required: `sy_commons::filesystem` functions for all file operations
+   - Required: Atomic writes for data integrity
+   - Pattern: `use sy_commons::filesystem::{read_file, write_file}; let content = read_file("config.toml").await?;`
+
+**8. Testing Alignment:**
    - Scan for: Hardcoded strings, numbers, UUIDs in tests
    - Scan for: Repeated test data across test cases
-   - Required: Factory-based generation using `fake` crate
-   - Required: `sy-commons::testing::safe_generator()`
+   - Scan for: Manual test data generation
+   - Required: Factory-based generation using `sy_commons::testing::safe_generator`
+   - Required: `fake` crate for realistic data generation
+   - Pattern: `use sy_commons::testing::safe_generator; let user_id = safe_generator().fake::<String>();`
+
+**9. Documentation Alignment:**
+   - Scan for: Public items without doc comments
+   - Scan for: Missing examples in doc comments
+   - Scan for: Inconsistent documentation style
+   - Required: /// doc comments on all public APIs
+   - Required: Examples in doc comments
+   - Pattern: Follow `rust_doc_style_guide.md`
+
+**10. Code Organization Alignment:**
+   - Scan for: Duplicated error handling patterns
+   - Scan for: Duplicated utility functions
+   - Scan for: Code that should be in sy-commons but isn't
+   - Required: Use `sy-commons` for shared functionality
+   - Required: Extend commons instead of duplicate
+   - Pattern: Contribute reusable patterns back to sy-commons
    - Pattern: `TestFactory::new().build()`
 
 **5. Documentation Alignment:**
