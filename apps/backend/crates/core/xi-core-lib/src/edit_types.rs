@@ -20,101 +20,132 @@
 
 use crate::movement::Movement;
 use crate::rpc::{
-    EditNotification, FindQuery, GestureType, LineRange, MouseAction, Position,
-    SelectionGranularity, SelectionModifier,
+	EditNotification, FindQuery, GestureType, LineRange, MouseAction, Position,
+	SelectionGranularity, SelectionModifier,
 };
 use crate::view::Size;
 
 /// Events that only modify view state
 #[derive(Debug, PartialEq, Clone)]
 pub(crate) enum ViewEvent {
-    Move(Movement),
-    ModifySelection(Movement),
-    SelectAll,
-    Scroll(LineRange),
-    AddSelectionAbove,
-    AddSelectionBelow,
-    Click(MouseAction),
-    Drag(MouseAction),
-    Gesture { line: u64, col: u64, ty: GestureType },
-    GotoLine { line: u64 },
-    Find { chars: String, case_sensitive: bool, regex: bool, whole_words: bool },
-    MultiFind { queries: Vec<FindQuery> },
-    FindNext { wrap_around: bool, allow_same: bool, modify_selection: SelectionModifier },
-    FindPrevious { wrap_around: bool, allow_same: bool, modify_selection: SelectionModifier },
-    FindAll,
-    HighlightFind { visible: bool },
-    SelectionForFind { case_sensitive: bool },
-    Replace { chars: String, preserve_case: bool },
-    SelectionForReplace,
-    SelectionIntoLines,
-    CollapseSelections,
+	Move(Movement),
+	ModifySelection(Movement),
+	SelectAll,
+	Scroll(LineRange),
+	AddSelectionAbove,
+	AddSelectionBelow,
+	Click(MouseAction),
+	Drag(MouseAction),
+	Gesture {
+		line: u64,
+		col: u64,
+		ty: GestureType,
+	},
+	GotoLine {
+		line: u64,
+	},
+	Find {
+		chars: String,
+		case_sensitive: bool,
+		regex: bool,
+		whole_words: bool,
+	},
+	MultiFind {
+		queries: Vec<FindQuery>,
+	},
+	FindNext {
+		wrap_around: bool,
+		allow_same: bool,
+		modify_selection: SelectionModifier,
+	},
+	FindPrevious {
+		wrap_around: bool,
+		allow_same: bool,
+		modify_selection: SelectionModifier,
+	},
+	FindAll,
+	HighlightFind {
+		visible: bool,
+	},
+	SelectionForFind {
+		case_sensitive: bool,
+	},
+	Replace {
+		chars: String,
+		preserve_case: bool,
+	},
+	SelectionForReplace,
+	SelectionIntoLines,
+	CollapseSelections,
 }
 
 /// Events that modify the buffer
 #[derive(Debug, PartialEq, Clone)]
 pub(crate) enum BufferEvent {
-    Delete { movement: Movement, kill: bool },
-    Backspace,
-    Transpose,
-    Undo,
-    Redo,
-    Uppercase,
-    Lowercase,
-    Capitalize,
-    Indent,
-    Outdent,
-    Insert(String),
-    Paste(String),
-    InsertNewline,
-    InsertTab,
-    Yank,
-    ReplaceNext,
-    ReplaceAll,
-    DuplicateLine,
-    IncreaseNumber,
-    DecreaseNumber,
+	Delete { movement: Movement, kill: bool },
+	Backspace,
+	Transpose,
+	Undo,
+	Redo,
+	Uppercase,
+	Lowercase,
+	Capitalize,
+	Indent,
+	Outdent,
+	Insert(String),
+	Paste(String),
+	InsertNewline,
+	InsertTab,
+	Yank,
+	ReplaceNext,
+	ReplaceAll,
+	DuplicateLine,
+	IncreaseNumber,
+	DecreaseNumber,
 }
 
 /// An event that needs special handling
 #[derive(Debug, PartialEq, Clone)]
 pub(crate) enum SpecialEvent {
-    DebugRewrap,
-    DebugWrapWidth,
-    DebugPrintSpans,
-    Resize(Size),
-    RequestLines(LineRange),
-    RequestHover { request_id: usize, position: Option<Position> },
-    DebugToggleComment,
-    Reindent,
-    ToggleRecording(Option<String>),
-    PlayRecording(String),
-    ClearRecording(String),
+	DebugRewrap,
+	DebugWrapWidth,
+	DebugPrintSpans,
+	Resize(Size),
+	RequestLines(LineRange),
+	RequestHover {
+		request_id: usize,
+		position: Option<Position>,
+	},
+	DebugToggleComment,
+	Reindent,
+	ToggleRecording(Option<String>),
+	PlayRecording(String),
+	ClearRecording(String),
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub(crate) enum EventDomain {
-    View(ViewEvent),
-    Buffer(BufferEvent),
-    Special(SpecialEvent),
+	View(ViewEvent),
+	Buffer(BufferEvent),
+	Special(SpecialEvent),
 }
 
 impl From<BufferEvent> for EventDomain {
-    fn from(src: BufferEvent) -> EventDomain {
-        EventDomain::Buffer(src)
-    }
+	fn from(src: BufferEvent) -> EventDomain {
+		EventDomain::Buffer(src)
+	}
 }
 
 impl From<ViewEvent> for EventDomain {
-    fn from(src: ViewEvent) -> EventDomain {
-        EventDomain::View(src)
-    }
+	fn from(src: ViewEvent) -> EventDomain {
+		EventDomain::View(src)
+	}
 }
 
 impl From<SpecialEvent> for EventDomain {
-    fn from(src: SpecialEvent) -> EventDomain {
-        EventDomain::Special(src)
-    }
+	fn from(src: SpecialEvent) -> EventDomain {
+		EventDomain::Special(src)
+	}
 }
 
 #[rustfmt::skip]

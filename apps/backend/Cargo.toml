@@ -13,6 +13,9 @@ members = [
     "crates/utils/sy-commons",
     "crates/symphony-core-ports",
     "crates/sy-ipc-protocol",
+    "crates/sy-ipc-transport",
+    "crates/sy-ipc-bus",
+    "crates/sy-xi-adapter",
 ]
 
 [workspace.dependencies]
@@ -20,18 +23,46 @@ members = [
 tokio = { version = "1.35", features = ["full"] }
 async-trait = "0.1"
 
+# Concurrent data structures
+dashmap = "5.5.3"
+
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+bincode = { version = "2.0", features = ["serde"] }
+rmp-serde = "1.1"
 
-# Logging
+# Pattern matching
+regex = "1.10.2"
+
+# Logging and tracing
 log = "0.4"
 tracing = "0.1"
-tracing-subscriber = "0.3"
+tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
 
 # Error handling
 anyhow = "1.0"
 thiserror = "2.0.17"
+
+# Configuration
+figment = { version = "0.10", features = ["toml", "env"] }
+
+# Filesystem and utilities
+directories = "5.0"
+tempfile = "3.0"
+uuid = { version = "1.6", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+notify = "6.1"
+
+# Testing frameworks
+criterion = { version = "0.8", features = ["html_reports"] }
+rstest = "0.18"
+tokio-test = "0.4"
+proptest = "1.0"
+serial_test = "3.0"
+
+# Development dependencies (commonly used across sy-* crates)
+# These are typically used in [dev-dependencies] sections
 
 [workspace.package]
 version = "0.1.0"
@@ -140,19 +171,31 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
+description = "Symphony AI-First Development Environment (AIDE) - Revolutionary text editor with AI orchestration"
+keywords = ["editor", "ide", "ai", "development", "aide"]
+categories = ["text-editors", "development-tools", "command-line-utilities"]
 
 [dependencies]
+# Symphony utilities
+sy-commons = { path = "crates/utils/sy-commons" }
+
+# Logging (required for auto-initializing macros)
+tracing.workspace = true
+
+# XI-editor core components (commented out for now)
 #xi-core-lib = { path = "crates/core/xi-core-lib" }
 #xi-rpc = { path = "crates/core/xi-rpc" }
 #xi-rope = { path = "crates/utils/xi-rope" }
-#
+
+# Workspace dependencies
 #serde.workspace = true
 #serde_json.workspace = true
 #log.workspace = true
 #tokio.workspace = true
 #anyhow.workspace = true
 
-env_logger = "0.11"
+# Remove env_logger since we're using Symphony's logging system
+# env_logger = "0.11"
 
 
 [[bin]]

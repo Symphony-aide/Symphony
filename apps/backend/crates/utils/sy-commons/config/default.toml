@@ -1,0 +1,35 @@
+# Symphony Default Configuration
+# This file contains the base configuration for all Symphony components.
+# Environment-specific files (development.toml, production.toml, etc.) can override these values.
+
+[logging]
+level = "info"
+
+[logging.console]
+enabled = true
+format = "Pretty"
+colors = true
+
+# File logging is disabled by default
+# Uncomment and configure to enable file logging
+# [logging.file]
+# enabled = false
+# path = "logs/app.log"
+# rotation = "Daily"
+# max_files = 7
+
+# JSON logging is disabled by default
+# Uncomment and configure to enable structured JSON logging
+# [logging.json]
+# enabled = false
+# path = "logs/structured.json"
+# include_spans = false
+
+[filesystem]
+# temp_dir = "/tmp/symphony"  # Optional: custom temp directory
+max_file_size = 104857600  # 100MB in bytes
+atomic_writes = true
+
+[debug]
+duck_debugging = true
+performance_logging = false

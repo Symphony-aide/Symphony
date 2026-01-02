@@ -22,46 +22,46 @@ use std::thread;
 use xi_rpc::chan::Chan;
 
 pub fn test_chan() {
-    let n_iter = 1000000;
-    let chan1 = Chan::new();
-    let chan1s = chan1.clone();
-    let chan2 = Chan::new();
-    let chan2s = chan2.clone();
-    let thread1 = thread::spawn(move|| {
-        for _ in 0..n_iter {
-            chan2s.try_send(chan1.recv());
-        }
-    });
-    let thread2 = thread::spawn(move|| {
-        for _ in 0..n_iter {
-            chan1s.try_send(42);
-            let _ = chan2.recv();
-        }
-    });
-    let _ = thread1.join();
-    let _ = thread2.join();
+	let n_iter = 1000000;
+	let chan1 = Chan::new();
+	let chan1s = chan1.clone();
+	let chan2 = Chan::new();
+	let chan2s = chan2.clone();
+	let thread1 = thread::spawn(move|| {
+		for _ in 0..n_iter {
+			chan2s.try_send(chan1.recv());
+		}
+	});
+	let thread2 = thread::spawn(move|| {
+		for _ in 0..n_iter {
+			chan1s.try_send(42);
+			let _ = chan2.recv();
+		}
+	});
+	let _ = thread1.join();
+	let _ = thread2.join();
 }
 */
 
 pub fn test_mpsc() {
-    let n_iter = 1000000;
-    let (chan1s, chan1) = mpsc::channel();
-    let (chan2s, chan2) = mpsc::channel();
-    let thread1 = thread::spawn(move || {
-        for _ in 0..n_iter {
-            chan2s.send(chan1.recv()).unwrap();
-        }
-    });
-    let thread2 = thread::spawn(move || {
-        for _ in 0..n_iter {
-            chan1s.send(42).unwrap();
-            let _ = chan2.recv();
-        }
-    });
-    let _ = thread1.join();
-    let _ = thread2.join();
+	let n_iter = 1000000;
+	let (chan1s, chan1) = mpsc::channel();
+	let (chan2s, chan2) = mpsc::channel();
+	let thread1 = thread::spawn(move || {
+		for _ in 0..n_iter {
+			chan2s.send(chan1.recv()).unwrap();
+		}
+	});
+	let thread2 = thread::spawn(move || {
+		for _ in 0..n_iter {
+			chan1s.send(42).unwrap();
+			let _ = chan2.recv();
+		}
+	});
+	let _ = thread1.join();
+	let _ = thread2.join();
 }
 
 pub fn main() {
-    test_mpsc()
+	test_mpsc()
 }

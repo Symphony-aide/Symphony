@@ -15,20 +15,20 @@
 //! The main library for xi-core.
 
 #![allow(
-    clippy::boxed_local,
-    clippy::cast_lossless,
-    clippy::collapsible_if,
-    clippy::let_and_return,
-    clippy::map_entry,
-    clippy::match_as_ref,
-    clippy::match_bool,
-    clippy::needless_pass_by_value,
-    clippy::new_without_default,
-    clippy::or_fun_call,
-    clippy::ptr_arg,
-    clippy::too_many_arguments,
-    clippy::unreadable_literal,
-    clippy::get_unwrap
+	clippy::boxed_local,
+	clippy::cast_lossless,
+	clippy::collapsible_if,
+	clippy::let_and_return,
+	clippy::map_entry,
+	clippy::match_as_ref,
+	clippy::match_bool,
+	clippy::needless_pass_by_value,
+	clippy::new_without_default,
+	clippy::or_fun_call,
+	clippy::ptr_arg,
+	clippy::too_many_arguments,
+	clippy::unreadable_literal,
+	clippy::get_unwrap
 )]
 
 #[macro_use]
@@ -53,13 +53,13 @@ extern crate xi_unicode;
 
 #[cfg(feature = "ledger")]
 mod ledger_includes {
-    extern crate fuchsia_zircon;
-    extern crate fuchsia_zircon_sys;
-    extern crate mxruntime;
-    #[macro_use]
-    extern crate fidl;
-    extern crate apps_ledger_services_public;
-    extern crate sha2;
+	extern crate fuchsia_zircon;
+	extern crate fuchsia_zircon_sys;
+	extern crate mxruntime;
+	#[macro_use]
+	extern crate fidl;
+	extern crate apps_ledger_services_public;
+	extern crate sha2;
 }
 #[cfg(feature = "ledger")]
 use ledger_includes::*;

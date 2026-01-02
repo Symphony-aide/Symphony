@@ -1,0 +1,78 @@
+[package]
+name = "sy-ipc-transport"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Cross-platform transport layer for Symphony IPC communication"
+keywords = ["symphony", "ipc", "transport", "unix-sockets", "named-pipes"]
+categories = ["development-tools", "network-programming"]
+
+[lints]
+workspace = true
+
+[features]
+# Default runs only fast unit tests
+default = []
+# Individual test category features
+unit = []
+integration = []
+performance = []
+unix = []
+windows = []
+load = []
+reconnection = []
+# Test utilities feature for integration tests
+test-utils = []
+# Platform-specific features
+unix-tests = []
+windows-tests = []
+
+[dependencies]
+# Symphony dependencies
+sy-commons = { path = "../utils/sy-commons" }
+sy-ipc-protocol = { path = "../sy-ipc-protocol" }
+
+# Async runtime and traits
+tokio.workspace = true
+async-trait.workspace = true
+
+# Serialization
+serde.workspace = true
+serde_json.workspace = true
+
+# Error handling
+thiserror.workspace = true
+anyhow.workspace = true
+
+# Utilities
+uuid.workspace = true
+chrono.workspace = true
+rand = "0.8"
+
+# Platform-specific dependencies
+[target.'cfg(unix)'.dependencies]
+tokio = { workspace = true, features = ["net", "process"] }
+
+[target.'cfg(windows)'.dependencies]
+tokio = { workspace = true, features = ["net", "process"] }
+# Note: Windows named pipes support will be added when available in tokio
+
+[dev-dependencies]
+# MANDATORY for factory-based testing
+fake = { version = "2.9", features = ["derive", "uuid", "chrono"] }
+
+# Testing frameworks
+rstest.workspace = true
+tokio-test.workspace = true
+proptest.workspace = true
+criterion.workspace = true
+tempfile.workspace = true
+serial_test.workspace = true
+
+# Additional dependencies for benchmarks
+rand = "0.8"
+
+[[bench]]
+name = "transport_bench"
+harness = false

@@ -21,73 +21,77 @@ use crate::rope::{Rope, RopeInfo};
 /// characters of `s` are missing from it in order. Returns a `Subset` which
 /// when deleted from `s` yields `substr`.
 pub fn find_deletions(substr: &str, s: &str) -> Subset {
-    let mut sb = SubsetBuilder::new();
-    let mut j = 0;
-    for i in 0..s.len() {
-        if j < substr.len() && substr.as_bytes()[j] == s.as_bytes()[i] {
-            j += 1;
-        } else {
-            sb.add_range(i, i + 1, 1);
-        }
-    }
-    sb.pad_to_len(s.len());
-    sb.build()
+	let mut sb = SubsetBuilder::new();
+	let mut j = 0;
+	for i in 0..s.len() {
+		if j < substr.len() && substr.as_bytes()[j] == s.as_bytes()[i] {
+			j += 1;
+		} else {
+			sb.add_range(i, i + 1, 1);
+		}
+	}
+	sb.pad_to_len(s.len());
+	sb.build()
 }
 
 impl Delta<RopeInfo> {
-    pub fn apply_to_string(&self, s: &str) -> String {
-        String::from(self.apply(&Rope::from(s)))
-    }
+	pub fn apply_to_string(&self, s: &str) -> String {
+		String::from(self.apply(&Rope::from(s)))
+	}
 }
 
 impl PartialEq for Rope {
-    fn eq(&self, other: &Rope) -> bool {
-        String::from(self) == String::from(other)
-    }
+	fn eq(&self, other: &Rope) -> bool {
+		String::from(self) == String::from(other)
+	}
 }
 
 pub fn parse_subset(s: &str) -> Subset {
-    let mut sb = SubsetBuilder::new();
+	let mut sb = SubsetBuilder::new();
 
-    for c in s.chars() {
-        if c == '#' {
-            sb.push_segment(1, 1);
-        } else if c == 'e' {
-            // do nothing, used for empty subsets
-        } else {
-            sb.push_segment(1, 0);
-        }
-    }
+	for c in s.chars() {
+		if c == '#' {
+			sb.push_segment(1, 1);
+		} else if c == 'e' {
+			// do nothing, used for empty subsets
+		} else {
+			sb.push_segment(1, 0);
+		}
+	}
 
-    sb.build()
+	sb.build()
 }
 
 pub fn parse_subset_list(s: &str) -> Vec<Subset> {
-    s.lines().map(|s| s.trim()).filter(|s| !s.is_empty()).map(parse_subset).collect()
+	s.lines()
+		.map(|s| s.trim())
+		.filter(|s| !s.is_empty())
+		.map(parse_subset)
+		.collect()
 }
 
 pub fn debug_subsets(subsets: &[Subset]) {
-    for s in subsets {
-        println!("{:#?}", s);
-    }
+	for s in subsets {
+		println!("{:#?}", s);
+	}
 }
 
 pub fn parse_delta(s: &str) -> Delta<RopeInfo> {
-    let base_len = s.chars().filter(|c| *c == '-' || *c == '!').count();
-    let mut b = delta::Builder::new(base_len);
+	let base_len = s.chars().filter(|c| *c == '-' || *c == '!').count();
+	let mut b = delta::Builder::new(base_len);
 
-    let mut i = 0;
-    for c in s.chars() {
-        if c == '-' {
-            i += 1;
-        } else if c == '!' {
-            b.delete(Interval::new(i, i + 1));
-            i += 1;
-        } else {
-            let inserted = format!("{}", c);
-            b.replace(Interval::new(i, i), Rope::from(inserted));
-        }
-    }
+	let mut i = 0;
+	for c in s.chars() {
+		if c == '-' {
+			i += 1;
+		} else if c == '!' {
+			b.delete(Interval::new(i, i + 1));
+			i += 1;
+		} else {
+			let inserted = format!("{}", c);
+			b.replace(Interval::new(i, i), Rope::from(inserted));
+		}
+	}
 
-    b.build()
+	b.build()
 }

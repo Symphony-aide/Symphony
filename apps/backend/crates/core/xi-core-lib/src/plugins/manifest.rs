@@ -27,102 +27,102 @@ use crate::syntax::{LanguageDefinition, LanguageId};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct PluginDescription {
-    pub name: String,
-    pub version: String,
-    #[serde(default)]
-    pub scope: PluginScope,
-    // more metadata ...
-    /// path to plugin executable
-    #[serde(deserialize_with = "platform_exec_path")]
-    pub exec_path: PathBuf,
-    /// Events that cause this plugin to run
-    #[serde(default)]
-    pub activations: Vec<PluginActivation>,
-    #[serde(default)]
-    pub commands: Vec<Command>,
-    #[serde(default)]
-    pub languages: Vec<LanguageDefinition>,
+	pub name: String,
+	pub version: String,
+	#[serde(default)]
+	pub scope: PluginScope,
+	// more metadata ...
+	/// path to plugin executable
+	#[serde(deserialize_with = "platform_exec_path")]
+	pub exec_path: PathBuf,
+	/// Events that cause this plugin to run
+	#[serde(default)]
+	pub activations: Vec<PluginActivation>,
+	#[serde(default)]
+	pub commands: Vec<Command>,
+	#[serde(default)]
+	pub languages: Vec<LanguageDefinition>,
 }
 
 fn platform_exec_path<'de, D: Deserializer<'de>>(deserializer: D) -> Result<PathBuf, D::Error> {
-    let exec_path = PathBuf::deserialize(deserializer)?;
-    if cfg!(windows) {
-        Ok(exec_path.with_extension("exe"))
-    } else {
-        Ok(exec_path)
-    }
+	let exec_path = PathBuf::deserialize(deserializer)?;
+	if cfg!(windows) {
+		Ok(exec_path.with_extension("exe"))
+	} else {
+		Ok(exec_path)
+	}
 }
 
 /// `PluginActivation`s represent events that trigger running a plugin.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum PluginActivation {
-    /// Always run this plugin, when available.
-    Autorun,
-    /// Run this plugin if the provided SyntaxDefinition is active.
-    #[allow(dead_code)]
-    OnSyntax(LanguageId),
-    /// Run this plugin in response to a given command.
-    #[allow(dead_code)]
-    OnCommand,
+	/// Always run this plugin, when available.
+	Autorun,
+	/// Run this plugin if the provided SyntaxDefinition is active.
+	#[allow(dead_code)]
+	OnSyntax(LanguageId),
+	/// Run this plugin in response to a given command.
+	#[allow(dead_code)]
+	OnCommand,
 }
 
 /// Describes the scope of events a plugin receives.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum PluginScope {
-    /// The plugin receives events from multiple buffers.
-    Global,
-    /// The plugin receives events for a single buffer.
-    BufferLocal,
-    /// The plugin is launched in response to a command, and receives no
-    /// further updates.
-    SingleInvocation,
+	/// The plugin receives events from multiple buffers.
+	Global,
+	/// The plugin receives events for a single buffer.
+	BufferLocal,
+	/// The plugin is launched in response to a command, and receives no
+	/// further updates.
+	SingleInvocation,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 /// Represents a custom command provided by a plugin.
 pub struct Command {
-    /// Human readable title, for display in (for example) a menu.
-    pub title: String,
-    /// A short description of the command.
-    pub description: String,
-    /// Template of the command RPC as it should be sent to the plugin.
-    pub rpc_cmd: PlaceholderRpc,
-    /// A list of `CommandArgument`s, which the client should use to build the RPC.
-    pub args: Vec<CommandArgument>,
+	/// Human readable title, for display in (for example) a menu.
+	pub title: String,
+	/// A short description of the command.
+	pub description: String,
+	/// Template of the command RPC as it should be sent to the plugin.
+	pub rpc_cmd: PlaceholderRpc,
+	/// A list of `CommandArgument`s, which the client should use to build the RPC.
+	pub args: Vec<CommandArgument>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 /// A user provided argument to a plugin command.
 pub struct CommandArgument {
-    /// A human readable name for this argument, for use as placeholder
-    /// text or equivelant.
-    pub title: String,
-    /// A short (single sentence) description of this argument's use.
-    pub description: String,
-    pub key: String,
-    pub arg_type: ArgumentType,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    /// If `arg_type` is `Choice`, `options` must contain a list of options.
-    pub options: Option<Vec<ArgumentOption>>,
+	/// A human readable name for this argument, for use as placeholder
+	/// text or equivelant.
+	pub title: String,
+	/// A short (single sentence) description of this argument's use.
+	pub description: String,
+	pub key: String,
+	pub arg_type: ArgumentType,
+	#[serde(skip_serializing_if = "Option::is_none")]
+	/// If `arg_type` is `Choice`, `options` must contain a list of options.
+	pub options: Option<Vec<ArgumentOption>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ArgumentType {
-    Number,
-    Int,
-    PosInt,
-    Bool,
-    String,
-    Choice,
+	Number,
+	Int,
+	PosInt,
+	Bool,
+	String,
+	Choice,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 /// Represents an option for a user-selectable argument.
 pub struct ArgumentOption {
-    pub title: String,
-    pub value: Value,
+	pub title: String,
+	pub value: Value,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -132,111 +132,126 @@ pub struct ArgumentOption {
 /// This is the type used for custom plugin commands, which may have arbitrary
 /// method names and parameters.
 pub struct PlaceholderRpc {
-    pub method: String,
-    pub params: Value,
-    pub rpc_type: RpcType,
+	pub method: String,
+	pub params: Value,
+	pub rpc_type: RpcType,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum RpcType {
-    Notification,
-    Request,
+	Notification,
+	Request,
 }
 
 impl Command {
-    pub fn new<S, V>(title: S, description: S, rpc_cmd: PlaceholderRpc, args: V) -> Self
-    where
-        S: AsRef<str>,
-        V: Into<Option<Vec<CommandArgument>>>,
-    {
-        let title = title.as_ref().to_owned();
-        let description = description.as_ref().to_owned();
-        let args = args.into().unwrap_or_default();
-        Command { title, description, rpc_cmd, args }
-    }
+	pub fn new<S, V>(title: S, description: S, rpc_cmd: PlaceholderRpc, args: V) -> Self
+	where
+		S: AsRef<str>,
+		V: Into<Option<Vec<CommandArgument>>>,
+	{
+		let title = title.as_ref().to_owned();
+		let description = description.as_ref().to_owned();
+		let args = args.into().unwrap_or_default();
+		Command {
+			title,
+			description,
+			rpc_cmd,
+			args,
+		}
+	}
 }
 
 impl CommandArgument {
-    pub fn new<S: AsRef<str>>(
-        title: S,
-        description: S,
-        key: S,
-        arg_type: ArgumentType,
-        options: Option<Vec<ArgumentOption>>,
-    ) -> Self {
-        let key = key.as_ref().to_owned();
-        let title = title.as_ref().to_owned();
-        let description = description.as_ref().to_owned();
-        if arg_type == ArgumentType::Choice {
-            assert!(options.is_some())
-        }
-        CommandArgument { title, description, key, arg_type, options }
-    }
+	pub fn new<S: AsRef<str>>(
+		title: S,
+		description: S,
+		key: S,
+		arg_type: ArgumentType,
+		options: Option<Vec<ArgumentOption>>,
+	) -> Self {
+		let key = key.as_ref().to_owned();
+		let title = title.as_ref().to_owned();
+		let description = description.as_ref().to_owned();
+		if arg_type == ArgumentType::Choice {
+			assert!(options.is_some())
+		}
+		CommandArgument {
+			title,
+			description,
+			key,
+			arg_type,
+			options,
+		}
+	}
 }
 
 impl ArgumentOption {
-    pub fn new<S: AsRef<str>, V: Serialize>(title: S, value: V) -> Self {
-        let title = title.as_ref().to_owned();
-        let value = serde_json::to_value(value).unwrap();
-        ArgumentOption { title, value }
-    }
+	pub fn new<S: AsRef<str>, V: Serialize>(title: S, value: V) -> Self {
+		let title = title.as_ref().to_owned();
+		let value = serde_json::to_value(value).unwrap();
+		ArgumentOption { title, value }
+	}
 }
 
 impl PlaceholderRpc {
-    pub fn new<S, V>(method: S, params: V, request: bool) -> Self
-    where
-        S: AsRef<str>,
-        V: Into<Option<Value>>,
-    {
-        let method = method.as_ref().to_owned();
-        let params = params.into().unwrap_or(json!({}));
-        let rpc_type = if request { RpcType::Request } else { RpcType::Notification };
+	pub fn new<S, V>(method: S, params: V, request: bool) -> Self
+	where
+		S: AsRef<str>,
+		V: Into<Option<Value>>,
+	{
+		let method = method.as_ref().to_owned();
+		let params = params.into().unwrap_or(json!({}));
+		let rpc_type = if request { RpcType::Request } else { RpcType::Notification };
 
-        PlaceholderRpc { method, params, rpc_type }
-    }
+		PlaceholderRpc {
+			method,
+			params,
+			rpc_type,
+		}
+	}
 
-    pub fn is_request(&self) -> bool {
-        self.rpc_type == RpcType::Request
-    }
+	pub fn is_request(&self) -> bool {
+		self.rpc_type == RpcType::Request
+	}
 
-    /// Returns a reference to the placeholder's params.
-    pub fn params_ref(&self) -> &Value {
-        &self.params
-    }
+	/// Returns a reference to the placeholder's params.
+	pub fn params_ref(&self) -> &Value {
+		&self.params
+	}
 
-    /// Returns a mutable reference to the placeholder's params.
-    pub fn params_ref_mut(&mut self) -> &mut Value {
-        &mut self.params
-    }
+	/// Returns a mutable reference to the placeholder's params.
+	pub fn params_ref_mut(&mut self) -> &mut Value {
+		&mut self.params
+	}
 
-    /// Returns a reference to the placeholder's method.
-    pub fn method_ref(&self) -> &str {
-        &self.method
-    }
+	/// Returns a reference to the placeholder's method.
+	pub fn method_ref(&self) -> &str {
+		&self.method
+	}
 }
 
 impl PluginDescription {
-    /// Returns `true` if this plugin is globally scoped, else `false`.
-    pub fn is_global(&self) -> bool {
-        matches!(self.scope, PluginScope::Global)
-    }
+	/// Returns `true` if this plugin is globally scoped, else `false`.
+	pub fn is_global(&self) -> bool {
+		matches!(self.scope, PluginScope::Global)
+	}
 }
 
 impl Default for PluginScope {
-    fn default() -> Self {
-        PluginScope::BufferLocal
-    }
+	fn default() -> Self {
+		PluginScope::BufferLocal
+	}
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use serde_json;
+	use super::*;
+	use serde_json;
 
-    #[test]
-    fn platform_exec_path() {
-        let json = r#"
+	#[test]
+	fn platform_exec_path() {
+		let json = r#"
         {
             "name": "test_plugin",
             "version": "0.0.0",
@@ -248,17 +263,17 @@ mod tests {
         }
         "#;
 
-        let plugin_desc: PluginDescription = serde_json::from_str(json).unwrap();
-        if cfg!(windows) {
-            assert!(plugin_desc.exec_path.ends_with("binary.exe"));
-        } else {
-            assert!(plugin_desc.exec_path.ends_with("binary"));
-        }
-    }
+		let plugin_desc: PluginDescription = serde_json::from_str(json).unwrap();
+		if cfg!(windows) {
+			assert!(plugin_desc.exec_path.ends_with("binary.exe"));
+		} else {
+			assert!(plugin_desc.exec_path.ends_with("binary"));
+		}
+	}
 
-    #[test]
-    fn test_serde_command() {
-        let json = r#"
+	#[test]
+	fn test_serde_command() {
+		let json = r#"
     {
         "title": "Test Command",
         "description": "Passes the current test",
@@ -293,10 +308,10 @@ mod tests {
     }
         "#;
 
-        let command: Command = serde_json::from_str(json).unwrap();
-        assert_eq!(command.title, "Test Command");
-        assert_eq!(command.args[0].arg_type, ArgumentType::Bool);
-        assert_eq!(command.rpc_cmd.params_ref()["non_arg"], "plugin supplied value");
-        assert_eq!(command.args[1].options.clone().unwrap()[1].value, json!(10));
-    }
+		let command: Command = serde_json::from_str(json).unwrap();
+		assert_eq!(command.title, "Test Command");
+		assert_eq!(command.args[0].arg_type, ArgumentType::Bool);
+		assert_eq!(command.rpc_cmd.params_ref()["non_arg"], "plugin supplied value");
+		assert_eq!(command.args[1].options.clone().unwrap()[1].value, json!(10));
+	}
 }

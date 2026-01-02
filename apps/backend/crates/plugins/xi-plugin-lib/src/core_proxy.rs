@@ -20,66 +20,69 @@ use xi_rpc::{RemoteError, RpcCtx, RpcPeer};
 
 #[derive(Clone)]
 pub struct CoreProxy {
-    plugin_id: PluginId,
-    peer: RpcPeer,
+	plugin_id: PluginId,
+	peer: RpcPeer,
 }
 
 impl CoreProxy {
-    pub fn new(plugin_id: PluginId, rpc_ctx: &RpcCtx) -> Self {
-        CoreProxy { plugin_id, peer: rpc_ctx.get_peer().clone() }
-    }
+	pub fn new(plugin_id: PluginId, rpc_ctx: &RpcCtx) -> Self {
+		CoreProxy {
+			plugin_id,
+			peer: rpc_ctx.get_peer().clone(),
+		}
+	}
 
-    pub fn add_status_item(&mut self, view_id: ViewId, key: &str, value: &str, alignment: &str) {
-        let params = json!({
-            "plugin_id": self.plugin_id,
-            "view_id": view_id,
-            "key": key,
-            "value": value,
-            "alignment": alignment
-        });
+	pub fn add_status_item(&mut self, view_id: ViewId, key: &str, value: &str, alignment: &str) {
+		let params = json!({
+			"plugin_id": self.plugin_id,
+			"view_id": view_id,
+			"key": key,
+			"value": value,
+			"alignment": alignment
+		});
 
-        self.peer.send_rpc_notification("add_status_item", &params)
-    }
+		self.peer.send_rpc_notification("add_status_item", &params)
+	}
 
-    pub fn update_status_item(&mut self, view_id: ViewId, key: &str, value: &str) {
-        let params = json!({
-            "plugin_id": self.plugin_id,
-            "view_id": view_id,
-            "key": key,
-            "value": value
-        });
+	pub fn update_status_item(&mut self, view_id: ViewId, key: &str, value: &str) {
+		let params = json!({
+			"plugin_id": self.plugin_id,
+			"view_id": view_id,
+			"key": key,
+			"value": value
+		});
 
-        self.peer.send_rpc_notification("update_status_item", &params)
-    }
+		self.peer.send_rpc_notification("update_status_item", &params)
+	}
 
-    pub fn remove_status_item(&mut self, view_id: ViewId, key: &str) {
-        let params = json!({
-            "plugin_id": self.plugin_id,
-            "view_id": view_id,
-            "key": key
-        });
+	pub fn remove_status_item(&mut self, view_id: ViewId, key: &str) {
+		let params = json!({
+			"plugin_id": self.plugin_id,
+			"view_id": view_id,
+			"key": key
+		});
 
-        self.peer.send_rpc_notification("remove_status_item", &params)
-    }
+		self.peer.send_rpc_notification("remove_status_item", &params)
+	}
 
-    pub fn display_hover(
-        &mut self,
-        view_id: ViewId,
-        request_id: usize,
-        result: &Result<Hover, RemoteError>,
-    ) {
-        let params = json!({
-            "plugin_id": self.plugin_id,
-            "request_id": request_id,
-            "result": result,
-            "view_id": view_id
-        });
+	pub fn display_hover(
+		&mut self,
+		view_id: ViewId,
+		request_id: usize,
+		result: &Result<Hover, RemoteError>,
+	) {
+		let params = json!({
+			"plugin_id": self.plugin_id,
+			"request_id": request_id,
+			"result": result,
+			"view_id": view_id
+		});
 
-        self.peer.send_rpc_notification("show_hover", &params);
-    }
+		self.peer.send_rpc_notification("show_hover", &params);
+	}
 
-    pub fn schedule_idle(&mut self, view_id: ViewId) {
-        let token: usize = view_id.into();
-        self.peer.schedule_idle(token);
-    }
+	pub fn schedule_idle(&mut self, view_id: ViewId) {
+		let token: usize = view_id.into();
+		self.peer.schedule_idle(token);
+	}
 }

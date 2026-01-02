@@ -19,14 +19,14 @@ use magenta::{Status, Vmo};
 
 // TODO: move this into magenta-rs?
 pub fn read_entire_vmo(vmo: &Vmo) -> Result<Vec<u8>, Status> {
-    let size = vmo.get_size()?;
-    // TODO: how fishy is this cast to usize?
-    let mut buffer: Vec<u8> = Vec::with_capacity(size as usize);
-    // TODO: consider using unsafe .set_len() to get uninitialized memory
-    for _ in 0..size {
-        buffer.push(0);
-    }
-    let bytes_read = vmo.read(buffer.as_mut_slice(), 0)?;
-    buffer.truncate(bytes_read);
-    Ok(buffer)
+	let size = vmo.get_size()?;
+	// TODO: how fishy is this cast to usize?
+	let mut buffer: Vec<u8> = Vec::with_capacity(size as usize);
+	// TODO: consider using unsafe .set_len() to get uninitialized memory
+	for _ in 0..size {
+		buffer.push(0);
+	}
+	let bytes_read = vmo.read(buffer.as_mut_slice(), 0)?;
+	buffer.truncate(bytes_read);
+	Ok(buffer)
 }

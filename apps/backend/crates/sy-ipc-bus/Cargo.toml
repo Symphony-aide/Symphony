@@ -1,0 +1,66 @@
+[package]
+name = "sy-ipc-bus"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "High-performance message bus with pattern-based routing, correlation, and pub/sub for Symphony AIDE"
+keywords = ["symphony", "message-bus", "routing", "pubsub", "correlation"]
+categories = ["development-tools", "network-programming", "asynchronous"]
+
+[lints]
+workspace = true
+
+[features]
+# Default runs only fast unit tests
+default = ["unit"]
+# Individual test category features
+unit = []
+integration = []
+performance = []
+load = []
+pubsub = []
+correlation = []
+health = []
+
+[dependencies]
+# Symphony dependencies
+sy-commons = { path = "../utils/sy-commons" }
+sy-ipc-protocol = { path = "../sy-ipc-protocol" }
+sy-ipc-transport = { path = "../sy-ipc-transport" }
+
+# Async runtime and traits
+tokio.workspace = true
+async-trait.workspace = true
+
+# Concurrent data structures
+dashmap.workspace = true
+
+# Pattern matching
+regex.workspace = true
+
+# Serialization
+serde.workspace = true
+serde_json.workspace = true
+
+# Error handling
+thiserror.workspace = true
+anyhow.workspace = true
+
+# Utilities
+uuid.workspace = true
+chrono.workspace = true
+
+# Logging
+tracing.workspace = true
+
+[dev-dependencies]
+# MANDATORY for factory-based testing
+fake = { version = "2.9", features = ["derive", "uuid", "chrono"] }
+
+# Testing frameworks
+rstest.workspace = true
+tokio-test.workspace = true
+proptest.workspace = true
+criterion.workspace = true
+tempfile.workspace = true

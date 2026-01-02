@@ -44,5 +44,5 @@ pub use crate::lsp_plugin::LspPlugin;
 pub use crate::types::Config;
 
 pub fn start_mainloop<P: Plugin>(plugin: &mut P) {
-    mainloop(plugin).unwrap();
+	mainloop(plugin).unwrap();
 }
