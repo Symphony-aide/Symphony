@@ -96,9 +96,13 @@
 
 pub mod config;
 pub mod error;
+pub mod event_stream;
 pub mod jsonrpc_client;
 pub mod process;
 pub mod types;
+
+// Test utilities (available during testing and for integration tests)
+pub mod test_utils;
 
 // Re-export main types for convenience
 pub use config::XiEditorConfig;

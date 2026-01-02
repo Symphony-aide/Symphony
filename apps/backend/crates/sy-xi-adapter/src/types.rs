@@ -57,6 +57,19 @@ pub struct JsonRpcNotification {
     pub params: Option<serde_json::Value>,
 }
 
+/// XI-editor notification from STDOUT stream
+/// 
+/// This represents notifications sent by XI-editor through STDOUT,
+/// which are used for event streaming to Symphony components.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct XiNotification {
+    /// Method name (event type)
+    pub method: String,
+    /// Parameters (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub params: Option<serde_json::Value>,
+}
+
 /// JSON-RPC response structure
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct JsonRpcResponse {
