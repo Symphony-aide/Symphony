@@ -33,28 +33,133 @@
 - Transport layer implementation (tested in F004)
 - Message protocol implementation (tested in F003)
 
-## Testing Strategy Integration
+## Phase-Specific Testing Strategy
 
-### Layer 1: Unit Tests (Rust) - <100ms
-**Focus**: Component functionality, error handling, state management
-- Test JSON-RPC client with mock XI-editor responses
-- Verify event parsing and routing logic
-- Test state synchronization algorithms
-- Use mock XI-editor process for isolation
+### Phase 1: XI-editor Process Management Testing ✅ COMPLETE
 
-### Layer 2: Integration Tests (Real XI-editor) - <5s
-**Focus**: Actual XI-editor integration, performance validation, failure scenarios
-- Test with real XI-editor binary process
-- Verify JSON-RPC protocol compliance
-- Test event streaming under load
-- Validate process failure recovery
+#### Unit Tests (`tests/unit/process_manager_test.rs`)
+```rust
+#[cfg(test)]
+mod process_manager_tests {
+    use super::*;
+    use tokio::time::{timeout, Duration};
+    
+    #[tokio::test]
+    async fn test_process_startup_success() 
+    
+    #[tokio::test]
+    async fn test_health_monitoring() 
+    
+    #[tokio::test]
+    async fn test_automatic_restart() 
+```
 
-### Layer 3: Pre-validation Tests (Performance) - <1ms
-**Focus**: Communication performance, latency measurement, throughput testing
-- Test JSON-RPC latency meets <1ms target
-- Verify event streaming latency <10ms
-- Test state synchronization speed
-- Ensure performance regression detection
+#### Integration Tests (`tests/integration/process_integration_test.rs`)
+```rust
+#[tokio::test]
+async fn test_real_xi_editor_startup() 
+```
+
+### Phase 2: JSON-RPC Client Testing ✅ COMPLETE
+
+#### Unit Tests (`tests/unit/jsonrpc_client_test.rs`)
+```rust
+#[cfg(test)]
+mod jsonrpc_client_tests {
+    use super::*;
+    use tokio::io::{AsyncWriteExt, duplex};
+    
+    #[tokio::test]
+    async fn test_request_response_correlation() 
+    
+    #[tokio::test]
+    async fn test_xi_editor_operations() 
+    
+    #[tokio::test]
+    async fn test_performance_monitoring()
+```
+
+#### Performance Tests (`tests/benchmarks/jsonrpc_bench.rs`)
+```rust
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
+
+fn benchmark_jsonrpc_latency(c: &mut Criterion) 
+
+criterion_group!(benches, benchmark_jsonrpc_latency);
+criterion_main!(benches);
+```
+
+### Phase 3: Event Streaming Testing 🔄 IN PROGRESS
+
+#### Unit Tests (`tests/unit/event_stream_test.rs`)
+```rust
+#[cfg(test)]
+mod event_stream_tests 
+    
+    #[tokio::test]
+    async fn test_event_delivery_performance() 
+    
+    #[tokio::test]
+    async fn test_malformed_event_handling() 
+```
+
+#### Integration Tests (`tests/integration/event_integration_test.rs`)
+```rust
+#[tokio::test]
+async fn test_real_xi_editor_events() 
+```
+
+### Phase 4: State Synchronization Testing 🔄 PENDING
+
+#### Unit Tests (`tests/unit/state_sync_test.rs`)
+```rust
+#[cfg(test)]
+mod state_sync_tests 
+
+    #[tokio::test]
+    async fn test_file_change_detection() 
+    
+    #[tokio::test]
+    async fn test_state_consistency() 
+```
+
+### Phase 5: XI-editor Adapter Testing 🔄 PENDING
+
+#### Unit Tests (`tests/unit/xi_adapter_test.rs`)
+```rust
+#[cfg(test)]
+mod xi_adapter_tests {
+    use super::*;
+    
+    #[tokio::test]
+    async fn test_text_editing_port_implementation() 
+    #[tokio::test]
+    async fn test_error_translation() 
+    
+    #[tokio::test]
+    async fn test_performance_optimization() 
+```
+
+### Phase 6: Integration and Testing 🔄 PENDING
+
+#### End-to-End Tests (`tests/integration/full_system_test.rs`)
+```rust
+#[tokio::test]
+async fn test_complete_bridge_system() 
+
+#[tokio::test]
+async fn test_system_reliability() 
+```
+
+#### Performance Benchmarks (`tests/benchmarks/full_system_bench.rs`)
+```rust
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
+
+fn benchmark_end_to_end_performance(c: &mut Criterion) 
+
+criterion_group!(benches, benchmark_end_to_end_performance);
+criterion_main!(benches);
+```
 
 ## Mock vs Real Decision Matrix
 

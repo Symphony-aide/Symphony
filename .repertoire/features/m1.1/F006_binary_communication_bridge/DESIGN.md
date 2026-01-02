@@ -811,10 +811,438 @@ impl BufferMetadata {
             pristine: true,
             cursor_positions: Vec::new(),
             selections: Vec::new(),
-            last_updated: chrono::Utc::now(),
+            last_updated: ## Phase-Specific Design Details
+
+### Phase 1: XI-editor Process Management - COMPLETE ✅
+
+#### Process Configuration System
+```rust
+#[derive(Debug, Clone)]
+pub struct XiEditorConfig {
+    pub xi_editor_path: PathBuf,
+    pub args: Vec<String>,
+    pub working_directory: Option<PathBuf>,
+    pub environment: HashMap<String, String>,
+    pub max_restarts: usize,
+    pub startup_timeout: Duration,
+    pub health_check_interval: Duration,
+    pub graceful_shutdown_timeout: Duration,
+}
+
+impl Default for XiEditorConfig {
+    fn default() -> Self {
+        Self {
+            xi_editor_path: PathBuf::from("xi-core"),
+            args: vec!["--rpc".to_string()],
+            working_directory: None,
+            environment: HashMap::new(),
+            max_restarts: 5,
+            startup_timeout: Duration::from_secs(10),
+            health_check_interval: Duration::from_secs(5),
+            graceful_shutdown_timeout: Duration::from_secs(5),
         }
     }
 }
+```
+
+#### Health Monitoring Implementation
+```rust
+pub struct HealthMonitor {
+    last_heartbeat: Arc<RwLock<Instant>>,
+    failure_count: AtomicUsize,
+    monitoring_task: Option<JoinHandle<()>>,
+}
+
+impl HealthMonitor {
+    pub async fn start_monitoring(&mut self, process_manager: Arc<XiEditorProcessManager>) {
+        let last_heartbeat = self.last_heartbeat.clone();
+        let failure_count = self.failure_count.clone();
+        
+        self.monitoring_task = Some(tokio::spawn(async move {
+            let mut interval = tokio::time::interval(Duration::from_secs(5));
+            
+            loop {
+                interval.tick().await;
+                
+                // Check if process is still responsive
+                if !process_manager.is_running().await {
+                    let failures = failure_count.fetch_add(1, Ordering::Relaxed);
+                    tracing::error!("XI-editor health check failed (failure #{failures})");
+                    
+                    // Attempt restart if under failure limit
+                    if failures < 5 {
+                        if let Err(e) = process_manager.restart().await {
+                            tracing::error!("Failed to restart XI-editor: {}", e);
+                        }
+                    } else {
+                        tracing::error!("XI-editor exceeded maximum restart attempts");
+                        break;
+                    }
+                }
+            }
+        }));
+    }
+}
+```
+
+### Phase 2: JSON-RPC Client - COMPLETE ✅
+
+#### Request Correlation System
+```rust
+pub struct RequestCorrelation {
+    pending_requests: Arc<Mutex<HashMap<u64, oneshot::Sender<JsonRpcResponse>>>>,
+    request_counter: AtomicU64,
+    timeout_duration: Duration,
+}
+
+impl RequestCorrelation {
+    pub async fn send_request(&self, request: JsonRpcRequest) -> Result<JsonRpcResponse, XiRpcError> {
+        let request_id = self.request_counter.fetch_add(1, Ordering::Relaxed);
+        let (response_tx, response_rx) = oneshot::channel();
+        
+        // Store correlation
+        {
+            let mut pending = self.pending_requests.lock().await;
+            pending.insert(request_id, response_tx);
+        }
+        
+        // Send request with timeout
+        let response = tokio::time::timeout(self.timeout_duration, response_rx)
+            .await
+            .map_err(|_| XiRpcError::RequestTimeout)?
+            .map_err(|_| XiRpcError::ResponseChannelClosed)?;
+        
+        Ok(response)
+    }
+    
+    pub async fn handle_response(&self, response: JsonRpcResponse) -> Result<(), XiRpcError> {
+        if let Some(request_id) = response.id.as_u64() {
+            let mut pending = self.pending_requests.lock().await;
+            if let Some(response_tx) = pending.remove(&request_id) {
+                let _ = response_tx.send(response);
+            }
+        }
+        Ok(())
+    }
+}
+```
+
+#### XI-editor Operation Wrappers
+```rust
+impl XiJsonRpcClient {
+    // Buffer management operations
+    pub async fn new_view(&self, file_path: Option<&str>) -> Result<String, XiRpcError> {
+        let params = file_path.map(|path| serde_json::json!({ "file_path": path }));
+        let result = self.call("new_view", params).await?;
+        
+        result.as_str()
+            .ok_or_else(|| XiRpcError::InvalidResponse("Expected string view_id".to_string()))
+            .map(|s| s.to_string())
+    }
+    
+    // Text editing operations
+    pub async fn insert(&self, view_id: &str, chars: &str) -> Result<(), XiRpcError> {
+        let params = serde_json::json!({
+            "view_id": view_id,
+            "chars": chars
+        });
+        self.call("insert", Some(params)).await?;
+        Ok(())
+    }
+    
+    // Cursor and selection operations
+    pub async fn click(&self, view_id: &str, line: u64, col: u64) -> Result<(), XiRpcError> {
+        let params = serde_json::json!({
+            "view_id": view_id,
+            "line": line,
+            "col": col
+        });
+        self.call("click", Some(params)).await?;
+        Ok(())
+    }
+    
+    // File operations
+    pub async fn save(&self, view_id: &str, file_path: Option<&str>) -> Result<(), XiRpcError> {
+        let mut params = serde_json::json!({ "view_id": view_id });
+        if let Some(path) = file_path {
+            params["file_path"] = serde_json::Value::String(path.to_string());
+        }
+        self.call("save", Some(params)).await?;
+        Ok(())
+    }
+}
+```
+
+### Phase 3: Event Streaming - IN PROGRESS 🔄
+
+#### Event Stream Architecture
+```rust
+pub struct XiEventStream {
+    ...
+}
+
+#[derive(Debug, Default)]
+pub struct EventParsingStats {
+    pub total_events: AtomicU64,
+    pub parse_errors: AtomicU64,
+    pub avg_parse_time: AtomicU64, // nanoseconds
+    pub max_parse_time: AtomicU64, // nanoseconds
+}
+
+impl XiEventStream {
+    pub async fn start_processing(&mut self) -> Result<(), EventStreamError> 
+    
+    async fn process_message(&self, line: &str) -> Result<(), EventStreamError> 
+```
+
+#### XI-editor Event Types
+```rust
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "method", content = "params")]
+pub enum XiEvent {
+    Update {
+        view_id: String,
+        update: ViewUpdate,
+        rev: u64,
+    },
+    ScrollTo {
+        view_id: String,
+        line: u64,
+        col: u64,
+    },
+    ConfigChanged {
+        view_id: String,
+        changes: serde_json::Value,
+    },
+    ThemeChanged {
+        name: String,
+        theme: serde_json::Value,
+    },
+    AvailablePlugins {
+        view_id: String,
+        plugins: Vec<PluginDescription>,
+    },
+    PluginStarted {
+        view_id: String,
+        plugin: String,
+    },
+    PluginStopped {
+        view_id: String,
+        plugin: String,
+        code: i32,
+    },
+    DefUpdate {
+        view_id: String,
+        available_plugins: Vec<String>,
+    },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ViewUpdate {
+    pub lines: Vec<Line>,
+    pub pristine: bool,
+    pub cursor: Vec<u64>,
+    pub selection: Vec<Selection>,
+    pub scrollto: Option<ScrollPosition>,
+}
+```
+
+### Phase 4: State Synchronization - PENDING 🔄
+
+#### Buffer Metadata Cache Design
+```rust
+pub struct BufferMetadataCache {
+    cache: Arc<RwLock<LruCache<String, BufferMetadata>>>,
+    cache_stats: CacheStats,
+    max_size: usize,
+    ttl: Duration,
+}
+
+#[derive(Debug, Clone)]
+pub struct BufferMetadata {
+    pub view_id: String,
+    pub file_path: Option<PathBuf>,
+    pub revision: u64,
+    pub pristine: bool,
+    pub cursor_positions: Vec<u64>,
+    pub selections: Vec<Selection>,
+    pub last_updated: chrono::DateTime<chrono::Utc>,
+    pub content_hash: Option<u64>, // For change detection
+}
+
+impl BufferMetadataCache {
+    pub async fn get(&self, view_id: &str) -> Option<BufferMetadata> {
+        let cache = self.cache.read().await;
+        let metadata = cache.get(view_id).cloned();
+        
+        if metadata.is_some() {
+            self.cache_stats.hits.fetch_add(1, Ordering::Relaxed);
+        } else {
+            self.cache_stats.misses.fetch_add(1, Ordering::Relaxed);
+        }
+        
+        metadata
+    }
+    
+    pub async fn update(&self, view_id: &str, metadata: BufferMetadata) {
+        let mut cache = self.cache.write().await;
+        cache.put(view_id.to_string(), metadata);
+        self.cache_stats.updates.fetch_add(1, Ordering::Relaxed);
+    }
+    
+    pub fn hit_rate(&self) -> f64 {
+        let hits = self.cache_stats.hits.load(Ordering::Relaxed) as f64;
+        let total = hits + self.cache_stats.misses.load(Ordering::Relaxed) as f64;
+        
+        if total > 0.0 {
+            hits / total
+        } else {
+            0.0
+        }
+    }
+}
+```
+
+#### File System Synchronization
+```rust
+pub struct FileSystemSynchronizer {
+    watcher: Option<notify::RecommendedWatcher>,
+    xi_client: Arc<XiJsonRpcClient>,
+    sync_events: mpsc::UnboundedSender<SyncEvent>,
+    watched_paths: HashSet<PathBuf>,
+}
+
+impl FileSystemSynchronizer 
+```
+
+### Phase 5: XI-editor Adapter - PENDING 🔄
+
+#### TextEditingPort Implementation
+```rust
+pub struct XiEditorAdapter {
+    process_manager: Arc<XiEditorProcessManager>,
+    rpc_client: Arc<XiJsonRpcClient>,
+    event_stream: Arc<Mutex<XiEventStream>>,
+    state_synchronizer: Arc<StateSynchronizer>,
+    performance_monitor: PerformanceMonitor,
+}
+
+#[async_trait]
+impl TextEditingPort for XiEditorAdapter {
+    async fn create_buffer(&self, file_path: Option<&Path>) -> Result<BufferId, TextEditingError> 
+    
+    async fn insert_text(&self, buffer_id: &BufferId, position: TextPosition, text: &str) -> Result<(), TextEditingError> 
+    
+    async fn save_buffer(&self, buffer_id: &BufferId, file_path: Option<&Path>) -> Result<(), TextEditingError> 
+    
+    async fn get_buffer_content(&self, buffer_id: &BufferId) -> Result<String, TextEditingError> {
+        // Get from cache first, fallback to XI-editor query
+        if let Some(metadata) = self.state_synchronizer.get_buffer_info(buffer_id.as_str()).await {
+            if let Some(content) = metadata.cached_content {
+                return Ok(content);
+            }
+        }
+        
+        // Query XI-editor for content
+        let result = self.rpc_client.call("get_buffer_content", Some(serde_json::json!({
+            "view_id": buffer_id.as_str()
+        }))).await
+            .map_err(|e| TextEditingError::OperationFailed(e.to_string()))?;
+        
+        result.as_str()
+            .ok_or_else(|| TextEditingError::InvalidResponse("Expected string content".to_string()))
+            .map(|s| s.to_string())
+    }
+}
+```
+
+### Phase 6: Integration and Testing - PENDING 🔄
+
+#### Complete System Integration
+```rust
+pub struct BinaryCommunicationBridge {
+    process_manager: Arc<XiEditorProcessManager>,
+    rpc_client: Arc<XiJsonRpcClient>,
+    event_stream: Arc<Mutex<XiEventStream>>,
+    state_synchronizer: Arc<StateSynchronizer>,
+    xi_adapter: Arc<XiEditorAdapter>,
+    performance_monitor: Arc<PerformanceMonitor>,
+    health_monitor: Arc<HealthMonitor>,
+}
+
+impl BinaryCommunicationBridge {
+    pub async fn new(config: XiEditorConfig) -> Result<Self, BridgeError> {
+        // Initialize process manager
+        let (process_manager, status_receiver) = XiEditorProcessManager::new(config);
+        let process_manager = Arc::new(process_manager);
+        
+        // Start XI-editor process
+        process_manager.start().await?;
+        
+        // Get process handles
+        let (stdin, stdout, stderr) = process_manager.get_handles().await?;
+        
+        // Initialize JSON-RPC client
+        let rpc_client = Arc::new(XiJsonRpcClient::new(stdin, Duration::from_millis(1000)));
+        
+        // Initialize event stream
+        let (event_stream, event_receiver) = XiEventStream::new(stdout, rpc_client.clone());
+        let event_stream = Arc::new(Mutex::new(event_stream));
+        
+        // Initialize state synchronizer
+        let (state_synchronizer, sync_receiver) = StateSynchronizer::new(rpc_client.clone());
+        let state_synchronizer = Arc::new(state_synchronizer);
+        
+        // Initialize XI-editor adapter
+        let xi_adapter = Arc::new(XiEditorAdapter::new(
+            process_manager.clone(),
+            rpc_client.clone(),
+            event_stream.clone(),
+            state_synchronizer.clone(),
+        ));
+        
+        // Initialize monitoring
+        let performance_monitor = Arc::new(PerformanceMonitor::new());
+        let health_monitor = Arc::new(HealthMonitor::new());
+        
+        // Start background tasks
+        Self::start_background_tasks(
+            event_receiver,
+            sync_receiver,
+            status_receiver,
+            state_synchronizer.clone(),
+            performance_monitor.clone(),
+        ).await;
+        
+        Ok(Self {
+            process_manager,
+            rpc_client,
+            event_stream,
+            state_synchronizer,
+            xi_adapter,
+            performance_monitor,
+            health_monitor,
+        })
+    }
+    
+    pub fn get_text_editing_port(&self) -> Arc<dyn TextEditingPort> {
+        self.xi_adapter.clone()
+    }
+    
+    pub async fn shutdown(&self) -> Result<(), BridgeError> {
+        tracing::info!("Shutting down binary communication bridge");
+        
+        // Stop XI-editor process gracefully
+        self.process_manager.stop().await?;
+        
+        // Clean up resources
+        self.performance_monitor.save_metrics().await?;
+        
+        tracing::info!("Binary communication bridge shutdown complete");
+        Ok(())
+    }
+}
+```
 
 #[derive(Debug, Clone)]
 pub enum SyncEvent {
@@ -855,3 +1283,93 @@ pub enum SyncEvent {
 ---
 
 **Design Complete**: Ready for TESTING phase
+
+## Performance Considerations
+
+### Communication Performance
+- **JSON-RPC Latency**: Target <1ms for request/response cycles
+- **Event Streaming**: Target <10ms for event delivery
+- **State Synchronization**: Target <10ms for consistency updates
+- **Memory Usage**: Efficient buffer caching with LRU eviction
+- **CPU Usage**: Async I/O to prevent blocking operations
+- **Resource Cleanup**: Automatic cleanup of expired state and connections
+
+### Error Handling Strategy
+
+### Error Categories
+1. **Process Errors**: XI-editor startup, crash, or communication failures
+2. **Protocol Errors**: JSON-RPC parsing, serialization, or format issues
+3. **State Errors**: Synchronization conflicts or consistency violations
+4. **Performance Errors**: Timeout, latency, or throughput issues
+
+### Error Recovery Mechanisms
+```rust
+#[derive(Debug, thiserror::Error)]
+pub enum BridgeError {
+    #[error("Process management error: {0}")]
+    ProcessError(#[from] ProcessError),
+    
+    #[error("JSON-RPC communication error: {0}")]
+    RpcError(#[from] XiRpcError),
+    
+    #[error("Event streaming error: {0}")]
+    EventStreamError(#[from] EventStreamError),
+    
+    #[error("State synchronization error: {0}")]
+    SyncError(#[from] SyncError),
+    
+    #[error("Performance threshold exceeded: {operation} took {duration:?} (limit: {limit:?})")]
+    PerformanceError {
+        operation: String,
+        duration: Duration,
+        limit: Duration,
+    },
+}
+
+pub struct ErrorRecoveryStrategy {
+    max_retries: usize,
+    retry_delay: Duration,
+    circuit_breaker: CircuitBreaker,
+}
+
+impl ErrorRecoveryStrategy {
+    pub async fn execute_with_retry<F, T, E>(&self, operation: F) -> Result<T, E>
+    where
+        F: Fn() -> Result<T, E> + Send + Sync,
+        E: std::error::Error + Send + Sync + 'static,
+    {
+        let mut attempts = 0;
+        
+        loop {
+            match operation() {
+                Ok(result) => return Ok(result),
+                Err(e) if attempts < self.max_retries => {
+                    attempts += 1;
+                    tracing::warn!("Operation failed (attempt {}/{}): {}", attempts, self.max_retries, e);
+                    tokio::time::sleep(self.retry_delay * attempts as u32).await;
+                }
+                Err(e) => return Err(e),
+            }
+        }
+    }
+}
+```
+
+## Implementation Phases Summary
+
+| Phase | Status | Duration | Key Deliverables | Performance Targets |
+|-------|--------|----------|------------------|-------------------|
+| 1 | ✅ Complete | 4 hours | Process management, health monitoring | <2s startup, <5s restart |
+| 2 | ✅ Complete | 4 hours | JSON-RPC client, operation wrappers | <1ms latency |
+| 3 | 🔄 Next | 4 hours | Event streaming, STDOUT parsing | <10ms delivery |
+| 4 | 🔄 Pending | 4 hours | State sync, file watching | <10ms consistency |
+| 5 | 🔄 Pending | 4 hours | TextEditingPort implementation | Port compliance |
+| 6 | 🔄 Pending | 4 hours | Integration, testing, validation | All targets met |
+
+**Total Estimated Effort**: 24 hours (3 days)  
+**Current Progress**: 33% complete (8/24 hours)  
+**Next Milestone**: Phase 3 - Event Streaming Implementation  
+
+---
+
+**Design Complete**: Ready for Phase 3 implementation
