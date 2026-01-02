@@ -42,7 +42,7 @@
 //!     
 //!     // Get the content back
 //!     let content = text_editor.get_buffer_content(buffer_id).await?;
-//!     println!("Buffer content: {}", content);
+//!     duck!("Buffer content: {}", content);
 //!     
 //!     Ok(())
 //! }

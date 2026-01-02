@@ -213,7 +213,7 @@ pub trait TextEditingPort: Send + Sync {
 ///     };
 ///     
 ///     let handle = pit.allocate_model(spec).await?;
-///     println!("Allocated model with handle: {:?}", handle);
+///     duck!("Allocated model with handle: {:?}", handle);
 ///     Ok(())
 /// }
 /// ```
@@ -554,7 +554,7 @@ pub trait ExtensionPort: Send + Sync {
 ///     };
 ///     
 ///     let decision = conductor.submit_decision(context).await?;
-///     println!("Conductor chose: {}", decision.choice);
+///     duck!("Conductor chose: {}", decision.choice);
 ///     Ok(())
 /// }
 /// ```
@@ -681,7 +681,7 @@ pub trait ConductorPort: Send + Sync {
 ///     
 ///     // Authoritative creation via OFB Python (single HTTP call)
 ///     let workflow_id = data_port.create_workflow(workflow).await?;
-///     println!("Created workflow: {:?}", workflow_id);
+///     duck!("Created workflow: {:?}", workflow_id);
 ///     Ok(())
 /// }
 /// ```

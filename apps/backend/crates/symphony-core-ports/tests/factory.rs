@@ -16,11 +16,6 @@ impl UUIDTestFactory {
 		let id = safe_generator().next_unique_id();
 		format!("550e8400-e29b-41d4-a716-{:012x}", id)
 	}
-
-	pub fn invalid() -> String {
-		let valid = Self::valid();
-		safe_generator().mutate_to_invalid(&valid)
-	}
 }
 
 /// Factory for generating BufferId test data
@@ -30,10 +25,6 @@ impl BufferIdTestFactory {
 	pub fn valid() -> BufferId {
 		let uuid_str = UUIDTestFactory::valid();
 		BufferId(uuid::Uuid::parse_str(&uuid_str).unwrap())
-	}
-
-	pub fn batch(count: usize) -> Vec<BufferId> {
-		(0..count).map(|_| Self::valid()).collect()
 	}
 }
 
@@ -59,11 +50,6 @@ impl PositionTestFactory {
 
 	pub fn with_line(line: u32) -> Position {
 		let column = safe_generator().number_in_range(0, 1000) as u32;
-		Position { line, column }
-	}
-
-	pub fn with_column(column: u32) -> Position {
-		let line = safe_generator().number_in_range(0, 1000) as u32;
 		Position { line, column }
 	}
 }
@@ -133,6 +119,12 @@ impl ModelSpecTestFactory {
 		spec.name = name.to_string();
 		spec
 	}
+
+	pub fn with_memory(memory_mb: u64) -> ModelSpec {
+		let mut spec = Self::valid();
+		spec.resource_requirements.memory_mb = memory_mb;
+		spec
+	}
 }
 
 /// Factory for generating ExtensionManifest test data
@@ -154,6 +146,18 @@ impl ExtensionManifestTestFactory {
 	pub fn with_type(extension_type: ExtensionType) -> ExtensionManifest {
 		let mut manifest = Self::valid();
 		manifest.extension_type = extension_type;
+		manifest
+	}
+
+	pub fn with_name(name: &str) -> ExtensionManifest {
+		let mut manifest = Self::valid();
+		manifest.name = name.to_string();
+		manifest
+	}
+
+	pub fn with_entry_point(entry_point: &str) -> ExtensionManifest {
+		let mut manifest = Self::valid();
+		manifest.entry_point = entry_point.to_string();
 		manifest
 	}
 }
@@ -229,5 +233,40 @@ impl HealthStatusTestFactory {
 
 	pub fn unknown() -> HealthStatus {
 		HealthStatus::Unknown
+	}
+}
+
+/// Factory for generating WorkflowSpec test data
+pub struct WorkflowSpecTestFactory;
+
+impl WorkflowSpecTestFactory {
+	pub fn valid() -> WorkflowSpec {
+		let id = safe_generator().next_unique_id();
+		WorkflowSpec {
+			name: format!("test-workflow-{}", id),
+			description: format!("Test workflow description {}", id),
+			steps: vec![],
+			timeout: std::time::Duration::from_secs(safe_generator().number_in_range(60, 3600)),
+		}
+	}
+
+	pub fn with_name(name: &str) -> WorkflowSpec {
+		let mut spec = Self::valid();
+		spec.name = name.to_string();
+		spec
+	}
+}
+
+/// Factory for generating ArtifactData test data
+pub struct ArtifactDataTestFactory;
+
+impl ArtifactDataTestFactory {
+	pub fn valid() -> ArtifactData {
+		let id = safe_generator().next_unique_id();
+		ArtifactData {
+			content: format!("test data content {}", id).into_bytes(),
+			content_type: "text/plain".to_string(),
+			metadata: std::collections::HashMap::new(),
+		}
 	}
 }

@@ -596,18 +596,13 @@ pub enum TextEditingEvent {
 		buffer_id: BufferId,
 	},
 	/// View was scrolled
-	ViewScrolled {
-		view_id: ViewId,
-		position: Position,
-	},
+	ViewScrolled { view_id: ViewId, position: Position },
 	/// Cursor moved
 	CursorMoved { view_id: ViewId, position: Position },
 	/// Selection changed
 	SelectionChanged { view_id: ViewId, range: Range },
 	/// Generic notification event
-	Notification {
-		message: String,
-	},
+	Notification { message: String },
 }
 
 /// Binary synchronization events

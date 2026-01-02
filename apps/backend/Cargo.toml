@@ -50,7 +50,7 @@ figment = { version = "0.10", features = ["toml", "env"] }
 # Filesystem and utilities
 directories = "5.0"
 tempfile = "3.0"
-uuid = { version = "1.6", features = ["v4", "serde"] }
+uuid = { version = "1.6", features = ["v4", "v5", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 notify = "6.1"
 
@@ -60,6 +60,10 @@ rstest = "0.18"
 tokio-test = "0.4"
 proptest = "1.0"
 serial_test = "3.0"
+fake = { version = "4.4.0", features = ["derive", "uuid", "chrono"] }
+
+# Path handling
+camino = "1.1"
 
 # Development dependencies (commonly used across sy-* crates)
 # These are typically used in [dev-dependencies] sections
