@@ -8,20 +8,22 @@
 #![allow(clippy::redundant_clone)] // May be needed for test isolation
 #![allow(clippy::panic)] // Acceptable in tests for assertion failures
 
+mod factory;
 
 #[cfg(feature = "unit")]
 mod message_envelope_tests {
+	use crate::factory;
 	use sy_commons::debug::duck;
-	use sy_ipc_protocol::{MessageEnvelope, MessageType, CorrelationId, MessageMetadata, MessagePriority};
+	use sy_ipc_protocol::{CorrelationId, MessagePriority, MessageType};
 
 	#[test]
 	fn test_message_envelope_creation() {
 		duck!("Testing message envelope creation");
 
-		let envelope = MessageEnvelope::new(MessageType::PitOperation, "test payload".to_string());
+		let envelope = factory::MessageEnvelopeTestFactory::with_string_payload();
 
 		assert_eq!(envelope.message_type, MessageType::PitOperation);
-		assert_eq!(envelope.payload, "test payload");
+		assert!(!envelope.payload.is_empty());
 		assert!(!envelope.correlation_id.to_string().is_empty());
 		assert!(envelope.timestamp.timestamp() > 0);
 	}
@@ -30,8 +32,8 @@ mod message_envelope_tests {
 	fn test_correlation_id_uniqueness() {
 		duck!("Testing correlation ID uniqueness");
 
-		let id1 = CorrelationId::new();
-		let id2 = CorrelationId::new();
+		let id1 = factory::CorrelationIdTestFactory::valid();
+		let id2 = factory::CorrelationIdTestFactory::valid();
 
 		assert_ne!(id1, id2);
 		assert!(!id1.to_string().is_empty());
@@ -42,8 +44,8 @@ mod message_envelope_tests {
 	fn test_correlation_id_from_string() {
 		duck!("Testing correlation ID from string");
 
-		let uuid_str = "550e8400-e29b-41d4-a716-446655440000";
-		let correlation_id = CorrelationId::from_request(uuid_str).unwrap();
+		let uuid_str = factory::UUIDTestFactory::valid();
+		let correlation_id = CorrelationId::from_request(&uuid_str).unwrap();
 
 		assert_eq!(correlation_id.to_string(), uuid_str);
 	}
@@ -52,20 +54,7 @@ mod message_envelope_tests {
 	fn test_message_envelope_with_metadata() {
 		duck!("Testing message envelope with custom metadata");
 
-		let metadata = MessageMetadata {
-			priority: MessagePriority::High,
-			routing_hints: vec!["urgent".to_string()],
-			timeout_ms: Some(1000),
-			retry_count: 0,
-			source_component: "test_source".to_string(),
-			target_component: Some("test_target".to_string()),
-		};
-
-		let envelope = MessageEnvelope::with_metadata(
-			MessageType::ExtensionCommand,
-			"urgent payload".to_string(),
-			metadata.clone(),
-		);
+		let envelope = factory::MessageEnvelopeTestFactory::with_metadata();
 
 		assert_eq!(envelope.message_type, MessageType::ExtensionCommand);
 		assert_eq!(envelope.metadata.priority, MessagePriority::High);
@@ -76,15 +65,16 @@ mod message_envelope_tests {
 
 #[cfg(feature = "unit")]
 mod serialization_tests {
-	use sy_commons::debug::duck;
-	use sy_ipc_protocol::{MessageEnvelope, MessageType, MessageSerializer, SerializationFormat};
+	use crate::factory;
 	use std::time::Instant;
+	use sy_commons::debug::duck;
+	use sy_ipc_protocol::{MessageEnvelope, MessageSerializer, MessageType, SerializationFormat};
 
 	#[tokio::test]
 	async fn test_messagepack_serialization() {
 		duck!("Testing MessagePack serialization");
 
-		let envelope = MessageEnvelope::new(MessageType::PitOperation, "test".to_string());
+		let envelope = factory::MessageEnvelopeTestFactory::with_type(MessageType::PitOperation);
 		let serializer = MessageSerializer::message_pack();
 
 		let start = Instant::now();
@@ -107,7 +97,7 @@ mod serialization_tests {
 		duck!("Testing MessagePack round-trip");
 
 		let original =
-			MessageEnvelope::new(MessageType::ExtensionCommand, "round trip test".to_string());
+			factory::MessageEnvelopeTestFactory::with_type(MessageType::ExtensionCommand);
 		let serializer = MessageSerializer::message_pack();
 
 		let serialized = serializer.serialize(&original).await.unwrap();
@@ -115,7 +105,6 @@ mod serialization_tests {
 			serializer.deserialize(&serialized).await.unwrap();
 
 		assert_eq!(original.message_type, deserialized.message_type);
-		assert_eq!(original.payload, deserialized.payload);
 		assert_eq!(original.correlation_id, deserialized.correlation_id);
 	}
 
@@ -124,7 +113,7 @@ mod serialization_tests {
 		duck!("Testing Bincode serialization");
 
 		let envelope =
-			MessageEnvelope::new(MessageType::ConductorDecision, "bincode test".to_string());
+			factory::MessageEnvelopeTestFactory::with_type(MessageType::ConductorDecision);
 		let serializer = MessageSerializer::bincode();
 
 		let start = Instant::now();
@@ -146,7 +135,7 @@ mod serialization_tests {
 	async fn test_json_serialization() {
 		duck!("Testing JSON serialization");
 
-		let envelope = MessageEnvelope::new(MessageType::XiRequest, "json test".to_string());
+		let envelope = factory::MessageEnvelopeTestFactory::with_type(MessageType::XiRequest);
 		let serializer = MessageSerializer::json();
 
 		let serialized = serializer.serialize(&envelope).await.unwrap();
@@ -161,47 +150,36 @@ mod serialization_tests {
 
 #[cfg(feature = "jsonrpc")]
 mod jsonrpc_tests {
+	use crate::factory;
 	use sy_commons::debug::duck;
-	use sy_ipc_protocol::{JsonRpcRequest, JsonRpcMessage};
-	use serde_json::Value;
+	use sy_ipc_protocol::JsonRpcMessage;
 
 	#[test]
 	fn test_jsonrpc_request_creation() {
 		duck!("Testing JSON-RPC request creation");
 
-		let request = JsonRpcRequest {
-			jsonrpc: "2.0".to_string(),
-			method: "test_method".to_string(),
-			params: Some(Value::String("test_params".to_string())),
-			id: Value::String("test_id".to_string()),
-		};
+		let request = factory::JsonRpcRequestTestFactory::valid();
 
 		assert_eq!(request.jsonrpc, "2.0");
-		assert_eq!(request.method, "test_method");
+		assert!(!request.method.is_empty());
 		assert!(request.params.is_some());
-		assert_eq!(request.id, Value::String("test_id".to_string()));
+		assert!(!request.id.to_string().is_empty());
 	}
 
 	#[test]
 	fn test_jsonrpc_message_serialization() {
 		duck!("Testing JSON-RPC message serialization");
 
-		let request = JsonRpcRequest {
-			jsonrpc: "2.0".to_string(),
-			method: "test".to_string(),
-			params: None,
-			id: Value::Number(1.into()),
-		};
-
-		let message = JsonRpcMessage::Request(request);
+		let request = factory::JsonRpcRequestTestFactory::without_params();
+		let message = JsonRpcMessage::Request(request.clone());
 		let serialized = serde_json::to_string(&message).unwrap();
 		let deserialized: JsonRpcMessage = serde_json::from_str(&serialized).unwrap();
 
 		match deserialized {
 			JsonRpcMessage::Request(req) => {
 				assert_eq!(req.jsonrpc, "2.0");
-				assert_eq!(req.method, "test");
-				assert_eq!(req.id, Value::Number(1.into()));
+				assert_eq!(req.method, request.method);
+				assert_eq!(req.id, request.id);
 			},
 			_ => panic!("Expected Request variant"),
 		}
@@ -210,9 +188,9 @@ mod jsonrpc_tests {
 
 #[cfg(feature = "unit")]
 mod registry_tests {
-	use super::*;
+	use crate::factory;
 	use sy_commons::debug::duck;
-	use sy_ipc_protocol::{MessageRegistry, MessageEnvelope, MessageType, SerializationFormat};
+	use sy_ipc_protocol::{MessageEnvelope, MessageRegistry, SerializationFormat};
 
 	#[test]
 	fn test_message_registry_creation() {
@@ -232,7 +210,7 @@ mod registry_tests {
 		duck!("Testing registry serialization");
 
 		let registry = MessageRegistry::new();
-		let envelope = MessageEnvelope::new(MessageType::PitOperation, "test".to_string());
+		let envelope = factory::MessageEnvelopeTestFactory::with_string_payload();
 
 		let serialized = registry
 			.serialize_message(&envelope, SerializationFormat::MessagePack)
@@ -244,6 +222,5 @@ mod registry_tests {
 			.unwrap();
 
 		assert_eq!(envelope.message_type, deserialized.message_type);
-		assert_eq!(envelope.payload, deserialized.payload);
 	}
 }

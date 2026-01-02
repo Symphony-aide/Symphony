@@ -163,8 +163,7 @@ impl MessagePackSerializer {
 			.map_err(|e| SerializationError::MessagePackError(e.to_string()))?;
 
 		let duration = start.elapsed();
-		let duration_micros = u64::try_from(duration.as_micros())
-			.unwrap_or(u64::MAX); // If duration is too large, use max value
+		let duration_micros = u64::try_from(duration.as_micros()).unwrap_or(u64::MAX); // If duration is too large, use max value
 
 		// Performance target: <0.01ms (10 microseconds) in production
 		// Allow more flexibility in debug/test builds
@@ -196,8 +195,7 @@ impl MessagePackSerializer {
 			.map_err(|e| SerializationError::MessagePackError(e.to_string()))?;
 
 		let duration = start.elapsed();
-		let duration_micros = u64::try_from(duration.as_micros())
-			.unwrap_or(u64::MAX); // If duration is too large, use max value
+		let duration_micros = u64::try_from(duration.as_micros()).unwrap_or(u64::MAX); // If duration is too large, use max value
 
 		// Performance target: <0.01ms (10 microseconds) in production
 		// Allow more flexibility in debug/test builds
